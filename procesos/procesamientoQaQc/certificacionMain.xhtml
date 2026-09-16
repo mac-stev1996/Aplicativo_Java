@@ -1,0 +1,133 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Certificacion de Requerimientos
+	</ui:define>
+
+	<ui:define name="buttons">
+	</ui:define>
+	<ui:define name="content">
+		<style type="text/css">
+body {
+	font-size: 11px !important;
+}
+
+body .ui-datatable.ui-datatable-scrollable thead tr th {
+	font-size: 11px !important;
+	padding: 0px 3px !important;
+}
+
+body .ui-datatable thead tr th {
+	padding: 4px 3px;
+}
+
+body .ui-datatable tbody tr td {
+	font-size: 10px !important;
+	padding: 2px 3px;
+}
+
+body .ui-panelgrid .ui-panelgrid-cell {
+	padding: 3px 4px;
+}
+
+.noborder, .noborder>tbody>tr, .noborder>tbody>tr>td, .noborder>*>div,
+	.noborder>.ui-widget-content {
+	border: 0px !important;
+	padding: 4px 3px !important;
+	background-color: transparent !important;
+}
+
+.gridSinBordes.ui-panelgrid>*>tr, .gridSinBordes.ui-panelgrid .ui-panelgrid-cell
+	{
+	border: none !important;
+	border-right-width: 0px !important;
+	border-left-width: 0px !important;
+	padding-right: 2px !important;
+	padding-left: 2px !important;
+	padding-top: 2px !important;
+	padding-bottom: 2px !important
+}
+
+.topAligned {
+	vertical-align: top;
+}
+
+body .ui-tabs .ui-tabs-nav>li.ui-state-default a {
+	background: #d8f1ff;
+	border-radius: 10px 10px 0px 0px;
+}
+
+.centrado {
+	display: flex;
+	align-items: center;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+	background-color: #4aaff7 !important;
+}
+
+.ui-dialog .ui-dialog-content {
+	border: 1px solid #d8d8d8 !important;
+}
+
+.btnGris {
+	background-color: #607d8b !important;
+}
+
+.forty-percent {
+	width: 42%;
+}
+
+.sixty-percent {
+	width: 58%;
+}
+
+.top-alignment {
+	vertical-align: top;
+}
+
+.inBlue {
+	color: #03A9F4 !important;
+}
+
+.egRed {
+	color: #F44336 !important;
+}
+
+.aprobado {
+	color: #4CAF50 !important;
+}
+
+.negado {
+	color: #FF0019 !important;
+}
+</style>
+<script type="text/javascript">
+	function mayus(e) {
+    e.value = e.value.toUpperCase();
+    }
+</script>
+		<h:form id="frmCertificacion" enctype="multipart/form-data">
+			<p:messages id="messages" showDetail="true" autoUpdate="true"
+				closable="true" showSummary="true" />
+			<div align="center">
+				<h:panelGrid columns="12" id="pgDatosGenerales" width="100%"
+					layout="grid"
+					rendered="#{controlCertificacionesController.pantalla eq 'LISTADO'}">
+					<ui:include src="controlCertificaciones.xhtml" />
+				</h:panelGrid>
+				<h:panelGrid columns="12" id="pgCertificacion" width="100%"
+					layout="grid"
+					rendered="#{controlCertificacionesController.pantalla eq 'FORMULARIO'}">
+					<ui:include src="certificacion.xhtml" />
+				</h:panelGrid>
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

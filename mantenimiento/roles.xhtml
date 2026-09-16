@@ -1,0 +1,75 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    template="/jsf/templates/bodyTemplate.xhtml">
+
+    <ui:define name="title">Roles de Documentos</ui:define>
+
+    <ui:define name="buttons">
+        <h:form id="formNuevoRol">
+            <p:commandButton value="Nuevo" icon="fa fa-plus"
+                styleClass="green-btn"
+                action="#{rolesController.nuevo()}"
+                process="@this" />
+        </h:form>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="formRoles" onkeypress="return event.keyCode!=13">
+            <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+
+                    <p:dataTable id="tblRoles" var="item"
+                        value="#{rolesController.roles}"
+                        emptyMessage="No existen registros"
+                        styleClass="hover-rows table table-body tbl-header-height"
+                        rowKey="#{item.codigo}"
+                        rowIndexVar="rowIndex"
+                        paginator="true" rows="10"
+                        paginatorPosition="bottom"
+                        paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+
+                        <p:column headerText="N°" styleClass="w10">
+                            <h:outputText value="#{rowIndex + 1}" />
+                        </p:column>
+                        <p:column headerText="Nombre" styleClass="w30">
+                            <h:outputText value="#{item.nombre}" />
+                        </p:column>
+                        <p:column headerText="Descripción" styleClass="w40">
+                            <h:outputText value="#{item.descripcion}" />
+                        </p:column>
+                            <p:column headerText="Estado" styleClass="w10">
+                            <h:outputText value="#{item.estado == 'A' ? 'ACTIVO' : 'INACTIVO'}" />
+                        </p:column>
+                        <p:column headerText="Acciones" styleClass="w10">
+                            <p:commandButton title="Editar" icon="fa fa-pencil"
+                                styleClass="cyan-btn"
+                                action="#{rolesController.editar(item, rowIndex + 1)}"
+                                process="@this" />
+                            <p:commandButton title="Inactivar" icon="fa fa-ban"
+                                styleClass="red-btn"
+                                process="@this"
+                                disabled="#{item.estado == 'I'}"
+                                oncomplete="PF('dlgConfirmar').show()"
+                                actionListener="#{rolesController.prepararEliminar(item)}" />
+                        </p:column>
+                    </p:dataTable>
+
+            <p:confirmDialog id="dlgConfirmar" widgetVar="dlgConfirmar"
+                header="Confirmar inactivación" severity="warn"
+                message="¿Está seguro de inactivar el rol seleccionado? Se inactivarán también todos sus módulos y usuarios asociados.">
+                <p:commandButton value="Sí" icon="fa fa-check"
+                    styleClass="red-btn"
+                    action="#{rolesController.confirmarEliminar()}"
+                    update="@form"
+                    oncomplete="PF('dlgConfirmar').hide()" />
+                <p:commandButton value="No" icon="fa fa-times"
+                    styleClass="secondary-btn"
+                    onclick="PF('dlgConfirmar').hide();" type="button" />
+            </p:confirmDialog>
+
+        </h:form>
+    </ui:define>
+
+</ui:composition>

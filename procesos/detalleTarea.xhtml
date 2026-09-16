@@ -1,0 +1,300 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Detalle Tarea
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmButtons">
+			<p:commandButton value="Regresar" styleClass="orange-btn"
+				icon="fa fa-reply" action="#{detalleTareaController.regresarInicio}"
+				process="@this"></p:commandButton>
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+
+		<style type="text/css">
+.select {
+	background-color: white;
+	color: #212121;
+	max-height: 20px;
+	right: 10%;
+	top: 5px;
+}
+
+/* Estilo para los botones activos */
+.ui-selectonebutton .ui-button.ui-state-active {
+  background-color: #179317;
+}
+
+/* Estilo para los botones inactivos */
+.ui-selectonebutton .ui-button:not(.ui-state-active) {
+  background-color: #606060;
+}
+
+.ui-selectonebutton.ui-buttonset label.ui-button.ui-state-active input:checked {
+  background-color: #179317;
+}
+
+</style>
+
+		<div class="ui-g dashboard" style="background-color: white;">
+			<div class="ui-g-12 ui-fluid contact-form">
+				<h:form id="form">
+					<div class="ui-lg-12 ui-md-12 ui-g-12"
+						style="padding-bottom: 0px; padding-top: 0px; border-bottom: 2px solid gray; border-bottom-width: thin;">
+						<h:panelGrid columns="2">
+							<h:graphicImage value="/common/imgs/reports/tarea-icon.png"
+								width="45" height="35" />
+							<p:outputLabel
+								value="#{detalleTareaController.tarea.tareaApoId} - #{detalleTareaController.tarea.tituloTarea}"
+								style="font-size:25px;font-weight: bold;"></p:outputLabel>
+						</h:panelGrid>
+					</div>
+					<div class="ui-lg-8 ui-md-7	ui-g-12"
+						style="padding-bottom: 0px; padding-top: 0px; font-size: 14px;">
+						<h:panelGrid columns="1">
+
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Estado: " style="font-weight: bold;"></p:outputLabel>
+								<p:outputLabel value="#{detalleTareaController.tarea.estado}"></p:outputLabel>
+							</h:panelGrid>
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Prioridad: " style="font-weight: bold;"></p:outputLabel>
+								<p:outputLabel
+									value="#{detalleTareaController.obtenerPrioridad(detalleTareaController.tarea.prioridad)}"></p:outputLabel>
+							</h:panelGrid>
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Descripci&#243;n: "
+									style="font-weight: bold;"></p:outputLabel>
+								<p:outputLabel
+									value="#{detalleTareaController.tarea.descripcion}"></p:outputLabel>
+							</h:panelGrid>
+							
+							<p:outputPanel autoUpdate="true">
+								<p:fileUpload immediate="true"
+									fileUploadListener="#{detalleTareaController.cargarArchivoPost}"
+									mode="advanced" dragDropSupport="true" update="dtlinksArchivos" 
+									uploadLabel="Subir Archivo"
+									cancelLabel="Cancelar" label="Subir Archivo Adjuntos" fileLimit="7"
+									fileLimitMessage="Puede subir hasta 7 archivos" auto="true"
+									multiple="true">
+								</p:fileUpload>
+								<p:dataTable value="#{detalleTareaController.listaAdjuntos}"
+									var="adj" id="dtlinksArchivos"
+									emptyMessage="Sin Archivos adjuntos">
+									<p:column headerText="Archivos Adjuntos">
+										<p:commandLink ajax="false" target="_blank"
+											action="#{detalleTareaController.verAdjunto(adj)}">
+											<h:outputText value="#{adj}"
+												style="text-decoration: underline; color: blue;"></h:outputText>
+										</p:commandLink>
+									</p:column>
+								</p:dataTable>
+							</p:outputPanel>
+							
+							
+							<br />
+
+							<h:panelGrid columns="2">
+								<p:commandButton value="Agregar Avance" styleClass="green-btn"
+									icon="fa fa-plus-square"
+									action="#{detalleTareaController.agregarAvance}"
+									update="FrmAvance"
+									rendered="#{detalleTareaController.agregarAvance}"></p:commandButton>
+
+							</h:panelGrid>
+							<p:dataTable value="#{detalleTareaController.listaAvances}"
+								var="avd" emptyMessage="No existen avances registrados">
+								<f:facet name="header">
+									<p:outputLabel value="Historial de Avances"></p:outputLabel>
+								</f:facet>
+								<p:column headerText="Fecha Registro" width="115">
+									<p:outputLabel value="#{avd.fechaAvance}">
+										<f:convertDateTime pattern="dd-MM-yyyy HH:mm" />
+									</p:outputLabel>
+								</p:column>
+								<p:column headerText="Comentario">
+									<p:outputLabel value="#{avd.comentario}"></p:outputLabel>
+								</p:column>
+								<p:column headerText="Tiempo" width="50">
+									<p:outputLabel
+										value="#{detalleTareaController.tranformarDiasHorasMin(avd.tiempo)}"></p:outputLabel>
+								</p:column>
+								<p:column headerText="Avance" width="90">
+									<p:progressBar value="#{avd.avance}" labelTemplate="{value}%"
+										style="width:70px;background:white;color:green"
+										displayOnly="true" />
+
+								</p:column>
+							</p:dataTable>
+						</h:panelGrid>
+					</div>
+					<div class="ui-lg-4 ui-md-5	ui-g-12"
+						style="padding-bottom: 0px; padding-top: 0px; font-size: 14px;">
+						<h:panelGrid columns="1" style="width:100%;">
+
+							<h:panelGrid columns="2" style="width:100%;">
+								<f:facet name="header">
+									<p:commandLink value="Involucrados"></p:commandLink>
+								</f:facet>
+								<p:outputLabel value="Responsable: " style="font-weight: bold;" />
+								<p:outputLabel
+									value="#{detalleTareaController.empleadoResp.nombre}" />
+								
+								<p:outputLabel value="Solicitantes: " style="font-weight: bold;" />
+								<p:outputLabel rendered="#{detalleTareaController.tarea.solicitanteMultiple eq 'N'}" 
+									value="#{detalleTareaController.empleadoSol.nombre}" />									
+								<p:outputLabel rendered="#{detalleTareaController.tarea.solicitanteMultiple eq 'S'}"
+								 value="#{detalleTareaController.salida}" />
+							</h:panelGrid>
+							<br />
+							<h:panelGrid columns="2"
+								style="border-top:1px solid gray;border-top-width: thin;width:100%;">
+								<f:facet name="header">
+									<p:commandLink value="Detalle de Fechas"></p:commandLink>
+
+								</f:facet>
+								<p:outputLabel value="Fecha Creaci&#243;n: "
+									style="font-weight: bold;" />
+								<p:outputLabel
+									value="#{detalleTareaController.tarea.fechaCreacion}">
+									<f:convertDateTime pattern="dd-MM-yyyy  HH:mm" />
+								</p:outputLabel>
+								<p:outputLabel value="Fecha Estimada de Entrega: "
+									style="font-weight: bold;" />
+								<p:outputLabel
+									value="#{detalleTareaController.tarea.fechaEntregaEstimada}">
+									<f:convertDateTime pattern="dd-MM-yyyy  HH:mm" />
+								</p:outputLabel>
+								<p:outputLabel value="Fecha de Entrega Real: "
+									style="font-weight: bold;"
+									rendered="#{detalleTareaController.tarea.fechaEntregaReal != null}" />
+								<p:outputLabel
+									value="#{detalleTareaController.tarea.fechaEntregaReal}"
+									rendered="#{detalleTareaController.tarea.fechaEntregaReal != null}">
+									<f:convertDateTime pattern="dd-MM-yyyy  HH:mm" />
+								</p:outputLabel>
+							</h:panelGrid>
+							<br />
+							<h:panelGrid columns="2"
+								style="border-top:1px solid gray; border-top-width: thin;width:100%;">
+								<f:facet name="header">
+									<p:commandLink value="Detalle de Tiempos"></p:commandLink>
+
+								</f:facet>
+								<p:outputLabel value="Tiempo utilizado: "
+									style="font-weight: bold;"
+									rendered="#{detalleTareaController.tiempoEmpleado != null}" />
+								<p:outputLabel
+									value="#{detalleTareaController.tranformarDiasHorasMin(detalleTareaController.tiempoEmpleado)}">
+								</p:outputLabel>
+
+							</h:panelGrid>
+							<h:panelGrid columns="1"
+								style="border-top:1px solid gray; border-top-width: thin;width:100%;">
+								<f:facet name="header">
+									<p:commandLink value="Avance"></p:commandLink>
+
+								</f:facet>
+								<h:panelGrid columns="2">
+									<p:spacer width="65" height="10"></p:spacer>
+									<p:knob disabled="true"
+										value="#{detalleTareaController.tarea.avance}"
+										labelTemplate="{value}%" foregroundColor="#35DCBB"
+										backgroundColor="#E0DFEC" />
+
+								</h:panelGrid>
+							</h:panelGrid>
+
+						</h:panelGrid>
+					</div>
+				</h:form>
+
+				<p:dialog widgetVar="DlgAvance" id="DlgAvance" closeOnEscape="true"
+					modal="true" width="400">
+					<h:form id="FrmAvance">
+						<div class="ui-lg-12 ui-md-12 ui-g-12"
+							style="padding-bottom: 0px;">
+							<div class="ui-lg-6 ui-md-6 ui-g-12" style="padding-bottom: 0px;">
+								<h:panelGroup styleClass="md-inputfield">
+									<p:inputNumber id="j_tiempo" autocomplete="off"
+										value="#{detalleTareaController.avance.tiempo}"
+										required="true"
+										requiredMessage="Ingrese el tiempo que empleo"
+										decimalPlaces="0" />
+									<p:message for="j_tiempo"></p:message>
+									<label>Tiempo Empleado</label>
+								</h:panelGroup>
+							</div>
+							<div class="ui-lg-6 ui-md-6 ui-g-12" style="padding-bottom: 0px;">
+								<p:selectOneMenu value="#{detalleTareaController.unidadTiempo}">
+									<f:selectItems value="#{detalleTareaController.unidadesTiempo}"
+										var="uni" itemLabel="#{uni.descripcion}" itemValue="#{uni}"></f:selectItems>
+								</p:selectOneMenu>
+							</div>
+						</div>
+						<div class="ui-lg-12 ui-md-12 ui-g-12"
+							style="padding-bottom: 5px;">
+							<p:commandLink value="Avance"></p:commandLink>
+							<h:panelGrid columns="1" style="margin-bottom: 10px">
+								<h:panelGrid columns="2" style="margin-bottom: 10px">
+									<h:outputText id="output" value="Porcentaje :" />
+									<p:inputText id="txt2" required="true"
+										requiredMessage="Ingrese el avance"
+										value="#{detalleTareaController.avance.avance}"
+										style="width: 40px" />
+								</h:panelGrid>
+								<p:slider animate="true" for="txt2" style="width: 210px" id="sliAvance"
+									step="5"/>
+							</h:panelGrid>
+						</div>
+
+						<div class="ui-lg-12 ui-md-12 ui-g-12"
+							style="padding-bottom: 0px;">
+							<p:commandLink id="labEstado" value="Estado: #{detalleTareaController.avance.estado}"></p:commandLink>
+							<p:selectOneButton value="#{detalleTareaController.avance.estado}" id="sbeEstado">
+									<f:selectItems value="#{detalleTareaController.estados}"
+									var="item" itemLabel="#{item.estado}"
+									itemValue="#{item.estado}"></f:selectItems>
+									 <p:ajax event="change" process="@this :FrmAvance:sbeEstado"
+									  listener="#{detalleTareaController.setearEstado(detalleTareaController.avance.estado)}"
+									  update="labEstado, :FrmAvance:txt2, :FrmAvance:sbeEstado :FrmAvance:sliAvance"/>
+							</p:selectOneButton>
+						</div>
+						<div class="ui-lg-12 ui-md-12 ui-g-12"
+							style="padding-bottom: 0px;">
+							<h:panelGroup styleClass="md-inputfield">
+								<p:inputTextarea id="j_Descr" autocomplete="off" required="true"
+									value="#{detalleTareaController.avance.comentario}"
+									requiredMessage="Ingrese la Observación"></p:inputTextarea>
+								<p:message for="j_Descr"></p:message>
+								<label>Observaci&#243;n</label>
+							</h:panelGroup>
+						</div>
+						<br />
+						<center>
+							<p:commandButton value="Guardar"
+								action="#{detalleTareaController.guardarAvance}" update="form"></p:commandButton>
+						</center>
+
+					</h:form>
+
+
+				</p:dialog>
+
+
+			</div>
+		</div>
+
+
+	</ui:define>
+
+</ui:composition>

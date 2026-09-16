@@ -1,0 +1,528 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Solicitud De Eliminación
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="idFormButtons">
+			<p:commandButton id="btnCrearSol" partialSubmit="true" value="Sol Eliminación"
+				process="@form" title="Crear Solicitud" icon="ui-icon-plus"
+				oncomplete="PF('DlgColaboradores').show();" styleClass="green-btn"
+				update="@form, :#{p:component('idColaboradoresAsignados')}"
+				action="#{procesoEliminacionUsuariosController.cargarColaboradoresAsignados}" />
+		</h:form>
+	</ui:define>
+	<ui:define name="content">
+		<style type="text/css">
+body {
+	font-size: 11px !important;
+}
+
+body .ui-datatable.ui-datatable-scrollable thead tr th {
+	font-size: 11px !important;
+	padding: 0px 3px !important;
+}
+
+body .ui-datatable thead tr th {
+	padding: 4px 3px;
+}
+
+body .ui-datatable tbody tr td {
+	font-size: 10px !important;
+	padding: 2px 3px;
+}
+
+body .ui-panelgrid .ui-panelgrid-cell {
+	padding: 3px 4px;
+}
+
+.noborder, .noborder>tbody>tr, .noborder>tbody>tr>td, .noborder>*>div,
+	.noborder>.ui-widget-content {
+	border: 0px !important;
+	padding: 4px 3px !important;
+	background-color: transparent !important;
+}
+
+.gridSinBordes.ui-panelgrid>*>tr, .gridSinBordes.ui-panelgrid .ui-panelgrid-cell
+	{
+	border: none !important;
+	border-right-width: 0px !important;
+	border-left-width: 0px !important;
+	padding-right: 2px !important;
+	padding-left: 2px !important;
+	padding-top: 2px !important;
+	padding-bottom: 2px !important
+}
+
+.topAligned {
+	vertical-align: top;
+}
+
+body .ui-tabs .ui-tabs-nav>li.ui-state-default a {
+	background: #d8f1ff;
+	border-radius: 10px 10px 0px 0px;
+}
+
+.centrado {
+	display: flex;
+	align-items: center;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+	background-color: #4aaff7 !important;
+}
+
+.ui-dialog .ui-dialog-content {
+	border: 1px solid #d8d8d8 !important;
+}
+
+.btnGris {
+	background-color: #607d8b !important;
+}
+
+.forty-percent {
+	width: 42%;
+}
+
+.sixty-percent {
+	width: 58%;
+}
+
+.top-alignment {
+	vertical-align: top;
+}
+
+.inBlue {
+	color: #03A9F4 !important;
+}
+
+.egRed {
+	color: #F44336 !important;
+}
+
+.aprobado {
+	color: #4CAF50 !important;
+}
+
+.negado {
+	color: #FF0019 !important;
+}
+
+.custom-select-width.ui-selectonemenu {
+	min-width: 200px !important;
+}
+
+.label-ancho-fijo {
+	display: inline-block;
+	width: 115px;
+}
+</style>
+		<script type="text/javascript">
+				function mayus(e) {
+			    e.value = e.value.toUpperCase();
+			    }
+			</script>
+		<h:form id="idForm" enctype="multipart/form-data">
+			<p:messages id="messages" showDetail="true"
+				closable="true" showSummary="true" />
+
+			<div class="ui-g dashboard">
+				<div class="ui-g-12">
+
+					<p:dataTable id="dtSolicitudes" styleClass="table" paginator="true"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+						emptyMessage="No existen registros" selectionMode="single"
+						rowKey="#{item}" paginatorPosition="bottom" rowsPerPageTemplate="25,50,75,100"
+						value="#{procesoEliminacionUsuariosController.listSolicitudes}" var="item">
+
+						<p:column id="clNoSol" headerText="No Sol" width="5%" styleClass="txtC" sortBy="#{item.controlUsuariosPK.solicitudNo}"
+							style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+							<h:outputText id="txtSolNo" value="#{item.controlUsuariosPK.solicitudNo}"
+								title="#{item.controlUsuariosPK.solicitudNo}" />
+						</p:column>
+						<p:column id="clCodEmp" headerText="Cod Empleado" width="5%" styleClass="txtC">
+							<h:outputText id="txtNoEmple" value="#{item.noEmple}" />
+						</p:column>
+						<p:column id="clCedula" headerText="Cédula" width="10%" styleClass="txtC"
+							style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+							filterBy="#{item.cedula}">
+							<h:outputText id="txtCedula" value="#{item.cedula}" />
+						</p:column>
+						<p:column id="clApellido" headerText="Apellidos" width="10%" styleClass="txtL"
+							style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+							filterBy="#{item.apellidos}">
+							<h:outputText id="txtApellidos" value="#{item.apellidos}" title="#{item.apellidos}" />
+						</p:column>
+						<p:column id="clNombre" headerText="Nombre" width="10%" styleClass="txtL"
+							style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+							filterBy="#{item.nombres}">
+							<h:outputText id="txtNombre" value="#{item.nombres}" title="#{item.nombres}" />
+						</p:column>
+						<p:column id="clUsuario" headerText="Usuario" width="10%" styleClass="txtC"
+							style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+							filterBy="#{item.usuarioDb}">
+							<h:outputText id="txtUsuarioDb" value="#{item.usuarioDb}" title="#{item.usuarioDb}" />
+						</p:column>
+						<p:column id="clEstado" headerText="Estado" width="10%" styleClass="txtC"
+							style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+							filterBy="#{item.estado}">
+							<h:outputText id="txtEstado" title="#{item.estado}"
+								value="#{item.estado eq 'P' ? 'PENDIENTE' : item.estado eq 'E' ? 'EJECUCION' : item.estado eq 'R' ?  'REALIZADO' : ''  }" />
+						</p:column>
+						<p:column id="clFechaEfect" headerText="Fecha Efectiva Salida" width="10%"
+							styleClass="txtC" sortBy="#{item.fechaEfectivaSalida}">
+							<h:outputText id="txtFechaEfec" value="#{item.fechaEfectivaSalida}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+
+						<p:column id="clAcciones" headerText="Acciones" width="15%">
+							<div style="display: flex; justify-content: center;">
+
+								<p:commandLink id="bttnElimina" partialSubmit="true" process="@form"
+									update="@form, :#{p:component('idEliminacionUsuario')}"
+									oncomplete="PF('DlgElimUsuario').show();"
+									style="margin-right: 15px;"
+									action="#{procesoEliminacionUsuariosController.cargarSolicitud(item)}">
+									<i class="fa fa-pencil fa-2x" title="Editar Solicitud"
+										style="color: #0288d1;" />
+								</p:commandLink>
+
+								<p:commandLink id="bttnRevPermis" partialSubmit="true" process="@this"
+									update="@this" style="margin-right: 15px;"
+									disabled="#{!item.permiteRevocarPermisos}"
+									action="#{procesoEliminacionUsuariosController.revocarPermisos(item.usuarioDb)}">
+									<i class="fa fa-warning fa-2x" title="Revocar Permisos"
+										style="color: #ffeb3b;" />
+									<p:confirm header="Confirmación"
+										message="Esta seguro de revocar los permisos al usaurio #{item.usuarioDb} ?"
+										icon="ui-icon-alert" />
+								</p:commandLink>
+								<p:confirmDialog id="confDialog" global="true" showEffect="fade"
+									hideEffect="fade">
+									<p:commandButton value="Si" type="button"
+										styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+									<p:commandButton value="No" type="button"
+										styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+								</p:confirmDialog>
+
+								<p:commandLink id="bttnRepoSal" process="@form" update="@this" target="_blank"
+									partialSubmit="true" ajax="flase"
+									action="#{procesoEliminacionUsuariosController.reporteSalida(item)}">
+									<i class="fa fa-file-pdf-o fa-2x" title="Generar Reporte"
+										style="color: #ff0000;" />
+								</p:commandLink>
+
+							</div>
+						</p:column>
+
+					</p:dataTable>
+				</div>
+			</div>
+
+		</h:form>
+
+		<p:dialog header="Colaboradores asignados"
+			id="idColaboradoresAsignados" widgetVar="DlgColaboradores"
+			modal="true" showEffect="fade" hideEffect="fade" resizable="true"
+			width="550" height="245" position="center center" appendTo="@(body)">
+			<h:form id="frColabAsignados">
+
+				<p:dataTable id="tblItems" var="item" paginatorPosition="bottom"
+					value="#{procesoEliminacionUsuariosController.lazyDataModelEmpleados}"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+					rowKey="#{item.cedula}" emptyMessage="No existen datos" lazy="true"
+					paginator="true" multiViewState="true" rows="10" filterDelay="600"
+					selection="#{procesoEliminacionUsuariosController.colaboradorSeleccionado}"
+					selectionMode="single">
+
+					<p:ajax event="rowSelect" process="tblItems"
+						listener="#{procesoEliminacionUsuariosController.crearSolicitud}"
+						update="@form, :#{p:component('idEliminacionUsuario')}"
+						onsuccess="PF('DlgColaboradores').hide();" />
+
+					<p:column id="clCedulaItem" headerText="Cédula" width="10%" styleClass="txtC"
+						style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+						filterBy="#{item.cedula}">
+						<h:outputText id="txtCedulaItem" value="#{item.cedula}" />
+					</p:column>
+					<p:column id="clNoEmpleItem" headerText="No Empleado" width="10%" styleClass="txtC"
+						filterBy="#{item.nomEmpleadosPK.noEmple}">
+						<h:outputText id="txtNoEmpleItem" value="#{item.nomEmpleadosPK.noEmple}" />
+					</p:column>
+					<p:column id="clNombreItem" headerText="Nombre" width="25%" styleClass="txtL"
+						style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+						filterBy="#{item.nombre}">
+						<h:outputText id="txtNombreItem" value="#{item.nombre}" title="#{item.nombre}" />
+					</p:column>
+					<p:column id="clUsuarioItem" headerText="Usuario" width="10%" styleClass="txtC"
+						style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+						filterBy="#{item.usuarioDb}">
+						<h:outputText id="txtUsuarioItem" value="#{item.usuarioDb}" title="#{item.usuarioDb}" />
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+
+		<p:dialog header="Solicitud de Eliminación de Usuario" id="idEliminacionUsuario"
+			widgetVar="DlgElimUsuario" modal="true" showEffect="fade"
+			hideEffect="fade" resizable="true" width="700" height="350"
+			position="center center" appendTo="@(body)">
+			<h:form id="frSolEliminacion">
+				<p:messages id="messagesDialog" showDetail="true" showSummary="true"
+					closable="true" />
+				<h:panelGrid id="idDialogDatos" columns="4">
+
+					<p:outputLabel value="Cédula:" />
+					<p:inputText id="txtCedulaSol" size="15" readonly="true"
+						value="#{procesoEliminacionUsuariosController.solicitudDeUsuario.cedula}" />
+
+					<p:outputLabel value="Agencia:" />
+					<p:inputText id="txtAgenciaSol" size="25" readonly="true"
+						value="#{procesoEliminacionUsuariosController.solicitudDeUsuario.agenciaDescri}" />
+
+					<p:outputLabel value="Nombres:" />
+					<p:inputText id="txtNombreSol" size="25" readonly="true"
+						value="#{procesoEliminacionUsuariosController.solicitudDeUsuario.name}" />
+
+					<p:outputLabel value="Departamento:" />
+					<p:inputText id="txtDepartSol" size="25" readonly="true"
+						value="#{procesoEliminacionUsuariosController.solicitudDeUsuario.deptoDescri}" />
+
+					<p:outputLabel value="Cargo:" />
+					<p:inputText id="txtCargoSol" size="25" readonly="true"
+						value="#{procesoEliminacionUsuariosController.solicitudDeUsuario.cargoColaborador}" />
+
+					<p:outputLabel value="División:" />
+					<p:inputText id="txtDivisionSol" size="25" readonly="true"
+						value="#{procesoEliminacionUsuariosController.solicitudDeUsuario.divisionDescri}" />
+
+					<p:outputLabel value="Nombre Línea Supervisión:" />
+					<p:inputText id="txtNomSuperSol" size="25" readonly="true"
+						value="#{procesoEliminacionUsuariosController.solicitudDeUsuario.nombreSolicitante}" />
+
+					<p:outputLabel value="Sección:" />
+					<p:inputText id="txtSeccionSol" size="25" readonly="true"
+						value="#{procesoEliminacionUsuariosController.solicitudDeUsuario.seccionDescri}" />
+
+					<p:outputLabel value="Cargo Supervisor:" />
+					<p:inputText id="txtCargoSuperSol" size="25" readonly="true"
+						value="#{procesoEliminacionUsuariosController.solicitudDeUsuario.cargoSolicitante}" />
+
+					<p:outputLabel value="Motivo Salida:" />
+					<p:selectOneMenu id="txtMotivSalidaSol" filter="true" styleClass="custom-select-width"
+						value="#{procesoEliminacionUsuariosController.solicitudDeUsuario.motivoSalida}">
+						<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+						<f:selectItems
+							value="#{procesoEliminacionUsuariosController.listaMotivoSalida}" var="item"
+							itemLabel="#{item.paramDetPK.codigoDet} - #{item.descripcion}"
+							itemValue="#{item.paramDetPK.codigoDet}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Fecha Creación Sol:" />
+					<p:inputText id="idFechaCreacionSol" size="25" readonly="true"
+						value="#{procesoEliminacionUsuariosController.solicitudDeUsuario.fecha}" >
+						<f:convertDateTime pattern="dd/MM/yyyy" />	
+					</p:inputText>
+
+					<p:outputLabel value="Fecha Efectiva de Salida:" />
+					<p:calendar id="idFechaEfectSalida" navigator="true" 
+						showOn="button" pattern="dd/MM/yyyy" size="15"
+						value="#{procesoEliminacionUsuariosController.solicitudDeUsuario.fechaEfectivaSalida}">
+						<p:ajax event="dateSelect" update="idFechaEfectSalida" />
+					</p:calendar>
+
+				</h:panelGrid>
+
+				<h:panelGrid id="idPgItemsEntrega" columns="1">
+
+					<div class="ui-g-4">
+						<p:toolbar>
+							<f:facet name="left">ENTREGA DE ITEMS</f:facet>
+						</p:toolbar>
+
+						<p:dataTable id="tblItems" var="item"
+							value="#{procesoEliminacionUsuariosController.lstItemsColaborador}"
+							rowKey="#{item}" emptyMessage="No existen datos"
+							rowIndexVar="row">
+
+							<p:column id="clTipo" headerText="Tipo" styleClass="txtL"
+								style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+								width="5%">
+								<h:outputText id="txtTipo"
+									value="#{item.tipo eq 'RP' ? 'ROPA' : item.tipo eq 'EQ' ? 'EQUIPO' : item.tipo eq 'HE' ? 'HERR.' : item.tipo eq 'OT' ? 'OTROS.' : ''}" />
+							</p:column>
+
+							<p:column id="clItem" headerText="Item" styleClass="txtL"
+								style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+								width="30%">
+								<h:outputText id="txtOutItem" value="#{item.item}" title="#{item.item}" rendered="#{item.tipo ne 'OT'}" />
+								<p:inputText id="txtInputItem" size="25" value="#{item.item}" maxlength="200"
+									rendered="#{item.tipo eq 'OT'}" >
+									<p:ajax event="change" partialSubmit="true" process="@this"
+										global="false" listener="#{item.setChanged(true)}"
+										update="@this" />
+								</p:inputText>
+							</p:column>
+
+							<p:column id="clRecibido" headerText="Recibido" styleClass="txtC" width="5%">
+								<p:selectBooleanCheckbox id="selectRecibido" value="#{item.received}" disabled="#{item.received and !item.changed}">
+									<p:ajax event="change" partialSubmit="true" process="@this"
+										global="false"
+										listener="#{procesoEliminacionUsuariosController.resetDataItem(item)}"
+										update="@this, idEstado, idValorDescuento, idObservacion" />
+								</p:selectBooleanCheckbox>
+							</p:column>
+							<p:column id="clEstado" headerText="Estado" styleClass="txtC" width="10%">
+								<p:selectOneMenu id="idEstado" value="#{item.estado}"
+									disabled="#{!item.received}"
+									style="align-content: flex-start !important">
+									<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+									<f:selectItem itemLabel="BUENO" itemValue="BUENO" />
+									<f:selectItem itemLabel="MALO" itemValue="MALO" />
+									<f:selectItem itemLabel="N/A" itemValue="N/A" />
+									<p:ajax event="change" partialSubmit="true" process="@this"
+										global="false" listener="#{item.setChanged(true)}"
+										update="@this" />
+								</p:selectOneMenu>
+							</p:column>
+							<p:column id="clValorDesc" headerText="Valor Descuento" styleClass="number" width="10%">
+								<p:inputNumber id="idValorDescuento" value="#{item.valorDescuento}"
+									style="width:18px;" minValue="0" decimalSeparator=","
+									thousandSeparator="" decimalPlaces="2"
+									onfocus="inputfocus(this)" disabled="#{!item.received}"
+									onblur="inputblur(this)">
+									<p:ajax event="change" partialSubmit="true" process="@this"
+										global="false" listener="#{item.setChanged(true)}"
+										update="@this" />								
+								</p:inputNumber>
+							</p:column>
+							<p:column id="clObs" headerText="Observación" styleClass="txtC" width="45%">
+								<p:inputTextarea id="idObservacion" value="#{item.observacion}"
+									autoResize="flase" disabled="#{!item.received}"
+									style="height: 15px; width: 240px; max-width: 240px;">
+									<p:ajax event="change" partialSubmit="true" process="@this"
+										global="false" listener="#{item.setChanged(true)}"
+										update="@this" />
+								</p:inputTextarea>
+							</p:column>
+							<p:column id="clBttnElimn" headerText="Elim" styleClass="txtC" width="5%">
+								<p:commandLink id="bttnElimin" partialSubmit="true" process="@this"
+									update="tblItems" 
+									action="#{procesoEliminacionUsuariosController.eliminarItem(item)}">
+									<i class="fa fa-trash fa-2x" title="Eliminar Item"
+										style="color: #ff0000;" />
+								</p:commandLink>
+							</p:column>
+						</p:dataTable>
+
+						<div style="display: flex; justify-content: flex-end; ">
+							<div>
+								<p:commandButton id="bttnAggItem" value="Agregar Item" style="margin-top:15px;"
+									styleClass="blue-btn" icon="ui-icon-plus" process="@this"
+									update="tblItems"
+									action="#{procesoEliminacionUsuariosController.agregarItem}" />
+							</div>
+						</div>
+
+
+					</div>
+				</h:panelGrid>
+
+				<p:fieldset legend="Respaldo de información">
+					<h:panelGrid id="idPgDatosAdicionales" columns="1">
+						<p:outputPanel autoUpdate="true">
+							<h:panelGrid columns="4" style="width:100%;">
+
+								<p:outputLabel value="Respaldo Archivos Computadora: "
+									styleClass="label-ancho-fijo" />
+
+								<p:selectBooleanCheckbox id="checkRespaldoArch"
+									value="#{procesoEliminacionUsuariosController.solicitudDeUsuario.respaldoComputadorChk}">
+									<p:ajax event="change"
+										listener="#{procesoEliminacionUsuariosController.toggleRespaldoComputador}"
+										update="@this, respaldoUsuario, txtUsuario" />
+								</p:selectBooleanCheckbox>
+
+								<p:commandLink value="Usuario:" update="idDialogUsuarios, @this"
+									id="respaldoUsuario" title="Clic para seleccionar un usuario"
+									disabled="#{!procesoEliminacionUsuariosController.solicitudDeUsuario.respaldoComputadorChk}"
+									oncomplete="PF('dialogUsuarios').show();" ajax="true"
+									actionListener="#{procesoEliminacionUsuariosController.cargarDialogoUsuarios('usuario')}" />
+
+								<p:inputText size="30" readonly="true" id="txtUsuario"
+									value="#{procesoEliminacionUsuariosController.solicitudDeUsuario.nombreUsuarioRespaldoArchivos} - #{procesoEliminacionUsuariosController.solicitudDeUsuario.usuarioEnvioRespaldoArchivo}" />
+
+								<p:outputLabel value="Respaldo Email: "
+									styleClass="label-ancho-fijo" />
+
+								<p:selectBooleanCheckbox id="checkRespaldoEmail"
+									value="#{procesoEliminacionUsuariosController.solicitudDeUsuario.respaldoEmailChk}">
+									<p:ajax event="change"
+										listener="#{procesoEliminacionUsuariosController.toggleRespaldoEmail}"
+										update="@this, respaldoEmail, txtEmail" />
+								</p:selectBooleanCheckbox>
+
+								<p:commandLink value="Email:" update="idDialogUsuarios, @this"
+									id="respaldoEmail" title="Clic para seleccionar un usuario"
+									oncomplete="PF('dialogUsuarios').show();" ajax="true"
+									disabled="#{!procesoEliminacionUsuariosController.solicitudDeUsuario.respaldoEmailChk}"
+									actionListener="#{procesoEliminacionUsuariosController.cargarDialogoUsuarios('email')}" />
+
+								<p:inputText size="30" readonly="true" id="txtEmail"
+									value="#{procesoEliminacionUsuariosController.solicitudDeUsuario.nombreUsuarioRespaldoEmail} - #{procesoEliminacionUsuariosController.solicitudDeUsuario.usuarioEnvioRespaldoEmail}" />
+
+								<p:outputLabel value="Notificación Exámenes Post Ocupacionales:"
+									styleClass="label-ancho-fijo" />
+								<p:selectBooleanCheckbox id="checkExamen"
+									value="#{procesoEliminacionUsuariosController.solicitudDeUsuario.examenPostOcupChk}">
+									<p:ajax event="change"
+										listener="#{procesoEliminacionUsuariosController.toggleExamenesPostOcup}"
+										update="@this" />
+								</p:selectBooleanCheckbox>
+
+							</h:panelGrid>
+						</p:outputPanel>
+
+					</h:panelGrid>
+				</p:fieldset>
+
+				<div
+					style="display: flex; justify-content: flex-end; margin-top: 15px;">
+					<div>
+						<p:commandButton id="bttnGuardar" value="Guardar" style="margin-top:15px;"
+							styleClass="blue-btn" icon="fa fa-floppy-o" process="@form"
+							update="@form, messagesDialog, :#{p:component('dtSolicitudes')}"
+							action="#{procesoEliminacionUsuariosController.guardar}"/>
+						<p:commandButton id="bttnCancelar" value="Cancelar" style="margin-top:15px;"
+							icon="fa fa-close" styleClass="red-btn"
+							oncomplete="PF('DlgElimUsuario').hide();" process="@form"
+							update="@form" />
+					</div>
+				</div>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog id="idDialogUsuarios" widgetVar="dialogUsuarios"
+			header="Seleccione usuario..." style="position:fixed"
+			responsive="true" closeOnEscape="true" modal="true"
+			appendTo="@(body)" width="440" height="250">
+			<h:form>
+				<ui:fragment>
+					<ui:include src="/common/dialog/dialogUsuarios.xhtml"></ui:include>
+				</ui:fragment>
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

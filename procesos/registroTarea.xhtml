@@ -1,0 +1,334 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		<h:outputText value="#{registroTareaController.tituloPantalla}"></h:outputText>
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmButtons">
+		<p:commandButton value="Duplicar"
+				actionListener="#{registroTareaController.duplicarTarea}"
+				process="@this, form" update="form" partialSubmit="true"
+				styleClass="cyan-btn" icon="fa fa-clipboard" title="Duplicar Tarea" rendered="#{registroTareaController.tarea.tareaApoId > 0}"></p:commandButton>
+			<p:commandButton value="Guardar"
+				actionListener="#{registroTareaController.guardarTarea}"
+				process="@this, form" update="form, frmButtons" partialSubmit="true"
+				styleClass="green-btn" icon="fa fa-floppy-o" title="Guardar Tarea"></p:commandButton>
+			<p:commandButton value="Regresar" styleClass="orange-btn"
+				icon="fa fa-reply"
+				action="#{registroTareaController.regresarInicio}" process="@this"></p:commandButton>
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+
+		<style type="text/css">
+.select {
+	background-color: white;
+	color: #212121;
+	max-height: 20px;
+	right: 10%;
+	top: 5px;
+}
+</style>
+
+		<div class="ui-g dashboard">
+			<div class="ui-g-12 ui-fluid contact-form">
+				<div class="ui-g-11" style="background-color: white;">
+
+					<h:form id="form">
+					
+					 <p:growl id="msgs" showDetail="true" skipDetailIfEqualsSummary="true" />
+
+						<br />
+						
+						<div class="ui-lg-12 ui-md-12ui-g-12">
+						<h:panelGroup >
+							<p:outputLabel value="Crear Tarea con Solicitantes Múltiples: "
+							rendered="#{registroTareaController.tarea.solicitanteMultiple eq null}"/>
+							<p:selectBooleanCheckbox id="idSBMultiple" style="background: #5daad4;"
+				 				value="#{registroTareaController.actSolicitantes}" 
+				 				rendered="#{registroTareaController.tarea.solicitanteMultiple eq null}" >
+				 				<p:ajax partialSubmit="true" process="@this" event = "change"
+				 				listener="#{registroTareaController.cambioUsuarioMultiple(registroTareaController.actSolicitantes)}" 
+				 				update="@form :FrmSolicitanteM:tblColaMul :FrmSolicitanteM:idEmpresa " />
+							</p:selectBooleanCheckbox>
+							</h:panelGroup>
+						</div>
+						
+						<br />
+						
+						<div class="ui-lg-12 ui-md-12ui-g-12">
+							<h:panelGroup styleClass="md-inputfield">
+								<p:inputText id="j_titulo" autocomplete="off" maxlength="60"
+									value="#{registroTareaController.tarea.tituloTarea}"
+									requiredMessage="Ingrese el Titulo de la Tarea" required="#{registroTareaController.empleadoResp.nombre != null}"/>
+								<p:message for="j_titulo"></p:message>
+								<label>Titulo de la Tarea</label>
+							</h:panelGroup>
+						</div>
+						
+						<div class="ui-lg-12 ui-md-12 ui-g-12"
+							style="padding-bottom: 0px;">
+							<h:panelGroup styleClass="md-inputfield">
+								<p:inputTextarea id="j_Descr" autocomplete="off" maxlength="1000"
+									value="#{registroTareaController.tarea.descripcion}"
+									requiredMessage="Ingrese la Descripcion"></p:inputTextarea>
+								<p:message for="j_Descr"></p:message>
+								<label>Descripci&#243;n</label>
+							</h:panelGroup>
+						</div>
+						
+						<div class="ui-lg-6 ui-md-6 ui-g-12" style="padding-bottom: 0px;">
+							<p:spacer width="100%" height="15"></p:spacer>
+							<h:panelGroup styleClass="md-inputfield">
+								<p:calendar id="j_fecEntre" autocomplete="off" showButtonPanel="true"
+									timeInput="true"
+									value="#{registroTareaController.tarea.fechaEntregaEstimada}"
+									requiredMessage="Ingrese la fecha de Entrega" locale="es"
+									monthNavigator="true" pattern="dd/MM/yyyy HH:mm" required="#{registroTareaController.empleadoResp.nombre != null}"></p:calendar>
+								<p:message for="j_fecEntre"></p:message>
+								<label>Fecha de Entrega</label>
+							</h:panelGroup>
+						 	<p:spacer width="100%" height="4"></p:spacer>
+						</div>
+						
+						<div class="ui-lg-6 ui-md-6 ui-g-12"
+							style="padding-bottom: 0px;">
+							<h:panelGroup>
+								<p:commandLink value="Prioridad"></p:commandLink>
+
+								<p:selectOneButton
+									value="#{registroTareaController.tarea.prioridad}">
+
+									<f:selectItems value="#{registroTareaController.prioridades}"
+										var="item" itemLabel="#{item.descripcion}"
+										itemValue="#{item.valor}"></f:selectItems>
+								</p:selectOneButton>
+
+							</h:panelGroup>
+						</div>
+						
+						<div class="ui-lg-12 ui-md-12 ui-g-12"
+							style="padding-bottom: 0px;"/>
+						
+						<div class="ui-lg-6 ui-md-6 ui-g-12" style="padding-bottom: 0px;">
+							<h:panelGroup  id="idUnico" rendered="#{registroTareaController.actSolicitantes == false}" >
+								<p:commandLink
+									action="#{registroTareaController.abrirEmpleados(false)}"
+									update="FrmSolicitante" value="Solicitante de la Tarea"
+									title="Cambiar Solicitante">
+								</p:commandLink>
+								
+								<p:spacer width="25%" height="2"></p:spacer>
+								
+								<p:commandLink 
+									action="#{registroTareaController.copiarEmpleado}"
+									update="FrmResponsable, j_responsable" value="--> Copiar -->"
+									title="Copiar el Solicitante a Responsable">
+								</p:commandLink>
+								
+								<p:spacer width="100%" height="2"></p:spacer>
+
+								<p:inputText id="j_solicitante" autocomplete="off"
+									value="#{registroTareaController.empleadoSol.nombre}"
+									requiredMessage="Ingrese el solicitante de la tarea" readonly="true"/>
+								<p:message for="j_solicitante"></p:message>
+
+							</h:panelGroup>
+							
+							<h:panelGroup  id="idMultiple" rendered="#{registroTareaController.actSolicitantes == true}">
+								<p:commandLink
+									action="#{registroTareaController.abrirEmpleados(false)}"
+									update=":FrmSolicitanteM:tblColaMul" value="Seleccionar Solicitantes de la Tarea"
+									title="Cambiar Solicitante Multiple">
+								</p:commandLink>
+								<p:spacer width="100%" height="2"></p:spacer>
+								
+								<p:inputTextarea id="j_solicitantes" autocomplete="off"
+									value="#{registroTareaController.salida}"
+									requiredMessage="Ingrese los solicitantes de la tarea" readonly="true"/>
+								<p:message for="j_solicitantes"></p:message>
+
+							</h:panelGroup>
+						</div>
+
+						<div class="ui-lg-6 ui-md-6 ui-g-12" style="padding-bottom: 0px;">
+							<h:panelGroup>
+								
+								<p:commandLink
+									action="#{registroTareaController.abrirEmpleados(true)}"
+									update="FrmResponsable" value="Responsable de la Tarea"
+									title="Cambiar Responsable">
+								</p:commandLink>
+								
+								<p:spacer width="100%" height="2"></p:spacer>
+								
+								<p:inputText id="j_responsable" autocomplete="off"
+									value="#{registroTareaController.empleadoResp.nombre}"
+									requiredMessage="Ingrese el responsable de la tarea" readonly="true"/>
+								<p:message for="j_responsable"></p:message>
+
+							</h:panelGroup>
+						</div>
+						
+						<div class="ui-lg-12 ui-md-12 ui-g-12"
+							style="padding-bottom: 0px;">
+
+							<p:commandLink value="Archivos Adjuntos"></p:commandLink>
+
+							<p:fileUpload
+								fileUploadListener="#{registroTareaController.cargarArchivo}"
+								mode="advanced" dragDropSupport="true"
+								update="form:dtlinksArchivos" uploadLabel="Subir Archivo"
+								cancelLabel="Cancelar" label="Seleccionar Archivo" fileLimit="7"
+								fileLimitMessage="Puede subir hasta 7 archivos" auto="true"
+								multiple="true">
+							</p:fileUpload>
+							<br />
+							<p:dataTable value="#{registroTareaController.listaAdjuntos}"
+								var="adj" id="dtlinksArchivos"
+								emptyMessage="Sin Archivos adjuntos">
+								<p:column headerText="Archivo">
+									<p:commandLink ajax="false" target="_blank"
+										action="#{registroTareaController.verAdjunto(adj)}">
+										<h:outputText value="#{adj}"
+											style="text-decoration: underline; color: blue;"></h:outputText>
+									</p:commandLink>
+
+								</p:column>
+								<p:column headerText="Eliminar" width="50">
+									<p:commandButton icon="fa fa-minus" title="Quitar Archivo"
+										styleClass="red-btn"
+										action="#{registroTareaController.quitarArchivo(adj)}"
+										update="form:dtlinksArchivos">
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</div>
+
+
+					</h:form>
+
+					<p:dialog width="450" widgetVar="DlgResponsable" id="DlgResponsable"
+						modal="true" closeOnEscape="true">
+						<h:form id="FrmResponsable">
+
+							<p:dataTable value="#{registroTareaController.empleados}"
+								var="item" rows="8" rowKey="#{item.nomEmpleadosPK.noEmple}" paginator="true"
+								selection="#{registroTareaController.empleadoSelecNom}"
+								selectionMode="single" filterEvent="blur"
+								filteredValue="#{registroTareaController.empleadosFiltradaNom}">
+								<p:column headerText="Nombre" width="60" filterBy="#{item.nombresApellidos}" 
+								filterMatchMode="contains" >
+									<h:outputText value="#{item.nombresApellidos}" />
+								</p:column>
+							</p:dataTable>
+							<br/>
+							<p:commandButton value="Seleccionar"
+								action="#{registroTareaController.seleccionarEmpleado}"
+								update="form"></p:commandButton>
+						</h:form>
+					</p:dialog>
+					
+					<p:dialog width="550" widgetVar="DlgSolicitante" id="DlgSolicitante"
+						modal="true" closeOnEscape="true">
+						<h:form id="FrmSolicitante">
+						
+							<center>
+								<p:panelGrid columns="3" >
+								<h:outputText value="Empresa del Solicitante:"/>
+								<p:selectOneMenu id="idEmpresa" style="width: 150px; font-weight:bold;"
+									value="#{registroTareaController.empSeleccionada}" filter="true"
+									filterMatchMode="contains">
+									<f:selectItem itemLabel="Selecione..." itemValue="" />
+									<f:selectItems value="#{registroTareaController.listaSisClientes}" var="item" 
+									               itemLabel="#{item.codigo}" itemValue="#{item.codEmpresa}" />
+									    <p:ajax event="change" update="tblColab" listener="#{registroTareaController.buscarColaboradores}"></p:ajax>
+								</p:selectOneMenu>
+								<p:commandButton value="Buscar" action="#{registroTareaController.buscarColaboradores}"
+								update="FrmSolicitante:tblColab"></p:commandButton>
+								</p:panelGrid>
+							</center>
+							
+							
+							 <p:dataTable id="tblColab" widgetVar="tblColab" var="item" rows="8" paginator="true" 
+							 			  value="#{registroTareaController.colaboradores}" selectionMode="single" 
+							              selection="#{registroTareaController.empleadoSelect}" rowKey="#{item.id.usuario}">
+						        <f:facet name="header">
+						           Solicitantes
+						        </f:facet>
+						        <p:column headerText="Nombre" width="40" filterMatchMode="contains" filterBy="#{item.nombre}" > 
+									<h:outputText value="#{item.nombre}" />
+								</p:column>
+								<p:column headerText="Email" width="40" filterMatchMode="contains" filterBy="#{item.email}" > 
+									<h:outputText value="#{item.email}" />
+								</p:column>
+						    </p:dataTable>
+							<br/>
+							<p:commandButton value="Seleccionar" 
+								action="#{registroTareaController.seleccionarEmpleado}" update="form"></p:commandButton>
+						</h:form>
+					</p:dialog>
+					
+					
+					<p:dialog width="550" widgetVar="DlgSolicitanteM" id="DlgSolicitanteM"
+						modal="true" closeOnEscape="true">
+						<h:form id="FrmSolicitanteM">
+						
+							<center>
+								<p:panelGrid columns="3" >
+								<h:outputText value="Empresa del Solicitante:"/>
+								<p:selectOneMenu id="idEmpresa" style="width: 100px; font-weight:bold;"
+									value="#{registroTareaController.empSeleccionada}" filter="true"
+									filterMatchMode="contains">
+									<f:selectItem itemLabel="Selecione..." itemValue="" />
+									<f:selectItems value="#{registroTareaController.listaSisClientes}" var="item" 
+									               itemLabel="#{item.codigo}" itemValue="#{item.codEmpresa}" />
+								 	<p:ajax event="change" update="tblColaMul" listener="#{registroTareaController.buscarColaboradorMultiple}"></p:ajax>
+								</p:selectOneMenu>
+								<p:commandButton value="Buscar" action="#{registroTareaController.buscarColaboradorMultiple}"
+								update="tblColaMul"></p:commandButton>
+								</p:panelGrid>
+							</center>
+							
+							
+							 <p:dataTable id="tblColaMul" widgetVar="tblColaMul" var="item" styleClass="table" rows="8" paginator="true" 
+							 			rowIndexVar="row" value="#{registroTareaController.colaboradoresMultiple}" selectionPageOnly="false"
+							 			emptyMessage="No existen registros" rowSelectMode="none"
+							          	selection="#{registroTareaController.listaSolicitantesSelected}" rowKey="#{item.id.usuario}" >
+							              
+							       <p:ajax event="rowUnselectCheckbox" update="@this"
+									process="@this"
+									listener="#{registroTareaController.rowUnselectCheckbox}" />
+						        <f:facet name="header">
+						           Solicitantes
+						        </f:facet>
+						        <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+						        <p:column headerText="Nombre" width="40" filterMatchMode="contains" filterBy="#{item.nombre}" > 
+									<h:outputText value="#{item.nombre}" />
+								</p:column>
+								<p:column headerText="Email" width="40" filterMatchMode="contains" filterBy="#{item.email}" > 
+									<h:outputText value="#{item.email}" />
+								</p:column>
+						    </p:dataTable>
+							<br/>
+							<p:commandButton value="Seleccionar" 
+								action="#{registroTareaController.seleccionarSolicitantes}" update=":form:j_solicitantes"></p:commandButton>
+						</h:form>
+					</p:dialog>
+
+				</div>
+			</div>
+		</div>
+
+
+	</ui:define>
+
+</ui:composition>

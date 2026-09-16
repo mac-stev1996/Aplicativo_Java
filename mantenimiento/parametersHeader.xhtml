@@ -1,0 +1,186 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<h:outputStylesheet name="css/layout-lightblue.css"
+		library="serenity-layout" />
+</h:head>
+<body style="font-size: 12px;">
+	<h:form id="formParamCab">
+
+		<p:toolbar id="findParamCab">
+			<f:facet name="left">
+				<h:panelGrid id="pgrid1" columns="5">
+					<p:outputLabel value="Codigo" style="font-size:15px" />
+					<p:inputText id="codigo" value="#{paramCabController.codigo}"
+						maxlength="6" style="width:70px" />
+					<p:outputLabel value="Descripcion" style="font-size:15px" />
+					<p:inputText id="nombre" value="#{paramCabController.descripcion}" />
+					<p:commandButton title="Buscar parametro" alt="Buscar parametro"
+						value="Buscar" icon="fa fa-search" id="buscarParametro"
+						action="#{paramCabController.findParamCabs()}"
+						actionListener="#{paramCabController.findParamCabs()}"
+						process="@this :formParamCab:pgrid1" partialSubmit="true"
+						update=":formParamCab:tblParamCab" />
+				</h:panelGrid>
+			</f:facet>
+			<f:facet name="right">
+				<h:panelGrid id="pgrid2" columns="1">
+					<p:commandButton id="nuevoParametro" title="Nuevo parametro"
+						icon="fa fa-file-o" value="Nuevo" partialSubmit="true"
+						actionListener="#{paramCabController.newParamCab()}"
+						update=":formParamCab:dlgParamCab " process="@this"
+						oncomplete="PF('dlgParamCabW').show();" />
+				</h:panelGrid>
+			</f:facet>
+		</p:toolbar>
+		<p:dialog id="dlgParamCab" modal="true" widgetVar="dlgParamCabW"
+			width="630px" height="320px">
+			<center>
+				<div>
+					<b><p:outputLabel
+							value="Formulario de registro de parametros de cabecera"
+							style="font-size:15px" /></b>
+					<hr />
+				</div>
+				<b><p:messages id="messages" showDetail="true" autoUpdate="true"
+						closable="true" /></b>
+
+				<p:panelGrid id="pgParamCab">
+					<p:panelGrid columns="4">
+						<h:outputText value="Codigo:" />
+						<p:outputLabel value="#{paramCabController.paramCab.pk.codigo}"
+							rendered="#{!paramCabController.nuevo}" />
+						<p:inputText value="#{paramCabController.paramCab.pk.codigo}"
+							maxlength="6" rendered="#{paramCabController.nuevo}"
+							style="width:70px" />
+
+						<h:outputText value="Descripcion:" />
+						<p:inputText value="#{paramCabController.paramCab.descripcion}"
+							maxlength="100" />
+
+						<h:outputText value="Longitud Detalle:" />
+						<p:inputText
+							value="#{paramCabController.paramCab.longitudDetalle}"
+							maxlength="3" style="width:50px" />
+
+						<h:outputText value="NomTexto1:" />
+						<p:inputText value="#{paramCabController.paramCab.estado1}"
+							maxlength="20" />
+						<h:outputText value="NomEstado1:" />
+						<p:inputText value="#{paramCabController.paramCab.texto1}"
+							maxlength="20" />
+
+						<h:outputText value="NomTexto2:" />
+						<p:inputText value="#{paramCabController.paramCab.estado2}"
+							maxlength="20" />
+
+						<h:outputText value="NomEstado2:" />
+						<p:inputText value="#{paramCabController.paramCab.texto2}"
+							maxlength="20" />
+
+						<h:outputText value="NomTexto3:" />
+						<p:inputText value="#{paramCabController.paramCab.estado3}"
+							maxlength="20" />
+
+						<h:outputText value="NomEstado3:" />
+						<p:inputText value="#{paramCabController.paramCab.texto3}"
+							maxlength="20" />
+
+						<h:outputText value="NomTexto4:" />
+						<p:inputText value="#{paramCabController.paramCab.estado4}"
+							maxlength="20" />
+						<h:outputText value="NomEstado4:" />
+						<p:inputText value="#{paramCabController.paramCab.texto4}"
+							maxlength="20" />
+
+					</p:panelGrid>
+				</p:panelGrid>
+				<p:commandButton title="Guardar parametro" value="Guardar"
+					id="guardarParametro" alt="Guardar parametro"
+					style="position: relative; left:250px; top: 15px;"
+					styleClass="green-btn" icon="ui-icon ui-icon-save"
+					process="@this :formParamCab:pgParamCab"
+					update=":formParamCab:tblParamCab"
+					action="#{paramCabController.save()}" />
+			</center>
+		</p:dialog>
+		<p:dataTable id="tblParamCab" reflow="true" var="item"
+			rowIndexVar="#{item}" rowKey="#{item.pk}" paginator="true" rows="20"
+			paginatorPosition="bottom"
+			value="#{paramCabController.listaParamCabs}" selectionMode="single"
+			styleClass="table table-body" emptyMessage="No existen Registros"
+			paginatorAlwaysVisible="true" multiViewState="true"
+			paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+
+			<p:column headerText="Codigo" filterBy="#{item.pk.codigo}"
+				style="text-align:center">
+				<h:outputText value="#{item.pk.codigo}" />
+			</p:column>
+			<p:column headerText="Descripcion" filterBy="#{item.descripcion}"
+				style="text-align:center">
+				<h:outputText value="#{item.descripcion}" />
+			</p:column>
+			<p:column headerText="Detalle longitud"
+				filterBy="#{item.longitudDetalle}" style="text-align:center; width:50px">
+				<h:outputText value="#{item.longitudDetalle}" />
+			</p:column>
+			<p:column headerText="Estado 1" filterBy="#{item.estado1}"
+				style="text-align:center; width:50px">
+				<h:outputText value="#{item.estado1}" />
+			</p:column>
+			<p:column headerText="Estado 2" filterBy="#{item.estado2}"
+				style="text-align:center; width:50px">
+				<h:outputText value="#{item.estado2}" />
+			</p:column>
+			<p:column headerText="Estado 3" filterBy="#{item.estado3}"
+				style="text-align:center; width:50px">
+				<h:outputText value="#{item.estado3}" />
+			</p:column>
+			<p:column headerText="Estado 4" filterBy="#{item.estado4}"
+				style="text-align:center; width:50px">
+				<h:outputText value="#{item.estado4}" />
+			</p:column>
+			<p:column headerText="Texto 1" filterBy="#{item.texto1}"
+				style="text-align:center">
+				<h:outputText value="#{item.texto1}" />
+			</p:column>
+			<p:column headerText="Texto 2" filterBy="#{item.texto2}"
+				style="text-align:center">
+				<h:outputText value="#{item.texto2}" />
+			</p:column>
+			<p:column headerText="Texto 3" filterBy="#{item.texto3}"
+				style="text-align:center">
+				<h:outputText value="#{item.texto3}" />
+			</p:column>
+			<p:column headerText="Texto 4" filterBy="#{item.texto4}"
+				style="text-align:center">
+				<h:outputText value="#{item.texto4}" />
+			</p:column>
+			<p:column>
+				<center>
+					<p:commandButton title="Editar parametro" alt="Editar parametro"
+						id="editarParametro" styleClass="red-btn"
+						icon="ui-icon ui-icon-edit" partialSubmit="true"
+						process="@this :formParamCab:tblParamCab"
+						oncomplete="PF('dlgParamCabW').show();"
+						actionListener="#{paramCabController.editarParamCab(item)}"
+						update=":formParamCab:dlgParamCab" />
+					<p:commandButton title="Detalle parametro" alt="Detalle parametro"
+						id="detalleParamtro" styleClass="blue-btn"
+						icon="ui-icon-document" partialSubmit="true"
+						process="@this"
+						actionListener="#{paramCabController.redirectsToParamDet(item)}">
+					</p:commandButton>
+				</center>
+			</p:column>
+		</p:dataTable>
+	</h:form>
+</body>
+</html>

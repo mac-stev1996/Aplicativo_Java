@@ -1,0 +1,147 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+	<ui:define name="title">
+		Administracion Usuarios
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmBotones">
+
+		</h:form>
+	</ui:define>
+	<ui:define name="content">
+		<style type="text/css">
+body {
+	font-size: 11px !important;
+}
+
+body .ui-button .ui-button-text {
+	font-size: 11px !important;
+}
+
+.table thead th, .table tbody tr td {
+	font-size: 11px !important;
+	padding: 2px 7px !important;
+}
+
+body .ui-messages>div {
+	padding: 4px 4px;
+	margin: 2px 2px;
+}
+</style>
+		<h:form id="frmAdmUsuarios" onkeypress="return event.keyCode!=13">
+			<p:messages id="messages" showDetail="true" autoUpdate="true"
+				closable="true" showSummary="true" />
+			<p:dataTable id="idTableUsuarios" var="item" multiViewState="true"
+				rowIndexVar="row" rows="10" filterDelay="600"
+				rowKey="#{item.usuario}" paginatorPosition="bottom"
+				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+				paginator="true" lazy="true"
+				value="#{usuariosAdminReporteRepController.lazyDataModelUsuarios}"
+				selection="#{usuariosAdminReporteRepController.usuarioDto}"
+				selectionMode="single">
+				
+				<p:column headerText="AGENCIA" filterBy="#{item.agencia}"
+					filterStyle="background:#e3e3e3;width:80%" width="30%">
+					<h:outputText value="#{item.agencia}" />
+				</p:column>
+
+				<p:column headerText="USUARIO" filterBy="#{item.usuario}"
+					filterStyle="background:#e3e3e3;width:80%" width="30%">
+					<h:outputText value="#{item.usuario}" />
+				</p:column>
+
+				<p:column headerText="NOMBRE" filterBy="#{item.nombre}"
+					filterStyle="background:#e3e3e3;width:80%" width="60%">
+					<h:outputText value="#{item.nombre}" />
+				</p:column>
+				
+				<p:column headerText="REPUESTOS" width="20%">
+					<p:selectBooleanCheckbox value="#{item.metaRepuestosChk}">
+						<p:ajax event="change"
+							listener="#{usuariosAdminReporteRepController.actualizarUsuario(item)}"
+							process="@this :frmAdmUsuarios:idTableUsuarios"
+							update=":frmAdmUsuarios:idTableUsuarios" partialSubmit="true">
+						</p:ajax>
+					</p:selectBooleanCheckbox>
+				</p:column>
+				
+				<p:column headerText="FAC. EMPLEADO" width="20%">
+					<p:selectBooleanCheckbox value="#{item.facEmpleadoChk}">
+						<p:ajax event="change"
+							listener="#{usuariosAdminReporteRepController.actualizarUsuario(item)}"
+							process="@this :frmAdmUsuarios:idTableUsuarios"
+							update=":frmAdmUsuarios:idTableUsuarios" partialSubmit="true">
+						</p:ajax>
+					</p:selectBooleanCheckbox>
+				</p:column>
+				
+				<p:column headerText="NC MAYOR A 30D" width="20%">
+					<p:selectBooleanCheckbox value="#{item.autorizaNcChk}">
+						<p:ajax event="change"
+							listener="#{usuariosAdminReporteRepController.actualizarUsuario(item)}"
+							process="@this :frmAdmUsuarios:idTableUsuarios"
+							update=":frmAdmUsuarios:idTableUsuarios" partialSubmit="true">
+						</p:ajax>
+					</p:selectBooleanCheckbox>
+				</p:column>
+				
+				<p:column headerText="NC EMPLEADO" width="20%">
+					<p:selectBooleanCheckbox value="#{item.ncEmpleadoChk}">
+						<p:ajax event="change"
+							listener="#{usuariosAdminReporteRepController.actualizarUsuario(item)}"
+							process="@this :frmAdmUsuarios:idTableUsuarios"
+							update=":frmAdmUsuarios:idTableUsuarios" partialSubmit="true">
+						</p:ajax>
+					</p:selectBooleanCheckbox>
+				</p:column>
+
+				<p:column headerText="CONTROL RECLAMOS" width="20%">
+					<p:selectBooleanCheckbox value="#{item.controlReclamosChk}">
+						<p:ajax event="change"
+							listener="#{usuariosAdminReporteRepController.actualizarUsuario(item)}"
+							process="@this :frmAdmUsuarios:idTableUsuarios"
+							update=":frmAdmUsuarios:idTableUsuarios" partialSubmit="true">
+						</p:ajax>
+					</p:selectBooleanCheckbox>
+				</p:column>
+				
+				<p:column headerText="FACTURA" width="10%">
+					<p:selectOneMenu value="#{item.factura}">
+						<f:selectItem itemValue="" itemLabel="Seleccione" />
+						<f:selectItem itemValue="FA" itemLabel="Contado" />
+						<f:selectItem itemValue="FC" itemLabel="Credito" />
+						<p:ajax event="change"
+							listener="#{usuariosAdminReporteRepController.actualizarUsuario(item)}"
+							process="@this :frmAdmUsuarios:idTableUsuarios"
+							update=":frmAdmUsuarios:idTableUsuarios" partialSubmit="true">
+						</p:ajax>
+					</p:selectOneMenu>
+				</p:column>
+
+				<p:column headerText="ADMINISTRADOR" width="10%">
+					<p:selectOneMenu value="#{item.administrador}">
+						<f:selectItem noSelectionOption="true" itemLabel="Seleccione" />
+						<f:selectItem itemValue="S" itemLabel="SI" />
+						<f:selectItem itemValue="N" itemLabel="NO" />
+						<p:ajax event="change"
+							listener="#{usuariosAdminReporteRepController.actualizarAcceso(item)}"
+							process="@this :frmAdmUsuarios:idTableUsuarios"
+							update=":frmAdmUsuarios:idTableUsuarios" partialSubmit="true">
+
+						</p:ajax>
+					</p:selectOneMenu>
+				</p:column>
+				
+			</p:dataTable>
+
+		</h:form>
+
+
+	</ui:define>
+</ui:composition>
