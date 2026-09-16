@@ -1,0 +1,277 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<h:outputStylesheet name="css/layout-lightblue.css"
+		library="serenity-layout" />
+</h:head>
+<f:metadata>
+	<f:viewParam name="codigo" value="#{paramDetController.codigoParam}" />
+	<f:viewParam name="bParamCab" value="#{paramDetController.bParamCab}" />
+</f:metadata>
+<body style="font-size: 12px;">
+	<h:form id="formParamDet">	 
+						
+				
+								
+		<p:toolbar id="findParamDet">
+			<f:facet name="left">
+				<h:panelGrid id="pgrid1" columns="5">
+					<p:outputLabel value="Codigo" style="font-size:15px" />
+					<p:inputText id="codigo" value="#{paramDetController.codigoParam}"
+						maxlength="6" style="width:70px" />
+					<p:commandButton title="Buscar parametro" alt="Buscar parametro"
+						value="Buscar" icon="fa fa-search" id="buscarParametro"
+						action="#{paramDetController.findParamDet()}"
+						onclick="#{paramDetController.findParamDet()}"
+						process="@this :formParamDet:pgrid1"
+						update=":formParamDet:tblParamDet" />
+				</h:panelGrid>
+			</f:facet>
+			<f:facet name="right">
+				<h:panelGrid id="pgrid2" columns="1">
+					<p:commandButton id="nuevoDetalle" title="Nuevo Detalle"
+						icon="fa fa-file-o" value="Nuevo" partialSubmit="true"
+						actionListener="#{paramDetController.newParamDet()}"
+						update=":formParamDet:dlgParamDet " process="@this"
+						oncomplete="PF('dlgParamDetW').show();" />
+				</h:panelGrid>
+			</f:facet>
+		</p:toolbar>
+
+		<p:growl id="messagesGlobal" showDetail="true" life="3000"
+			autoUpdate="true" redisplay="true" globalOnly="true" escape="false" />
+			
+		<p:dialog id="dlgParamDet" modal="true" widgetVar="dlgParamDetW"
+			width="630px" height="320px">
+			<center>
+				<div>
+					<b><p:outputLabel
+							value="Formulario de registro de parametros de detalle"
+							style="font-size:15px" /></b>
+					<hr />
+				</div>
+				
+
+				<p:panelGrid id="pgParamDet">
+					<p:panelGrid columns="4">
+						<h:outputText value="Codigo:" />
+						<p:outputLabel
+							value="#{paramDetController.paramDet.paramDetPK.codigo}"
+							rendered="#{!paramDetController.nuevo}" />
+						<p:inputText
+							value="#{paramDetController.paramDet.paramDetPK.codigo}"
+							maxlength="6" rendered="#{paramDetController.nuevo}"
+							style="width:70px" />
+
+						<h:outputText value="Descripcion:" rendered="#{paramDetController.codigoParam ne 'MATTO'}" />
+						<h:outputText value="Categoria Documento:" rendered="#{paramDetController.codigoParam eq 'MATTO'}" />
+						<p:inputText value="#{paramDetController.paramDet.descripcion}"
+							maxlength="150" />
+
+						<h:outputText value="Codigo Detalle:" />
+						<p:inputText
+							value="#{paramDetController.paramDet.paramDetPK.codigoDet}"
+							rendered="#{paramDetController.nuevo}" maxlength="15"
+							style="width:70px" />
+						<p:outputLabel
+							value="#{paramDetController.paramDet.paramDetPK.codigoDet}"
+							rendered="#{!paramDetController.nuevo}" />
+
+
+						<h:outputText value="NomTexto1:" rendered="#{paramDetController.codigoParam ne 'MATTO'}" />
+							<h:outputText value="Descripción:" rendered="#{paramDetController.codigoParam eq 'MATTO'}" />
+						<p:inputTextarea value="#{paramDetController.paramDet.texto1}"
+							maxlength="500" />
+
+						<h:outputText value="NomEstado1:" rendered="#{paramDetController.codigoParam ne 'MATTO'}"/>
+						<h:outputText value="Estado documento:" rendered="#{paramDetController.codigoParam eq 'MATTO'}"/>
+						<p:inputText value="#{paramDetController.paramDet.estado1}"
+							maxlength="1" rendered="#{paramDetController.codigoParam ne 'MATTO'}"/>
+
+						<p:selectOneMenu id="estSolicitudPagado"
+							value="#{paramDetController.paramDet.estado1}"
+							rendered="#{paramDetController.codigoParam eq 'MATTO'}">
+							<f:selectItem noSelectionOption="true" />
+							<f:selectItem itemValue="A" itemLabel="ACTIVO" />
+							<f:selectItem itemValue="I" itemLabel="INACTIVO" />
+						</p:selectOneMenu>
+
+						<h:outputText value="NomTexto2:" rendered="#{paramDetController.codigoParam ne 'MATTO'}"/>
+						<h:outputText value="Observaciones:" rendered="#{paramDetController.codigoParam eq 'MATTO'}"/>
+						<p:inputTextarea value="#{paramDetController.paramDet.texto2}"
+							maxlength="200" />
+
+						<h:outputText value="NomEstado2:" rendered="#{paramDetController.codigoParam ne 'MATTO'}"/>
+						<p:inputText value="#{paramDetController.paramDet.estado2}"
+							maxlength="1" rendered="#{paramDetController.codigoParam ne 'MATTO'}"/>
+
+						<h:outputText value="NomTexto3:" rendered="#{paramDetController.codigoParam ne 'MATTO'}" />
+						<h:outputText value="Grupo:" rendered="#{paramDetController.codigoParam eq 'MATTO'}" />
+						<p:inputText value="#{paramDetController.paramDet.texto3}"
+							maxlength="20" />
+
+						<h:outputText value="NomEstado3:" rendered="#{paramDetController.codigoParam ne 'MATTO'}" />
+						<p:inputText value="#{paramDetController.paramDet.estado3}"
+							maxlength="1" rendered="#{paramDetController.codigoParam ne 'MATTO'}"/>
+
+						<h:outputText value="NomTexto4:"  rendered="#{paramDetController.codigoParam ne 'MATTO'}"/>
+						<p:inputText value="#{paramDetController.paramDet.texto4}"
+							maxlength="20"  rendered="#{paramDetController.codigoParam ne 'MATTO'}" />
+
+
+						<h:outputText value="NomEstado4:" rendered="#{paramDetController.codigoParam ne 'MATTO'}"/>
+						<p:inputText value="#{paramDetController.paramDet.estado4}"
+							maxlength="1" rendered="#{paramDetController.codigoParam ne 'MATTO'}"/>
+
+					</p:panelGrid>
+				</p:panelGrid>
+				<p:commandButton title="Guardar parametro" value="Guardar"
+					id="guardarParametro" alt="Guardar parametro"
+					style="position: relative; left:250px; top: 15px;"
+					styleClass="green-btn" icon="ui-icon ui-icon-save"
+					process="@this :formParamDet:pgParamDet"
+					oncomplete="PF('tblParamDet').clearFilters()" async="true" global="false"
+					update=":formParamDet:tblParamDet"
+					action="#{paramDetController.save()}" />
+			</center>
+		</p:dialog>
+			<!-- Nota: No modificar atributos (rerender) esta pantalla se usa de manera personalizada en matriculación -->
+		<p:dataTable id="tblParamDet" widgetVar="tblParamDet" reflow="true" var="item"
+			rowIndexVar="#{item}" rowKey="#{item.paramDetPK}" paginator="true"
+			rows="20" paginatorPosition="bottom"
+			value="#{paramDetController.listaParamDets}" selectionMode="single"
+			styleClass="table table-body" emptyMessage="No existen Registros"
+			paginatorAlwaysVisible="true" multiViewState="true"
+			paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+  			<p:ajax event="filter" ignoreAutoUpdate="true" />
+			<p:column headerText="Codigo" filterBy="#{item.paramDetPK.codigo}" rendered="#{paramDetController.codigoParam ne 'MATTO'}"
+				style="text-align:center">
+				<h:outputText value="#{item.paramDetPK.codigo}" />
+			</p:column>
+			
+			 
+			
+			<p:column headerText="Grupo" filterBy="#{item.texto3}" rendered="#{paramDetController.codigoParam eq 'MATTO'}"
+				style="text-align:center">
+				<h:outputText value="#{item.texto3}" />
+			</p:column>
+					
+			<p:column headerText="Codigo" rendered="#{paramDetController.codigoParam eq 'MATTO'}"
+				filterBy="#{item.paramDetPK.codigoDet}" style="text-align:center; width:40px">
+				<h:outputText value="#{item.paramDetPK.codigoDet}" />
+			</p:column>
+		 			
+			
+			<p:column headerText="Descripcion" filterBy="#{item.descripcion}" rendered="#{paramDetController.codigoParam ne 'MATTO'}"
+				style="text-align:center">
+				<h:outputText value="#{item.descripcion}" />
+			</p:column>
+			<p:column headerText="Categoria Documento" filterBy="#{item.descripcion}" rendered="#{paramDetController.codigoParam eq 'MATTO'}"
+				style="text-align:center">
+				<h:outputText value="#{item.descripcion}" />
+			</p:column>
+			
+			<p:column headerText="Codigo detalle" rendered="#{paramDetController.codigoParam ne 'MATTO'}"
+				filterBy="#{item.paramDetPK.codigoDet}" style="text-align:center; width:40px">
+				<h:outputText value="#{item.paramDetPK.codigoDet}" />
+			</p:column>		
+			
+			<p:column headerText="Estado 1" filterBy="#{item.estado1}" rendered="#{paramDetController.codigoParam ne 'MATTO'}"
+				style="text-align:center; width:50px">
+				<h:outputText value="#{item.estado1}" />
+			</p:column>
+			
+			
+			<p:column headerText="Estado 2" filterBy="#{item.estado2}" rendered="#{paramDetController.codigoParam ne 'MATTO'}"
+				style="text-align:center; width:50px">
+				<h:outputText value="#{item.estado2}" />
+			</p:column>
+			<p:column headerText="Estado 3" filterBy="#{item.estado3}" rendered="#{paramDetController.codigoParam ne 'MATTO'}"
+				style="text-align:center; width:50px">
+				<h:outputText value="#{item.estado3}" />
+			</p:column>
+			<p:column headerText="Estado 4" filterBy="#{item.estado4}" rendered="#{paramDetController.codigoParam ne 'MATTO'}"
+				style="text-align:center; width:50px">
+				<h:outputText value="#{item.estado4}" />
+			</p:column>
+			
+			<p:column headerText="Texto 1" filterBy="#{item.texto1}" rendered="#{paramDetController.codigoParam ne 'MATTO'}"
+				style="text-align:center">
+				<h:outputText value="#{item.texto1}" />
+			</p:column>
+			<p:column headerText="Descripción" filterBy="#{item.texto1}" rendered="#{paramDetController.codigoParam eq 'MATTO'}"
+				style="text-align:center">
+				<h:outputText value="#{item.texto1}" />
+			</p:column>
+			
+			<p:column headerText="Texto 2" filterBy="#{item.texto2}" rendered="#{paramDetController.codigoParam ne 'MATTO'}"
+				style="text-align:center">
+				<h:outputText value="#{item.texto2}" />
+			</p:column>
+			<p:column headerText="Observaciones" filterBy="#{item.texto2}" rendered="#{paramDetController.codigoParam eq 'MATTO'}"
+				style="text-align:center">
+				<h:outputText value="#{item.texto2}" />
+			</p:column>
+			
+			
+			
+			
+			<p:column headerText="Texto 3" filterBy="#{item.texto3}" rendered="#{paramDetController.codigoParam ne 'MATTO'}"
+				style="text-align:center">
+				<h:outputText value="#{item.texto3}" />
+			</p:column>
+			<p:column headerText="Texto 4" filterBy="#{item.texto4}" rendered="#{paramDetController.codigoParam ne 'MATTO'}"
+				style="text-align:center">
+				<h:outputText value="#{item.texto4}" />
+			</p:column>
+			
+			<p:column headerText="Estado documento" filterBy="#{item.estado1}" rendered="#{paramDetController.codigoParam eq 'MATTO'}"
+				style="text-align:center; width:50px">
+				<h:outputText value="#{item.estado1}" />
+			</p:column>
+			<p:column>
+				<center>
+					<p:commandButton title="Editar registro" alt="Editar parametro"
+						id="editarParametro" styleClass="red-btn"
+						icon="ui-icon ui-icon-edit" partialSubmit="true"
+						process="@this :formParamDet:tblParamDet "
+						oncomplete="PF('dlgParamDetW').show();"
+						actionListener="#{paramDetController.editarParamDet(item)}"
+						update=":formParamDet:dlgParamDet" />
+
+					<p:commandButton title="Eliminar registro"
+						oncomplete="PF('tblParamDet').clearFilters()"
+						alt="Eliminar parametro" id="eliminarParametro"
+						styleClass="blue-btn" icon="ui-icon ui-icon-trash"
+						process="@this"
+						actionListener="#{paramDetController.delete(item)}" async="true"
+						global="false"
+						update=":formParamDet:tblParamDet,:formParamDet:messagesGlobal">
+						<p:confirm header="Confirmación"
+							message="¿Está seguro de eliminar el registró?"
+							icon="ui-icon-alert" />
+					</p:commandButton>
+
+					<p:commandButton title="Regresar" alt="Regresar"
+						id="regresarCabecera" icon="ui-icon ui-icon-arrow-back"
+						partialSubmit="true" styleClass="blue-btn"
+						action="#{paramDetController.redirectsToParamCab(item)}"
+						process="@this" rendered="#{paramDetController.bParamCab}" />
+				</center>
+			</p:column>
+		</p:dataTable>
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
+			<p:commandButton value="Si" type="button"
+				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+			<p:commandButton value="No" type="button"
+				styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+		</p:confirmDialog>
+	</h:form>
+</body>
+</html>

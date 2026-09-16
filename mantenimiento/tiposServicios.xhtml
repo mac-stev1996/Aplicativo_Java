@@ -1,0 +1,225 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+<style>
+input, .ui-selectcheckboxmenu, .ui-selectonemenu {
+	width: 95% !important;
+}
+
+::ng-deep p-dialog .ui-dialog {
+	overflow: scroll;
+	max-height: 100%;
+}
+</style>
+
+<h:head>
+	<h:outputStylesheet name="css/layout-lightblue.css"
+		library="serenity-layout" />
+</h:head>
+<h:body>
+	<h:form id="idForm">
+
+		<p:ajaxStatus onstart="PF('statusDialog').show()"
+			onsuccess="PF('statusDialog').hide()"
+			onerror="PF('statusDialog').hide()" />
+
+		<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+			closable="false" resizable="false" showHeader="false">
+			<h:graphicImage value="/common/imgs/gifs/ajaxloadingbar.gif" />
+		</p:dialog>
+
+		<p:growl id="idGrowl" showDetail="true" autoUpdate="true" life="3000" />
+
+		<p:toolbar id="menuSuperior">
+			<p:toolbarGroup align="left">
+				<b> <p:outputLabel style="font-size: 15px;"
+						value="Tipos de Servicios" />
+				</b>
+			</p:toolbarGroup>
+			<p:toolbarGroup align="right">
+				<p:commandButton title="Nuevo" icon="fa fa-plus-square-o"
+					styleClass="ui-button-success" style="margin-right: .5rem"
+					action="#{TiposServiciosController.vaciar}"
+					update=":idForm :dlgTiposServicios"
+					oncomplete="PF('dlgTiposServicios').show()">
+				</p:commandButton>
+			</p:toolbarGroup>
+
+
+
+		</p:toolbar>
+
+		<center>
+			<h:panelGrid id="tipoServiciosPanel" width="1200px"
+				style="margin-top:30px;">
+
+				<p:dataTable id="tblTiposServicios" reflow="true" var="item"
+					value="#{TiposServiciosController.listaTipoServicios}"
+					widgetVar="tblTiposServicios" rowIndexVar="var"
+					rowKey="#{item.codigoServicio}" paginator="true" rows="30"
+					paginatorPosition="bottom" selectionMode="single"
+					styleClass="table table-body" emptyMessage="No existen Registros"
+					paginatorAlwaysVisible="true" sortBy="#{item.codigoServicio}"
+					sortOrder="ascending"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+					filteredValue="#{TiposServiciosController.listaTipoServiciosSelecte}">
+
+					<p:column width="3%">
+						<f:facet name="header">
+							<h:outputText value="No" />
+						</f:facet>
+
+						<p:commandLink value="#{var + 1}"
+							update=":idForm :dlgTiposServicios"
+							oncomplete="PF('dlgTiposServicios').show()" process="@this">
+							<f:setPropertyActionListener value="#{item}"
+								target="#{TiposServiciosController.selectedTipoServicios}" />
+						</p:commandLink>
+
+					</p:column>
+					<p:column headerText="Codigo Servicio"
+						sortBy="#{item.codigoServicio}" filterBy="#{item.codigoServicio}"
+						onchange="PF('tblTiposServicios').filter()"
+						style="text-align:center">
+						<p:outputLabel value="#{item.codigoServicio}" />
+					</p:column>
+
+					<p:column headerText="Estado" sortBy="#{item.estado}"
+						filterBy="#{item.estado}"
+						onchange="PF('tblTiposServicios').filter()"
+						style="text-align:center">
+						<p:outputLabel value="#{item.estado}" />
+					</p:column>
+
+
+
+					<p:column headerText="Horas Disponible Mes"
+						sortBy="#{item.horasDisponibleMes}"
+						filterBy="#{item.horasDisponibleMes}"
+						onchange="PF('tblTiposServicios').filter()"
+						style="text-align:center">
+						<p:outputLabel value="#{item.horasDisponibleMes}" />
+					</p:column>
+
+					<!--<p:column headerText="RGS TOLERANCIA"
+						sortBy="#{item.rgsTolerancia}" filterBy="#{item.rgsTolerancia}"
+						onchange="PF('tblTiposServicios').filter()"
+						style="text-align:center">
+						<p:outputLabel value="#{item.rgsTolerancia}" />
+					</p:column>
+
+					<p:column headerText="RGS APETITO RIESGO" style="text-align:center"
+						sortBy="#{item.rgsApetitoRiesgo}"
+						filterBy="#{item.rgsApetitoRiesgo}"
+						onchange="PF('tblTiposServicios').filter()">
+						<p:outputLabel value="#{item.rgsApetitoRiesgo}" />
+					</p:column>-->
+
+
+					<p:column headerText="APLICA RIESGOS" style="text-align:center"
+						sortBy="#{item.aplicaRiesgos}" filterBy="#{item.aplicaRiesgos}"
+						onchange="PF('tblTiposServicios').filter()">
+						<p:outputLabel value="#{item.aplicaRiesgos}" />
+					</p:column>
+
+					<p:column headerText="GRUPO" style="text-align:center"
+						sortBy="#{item.grupo}" filterBy="#{item.grupo}"
+						onchange="PF('tblTiposServicios').filter()">
+						<p:outputLabel value="#{item.grupo}" />
+					</p:column>
+
+				</p:dataTable>
+			</h:panelGrid>
+
+
+		</center>
+	</h:form>
+	<p:dialog id="dlgTiposServicios" widgetVar="dlgTiposServicios"
+		style="position:fixed" modal="true" closeOnEscape="true"
+		header="Tipo Servicios">
+		<h:form id="saveForm">
+			<center>
+				<p:panelGrid columns="2" style="padding:2px; margin:0px;">
+
+					<p:outputLabel value="CODIGO SERVICIO"></p:outputLabel>
+					<p:inputText id="codigo_servicio"
+						value="#{TiposServiciosController.selectedTipoServicios.codigoServicio}"
+						 required="true"
+                         requiredMessage="CODIGO SERVICIO es requerido">
+						<p:ajax event="change" update="saveForm:codigo_servicio" />
+					</p:inputText>
+
+					<p:outputLabel value="ESTADO"
+						rendered="#{TiposServiciosController.selectedTipoServicios.estado != null}"></p:outputLabel>
+					<p:selectOneMenu id="estado"
+						value="#{TiposServiciosController.selectedTipoServicios.estado}"
+						rendered="#{TiposServiciosController.selectedTipoServicios.estado != null}">
+						<f:selectItem itemLabel="A" itemValue="A" />
+						<f:selectItem itemLabel="I" itemValue="I" />
+						<p:ajax event="change" update="saveForm:estado" />
+					</p:selectOneMenu>
+
+
+
+					<p:outputLabel value="HORAS DISPONIBLE MES"></p:outputLabel>
+					<p:inputNumber id="horas_disponible_mes"
+						value="#{TiposServiciosController.selectedTipoServicios.horasDisponibleMes}"
+						minValue="0" decimalPlaces="0">
+						<p:ajax event="change" update="saveForm:horas_disponible_mes" />
+					</p:inputNumber>
+
+					<p:outputLabel value="RGS_TOLERANCIA"></p:outputLabel>
+					<p:inputNumber id="rgs_tolerancia"
+						value="#{TiposServiciosController.selectedTipoServicios.rgsTolerancia}"
+						minValue="0" decimalPlaces="0">
+						<p:ajax event="change" update="saveForm:rgs_tolerancia" />
+					</p:inputNumber>
+
+					<p:outputLabel value="RGS_APETITO_RIESGO"></p:outputLabel>
+					<p:inputNumber id="rgs_apetito_riesgo"
+						value="#{TiposServiciosController.selectedTipoServicios.rgsApetitoRiesgo}"
+						minValue="0" decimalPlaces="0">
+						<p:ajax event="change" update="saveForm:rgs_apetito_riesgo" />
+					</p:inputNumber>
+
+					<p:outputLabel value="APLICA_RIESGOS"></p:outputLabel>
+					<p:inputText id="aplica_riesgos"
+						value="#{TiposServiciosController.selectedTipoServicios.aplicaRiesgos}">
+						<p:ajax event="change" update="saveForm:aplica_riesgos" />
+					</p:inputText>
+
+					<p:outputLabel value="GRUPO"></p:outputLabel>
+
+					<p:selectOneMenu id="grupo"
+						value="#{TiposServiciosController.selectedTipoServicios.grupo}">
+						<f:selectItems
+							value="#{TiposServiciosController.listaGruposTecnicos}" />
+						<p:ajax event="change" update="saveForm:grupo" />
+					</p:selectOneMenu>
+
+
+
+				</p:panelGrid>
+
+				<h:panelGrid id="idBotones" columns="1"
+					style="text-align:center;width:100%">
+					<p:commandButton value="Guardar"
+						action="#{TiposServiciosController.guardar()}"
+						partialSubmit="true" process="@this"
+						oncomplete="PF('dlgTiposServicios').hide();"
+						update=":idForm :dlgTiposServicios" />
+				</h:panelGrid>
+
+			</center>
+		</h:form>
+	</p:dialog>
+
+
+</h:body>
+</html>

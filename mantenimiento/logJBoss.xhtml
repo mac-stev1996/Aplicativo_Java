@@ -1,0 +1,66 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Log de Servidor
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmButtons">
+			<p:selectOneMenu id="numLineas"
+				value="#{logJBossController.pageSize}" styleClass="select">
+				<f:selectItem itemLabel="100" itemValue="100" />
+				<f:selectItem itemLabel="200" itemValue="200" />
+				<f:selectItem itemLabel="500" itemValue="500" />
+				<f:selectItem itemLabel="1000" itemValue="1000" />
+				<f:selectItem itemLabel="1500" itemValue="1500" />
+				<f:selectItem itemLabel="2000" itemValue="2000" />
+			</p:selectOneMenu>
+			<p:commandButton partialSubmit="true"
+				process="@this, #{p:component('numLineas')}" title="Buscar"
+				ajax="false" icon="ui-icon ui-icon-search"
+				actionListener="#{logJBossController.cargar}"
+				update="#{p:component('log')}" />
+			<p:commandButton partialSubmit="true" process="@this"
+				title="Descargar" ajax="false" icon="fa fa-download"
+				actionListener="#{logJBossController.download}" update="@this" />
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+
+		<style type="text/css">
+.select {
+	background-color: white;
+	color: #212121;
+	max-height: 20px;
+	right: 10%;
+	top: 5px;
+}
+</style>
+
+		<div class="ui-g dashboard">
+			<div class="ui-g-12 ui-fluid contact-form">
+				<div class="ui-g-12">
+
+					<h:form id="form">
+						<p:inputTextarea id="log" rows="30" cols="1000" scrollHeight="100"
+							autoResize="false"
+							style="width:100%; background: black; color: white; resize: none;"
+							readonly="true" onkeypress="return false"
+							value="#{logJBossController.data}" tabindex="1" />
+					</h:form>
+
+				</div>
+			</div>
+		</div>
+
+
+	</ui:define>
+
+</ui:composition>

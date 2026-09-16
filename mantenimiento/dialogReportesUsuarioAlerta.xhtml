@@ -1,0 +1,46 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+<head>
+
+</head>
+<ui:composition>
+	<h:panelGrid id="idPanelReportes" columns="1">
+		<p:growl id="messagesReporte" globalOnly="true" autoUpdate="true"
+			widgetVar="groMessages" showDetail="true" />
+		<ui:fragment>
+			<ui:include src="/jsf/mantenimiento/datosUsuarioAlerta.xhtml"></ui:include>
+		</ui:fragment>
+		<p:dataTable id="idReportes" var="item"
+			value="#{alertaUsuariosController.reportesAlertasUsuario}"
+			multiViewState="true" rowIndexVar="row" rows="7" filterDelay="600"
+			paginatorPosition="bottom"
+			paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+			paginator="true">
+			<f:facet name="header">Reportes usuario</f:facet>
+			<p:column headerText="N°" width="2%" style="text-align:center">
+				<h:outputText value="#{row+1}" />
+			</p:column>
+			<p:column headerText="Nombre del reporte" width="15%">
+				<h:outputText value="#{item.descripcion}" />
+			</p:column>
+			<p:column headerText="Habilitar/Deshabilitar" width="7%"
+				style="text-align:center">
+				<p:selectBooleanCheckbox value="#{item.habilitado}">
+					<p:ajax update=":#{p:component('messagesReporte')}"
+						listener="#{alertaUsuariosController.habilitarReporteUsuario(item)}" />
+				</p:selectBooleanCheckbox>
+			</p:column>
+			<p:column headerText="Frecuencia" width="5%"
+				style="text-align:center">
+				<h:outputText value="#{item.frecuencia}" />
+			</p:column>
+			<p:column headerText="Horario" width="5%" style="text-align:center">
+				<h:outputText value="#{item.horario}" />
+			</p:column>
+		</p:dataTable>
+	</h:panelGrid>
+</ui:composition>
+</html>

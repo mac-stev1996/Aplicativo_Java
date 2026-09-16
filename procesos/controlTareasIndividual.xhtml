@@ -1,0 +1,666 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		CONTROL DE TAREAS 
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmButtons">
+			<p:commandButton value="Crear Tarea"
+				action="#{controlTareasIndController.agregarTarea}" process="@this"
+				styleClass="green-btn" icon="fa fa-plus" title="Agregar Tarea">
+			</p:commandButton>
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+
+		<style type="text/css">
+.select {
+	background-color: white;
+	color: #212121;
+	max-height: 20px;
+	right: 10%;
+	top: 5px;
+}
+
+.avatar {
+  	vertical-align: middle;
+	width: 50%;
+	height: 10%;
+	border-radius: 45%;
+	padding-left: 50px;
+	min-width: 90px;
+	max-width: 90px;
+}
+
+.ui-rating .ui-rating-star {
+    text-indent: 0;
+    padding-right: 15px;
+    padding-left: 3px;
+}
+
+.companyHeaderGrid.ui-panelgrid>*>tr,
+.companyHeaderGrid.ui-panelgrid .ui-panelgrid-cell {
+    border: none;
+}
+
+.tituloControl{
+	color: gray;
+	font-family:Roboto,Helvetica Neue,sans-serif; 
+	font-size: 115%;font-weight: bold;
+}
+
+.ui-progressbar .ui-progressbar-label {
+    color: #2B2E2F !important;
+}
+
+.ui-progressbar .ui-widget-header {
+    background-color: #5CBA4A !important;
+    color: #ffffff;
+    border: 1px solid #509D41 !important;
+    padding: 8px 14px;
+}
+
+.ui-tabs .ui-tabs-nav > li.ui-state-active {
+    background-color: #0288d1 !important;
+	border-color: #0564ca !important;
+    border-style: solid;
+}
+
+.ui-tabs .ui-tabs-nav > li.ui-state-active a {
+    color: #F6F8F9 !important;
+    font-weight: 700 !important;
+}
+
+.ui-datatable .ui-sortable-column-icon.ui-icon {
+    background-image: none; text-indent: 0; margin: 0 0 0 .5em;
+}
+.ui-paginator > span:before, .ui-sortable-column-icon:before {
+    font-family: FontAwesome; color: #7A7A7A;
+}
+.ui-paginator > span > span, .ui-paginator a span { display: none; }
+.ui-paginator-first:before { content: '\f049'; }
+.ui-paginator-prev:before { content: '\f048'; }
+.ui-paginator-next:before { content: '\f051'; }
+.ui-paginator-last:before { content: '\f050'; }
+.ui-icon-carat-2-n-s:before { content: '\f0dc'; }
+.ui-icon-carat-2-n-s.ui-icon-triangle-1-n:before { content: '\f0de'; }
+.ui-icon-carat-2-n-s.ui-icon-triangle-1-s:before { content: '\f0dd'; }
+.ui-paginator .ui-state-disabled { opacity: .25; }
+
+.ui-rating-star ui-rating-star-on a {
+    color: #069938 !important;
+}
+
+.textoVerde{
+	color: #13a93f !important;
+}
+
+.textoAmarillo{
+	color: #df9c00 !important;
+}
+
+.textoRojo{
+	color: #ee0707 !important;
+}
+
+.textoNegro{
+	color: #000000 !important;
+}
+
+</style>
+
+		<div class="ui-g dashboard">
+			<div class="ui-g-12 ui-fluid contact-form">
+				<div class="ui-g-11" style="background-color:white;">
+
+					<h:form id="form">
+
+						<div class="ui-lg-12 ui-lg-12 ui-lg-12" style="padding-bottom: 0px; ">
+							<fieldset>
+								<legend><p:outputLabel value="BIENVENIDO" style="color: gray;font-family:Roboto,Helvetica Neue,sans-serif; font-size: 135%;"/></legend>
+							<p:panelGrid columns="4" styleClass="ui-noborder" style="padding-left: 95px;">
+								<p:panelGrid columns="1" styleClass="ui-noborder">
+								    
+								    <p:panelGrid columns="3" styleClass="ui-noborder">
+								   				<h:graphicImage   styleClass="avatar" value="/images/dynamic?file=#{controlTareasIndController.obtenerImagen}"
+												style="border:0;" title="Colaborador"/>
+							        </p:panelGrid>
+							        
+							       <p:panelGrid columns="2" styleClass="ui-noborder">
+										<p:outputLabel value="NOMBRES:" styleClass="tituloControl"/> 
+										<p:outputLabel value="#{controlTareasIndController.colaborador.nombrePila} #{controlTareasIndController.colaborador.apePat}"/>
+										<p:outputLabel value="CEDULA:" styleClass="tituloControl"/>
+										<p:outputLabel value="#{controlTareasIndController.colaborador.cedula}" />
+										<p:outputLabel value="CODIGO EMPLEADO:" styleClass="tituloControl"/>
+										<p:outputLabel value="#{controlTareasIndController.colaborador.nomEmpleadosPK.noEmple}" />
+										<p:outputLabel value="CARGO:" styleClass="tituloControl"/>
+										<p:outputLabel value="#{controlTareasIndController.nomCargoColab.descri}" />
+								   </p:panelGrid>
+							    
+							    </p:panelGrid>
+								
+								<p:panelGrid columns="1" styleClass="ui-noborder">
+									<div id="pie_container" title="PIE" />
+								</p:panelGrid>
+							
+							</p:panelGrid>
+							</fieldset>
+							<br/>
+							<!-- LISTADO DE TAREAS -->
+							<fieldset>
+								<legend>
+									<p:outputLabel value="LISTADO DE TAREAS" style="color: gray;font-family:Roboto,Helvetica Neue,sans-serif; font-size: 135%;"/>
+								</legend>
+								<p:tabView id="tviewTareas">
+        							    <p:tab title="TAREAS RESPONSABLE">
+										   <p:dataTable value="#{controlTareasIndController.listaUsuarioTarea}"
+											var="tarea" id="dtlinksArchivos" emptyMessage="Sin Archivos adjuntos"
+											rowIndexVar="var">
+											<p:column headerText="Nro. Tarea" width="40" styleClass="#{tarea.fechaColor}">
+													<h:outputText value="#{tarea.ctaDetalleTarea.tareaApoId}"></h:outputText>
+											</p:column>
+											<p:column headerText="Proridad" width="40" sortBy="#{controlTareasIndController.obtenerPrioridad(tarea.ctaDetalleTarea.prioridad)}">
+													<h:outputText value="#{controlTareasIndController.obtenerPrioridad(tarea.ctaDetalleTarea.prioridad)}"></h:outputText>
+											</p:column>
+											<p:column headerText="Fecha creacion" sortBy="#{tarea.ctaDetalleTarea.fechaCreacion}">
+													<h:outputText value="#{tarea.ctaDetalleTarea.fechaCreacion}">
+														<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+													</h:outputText>
+											</p:column>
+											<p:column headerText="Fecha Entrega" sortBy="#{tarea.ctaDetalleTarea.fechaEntregaEstimada}">
+													<h:outputText value="#{tarea.ctaDetalleTarea.fechaEntregaEstimada}" styleClass="#{tarea.fechaColor}">
+														<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+													</h:outputText>
+											</p:column>
+											<p:column headerText="Titulo Tarea">
+													<h:outputText value="#{tarea.ctaDetalleTarea.tituloTarea}"></h:outputText>
+											</p:column>
+											<p:column headerText="Solicitante"  width="80px">
+													  <p:outputLabel rendered="#{tarea.ctaDetalleTarea.solicitanteMultiple eq 'N'}"
+													  value="#{tarea.empleadoSol.nombre}"></p:outputLabel>
+													  <p:outputLabel rendered="#{tarea.ctaDetalleTarea.solicitanteMultiple eq 'S'}"
+													   value="#{tarea.solicitantes}" style="width:100%;" />
+											</p:column>
+											<p:column headerText="Responsable">
+													  <p:outputLabel value="#{tarea.empleadoResp.nombre}"></p:outputLabel>
+											</p:column>
+											<p:column headerText="Tiempo Usado">
+													  <p:outputLabel value="#{tarea.tiempoTexto}"></p:outputLabel>
+											</p:column>
+											<p:column headerText="Avance">
+													<h:panelGrid columns="1" style="margin-bottom: 10px">
+												        <p:progressBar value="#{tarea.ctaDetalleTarea.avance}" labelTemplate="{value}%" style="width:100px;background:#d5d5d5;" displayOnly="true"/>
+												    </h:panelGrid>
+											</p:column>
+											<p:column headerText="Estado" width="60">
+													<h:outputText value="#{tarea.ctaDetalleTarea.estado}"></h:outputText>
+											</p:column>
+										    <p:column headerText="Ver Tarea" width="40">
+												<p:commandButton icon="fa fa-file-text-o" styleClass="orange-btn" title="Ver Tarea" ajax="false"  immediate="true" process="@this"
+													actionListener="#{controlTareasIndController.verTarea(tarea.ctaDetalleTarea.tareaApoId)}">
+												</p:commandButton>
+											</p:column>
+											<p:column headerText="Editar" width="50" visible="false" rendered="false">
+													<p:commandButton icon="fa fa-pencil"
+													 rendered="#{tarea.ctaDetalleTarea.estado != 'TERMINADA'}" 
+													 title="Editar Registro" process="@this"
+													  actionListener="#{controlTareasIndController.editarTarea(tarea.ctaDetalleTarea.tareaApoId)}" 
+													  styleClass="green-btn">
+													</p:commandButton>
+											</p:column>
+											 <p:columnGroup type="footer">
+								            <p:row>
+								                <p:column colspan="7" style="text-align:right;font-weight: bold;" footerText="TOTAL:" />
+								                <p:column footerText="#{controlTareasIndController.tiempoRespText}" />
+								            </p:row>
+								        </p:columnGroup>
+										</p:dataTable>
+										</p:tab>
+										<p:tab title="TAREAS SOLICITADAS">
+											<p:dataTable value="#{controlTareasIndController.listaUsrTareaSol}"
+												var="tarea" id="dtTareasSolicit" emptyMessage="Sin Archivos adjuntos"
+												rowIndexVar="var">
+												<p:column headerText="Nro. Tarea">
+														<h:outputText value="#{tarea.ctaDetalleTarea.tareaApoId}"></h:outputText>
+												</p:column>
+												<p:column headerText="Proridad" sortBy="#{controlTareasIndController.obtenerPrioridad(tarea.ctaDetalleTarea.prioridad)}">
+														<h:outputText value="#{controlTareasIndController.obtenerPrioridad(tarea.ctaDetalleTarea.prioridad)}"></h:outputText>
+												</p:column>
+												<p:column headerText="Fecha creacion" sortBy="#{tarea.ctaDetalleTarea.fechaCreacion}">
+														<h:outputText value="#{tarea.ctaDetalleTarea.fechaCreacion}">
+															<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+														</h:outputText>
+												</p:column>
+												<p:column headerText="Fecha Entrega" sortBy="#{tarea.ctaDetalleTarea.fechaEntregaEstimada}" styleClass="#{tarea.fechaColor}">
+													<h:outputText value="#{tarea.ctaDetalleTarea.fechaEntregaEstimada}">
+														<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+													</h:outputText>
+											    </p:column>
+												<p:column headerText="Titulo Tarea">
+														<h:outputText value="#{tarea.ctaDetalleTarea.tituloTarea}"></h:outputText>
+												</p:column>
+												<p:column headerText="Solicitante"  width="80px">
+													  <p:outputLabel rendered="#{tarea.ctaDetalleTarea.solicitanteMultiple eq 'N'}"
+													  value="#{tarea.empleadoSol.nombre}"></p:outputLabel>
+													  <p:outputLabel rendered="#{tarea.ctaDetalleTarea.solicitanteMultiple eq 'S'}"
+													   value="#{tarea.solicitantes}" style="width:100%;" />
+												</p:column>
+												<p:column headerText="Responsable">
+													  <p:outputLabel value="#{tarea.empleadoResp.nombre}"></p:outputLabel>
+											</p:column>
+												<p:column headerText="Tiempo Usado">
+														  <p:outputLabel value="#{tarea.tiempoTexto}"></p:outputLabel>
+												</p:column>
+												<p:column headerText="Avance">
+														<h:panelGrid columns="1" style="margin-bottom: 10px">
+													        <p:progressBar value="#{tarea.ctaDetalleTarea.avance}" labelTemplate="{value}%" style="width:70px;background:#d5d5d5;" displayOnly="true"/>
+													    </h:panelGrid>
+												</p:column>
+												<p:column headerText="Estado">
+														<h:outputText value="#{tarea.ctaDetalleTarea.estado}"></h:outputText>
+												</p:column>
+											    <p:column headerText="Ver Tarea" width="50">
+													<p:commandButton icon="fa fa-file-text-o" styleClass="orange-btn" title="Ver Tarea" ajax="false"  immediate="true" process="@this"
+														actionListener="#{controlTareasIndController.verTarea(tarea.ctaDetalleTarea.tareaApoId)}">
+													</p:commandButton>
+												</p:column>
+												<p:column headerText="Editar" width="50">
+													<p:commandButton icon="fa fa-pencil"
+													rendered="#{tarea.ctaDetalleTarea.estado != 'TERMINADA'}" 
+													title="Editar Registro" process="@this"
+													  actionListener="#{controlTareasIndController.editarTarea(tarea.ctaDetalleTarea.tareaApoId)}" 
+													  styleClass="green-btn">
+													</p:commandButton>
+												</p:column>
+											    <p:columnGroup type="footer">
+											            <p:row>
+											                <p:column colspan="7" style="text-align:right;font-weight: bold; " footerText="TOTAL:" />
+											                <p:column footerText="#{controlTareasIndController.tiempoSolicText}" />
+											            </p:row>
+											    </p:columnGroup>
+											</p:dataTable>
+										</p:tab>
+										<!-- 
+										<p:tab title="TAREAS A CALIFICAR">
+											<p:dataTable value="#{controlTareasIndController.listaTareaSolCalifica}"
+												var="tarea" id="dtTareasCalif" widgetVar="dtTareasCalif" emptyMessage="Sin tareas para calificar"
+												rowIndexVar="var">
+												<p:column headerText="Nro. Tarea">
+														<h:outputText value="#{tarea.ctaDetalleTarea.tareaApoId}"></h:outputText>
+												</p:column>
+												<p:column headerText="Proridad" sortBy="#{controlTareasIndController.obtenerPrioridad(tarea.ctaDetalleTarea.prioridad)}">
+														<h:outputText value="#{controlTareasIndController.obtenerPrioridad(tarea.ctaDetalleTarea.prioridad)}"></h:outputText>
+												</p:column>
+												<p:column headerText="Fecha creacion" sortBy="#{tarea.ctaDetalleTarea.fechaCreacion}">
+														<h:outputText value="#{tarea.ctaDetalleTarea.fechaCreacion}">
+															<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+														</h:outputText>
+												</p:column>
+												<p:column headerText="Fecha Entrega" sortBy="#{tarea.ctaDetalleTarea.fechaEntregaEstimada}">
+													<h:outputText value="#{tarea.ctaDetalleTarea.fechaEntregaEstimada}">
+														<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+													</h:outputText>
+											    </p:column>
+												<p:column headerText="Titulo Tarea">
+														<h:outputText value="#{tarea.ctaDetalleTarea.tituloTarea}"></h:outputText>
+												</p:column>
+												<p:column headerText="Solicitante">
+														  <p:outputLabel value="#{tarea.empleadoSol.nombre}"></p:outputLabel>
+												</p:column>
+												<p:column headerText="Responsable">
+													  <p:outputLabel value="#{tarea.empleadoResp.nombre}"></p:outputLabel>
+												</p:column>
+												<p:column headerText="Avance">
+														<h:panelGrid columns="1" style="margin-bottom: 10px">
+													        <p:progressBar value="#{tarea.ctaDetalleTarea.avance}" labelTemplate="{value}%" style="width:70px;background:#d5d5d5;" displayOnly="true"/>
+													    </h:panelGrid>
+												</p:column>
+												<p:column headerText="Estado">
+														<h:outputText value="#{tarea.ctaDetalleTarea.estado}"></h:outputText>
+												</p:column>
+											    <p:column headerText="Ver Tarea" width="50">
+													<p:commandButton icon="fa fa-file-text-o" styleClass="orange-btn" title="Ver Tarea" ajax="false"  immediate="true" process="@this"
+														actionListener="#{controlTareasIndController.verTarea(tarea.ctaDetalleTarea.tareaApoId)}">
+													</p:commandButton>
+												</p:column>
+												<p:column headerText="Calificar">
+														<p:commandButton icon="fa fa-star" process="@this" oncomplete="PF('dlgCalificar').show();"
+														actionListener="#{controlTareasIndController.tareaCalifica(tarea)}"  
+														title="Calificar">
+													    </p:commandButton>
+												</p:column>
+											</p:dataTable>
+										</p:tab>
+										 -->
+										 <p:tab title="TAREAS DEL MES">
+										 	<p:dataTable value="#{controlTareasIndController.listaTareasMes}"
+													var="tarea" id="dtUsuariosTareasMes" emptyMessage="Sin Registros">
+													<p:column headerText="Nro. Tarea">
+														<h:outputText value="#{tarea.ctaDetalleTarea.tareaApoId}"></h:outputText>
+												</p:column>
+												<p:column headerText="Proridad" sortBy="#{controlTareasIndController.obtenerPrioridad(tarea.ctaDetalleTarea.prioridad)}">
+														<h:outputText value="#{controlTareasIndController.obtenerPrioridad(tarea.ctaDetalleTarea.prioridad)}"></h:outputText>
+												</p:column>
+												<p:column headerText="Fecha creacion" sortBy="#{tarea.ctaDetalleTarea.fechaCreacion}">
+														<h:outputText value="#{tarea.ctaDetalleTarea.fechaCreacion}">
+															<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+														</h:outputText>
+												</p:column>
+												<p:column headerText="Fecha Entrega" sortBy="#{tarea.ctaDetalleTarea.fechaEntregaEstimada}" styleClass="#{tarea.fechaColor}">
+													<h:outputText value="#{tarea.ctaDetalleTarea.fechaEntregaEstimada}">
+														<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+													</h:outputText>
+											    </p:column>
+												<p:column headerText="Titulo Tarea">
+														<h:outputText value="#{tarea.ctaDetalleTarea.tituloTarea}"></h:outputText>
+												</p:column>
+												<p:column headerText="Solicitante"  width="80px">
+													  <p:outputLabel rendered="#{tarea.ctaDetalleTarea.solicitanteMultiple eq 'N'}"
+													  value="#{tarea.empleadoSol.nombre}"></p:outputLabel>
+													  <p:outputLabel rendered="#{tarea.ctaDetalleTarea.solicitanteMultiple eq 'S'}"
+													   value="#{tarea.solicitantes}" style="width:100%;" />
+												</p:column>
+												<p:column headerText="Responsable">
+													  <p:outputLabel value="#{tarea.empleadoResp.nombre}"></p:outputLabel>
+											</p:column>
+												<p:column headerText="Tiempo Usado">
+														  <p:outputLabel value="#{tarea.tiempoTexto}"></p:outputLabel>
+												</p:column>
+												<p:column headerText="Avance">
+														<h:panelGrid columns="1" style="margin-bottom: 10px">
+													        <p:progressBar value="#{tarea.ctaDetalleTarea.avance}" labelTemplate="{value}%" style="width:70px;background:#d5d5d5;" displayOnly="true"/>
+													    </h:panelGrid>
+												</p:column>
+												<p:column headerText="Estado">
+														<h:outputText value="#{tarea.ctaDetalleTarea.estado}"></h:outputText>
+												</p:column>
+											    <p:column headerText="Ver Tarea" width="50">
+													<p:commandButton icon="fa fa-eye" styleClass="orange-btn" title="Ver Tarea" ajax="false"  immediate="true" process="@this"
+														actionListener="#{controlTareasIndController.verTarea(tarea.ctaDetalleTarea.tareaApoId)}">
+													</p:commandButton>
+												</p:column>
+											    <p:columnGroup type="footer">
+											            <p:row>
+											                <p:column colspan="7" style="text-align:right;font-weight: bold; " footerText="TOTAL:" />
+											                <p:column footerText="#{controlTareasIndController.tiempoSolicText}" />
+											            </p:row>
+											    </p:columnGroup>
+												</p:dataTable>
+										 </p:tab>
+										 
+										<p:tab title="COLABORADORES A CARGO" rendered="#{controlTareasIndController.tieneColaboradoresCargo}">
+											<p:panelGrid columns="2">
+											
+												 <p:dataTable var="emple" value="#{controlTareasIndController.listaEmpleados}">
+											        <f:facet name="header">
+											           Colaboradores y Tareas Asignadas
+											        </f:facet>
+											        <p:ajax event="rowToggle" listener="#{controlTareasIndController.onRowToggle}" update=":idGrowl dtTareasEmpleResp" />
+											        <p:column style="width:16px">
+											            <p:rowToggler/>
+											        </p:column>
+											        <p:column headerText="Codigo" width="40">
+											            <h:outputText value="#{emple.nomEmpleadosPK.noEmple}" />
+											        </p:column>
+											        <p:column headerText="Nombres" width="200">
+											            <h:outputText value="#{emple.nombre}" />
+											        </p:column>
+											        
+											         <p:column headerText="Tareas Asignadas" width="60">
+											            <h:outputText value="#{emple.totalActivos}">
+											            	<f:convertNumber integerOnly="true"/>
+											            </h:outputText>
+											        </p:column>
+											        
+											        <p:column headerText="Tareas En proceso" width="60">
+											            <h:outputText value="#{emple.totalPasivos}">
+											            	<f:convertNumber integerOnly="true"/>
+											            </h:outputText>
+											        </p:column>
+											 
+											        <p:rowExpansion>
+											            <p:panelGrid  columns="2" columnClasses="label,value" style="width:80%">
+											               <p:dataTable value="#{controlTareasIndController.tareasColab}"
+																var="tarea" id="dtTareasEmpleResp" emptyMessage="Sin tareas"
+																rowIndexVar="var">
+																<p:column headerText="Nro. Tarea">
+																		<h:outputText value="#{tarea.ctaDetalleTarea.tareaApoId}"></h:outputText>
+																</p:column>
+																<p:column headerText="Proridad" sortBy="#{controlTareasIndController.obtenerPrioridad(tarea.ctaDetalleTarea.prioridad)}">
+																		<h:outputText value="#{controlTareasIndController.obtenerPrioridad(tarea.ctaDetalleTarea.prioridad)}"></h:outputText>
+																</p:column>
+																<p:column headerText="Fecha Entrega" sortBy="#{tarea.ctaDetalleTarea.fechaEntregaEstimada}">
+																	<h:outputText value="#{tarea.ctaDetalleTarea.fechaEntregaEstimada}" styleClass="#{tarea.fechaColor}">
+																		<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+																	</h:outputText>
+															    </p:column>
+																<p:column headerText="Tarea">
+																		<h:outputText value="#{tarea.ctaDetalleTarea.tituloTarea}"></h:outputText>
+																</p:column>
+																<p:column headerText="Solicitante">
+																		  <p:outputLabel value="#{tarea.empleadoSol.nombre}"></p:outputLabel>
+																</p:column>
+																<p:column headerText="Tiempo Usado">
+																		  <p:outputLabel value="#{tarea.tiempoTexto}"></p:outputLabel>
+																</p:column>
+																<p:column headerText="Avance" width="100">
+																		<h:panelGrid columns="1" style="margin-bottom: 10px">
+																	        <p:progressBar value="#{tarea.ctaDetalleTarea.avance}" labelTemplate="{value}%" style="width:100px;background:#d5d5d5;" displayOnly="true"/>
+																	    </h:panelGrid>
+																</p:column>
+																<p:column headerText="Estado">
+																		<h:outputText value="#{tarea.ctaDetalleTarea.estado}"></h:outputText>
+																</p:column>
+															    <p:columnGroup type="footer">
+															            <p:row>
+															                <p:column colspan="5" style="text-align:right;font-weight: bold; " footerText="TOTAL:" />
+															                <p:column footerText="#{controlTareasIndController.tiempoColabText}" />
+															            </p:row>
+															    </p:columnGroup>
+															</p:dataTable>
+											            </p:panelGrid>
+											        </p:rowExpansion>
+											    </p:dataTable>
+											
+											</p:panelGrid>
+										</p:tab>
+										<p:tab title="COLABORADORES DEL AREA" rendered="#{controlTareasIndController.tieneColaboradoresCargo}">
+											<p:panelGrid columns="2">
+												 <p:dataTable var="emple" value="#{controlTareasIndController.listaEmpleInternos}">
+											        <f:facet name="header">
+											           Colaboradores del area bajo responsabilidad
+											        </f:facet>
+											        <p:ajax event="rowToggle" listener="#{controlTareasIndController.onRowToggle}" update=":idGrowl" />
+											        <p:column style="width:16px">
+											            <p:rowToggler/>
+											        </p:column>
+											        <p:column headerText="Codigo" width="40">
+											            <h:outputText value="#{emple.nomEmpleadosPK.noEmple}" />
+											        </p:column>
+											        <p:column headerText="Nombres" width="200">
+											            <h:outputText value="#{emple.nombre}" />
+											        </p:column>
+											        
+											         <p:column headerText="Tareas Asignadas" width="60">
+											            <h:outputText value="#{emple.totalActivos}">
+											            	<f:convertNumber integerOnly="true"/>
+											            </h:outputText>
+											        </p:column>
+											        
+											        <p:column headerText="Tareas En proceso" width="60">
+											            <h:outputText value="#{emple.totalPasivos}">
+											            	<f:convertNumber integerOnly="true"/>
+											            </h:outputText>
+											        </p:column>
+											 
+											        <p:rowExpansion>
+											            <p:panelGrid  columns="2" columnClasses="label,value" style="width:80%">
+											               <p:dataTable value="#{controlTareasIndController.tareasColab}"
+																var="tarea" id="dtTareasEmplArea" emptyMessage="Sin tareas"
+																rowIndexVar="var">
+																<p:column headerText="Nro. Tarea">
+																		<h:outputText value="#{tarea.ctaDetalleTarea.tareaApoId}"></h:outputText>
+																</p:column>
+																<p:column headerText="Proridad" sortBy="#{controlTareasIndController.obtenerPrioridad(tarea.ctaDetalleTarea.prioridad)}">
+																		<h:outputText value="#{controlTareasIndController.obtenerPrioridad(tarea.ctaDetalleTarea.prioridad)}"></h:outputText>
+																</p:column>
+																<p:column headerText="Fecha Entrega" sortBy="#{tarea.ctaDetalleTarea.fechaEntregaEstimada}">
+																	<h:outputText value="#{tarea.ctaDetalleTarea.fechaEntregaEstimada}" styleClass="#{tarea.fechaColor}">
+																		<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+																	</h:outputText>
+															    </p:column>
+																<p:column headerText="Tarea">
+																		<h:outputText value="#{tarea.ctaDetalleTarea.tituloTarea}"></h:outputText>
+																</p:column>
+																<p:column headerText="Solicitante">
+																		  <p:outputLabel value="#{tarea.empleadoSol.nombre}"></p:outputLabel>
+																</p:column>
+																<p:column headerText="Tiempo Usado">
+																		  <p:outputLabel value="#{tarea.tiempoTexto}"></p:outputLabel>
+																</p:column>
+																<p:column headerText="Avance" width="100">
+																		<h:panelGrid columns="1" style="margin-bottom: 10px">
+																	        <p:progressBar value="#{tarea.ctaDetalleTarea.avance}" labelTemplate="{value}%" style="width:100px;background:#d5d5d5;" displayOnly="true"/>
+																	    </h:panelGrid>
+																</p:column>
+																<p:column headerText="Estado">
+																		<h:outputText value="#{tarea.ctaDetalleTarea.estado}"></h:outputText>
+																</p:column>
+															    <p:columnGroup type="footer">
+															            <p:row>
+															                <p:column colspan="5" style="text-align:right;font-weight: bold; " footerText="TOTAL:" />
+															                <p:column footerText="#{controlTareasIndController.tiempoColabText}" />
+															            </p:row>
+															    </p:columnGroup>
+															</p:dataTable>
+											            </p:panelGrid>
+											        </p:rowExpansion>
+											    </p:dataTable>
+											
+											</p:panelGrid>
+										</p:tab>
+										
+									    
+									</p:tabView>
+							</fieldset>
+							<br/>
+							<!-- REGISTRO DE AVANCES DEL DIA -->
+							<fieldset>
+								<legend>
+								<p:outputLabel value="REGISTRO DE AVANCES DEL DIA" style="color: gray;font-family:Roboto,Helvetica Neue,sans-serif; font-size: 135%;"/>
+								</legend>
+								
+							<p:dataTable value="#{controlTareasIndController.listaAvances}"
+								var="avan" id="dtUsuariosHistorial" emptyMessage="Sin Registros">
+								<p:column headerText="Fecha Avance">	
+										<h:outputText value="#{avan.fechaAvance}"></h:outputText>
+								</p:column>
+								<p:column headerText="Nro. Tarea">
+										<h:outputText value="#{avan.ctaDetalleTarea.tareaApoId}"></h:outputText>
+								</p:column>
+								<p:column headerText="Tareas">
+										<h:outputText value="#{avan.ctaDetalleTarea.tituloTarea}"></h:outputText>
+								</p:column>
+								<p:column headerText="Avance">
+										<h:panelGrid columns="1" style="margin-bottom: 10px">
+									        <p:progressBar value="#{avan.avance}" labelTemplate="{value}%" style="width:70px;background:#d5d5d5;" displayOnly="true"/>
+									    </h:panelGrid>
+								</p:column>
+								<p:column headerText="Observacion">	
+										<h:outputText value="#{avan.comentario}"></h:outputText>
+								</p:column>
+								<p:column headerText="Tiempo">	
+										<h:outputText value="#{avan.tiempoTexto}"></h:outputText>
+								</p:column>
+								  <p:columnGroup type="footer">
+											            <p:row>
+											                <p:column colspan="5" style="text-align:right;font-weight: bold; " footerText="TOTAL:" />
+											                <p:column footerText="#{controlTareasIndController.tiempoDiaText}" />
+											            </p:row>
+											    </p:columnGroup>
+							</p:dataTable>
+							</fieldset>
+
+							
+							
+							
+							
+						</div>
+						
+						<h:inputHidden id="pie_type" value="#{controlTareasIndController.pie.type}" />
+						<h:inputHidden id="pie_title" value="#{controlTareasIndController.pie.title}" />
+						<h:inputHidden id="pie_subtitle" value="#{controlTareasIndController.pie.subtitle}" />
+						<h:inputHidden id="pie_xAxisCategories" value="#{controlTareasIndController.pie.CategoriestoGson()}" />
+						<h:inputHidden id="pie_yAxisTitle" value="#{controlTareasIndController.pie.yAxis}" />
+						<h:inputHidden id="pie_data_series" value="#{controlTareasIndController.pie.SeriestoGson()}" />
+					</h:form>
+					
+					<p:dialog id="dlgCalificar" widgetVar="dlgCalificar" resizable="false"
+						modal="true" appendTo="@(body)" closeOnEscape="true"
+						header="Calificar:" focus=":frmDlgCalif:btnCancel">
+						 <h:form id="frmDlgCalif">
+						 		<center> 
+									<p:panelGrid columns="1" styleClass="ui-noborder">
+									<p:outputLabel value="Califique el servicio de la tarea realizada."></p:outputLabel>
+									    
+										<h:panelGrid id="panel">
+											<p:rating id="calTarStar" value="#{controlTareasIndController.calificaTarea}" stars="5" cancel="false">
+											  <p:ajax event="rate" process="@this" update="@this"></p:ajax>
+											</p:rating>
+										</h:panelGrid>
+										<p:panelGrid columns="5" styleClass="ui-noborder">
+											<p:outputLabel value="1" style="border: none; padding: 0px 0px 0px 0px;color: #717171;font-weight: bold;" />
+											<p:outputLabel value="2" style="border: none; padding: 0px 0px 0px 0px;color: #717171;font-weight: bold;" />
+											<p:outputLabel value="3" style="border: none; padding: 0px 0px 0px 0px;color: #717171;font-weight: bold;" />
+											<p:outputLabel value="4" style="border: none; padding: 0px 0px 0px 0px;color: #717171;font-weight: bold;" />
+											<p:outputLabel value="5" style="border: none; padding: 0px 0px 0px 0px;color: #717171;font-weight: bold;" />
+										</p:panelGrid>
+										<p:panelGrid columns="1" styleClass="ui-noborder">
+											<p:outputLabel value="Observación:."></p:outputLabel>		
+											  <p:inputTextarea id="obsCalif" maxlength="500" value="#{controlTareasIndController.observaCalifica}">
+											      <p:ajax event="blur" process="@this" update="@this"></p:ajax>
+											  </p:inputTextarea>
+										</p:panelGrid>
+									</p:panelGrid>
+								</center>
+								<br/><br/>
+								<p:panelGrid>
+									<p:commandButton value="Guardar" tabindex="2"
+										 process="@this"
+										styleClass="green-btn" icon="fa fa-floppy-o" title="Guardar Calificacion"
+										actionListener="#{controlTareasIndController.guardarCalificacion}"
+										oncomplete="PF('dlgCalificar').hide();"
+										update="form:tviewTareas">
+									</p:commandButton>
+									 <p:focus for="btnCancel"/>
+									<p:commandButton id="btnCancel" value="Cancelar" tabindex="1" process="@this"
+										oncomplete="PF('dlgCalificar').hide();"
+										icon="fa fa-times" title="Cancelar">
+									</p:commandButton>
+									 <p:defaultCommand target="btnCancel" />
+								</p:panelGrid>
+								<br/>
+						 </h:form>
+					</p:dialog>
+					
+				</div>
+			</div>
+		</div>
+		
+		<h:outputScript library="js" name="highcharts.js" />
+   		<h:outputScript library="js" name="exporting.js" />
+   		<h:outputScript library="js" name="highcharts-3d.js" />
+   		<h:outputScript library="js" name="highChartTheme/grid-light.js" />
+   		<h:outputScript library="js" name="charts/chart_pie_3D.js" />
+
+
+	</ui:define>
+</ui:composition>

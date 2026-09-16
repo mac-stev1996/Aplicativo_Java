@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>Administracion de reportes y alertas list</title>
+	<style type="text/css">
+body {
+	font-size: 11px
+}
+
+body .ui-toolbar {
+	padding: 5px
+}
+
+.ui-datatable thead th, .ui-datatable tfoot td {
+	vertical-align: top;
+}
+</style>
+</h:head>
+<h:body>
+
+	<p:ajaxStatus onstart="PF('statusDialog').show()"
+		onsuccess="PF('statusDialog').hide()" />
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+		closable="false" resizable="false" showHeader="false">
+		<p:graphicImage name="/images/icons/ajax-loader.gif" />
+	</p:dialog>
+
+	<h:form id="form">
+		<p:growl id="messages" globalOnly="true" autoUpdate="true"
+			widgetVar="groMessages" showDetail="true" />
+		<p:toolbar>
+			<f:facet name="left">
+				<p:outputLabel value="Administrador Reportes"></p:outputLabel>
+			</f:facet>
+
+		</p:toolbar>
+		<p:dataTable id="dtListaUsuarios" var="usuario"
+			value="#{usuariosAdminRepRepuestosController.usuariosEmpresa}"
+			rowIndexVar="row" rows="10" paginatorPosition="bottom"
+			paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+			paginator="true" style="text-align:center"
+			rowKey=""
+			>
+			<p:column headerText="N°" width="2%">
+				<h:outputText value="#{row+1}" />
+			</p:column>
+			<p:column headerText="Nombre de Usuario" width="10%"
+				filterBy="#{usuario.nombre}"
+				filterStyle="background:#e3e3e3;width:80%"
+				filterMatchMode="contains">
+				<h:outputText value="#{usuario.nombre}" />
+			</p:column>
+			<p:column headerText="Cargo" width="10%">
+				<h:outputText value="#{usuario.administrador}" />
+			</p:column>
+			
+
+		</p:dataTable>
+	</h:form>
+
+
+	<h:outputStylesheet name="css/layout-lightblue.css"
+		library="serenity-layout" />
+	<h:outputScript name="js/layout.js" library="serenity-layout" />
+	<h:outputScript name="js/ripple.js" library="serenity-layout" />
+</h:body>
+</html>

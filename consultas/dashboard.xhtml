@@ -1,0 +1,29 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+	<ui:define name="title">
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmBotones">
+			<p:commandButton id="cmdCargaTablero" style="display:none;"
+				partialSubmit="true" update="frmBotones, frmDashboard"
+				actionListener="#{dashboardController.cargarTableroBI}" />
+		</h:form>
+	</ui:define>
+	<ui:define name="content">
+		<style type="text/css">
+</style>
+		<h:form id="frmDashboard" onkeypress="return event.keyCode!=13">
+			<div id="wrap" style="width: 100%; height: 560px; overflow: hidden;">
+				<iframe id="imagepgframe" name="imagepgframe"
+					src="#{dashboardController.url}" width="100%" height="600"
+					style="margin-top: 0px; border: none;" />
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

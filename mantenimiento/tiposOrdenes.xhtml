@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+<h:head>
+	<h:outputStylesheet name="css/layout-lightblue.css"
+		library="serenity-layout" />
+</h:head>
+<h:body>
+	<h:form id="idForm">
+		<p:growl id="idGrowl" showDetail="true" autoUpdate="true" life="3000" />
+		<p:toolbar id="menuSuperior">
+			<f:facet name="left">
+				<b><p:outputLabel style="font-size: 15px;"
+						value="Mantenimiento de tipos de ordenes" /></b>
+			</f:facet>
+		</p:toolbar>
+		<center>
+			<h:panelGrid id="tiposOrdenes" width="600px" style="margin-top:20px;">
+				<p:commandButton value="Nuevo tipo"
+					style="margin-bottom:10px; float: right;" icon="ui-icon-document"
+					styleClass="boton" process="@this"
+					action="#{tiposOrdenesController.cargarTipoOrden()}"
+					onclick="PF('dlgTiposOrdenes').show();" />
+				<p:dataTable id="tblTiposOrdenes" reflow="true" var="item"
+					value="#{tiposOrdenesController.listaTiposDeOrdenes}"
+					rowIndexVar="#{item}" rowKey="#{item.id}" paginator="true"
+					rows="10" paginatorPosition="bottom" selectionMode="single"
+					styleClass="table table-body" emptyMessage="No existen Registros"
+					paginatorAlwaysVisible="true" multiViewState="true" editable="true"
+					editMode="cell"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+
+					<p:ajax event="cellEdit"
+						listener="#{tiposOrdenesController.editarTipoOrden(item)}"
+						update=":#{p:component('tblTiposOrdenes')}, :#{p:component('idGrowl')}"
+						process="@this" partialSubmit="true" />
+
+					<p:column headerText="No Linea" filterBy="#{item.id.noLinea}"
+						style="text-align:center">
+						<p:outputLabel value="#{item.id.noLinea}" />
+					</p:column>
+					<p:column headerText="Cod tipo" filterBy="#{item.id.codTipo}"
+						style="text-align:center">
+						<p:outputLabel value="#{item.id.codTipo}" />
+					</p:column>
+					<p:column headerText="Descripción" filterBy="#{item.descripcion}"
+						style="text-align:center">
+						<p:cellEditor>
+							<f:facet name="output">
+								<p:outputLabel value="#{item.descripcion}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText value="#{item.descripcion}" />
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+					<p:column headerText="Acciones" style="text-align:center">
+						<center>
+							<p:commandButton title="Eliminar" id="eliminarRegistro"
+								partialSubmit="true" process="@this :idForm:tiposOrdenes"
+								update=":idForm:tiposOrdenes"
+								action="#{tiposOrdenesController.eliminarTipoOrden(item)}"
+								styleClass="red-btn" icon="ui-icon ui-icon-trash" />
+						</center>
+					</p:column>
+				</p:dataTable>
+			</h:panelGrid>
+			<p:dialog id="dlgTiposOrdenes" widgetVar="dlgTiposOrdenes"
+				modal="true" closeOnEscape="true" header="Nuevo tipo de orden">
+				<center>
+					<h:panelGrid columns="2" style="padding:2px; margin:0px;">
+						<p:outputLabel value="No Linea: " style="padding-right:3px;"></p:outputLabel>
+						<p:selectOneMenu id="lineasDeNegocio" styleClass="normal"
+							style="width: 160px!important; min-width: 160px!important; "
+							value="#{tiposOrdenesController.tiposOrdenes.id.noLinea}">
+							<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+							<f:selectItems
+								value="#{tiposOrdenesController.listaLineasDeNegocio}"
+								var="linea" itemValue="#{linea.lineaNegocioPK.noLinea}"
+								itemLabel="#{linea.lineaNegocioPK.noLinea} - #{linea.descripcion}" />
+						</p:selectOneMenu>
+						<p:outputLabel value="Cod tipo: " style="padding-right:3px;"></p:outputLabel>
+						<p:inputText style="width: 277px" maxlength="2"
+							value="#{tiposOrdenesController.tiposOrdenes.id.codTipo}">
+						</p:inputText>
+						<p:outputLabel value="Descripción: " style="padding-right:3px;"></p:outputLabel>
+						<p:inputText style="width: 277px"
+							value="#{tiposOrdenesController.tiposOrdenes.descripcion}">
+						</p:inputText>
+					</h:panelGrid>
+					<p:commandButton value="Guardar" style="margin-top:15px;"
+						icon="fa fa-save" onclick="PF('dlgTiposOrdenes').hide();"
+						styleClass="green-btn" process="@this :idForm:dlgTiposOrdenes"
+						async="true" global="false" update=":idForm:tiposOrdenes"
+						action="#{tiposOrdenesController.guardarTipoOrden()}">
+					</p:commandButton>
+				</center>
+			</p:dialog>
+		</center>
+	</h:form>
+</h:body>
+</html>

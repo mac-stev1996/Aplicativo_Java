@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>Administracion de reportes y alertas list</title>
+	<style type="text/css">
+body {
+	font-size: 11px
+}
+
+body .ui-toolbar {
+	padding: 5px
+}
+
+.ui-datatable thead th, .ui-datatable tfoot td {
+	vertical-align: top;
+}
+</style>
+</h:head>
+<h:body>
+
+	<p:ajaxStatus onstart="PF('statusDialog').show()"
+		onsuccess="PF('statusDialog').hide()" />
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+		closable="false" resizable="false" showHeader="false">
+		<p:graphicImage name="/images/icons/ajax-loader.gif" />
+	</p:dialog>
+
+	<h:form id="form">
+		<p:growl id="messages" globalOnly="true" autoUpdate="true"
+			widgetVar="groMessages" showDetail="true" />
+		<p:toolbar>
+			<f:facet name="left">
+				<p:outputLabel value="Administracion de reportes y alertas"></p:outputLabel>
+			</f:facet>
+			<f:facet name="right">
+				<p:commandButton title="Nuevo Usuario" icon="fa fa-plus-square-o"
+					update="idDialogUsuario" oncomplete="PF('dialogUsuario').show();"
+					actionListener="#{alertaUsuariosController.crearNuevoUsuario}" />
+			</f:facet>
+		</p:toolbar>
+		<p:dataTable id="dtListaUsuarios" var="usuario"
+			value="#{alertaUsuariosController.usuariosAlerta}" rowIndexVar="row"
+			rows="10" paginatorPosition="bottom"
+			paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+			paginator="true" style="text-align:center"
+			rowKey="#{usuario.idUsuarioAlerta}"
+			filteredValue="#{alertaUsuariosController.usuariosAlertaSelected}">
+			<p:column headerText="N°" width="2%">
+				<h:outputText value="#{row+1}" />
+			</p:column>
+			<p:column headerText="Nombre de Usuario" width="10%"
+				filterBy="#{usuario.nombre}"
+				filterStyle="background:#e3e3e3;width:80%"
+				filterMatchMode="contains">
+				<h:outputText value="#{usuario.nombre}" />
+			</p:column>
+			<p:column headerText="Cargo" width="10%">
+				<h:outputText value="#{usuario.cargo}" />
+			</p:column>
+			<p:column headerText="Correo electrónico" width="20%">
+				<h:outputText value="#{usuario.email}" />
+			</p:column>
+			<p:column headerText="Estado" width="5%">
+				<h:outputText
+					value="#{usuario.estado eq 'A'?'Activo':'Desactivado'}" />
+			</p:column>
+			<p:column headerText="Acciones" width="20%">
+				<p:commandButton update=":#{p:component('idDialogLineaNegocio')}"
+					action="#{alertaUsuariosController.verLineaNegocio}"
+					oncomplete="PF('dialogLineaNegocio').show()" icon="fa fa-search"
+					title="Linea de Negocio" process="@this">
+					<f:setPropertyActionListener value="#{usuario}"
+						target="#{alertaUsuariosController.usuariosAlertaSeleccionado}" />
+				</p:commandButton>
+				<p:commandButton update=":#{p:component('idDialogReportes')}"
+					action="#{alertaUsuariosController.verReportesUsuarios}"
+					oncomplete="PF('dialogReportes').show()" icon="fa fa-newspaper-o"
+					title="Reportes">
+					<f:setPropertyActionListener value="#{usuario}"
+						target="#{alertaUsuariosController.usuariosAlertaSeleccionado}" />
+				</p:commandButton>
+				<p:commandButton update="frmAlertas" action="#{alertaUsuariosController.verAlertas}"
+					oncomplete="PF('dialogAlertas').show()"
+					icon="fa fa-exclamation-triangle" title="Alertas">
+					<f:setPropertyActionListener value="#{usuario}"
+						target="#{alertaUsuariosController.usuariosAlertaSeleccionado}" />
+				</p:commandButton>
+				<p:commandButton icon="ui-icon-trash" title="Eliminar usuario"
+					actionListener="#{alertaUsuariosController.eliminarUsuarioAlerta(usuario)}"
+					update=":#{p:component('dtListaUsuarios')} :#{p:component('messages')}">
+					<p:confirm header="Confirmación"
+						message="Esta Seguro de eliminar el usuario?" icon="ui-icon-alert" />
+				</p:commandButton>
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+					<p:commandButton value="Si" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="No" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+			</p:column>
+		</p:dataTable>
+	</h:form>
+	<p:dialog id="idDialogLineaNegocio" widgetVar="dialogLineaNegocio"
+		height="100%" width="580" closeOnEscape="true" modal="true"
+		closable="true">
+		<h:form id="frmLineaNegocio">
+			<ui:fragment>
+				<ui:include
+					src="/jsf/mantenimiento/dialogLineaNegocioUsuarioAlerta.xhtml"></ui:include>
+			</ui:fragment>
+		</h:form>
+	</p:dialog>
+	<p:dialog id="idDialogReportes" widgetVar="dialogReportes"
+		height="100%" width="650" closeOnEscape="true" modal="true"
+		closable="true">
+		<h:form id="frmReportes">
+			<ui:fragment>
+				<ui:include
+					src="/jsf/mantenimiento/dialogReportesUsuarioAlerta.xhtml"></ui:include>
+			</ui:fragment>
+		</h:form>
+	</p:dialog>
+	<p:dialog id="idDialogAlertas" widgetVar="dialogAlertas" height="100%"
+		width="650" closeOnEscape="true" modal="true" closable="true">
+		<h:form id="frmAlertas">
+			<ui:fragment>
+				<ui:include src="/jsf/mantenimiento/dialogAlertas.xhtml"></ui:include>
+			</ui:fragment>
+		</h:form>
+	</p:dialog>
+	<p:dialog id="idDialogUsuario" widgetVar="dialogUsuario"
+		header="Nuevo usuario alerta" style="position:fixed"
+		closeOnEscape="true" modal="true" closable="true">
+		<h:form id="frmUsuario">
+			<ui:fragment>
+				<ui:include src="/jsf/mantenimiento/dialogUsuarioAlerta.xhtml"></ui:include>
+			</ui:fragment>
+		</h:form>
+	</p:dialog>
+	<h:outputStylesheet name="css/layout-lightblue.css"
+		library="serenity-layout" />
+	<h:outputScript name="js/layout.js" library="serenity-layout" />
+	<h:outputScript name="js/ripple.js" library="serenity-layout" />
+</h:body>
+</html>
