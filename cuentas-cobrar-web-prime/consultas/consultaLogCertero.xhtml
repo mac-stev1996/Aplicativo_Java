@@ -1,0 +1,134 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Consulta Log Certero
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmButtons">
+			<p:commandButton icon="fa fa-refresh" partialSubmit="true"
+				process="@this, :idForm"
+				actionListener="#{consultaLogCerteroController.init}"
+				title="limpiar datos consulta" update="idForm :frmButtons" />
+			<p:commandButton id="btnConsultar" value="Buscar"
+				partialSubmit="true"
+				actionListener="#{consultaLogCerteroController.buscar}"
+				process="@this, :idForm" update=":idForm, :frmButtons" />
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+		<style>
+.w25 {
+	width: 25%;
+}
+</style>
+		<script type="text/javascript">
+		function mayus(e) {
+		    e.value = e.value.toUpperCase();
+		}
+	
+	</script>
+		<h:form id="idForm">
+
+			<div class="ui-g dashboard">
+				<div class="ui-g-12 ui-fluid contact-form">
+					<div class="ui-g-6">
+						<h:panelGrid columns="4">
+							<p:outputLabel value="Numero de Contrato: " styleClass="bold" />
+							<p:inputText value="#{consultaLogCerteroController.noContrato}" />
+							<p:outputLabel value="Estado : " styleClass="bold" />
+							<p:selectOneMenu value="#{consultaLogCerteroController.estado}">
+								<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+								<f:selectItem itemLabel="Todos" itemValue="T" />
+								<f:selectItem itemLabel="Exitoso" itemValue="S" />
+								<f:selectItem itemLabel="No Exitoso" itemValue="N" />
+								<p:ajax event="change" global="false" process="@this"></p:ajax>
+							</p:selectOneMenu>
+						</h:panelGrid>
+					</div>
+				</div>
+
+				<div class="ui-g-12 ui-fluid contact-form">
+					<p:dataTable id="tblConsultaLog" widgetVar="tblConsultaLog"
+						emptyMessage="No existen registros"
+						value="#{consultaLogCerteroController.listadoConsultado}"
+						var="wsPago" rowKey="#{wsPago.noRegistro}" rowIndexVar="var"
+						paginator="true" paginatorAlwaysVisible="false" filterDelay="1000"
+						rows="10" paginatorPosition="bottom"
+						paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+						<p:column headerText="Cedula Cliente" width="10%"
+							style="text-align: center;">
+							<p:outputLabel value="#{wsPago.cedula}" />
+						</p:column>
+						<p:column headerText="Nombre Cliente" width="30%"
+							style="text-align: center;">
+							<p:outputLabel value="#{wsPago.nombreCliente}" />
+						</p:column>
+						<p:column headerText="Numero de Contrato" width="10%"
+							filterBy="#{wsPago.noContrato}" style="text-align: center;">
+							<p:outputLabel value="#{wsPago.noContrato}" />
+						</p:column>
+						<p:column headerText="Tipo Registro" width="10%"
+							filterBy="#{wsPago.tipoRegistro}" style="text-align: center;">
+							<p:outputLabel value="#{wsPago.tipoRegistro}" />
+						</p:column>
+						<p:column headerText="Fecha Registro" width="10%"
+							style="text-align: center;">
+							<p:outputLabel value="#{wsPago.fechaRegistro}">
+								<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+							</p:outputLabel>
+						</p:column>
+						<p:column headerText="No Transaccion" width="10%"
+							style="text-align: center;" filterBy="#{wsPago.noTransaccion}">
+							<p:outputLabel value="#{wsPago.noTransaccion}" />
+						</p:column>
+						<p:column headerText="Fue Exitoso?" width="7%"
+							style="text-align: center;">
+							<p:outputLabel value="#{wsPago.fueExitoso eq 'S' ? 'SI': 'NO'}" />
+						</p:column>
+						<p:column width="5%">
+							<p:commandButton title="Detalle" partialSubmit="true"
+								icon="fa fa-list-ul" process="@this,tblConsultaLog"
+								style="margin-top: 0px !important"
+								action="#{consultaLogCerteroController.detalle(wsPago)}"
+								update="detRecibido">
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+				</div>
+			</div>
+		</h:form>
+		<p:dialog widgetVar="detRecibido" id="detRecibido"
+			header="Detalle Repuesta" resizable="true" modal="true"
+			closable="true" appendTo="@(body)" width="700px" height="350px"
+			closeOnEscape="true">
+			<h:form id="idFrmDetRecibido">
+				<div class="ui-g dashboard">
+					<div class="ui-g-12 ui-fluid contact-form">
+						<div class="ui-g-12">
+							<label style="font-weight: bold;">Respuesta S3S : </label>
+							<p:outputLabel
+								value="#{consultaLogCerteroController.wsRegistroPagosConsultado.respuesta}"
+								style="width:100%;" />
+						</div>
+						<div class="ui-g-12">
+							<label style="font-weight: bold;">Petición Enviada GIF :
+							</label>
+							<p:inputTextarea rows="10" cols="50"
+								value="#{consultaLogCerteroController.wsRegistroPagosConsultado.peticion}"
+								readonly="true" style="font-weight: bold;" />
+						</div>
+					</div>
+				</div>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+
+</ui:composition>
