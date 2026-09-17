@@ -1,0 +1,89 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Dias de Cierre sin Movimientos
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmButtons">
+			<p:commandButton title="Procesar" value="Procesar" icon="ui-icon ui-icon-refresh"
+				style="width:auto;padding-top:0px;" partialSubmit="true"
+				actionListener="#{cierreDiaSinMovimientosController.procesarCierreDia}"
+				process="@this :idForm:pgListaPen"
+				update=":idForm:pgListaPen" />	
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+		<style type="text/css">
+			body, .ui-inputfield {
+				font-size: 11px !important;
+			}			
+			.table thead th {
+				font-size: 11px !important;
+			}
+			body .ui-datatable thead tr th {
+				padding: 1px 1px;
+				vertical-align: top;
+			}
+			body .ui-datatable tbody tr td {
+				padding: 2px 3px;
+			}
+			body .ui-widget-content {
+			    padding: 4px 7px;
+			}
+			body .ui-panelgrid .ui-panelgrid-cell {
+			    padding: 4px 0px;
+			}
+			body .ui-panel .ui-panel-content {
+			    padding: 4px 7px;
+			}	
+			input:read-only {
+				background-color: #dcecf5;
+			}
+			.tblPrincipal > div>table>thead> tr> th{			
+			    
+			}
+			.tblSecundaria > div>table>thead> tr> th{			
+			    background-color: powderblue;
+			}
+			body .ui-datatable tbody tr.ui-state-highlight .ui-inputfield, .ui-datatable tr.ui-state-highlight {
+			    background-color: #607D8B !important;
+    			color: #ffffff !important;
+			}
+			.panelB div{
+				height: 16px;
+			}
+		</style>
+		<script type="text/javascript">
+			function mayus(e) {
+			    e.value = e.value.toUpperCase();
+			}
+		</script>
+
+		<h:form id="idForm">
+			<p:messages id="messages" showDetail="true" autoUpdate="true"
+				closable="true" showSummary="true" />
+			<div align="center">
+			
+				<h:panelGrid columns="12" id="pgListaPen" width="50%" layout="grid">					
+					<ui:include src="cierreDiaPen.xhtml" />					
+				</h:panelGrid>				
+				
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+					<p:commandButton value="Si" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="No" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+			</div>			
+		</h:form>
+						
+	</ui:define>
+</ui:composition>

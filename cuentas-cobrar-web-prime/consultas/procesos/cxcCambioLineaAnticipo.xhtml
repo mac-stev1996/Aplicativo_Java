@@ -1,0 +1,253 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<style type="text/css">
+body {
+	font-size: 10px;
+}
+
+body .ui-toolbar {
+	padding: 5px;
+}
+
+.columAlignCenter {
+	text-align: center;
+}
+
+.columAlignRight {
+	text-align: right;
+}
+</style>
+	<script type="text/javascript">
+		PrimeFaces.locales["es"] = {
+			    closeText: "Cerrar",
+			    prevText: "Anterior",
+			    nextText: "Siguiente",
+			    monthNames: ["Enero","Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+			    monthNamesShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+			    dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+			    dayNamesShort: ["Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab"],
+			    dayNamesMin: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
+			    weekHeader: "Semana",
+			    firstDay: 0,
+			    isRTL: false,
+			    showMonthAfterYear: false,
+			    yearSuffix: "",
+			    timeOnlyTitle: "Solo hora",
+			    timeText: "Tiempo",
+			    hourText: "Hora",
+			    minuteText: "Minuto",
+			    secondText: "Segundo",
+			    currentText: "Fecha actual",
+			    ampm: false,
+			    month: "Mes",
+			    week: "Semana",
+			    day: "Día",
+			    allDayText : "Todo el día"
+			};
+
+		</script>
+</h:head>
+<h:body>
+	<p:ajaxStatus onstart="PF('statusDialog').show()"
+		onsuccess="PF('statusDialog').hide()"
+		onerror="PF('statusDialog').hide()" />
+
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+		closable="false" resizable="false" showHeader="false">
+		<h:graphicImage value="/common/imgs/gifs/ajaxloadingbar.gif" />
+	</p:dialog>
+	<p:growl id="idGrowl" globalOnly="true" autoUpdate="true"
+		widgetVar="groMessages" showDetail="true" life="5000" />
+
+	<h:form id="idForm">
+		<p:toolbar>
+			<f:facet name="left">
+				<h:outputLabel style="font-size: 15px;"
+					value="CAMBIO DE LINEA DE ANTICIPO" />
+			</f:facet>
+
+			<f:facet name="right">
+				<p:commandButton value="Procesar" icon="fa fa-cog"
+					update="idForm, FrmResult"
+					rendered="#{cxcCambioLineaAnticipoController.activarProceso}"
+					action="#{cxcCambioLineaAnticipoController.procesar}"
+					styleClass="green-btn" process="idForm"></p:commandButton>
+
+				<p:commandButton value="Limpiar" icon="fa fa-refresh"
+					update="idForm"
+					action="#{cxcCambioLineaAnticipoController.limpiar}"></p:commandButton>
+
+			</f:facet>
+
+		</p:toolbar>
+
+		<h:panelGrid columns="4">
+			<f:facet name="header">
+				<h:outputText value="Filtros de B&#250;squeda"></h:outputText>
+			</f:facet>
+
+			<h:panelGrid columns="4" id="pnlFiltros">
+				
+					<p:commandLink oncomplete="PF('DlgClientes').show();"
+						value="Por Cliente: " update="FrmClientes" style="font-weight: bold;"/>
+					<h:panelGrid columns="2">
+						<p:inputText
+							value="#{cxcCambioLineaAnticipoController.clienteSeleccionado.clientePK.noCliente}"
+							style="width:60px;" readonly="true"></p:inputText>
+						<p:inputText
+							value="#{cxcCambioLineaAnticipoController.clienteSeleccionado.nombre}"
+							style="width:290px;" readonly="true"></p:inputText>
+					</h:panelGrid>
+				
+				<p:spacer width="20" height="5"></p:spacer>
+				<p:commandButton value="Buscar" icon="fa fa-search"
+					styleClass="orange-btn"
+					action="#{cxcCambioLineaAnticipoController.buscarAnticipos}"
+					update="idForm:idTblDiarios"></p:commandButton>
+			</h:panelGrid>
+		</h:panelGrid>
+
+		<p:dataTable id="idTblDiarios" emptyMessage="Sin Registros"
+			value="#{cxcCambioLineaAnticipoController.anticiposCliente}"
+			var="item"
+			paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+			rows="15" paginator="true">
+
+			<p:column headerText="No DOCU" styleClass="columAlignCenter"
+				width="100">
+				<p:outputLabel value="#{item.noDocu}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="Origen " styleClass="columAlignCenter"
+				width="100">
+				<p:outputLabel value="#{item.origen}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="Linea Negocio " styleClass="columAlignCenter">
+				<p:outputLabel value="#{item.descripcion}"></p:outputLabel>
+			</p:column>
+
+			<p:column headerText="Fecha" styleClass="columAlignCenter"
+				width="130">
+				<p:outputLabel value="#{item.fecha}">
+					<f:convertDateTime pattern="dd-MM-yyyy" />
+				</p:outputLabel>
+
+			</p:column>
+			<p:column headerText="Centro " styleClass="columAlignCenter">
+				<p:outputLabel value="#{item.desccentro}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="Ingreso " styleClass="columAlignCenter"
+				width="100">
+				<p:outputLabel value="#{item.noFisico}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="Saldo " styleClass="columAlignCenter">
+				<p:outputLabel value="#{item.saldo}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="Utilizar " styleClass="columAlignCenter">
+				<p:inputNumber value="#{item.valorUtilizar}"
+					maxValue="#{item.saldo}">
+					<p:ajax
+						listener="#{cxcCambioLineaAnticipoController.calcularTotal}"
+						update="idForm"></p:ajax>
+				</p:inputNumber>
+			</p:column>
+
+		</p:dataTable>
+
+		<br> </br>
+		<center>
+			<p:panelGrid columns="2" id="PnlResult">
+				<p:outputLabel value="Total Valor a Cambiar"></p:outputLabel>
+				<p:outputLabel
+					value="#{cxcCambioLineaAnticipoController.montoTotal}"></p:outputLabel>
+				<p:outputLabel value="Linea a Cambiar"></p:outputLabel>
+				<p:selectOneMenu
+					value="#{cxcCambioLineaAnticipoController.lineaSeleccionada}"
+					filter="true">
+					<f:selectItem itemLabel="Seleccione.." />
+					<f:selectItems
+						value="#{cxcCambioLineaAnticipoController.lineasAnticipos}"
+						var="ln"
+						itemLabel="#{ln.lineaNegocioPK.noLinea} : #{ln.descripcion}"
+						itemValue="#{ln.lineaNegocioPK.noLinea}"></f:selectItems>
+				</p:selectOneMenu>
+				<p:outputLabel value="Comentario"></p:outputLabel>
+				<p:inputTextarea
+					value="#{cxcCambioLineaAnticipoController.comentario}"></p:inputTextarea>
+			</p:panelGrid>
+		</center>
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+			<p:commandButton value="Yes" type="button"
+				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+			<p:commandButton value="No" type="button"
+				styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+		</p:confirmDialog>
+	</h:form>
+
+	<p:dialog widgetVar="DlgClientes" id="DlgClientes"
+		header="Seleccione Cliente" resizable="true" modal="true"
+		closable="true" appendTo="@(body)" width="480" height="500">
+		<h:form id="FrmClientes">
+			<p:dataTable id="dtClientes"
+				value="#{cxcCambioLineaAnticipoController.clientes}" var="cliente"
+				emptyMessage="No existen registros" selectionMode="single"
+				selection="#{cxcCambioLineaAnticipoController.clienteSeleccionado}"
+				rowKey="#{cliente.clientePK}" paginator="true" rows="10" lazy="true"
+				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+				<p:column headerText="Cedula/Ruc" filterBy="#{cliente.cedula}"
+					width="90">
+					<h:outputText value="#{cliente.cedula}" />
+				</p:column>
+				<p:column headerText="Nombre" filterBy="#{cliente.nombre}"
+					filterMatchMode="startsWith">
+					<h:outputText value="#{cliente.nombre}" />
+				</p:column>
+			</p:dataTable>
+			<br> </br>
+			<center>
+				<p:commandButton value="Seleccionar "
+					action="#{cxcCambioLineaAnticipoController.seleccionarCliente}"
+					update="idForm"></p:commandButton>
+			</center>
+		</h:form>
+	</p:dialog>
+
+	<p:dialog widgetVar="DlgResult" id="DlgResult" header="Proceso Exitoso"
+		resizable="true" modal="true" closable="false" appendTo="@(body)"
+		width="480" height="250">
+		<h:form id="FrmResult">
+			<p:outputLabel
+				value="Se ha procesado el cambio de linea de anticipo exitosamente, como resultado se han generado los siguientes diarios: "></p:outputLabel>
+			<p:dataTable
+				value="#{cxcCambioLineaAnticipoController.diariosResult}"
+				var="diario">
+				<p:column headerText="Numero Diario">
+					<p:outputLabel value="#{diario.serieFisico} - #{diario.noFisico}"></p:outputLabel>
+				</p:column>
+				<p:column headerText="Ver" width="120">
+					<p:commandLink ajax="false" target="_blank"
+						action="#{cxcCambioLineaAnticipoController.imprimirDiario(diario)}">
+						<p:commandButton icon="fa fa-print" title="Ver Diario A"
+							ajax="false">
+						</p:commandButton>
+					</p:commandLink>
+				</p:column>
+			</p:dataTable>
+
+			<br />
+			<center>
+				<p:commandButton value="Cerrar"
+					action="#{cxcCambioLineaAnticipoController.actualizarAnticipos}"
+					update="idForm"></p:commandButton>
+			</center>
+		</h:form>
+	</p:dialog>
+
+	<h:outputStylesheet name="css/layout-lightblue.css"
+		library="serenity-layout" />
+</h:body>
+</html>

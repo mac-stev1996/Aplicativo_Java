@@ -1,0 +1,456 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<style type="text/css">
+body {
+	font-size: 10px;
+}
+
+body .ui-toolbar {
+	padding: 5px;
+}
+
+.columAlignCenter {
+	text-align: center;
+}
+
+.columAlignRight {
+	text-align: right;
+}
+</style>
+	<script type="text/javascript">
+		PrimeFaces.locales["es"] = {
+			    closeText: "Cerrar",
+			    prevText: "Anterior",
+			    nextText: "Siguiente",
+			    monthNames: ["Enero","Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+			    monthNamesShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+			    dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+			    dayNamesShort: ["Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab"],
+			    dayNamesMin: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
+			    weekHeader: "Semana",
+			    firstDay: 0,
+			    isRTL: false,
+			    showMonthAfterYear: false,
+			    yearSuffix: "",
+			    timeOnlyTitle: "Solo hora",
+			    timeText: "Tiempo",
+			    hourText: "Hora",
+			    minuteText: "Minuto",
+			    secondText: "Segundo",
+			    currentText: "Fecha actual",
+			    ampm: false,
+			    month: "Mes",
+			    week: "Semana",
+			    day: "Día",
+			    allDayText : "Todo el día"
+			};
+
+		</script>
+</h:head>
+<h:body>
+	<p:ajaxStatus onstart="PF('statusDialog').show()"
+		onsuccess="PF('statusDialog').hide()"
+		onerror="PF('statusDialog').hide()" />
+
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+		closable="false" resizable="false" showHeader="false">
+		<h:graphicImage value="/common/imgs/gifs/ajaxloadingbar.gif" />
+	</p:dialog>
+	<p:growl id="idGrowl" globalOnly="true" autoUpdate="true"
+		widgetVar="groMessages" showDetail="true" life="5000" />
+
+	<h:form id="idForm">
+		<p:toolbar>
+			<f:facet name="left">
+				<h:outputLabel style="font-size: 15px;"
+					value="CANCELACION AUTOMATICA CM Y ALISTAMIENTOS DIARIOS A" />
+			</f:facet>
+
+
+		</p:toolbar>
+
+		<h:panelGrid columns="5">
+			<f:facet name="header">
+				<h:outputText value="Filtros de B&#250;squeda"></h:outputText>
+			</f:facet>
+			<h:outputText value="Por Fecha: " style="font-weight: bold;"></h:outputText>
+			<h:panelGrid columns="2">
+				<h:outputText value="Desde el: "></h:outputText>
+				<p:calendar title="Fecha Inicial"
+					value="#{cxcCancelacionAutomaticaAlistamientos.fechaInicial}"
+					autocomplete="off"></p:calendar>
+			</h:panelGrid>
+			<h:panelGrid columns="2">
+				<h:outputText value="Hasta el: "></h:outputText>
+				<p:calendar title="Fecha Final"
+					value="#{cxcCancelacionAutomaticaAlistamientos.fechaFinal}"
+					autocomplete="off"></p:calendar>
+			</h:panelGrid>
+			<p:spacer width="5" height="5"></p:spacer>
+
+			<p:spacer width="5" height="5"></p:spacer>
+			<h:outputText value="Por Codigo U: " style="font-weight: bold;"></h:outputText>
+			<p:inputText value="#{cxcCancelacionAutomaticaAlistamientos.codigoU}"></p:inputText>
+<p:spacer width="20" height="5"></p:spacer>
+			<p:commandButton value="Buscar" icon="fa fa-search"
+				styleClass="orange-btn"
+				action="#{cxcCancelacionAutomaticaAlistamientos.buscar}"
+				update="idForm:idTblDiarios"></p:commandButton>
+		</h:panelGrid>
+
+
+		<p:dataTable id="idTblDiarios" emptyMessage="Sin Registros"
+			value="#{cxcCancelacionAutomaticaAlistamientos.listDetallesUsados}"
+			var="item"
+			paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+			rows="10" paginator="true">
+
+
+			<p:column headerText="Acciones" styleClass="columAlignCenter"
+				width="100" rendered="#{cxcCancelacionAutomaticaAlistamientos.esCobranzas}">
+				<p:commandButton value="Diarios A" title="Generar diarios A"
+					styleClass="green-btn"
+					action="#{cxcCancelacionAutomaticaAlistamientos.verPreviaDiarioA(item)}"
+					update="FrmPrevDiario"></p:commandButton>
+			</p:column>
+
+<p:column headerText="Diario A" styleClass="columAlignCenter"
+			width="60"	 rendered="#{cxcCancelacionAutomaticaAlistamientos.esContabilidad}">
+				<p:commandLink value="#{item.numDiario}" title="Diario A de Cancelacion"
+					action="#{cxcCancelacionAutomaticaAlistamientos.verDiarioAGenerado(item)}"
+					update="FrmDiarioA"></p:commandLink>
+			</p:column>
+			
+			<p:column headerText="Fecha Diario A" styleClass="columAlignCenter"
+			width="60"	 rendered="#{cxcCancelacionAutomaticaAlistamientos.esContabilidad}">
+				<p:outputLabel  value="#{item.fechaDiario}">
+				<f:convertDateTime pattern="dd-MM-yyyy" />
+				</p:outputLabel>
+			</p:column>
+			
+			<p:column headerText="Usuario Diario A" styleClass="columAlignCenter"
+			width="60"	 rendered="#{cxcCancelacionAutomaticaAlistamientos.esContabilidad}">
+				<p:outputLabel  value="#{item.usuarioDiario}">
+				</p:outputLabel>
+			</p:column>
+			
+			<p:column headerText="Codigo " styleClass="columAlignCenter"
+				width="60" filterBy="#{item.ceduldaDueno}">
+				<p:outputLabel value="#{item.ceduldaDueno}" title="La U tiene utilidad" rendered="#{!cxcCancelacionAutomaticaAlistamientos.isEsPerdida(item)}"></p:outputLabel>
+				<p:outputLabel value="#{item.ceduldaDueno}" title="La U tiene perdida" style="color:red" rendered="#{cxcCancelacionAutomaticaAlistamientos.isEsPerdida(item)}"></p:outputLabel>
+				
+			</p:column>
+			<p:column headerText="Chasis " styleClass="columAlignCenter"
+				width="100" filterBy="#{item.svincodi}">
+				<p:outputLabel value="#{item.svincodi}"></p:outputLabel>
+
+			</p:column>
+			<p:column headerText="Descripcion " styleClass="columAlignCenter"
+				width="150">
+				<p:outputLabel value="#{item.svindesc}"></p:outputLabel>
+			</p:column>
+
+			<p:column headerText="Cliente Vendedor "
+				styleClass="columAlignCenter" width="150" filterBy="#{item.clienteUsado}">
+				<p:outputLabel value="#{item.clienteUsado}"></p:outputLabel>
+			</p:column>
+
+			<p:column headerText="Cedula/Ruc Comp. "
+				styleClass="columAlignCenter" width="90">
+				<p:outputLabel value="#{item.cedulaCompra}"></p:outputLabel>
+			</p:column>
+
+			<p:column headerText="Nombre Comprador "
+				styleClass="columAlignCenter" width="90">
+				<p:outputLabel value="#{item.clienteCompra}"></p:outputLabel>
+			</p:column>
+
+			<p:column headerText="Agencia ND " styleClass="columAlignCenter"
+				width="60">
+				<p:outputLabel value="#{item.agencia}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="No Fisico ND " styleClass="columAlignCenter"
+				width="60">
+				<p:outputLabel value="#{item.nofisico}"></p:outputLabel>
+			</p:column>
+
+			<p:column headerText="Fecha ND " styleClass="columAlignCenter"
+				width="90">
+				<p:outputLabel value="#{item.fecha}">
+					<f:convertDateTime pattern="dd-MM-yyyy" />
+				</p:outputLabel>
+			</p:column>
+
+			<p:column headerText="Costo Recepc. " styleClass="columAlignCenter"
+				width="60">
+				<p:outputLabel value="#{item.costoDolares}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="Costos Adicional "
+				styleClass="columAlignCenter" width="60">
+				<p:outputLabel value="#{item.costoAdicional}"></p:outputLabel>
+			</p:column>
+
+			<p:column headerText="Costos Alistamiento"
+				styleClass="columAlignCenter" width="90">
+				<p:outputLabel value="#{item.valorAlistamientos}"></p:outputLabel>
+			</p:column>
+
+			<p:column headerText="Costos Total" styleClass="columAlignCenter"
+				width="60">
+				<p:outputLabel value="#{item.costoTotal}"></p:outputLabel>
+			</p:column>
+
+			<p:column headerText="Precio Venta" styleClass="columAlignCenter"
+				width="60">
+				<p:outputLabel value="#{item.precioVenta}"></p:outputLabel>
+			</p:column>
+
+			<p:column headerText="Utilidad Bruta" styleClass="columAlignCenter"
+				width="60">
+				<p:outputLabel value="#{item.utilidadBruta}"></p:outputLabel>
+			</p:column>
+
+			<p:column headerText="Utilidad Neta" styleClass="columAlignCenter"
+				width="60">
+				<p:outputLabel
+					value="#{item.utilidadBruta - item.valorAlistamientos}" rendered="#{!cxcCancelacionAutomaticaAlistamientos.isEsPerdida(item)}"></p:outputLabel>
+				<p:outputLabel value="#{item.utilidadBruta - item.valorAlistamientos}" title="La U tiene perdida" style="color:red" rendered="#{cxcCancelacionAutomaticaAlistamientos.isEsPerdida(item)}"></p:outputLabel>
+			</p:column>
+
+			<p:column headerText="Base " styleClass="columAlignCenter" width="60">
+				<p:outputLabel
+					value="#{cxcCancelacionAutomaticaAlistamientos.obtenerBase(item)}"></p:outputLabel>
+			</p:column>
+
+			<p:column headerText="Iva " styleClass="columAlignCenter" width="60">
+				<p:outputLabel
+					value="#{cxcCancelacionAutomaticaAlistamientos.obtenerIva(item)}"></p:outputLabel>
+			</p:column>
+
+			<p:column headerText="Ordenes Abiertas" styleClass="columAlignCenter"
+				width="60">
+				<p:outputLabel value="#{item.ordenesAbiertas}"></p:outputLabel>
+			</p:column>
+
+			<p:column headerText="Chasis Comision" styleClass="columAlignCenter"
+				width="60">
+				<p:outputLabel value="#{item.chasisComision}"></p:outputLabel>
+			</p:column>
+
+			<p:column headerText="Cotizacion Comision"
+				styleClass="columAlignCenter" width="60">
+				<p:outputLabel value="#{item.cotizacionComision}"></p:outputLabel>
+			</p:column>
+
+			<p:column headerText="Factura Comision" styleClass="columAlignCenter"
+				width="60">
+				<p:outputLabel value="#{item.facturaComision}"></p:outputLabel>
+			</p:column>
+
+			<p:column headerText="Valor Comision" styleClass="columAlignCenter"
+				width="60">
+				<p:outputLabel value="#{item.valorComision}"></p:outputLabel>
+			</p:column>
+
+
+		</p:dataTable>
+
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+			<p:commandButton value="Yes" type="button"
+				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+			<p:commandButton value="No" type="button"
+				styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+		</p:confirmDialog>
+
+
+
+
+
+	</h:form>
+
+	<p:dialog widgetVar="DlgPrevDiario" id="DlgPrevDiario" closable="true"
+		closeOnEscape="true" modal="true"
+		header="Generacion Diario A para cancelacion" width="70%">
+		<h:form id="FrmPrevDiario">
+			<p:outputPanel>
+
+				<p:dataTable
+					value="#{cxcCancelacionAutomaticaAlistamientos.facturaComision}"
+					var="cance" rendered="#{cxcCancelacionAutomaticaAlistamientos.facturaComision != null}" emptyMessage="No existe factura de comision">
+					<f:facet name="header">Factura Comision</f:facet>
+					<p:column headerText="Descrip." width="30">
+						<p:outputLabel value="#{cance.tipoDoc}"></p:outputLabel>
+					</p:column>
+					<p:column headerText="Agencia" width="30">
+						<p:outputLabel value="#{cance.centro}"></p:outputLabel>
+					</p:column>
+					<p:column headerText="Factura">
+					<p:commandLink value="#{cance.noFisico}" process="@this"
+						partialSubmit="true" title="Ver Factura"
+						actionListener="#{cxcCancelacionAutomaticaAlistamientos.imprimirRide(item)}" />
+						
+					</p:column>
+					<p:column headerText="Linea Neg." width="25">
+						<p:outputLabel value="#{cance.serieFisico}"></p:outputLabel>
+					</p:column>
+					<p:column headerText="Fecha Vencimiento">
+						<p:outputLabel value="#{cance.fechaVence}"></p:outputLabel>
+					</p:column>
+					<p:column headerText="Monto">
+						<p:outputLabel value="#{cance.mOriginal}"></p:outputLabel>
+					</p:column>
+					<p:column headerText="Saldo">
+						<p:outputLabel value="#{cance.saldo}"></p:outputLabel>
+					</p:column>
+				</p:dataTable>
+
+				<h:panelGrid columns="2">
+					<p:outputLabel value="Total Factura por Comision: "></p:outputLabel>
+					<p:inputText
+						value="#{cxcCancelacionAutomaticaAlistamientos.valorComision}"
+						readonly="true"></p:inputText>
+				</h:panelGrid>
+
+			</p:outputPanel>
+
+
+			<p:outputPanel 
+				>
+				<p:dataTable
+					value="#{cxcCancelacionAutomaticaAlistamientos.facturasAlistamientos}"
+					var="cance" emptyMessage="No existen facturas a cancelar" rendered="#{cxcCancelacionAutomaticaAlistamientos.facturasAlistamientos != null}">
+					<f:facet name="header">Facturas Alistamiento</f:facet>
+					<p:column headerText="Descrip." width="30">
+						<p:outputLabel value="#{cance.tipoDoc}"></p:outputLabel>
+					</p:column>
+					<p:column headerText="Agencia" width="30">
+						<p:outputLabel value="#{cance.centro}"></p:outputLabel>
+					</p:column>
+					<p:column headerText="Factura">
+						<p:outputLabel value="#{cance.noFisico}"></p:outputLabel>
+					</p:column>
+					<p:column headerText="Linea Neg." width="25">
+						<p:outputLabel value="#{cance.serieFisico}"></p:outputLabel>
+					</p:column>
+					<p:column headerText="Fecha Vencimiento">
+						<p:outputLabel value="#{cance.fechaVence}"></p:outputLabel>
+					</p:column>
+					<p:column headerText="Monto">
+						<p:outputLabel value="#{cance.mOriginal}"></p:outputLabel>
+					</p:column>
+					<p:column headerText="Saldo">
+						<p:outputLabel value="#{cance.saldo}"></p:outputLabel>
+					</p:column>
+				</p:dataTable>
+
+				<h:panelGrid columns="2">
+					<p:outputLabel value="Total Facturas por Alistamiento: "></p:outputLabel>
+					<p:inputText
+						value="#{cxcCancelacionAutomaticaAlistamientos.valorAlistamientos}"
+						readonly="true"></p:inputText>
+				</h:panelGrid>
+
+			</p:outputPanel>
+			<center>
+				<h:panelGrid columns="2">
+					<f:facet name="header">
+						<p:outputLabel value="Datos de Diario A con UTILIDAD"
+							rendered="#{!cxcCancelacionAutomaticaAlistamientos.esPerdida}" style="font-size: 14px;"></p:outputLabel>
+						<p:outputLabel value="Datos de Diario A con PERDIDA"
+							rendered="#{cxcCancelacionAutomaticaAlistamientos.esPerdida}" style="font-size: 14px;"></p:outputLabel>
+					</f:facet>
+
+					<p:outputLabel value="Valor total a cancelar con Diario A: "></p:outputLabel>
+					<p:inputText
+						value="#{cxcCancelacionAutomaticaAlistamientos.valorTotal}"
+						readonly="true"></p:inputText>
+					<p:outputLabel value="Concepto: "></p:outputLabel>
+					<p:inputTextarea
+						value="#{cxcCancelacionAutomaticaAlistamientos.comentario}"></p:inputTextarea>
+
+				</h:panelGrid>
+				<p:panel
+					rendered="#{cxcCancelacionAutomaticaAlistamientos.validarDiferencia}"
+					style="background-color:#D9D2D2;color:orange;">
+					<center>
+						<p:outputLabel value="!Advertencia!"></p:outputLabel>
+						<br></br>
+						<p:outputLabel
+							value="Los valores del total de las facturas #{cxcCancelacionAutomaticaAlistamientos.valorTotal} no es igual al valor del reporte #{cxcCancelacionAutomaticaAlistamientos.valorComparar}, por favor revise antes de generar el Diario A." style="font-size: 14px;"></p:outputLabel>
+					</center>
+				</p:panel>
+
+				<br />
+				<p:commandButton value="Generar Diario A"
+					action="#{cxcCancelacionAutomaticaAlistamientos.realizarCancelacion}" rendered="#{!cxcCancelacionAutomaticaAlistamientos.diferenciaMayor}"></p:commandButton>
+			</center>
+		</h:form>
+
+	</p:dialog>
+	
+		<p:dialog widgetVar="DlgDiarioA" id="DlgDiarioA" closable="true"
+		closeOnEscape="true" modal="true"
+		header="Detalle del Diario A" width="70%">
+		<h:form id="FrmDiarioA">
+			<p:outputPanel>
+
+				<p:dataTable
+					value="#{cxcCancelacionAutomaticaAlistamientos.facturasCanceladas}"
+					var="cance"  emptyMessage="No existen facturas canceladas por el Diario"><f:facet name="header">Factura canceladas por el diario</f:facet>
+					<p:column headerText="Descrip." width="30">
+						<p:outputLabel value="#{cance.tipoDoc}"></p:outputLabel>
+					</p:column>
+					<p:column headerText="Agencia" width="30">
+						<p:outputLabel value="#{cance.centro}"></p:outputLabel>
+					</p:column>
+					<p:column headerText="Factura">
+					
+					<p:commandLink value="#{cance.noFisico}" 
+						title="Ver Factura" actionListener="#{cxcCancelacionAutomaticaAlistamientos.imprimirRide(cance)}"
+						process="@this" partialSubmit="true"/>
+						
+					</p:column>
+					<p:column headerText="Linea Neg." width="25">
+						<p:outputLabel value="#{cance.serieFisico}"></p:outputLabel>
+					</p:column>
+						<p:column headerText="Secuencia" width="40">
+						<p:outputLabel value="#{cance.cantProrrogas}"></p:outputLabel>
+					</p:column>
+					<p:column headerText="Fecha">
+						<p:outputLabel value="#{cance.fecha}"></p:outputLabel>
+					</p:column>
+					<p:column headerText="Fecha Vencimiento">
+						<p:outputLabel value="#{cance.fechaVence}"></p:outputLabel>
+					</p:column>
+					<p:column headerText="Monto">
+						<p:outputLabel value="#{cance.mOriginal}"></p:outputLabel>
+					</p:column>
+					<p:column headerText="Saldo">
+						<p:outputLabel value="#{cance.saldo}"></p:outputLabel>
+					</p:column>
+				</p:dataTable>
+				<center>
+				<h:panelGrid columns="2">
+				<p:outputLabel value="Ver Diario A: "></p:outputLabel>
+				
+				<p:commandButton  ajax="false"
+						title="Ver Diario A" icon="fa fa-print"
+						onclick="form.target='_blank'"
+						action="#{cxcCancelacionAutomaticaAlistamientos.generarReporteJasper}"
+						></p:commandButton>
+				</h:panelGrid>
+				</center>
+				</p:outputPanel>
+		</h:form>
+
+	</p:dialog>
+
+	<h:outputStylesheet name="css/layout-lightblue.css"
+		library="serenity-layout" />
+</h:body>
+</html>

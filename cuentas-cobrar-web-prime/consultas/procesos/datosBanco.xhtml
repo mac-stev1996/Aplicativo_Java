@@ -1,0 +1,31 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+<head>
+</head>
+<ui:composition>
+	<p:outputPanel autoUpdate="true" style="text-align:left;">
+		<h:panelGrid columns="4">
+			<h:outputText value="BANCO:" />
+			<p:inputText readonly="true"
+				value="#{cxcLiquidacionTarjetasCreditoController.datosBanco.codBanco}" />
+			<h:outputText value="CUENTA:" />
+			<p:inputText readonly="true"
+				value="#{cxcLiquidacionTarjetasCreditoController.datosBanco.cuenta}" />
+			<h:outputText value="DOCUMENTO:" />
+			<p:inputText readonly="true"
+				value="#{cxcLiquidacionTarjetasCreditoController.datosBanco.numeroDocumento}" />
+			<h:outputText value="FECHA:"/>
+			<p:inputText readonly="true"
+				value="#{cxcLiquidacionTarjetasCreditoController.datosBanco.fecha}">
+				<f:convertDateTime pattern="dd/MM/yyyy" />
+			</p:inputText>
+			<h:outputText value="VALOR:" />
+			<p:inputText readonly="true"
+				value="#{cxcLiquidacionTarjetasCreditoController.datosBanco.valor}" />
+		</h:panelGrid>
+	</p:outputPanel>
+</ui:composition>
+</html>

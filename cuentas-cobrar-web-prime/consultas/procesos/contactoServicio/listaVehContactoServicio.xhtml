@@ -1,0 +1,177 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<p:panelGrid columns="1" id="pgListaGeneral" width="100%" layout="grid"
+		columnClasses="ui-grid-col-12">
+
+		<p:panel style="display: flex; justify-content: flex-end;"
+			rendered="#{cxcContactoServicioController.pantalla eq 'LISTADO'}"
+			styleClass="noborder">
+			<p:fieldset legend="Filtros de Búsqueda" toggleable="false">
+				<h:panelGrid columns="2" id="idPgFiltros" style="width:100%">
+				<h:panelGrid columns="4">
+					<p:commandLink id="clienteCommandLink" value="Cliente: "
+						oncomplete="PF('modalCLientes').show();" styleClass="bold"
+						update=":#{p:component('modalCLientes')}"
+						action="#{cxcContactoServicioController.ejecutarConsultaClientes}" />
+					<p:outputPanel autoUpdate="true">
+						<h:panelGrid columns="2">
+							<p:inputText readonly="true"
+								value="#{cxcContactoServicioController.cedulaCliente}"
+								size="10" />
+							<p:inputText readonly="true"
+								value="#{cxcContactoServicioController.nombreCliente}" />
+						</h:panelGrid>
+					</p:outputPanel>				 
+
+					<p:outputLabel value="Linea Negocio: " styleClass="bold"
+						for="selectLinea" />
+					<p:selectOneMenu filter="true" id="selectLinea"
+						value="#{cxcContactoServicioController.noLinea}">
+						<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+						<f:selectItems
+							value="#{cxcContactoServicioController.listaLineasNegocio}"
+							var="item"
+							itemLabel="#{item.lineaNegocioPK.noLinea} - #{item.descripcion}"
+							itemValue="#{item.lineaNegocioPK.noLinea}" />
+					</p:selectOneMenu>
+				</h:panelGrid>
+				<h:panelGrid columns="6">
+					<p:outputLabel value="Fecha Factura Desde: " />
+					<p:calendar id="fechaDesde" locale="es" navigator="true"
+						autocomplete="off" pattern="dd/MM/yyyy"
+						maxdate="#{cxcContactoServicioController.fechaActual}"
+						value="#{cxcContactoServicioController.fechaDesde}">
+						<p:ajax event="dateSelect" process="@this"
+							listener="#{cxcContactoServicioController.actualizarFechaDesde}"
+							update="fechaHasta" />
+					</p:calendar>
+
+					<p:outputLabel value="Fecha Factura Hasta: " />
+					<p:calendar id="fechaHasta" locale="es" navigator="true"
+						autocomplete="off" pattern="dd/MM/yyyy"
+						mindate="#{cxcContactoServicioController.fechaDesde}"
+						maxdate="#{cxcContactoServicioController.fechaActual}"
+						value="#{cxcContactoServicioController.fechaHasta}" />
+
+					<p:commandButton value="Buscar" icon="ui-icon ui-icon-search"
+						title="Buscar" partialSubmit="true"
+						process="@this :idForm:idPgFiltros"
+						actionListener="#{cxcContactoServicioController.buscarVehiculos}"
+						oncomplete="PF('wdtDetalle').getPaginator().setPage(0);"
+						update=":idForm:dtDetalle" />
+					<p:commandButton value="Limpiar" icon="fa fa-eraser"
+						title="Limpiar filtros" partialSubmit="true" process="@this"
+						actionListener="#{cxcContactoServicioController.limpiarFiltros}"
+						oncomplete="PF('wdtDetalle').getPaginator().setPage(0);"
+						update=":idForm:idPgFiltros :idForm:dtDetalle" />
+				</h:panelGrid>
+				
+
+				
+
+				
+				</h:panelGrid>
+			</p:fieldset>
+			<p:spacer />
+			<p:panelGrid columns="1" id="idPgDatos" style="width:100%">
+				<p:dataTable id="dtDetalle" lazy="true" widgetVar="wdtDetalle"
+					value="#{cxcContactoServicioController.model}" var="item"
+					paginator="true" rows="#{cxcContactoServicioController.batchSize}"
+					rowKey="#{item.chasis}" styleClass="table table-body"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+					paginatorPosition="bottom"
+					emptyMessage="No existe información de seguimiento de vehículos"
+					rowIndexVar="row" filterDelay="1000">
+					<f:facet name="header">
+						<p:outputLabel value="Listado de Seguimiento de Vehiculos Nuevos" />
+					</f:facet>
+
+					<p:column headerText="No." width="10">
+						<p:outputLabel value="#{row +1}" />
+					</p:column>
+
+					<p:column headerText="Cedula Cliente" width="70">
+						<p:outputLabel value="#{item.cedulaCliente}" readonly="true" />
+					</p:column>
+
+					<p:column headerText="Nombre Cliente" width="70">
+						<p:outputLabel value="#{item.nombreCliente}" readonly="true" />
+					</p:column>
+
+					<p:column headerText="Agencia" width="70">
+						<p:outputLabel value="#{item.nombreAgencia}" readonly="true" />
+					</p:column>
+
+					<p:column headerText="Línea Negocio" width="70">
+						<p:outputLabel value="#{item.lineaNegocio}" readonly="true" />
+					</p:column>
+
+					<p:column headerText="Numero Fisico" width="70">
+						<p:outputLabel value="#{item.noFisico}" readonly="true" />
+					</p:column>
+
+					<p:column headerText="Fecha Factura" width="68">
+						<p:outputLabel value="#{item.fechaFactura}" readonly="true">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:outputLabel>
+					</p:column>
+
+					<p:column headerText="Fecha Salida" width="68">
+						<p:outputLabel value="#{item.fechaSalida}" readonly="true">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:outputLabel>
+					</p:column>
+
+					<p:column headerText="Usuario Salida" width="70">
+						<p:outputLabel value="#{item.usuarioSalida}" readonly="true" />
+					</p:column>
+
+					<p:column headerText="Vehículo" width="60">
+						<p:outputLabel value="#{item.descripcion}" readonly="true" />
+					</p:column>
+
+					<p:column headerText="Placa" width="60">
+						<p:outputLabel value="#{item.placa}" readonly="true" />
+					</p:column>
+
+					<p:column headerText="Chasis" width="100">
+						<p:outputLabel value="#{item.chasis}" readonly="true" />
+					</p:column>
+
+					<p:column headerText="Master Local" width="80">
+						<p:outputLabel value="#{item.svmamaster}" readonly="true" />
+					</p:column>
+
+					<p:column headerText="Tiene Ordenes" width="60">
+						<p:outputLabel value="#{item.tieneOrdenes}" readonly="true" />
+					</p:column>
+
+					<p:column headerText="Control"
+						style="text-align:center;color:red !important" width="120">
+						<p:commandButton id="btnEntregaVeh" icon="fa fa-car" process="@this"
+							title="Entrega Vehículo" styleClass="green-btn" update="@form"
+							action="#{cxcContactoServicioController.asignarEntregaVehiculos(item)}" />					
+						<p:tooltip id="toolEntregaVeh" for="btnEntregaVeh"
+															value="Registrar entrega de vehículo"
+															position="top" />
+						
+						<p:commandButton id="btnCliente" icon="fa fa-user"
+							title="Ver Cliente" styleClass="blue-btn" partialSubmit="true"
+							process="@this"
+							action="#{cxcContactoServicioController.verPantallaCliente(item)}" />
+								<p:tooltip id="toolInfoCliente" for="btnCliente"
+															value="Ver información del cliente"
+															position="top" />
+					</p:column>
+
+				</p:dataTable>
+			</p:panelGrid>
+		</p:panel>
+	</p:panelGrid>
+</ui:composition>

@@ -1,0 +1,292 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		REGISTRO INFORMACION ENTREGA DE VEHICULOS Y CONTACTOS DE SERVICIO
+	</ui:define>
+
+	<ui:define name="buttons">
+ 
+	 
+	</ui:define>
+	<ui:define name="content">
+		<style type="text/css">
+body {
+	font-size: 11px !important;
+}
+
+body .ui-datatable.ui-datatable-scrollable thead tr th {
+	font-size: 11px !important;
+	padding: 0px 3px !important;
+}
+
+body .ui-datatable thead tr th {
+	padding: 4px 3px;
+}
+
+body .ui-datatable tbody tr td {
+	font-size: 10px !important;
+	padding: 2px 3px;
+}
+
+body .ui-panelgrid .ui-panelgrid-cell {
+	padding: 3px 4px;
+}
+
+.noborder, .noborder>tbody>tr, .noborder>tbody>tr>td, .noborder>*>div,
+	.noborder>.ui-widget-content {
+	border: 0px !important;
+	padding: 4px 3px !important;
+	background-color: transparent !important;
+}
+
+.gridSinBordes.ui-panelgrid>*>tr, .gridSinBordes.ui-panelgrid .ui-panelgrid-cell
+	{
+	border: none !important;
+	border-right-width: 0px !important;
+	border-left-width: 0px !important;
+	padding-right: 2px !important;
+	padding-left: 2px !important;
+	padding-top: 2px !important;
+	padding-bottom: 2px !important
+}
+
+.topAligned {
+	vertical-align: top;
+}
+
+body .ui-tabs .ui-tabs-nav>li.ui-state-default a {
+	background: #d8f1ff;
+	border-radius: 10px 10px 0px 0px;
+}
+
+.centrado {
+	display: flex;
+	align-items: center;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+	background-color: #4aaff7 !important;
+}
+
+.ui-dialog .ui-dialog-content {
+	border: 1px solid #d8d8d8 !important;
+}
+
+.btnGris {
+	background-color: #607d8b !important;
+}
+
+.forty-percent {
+	width: 42%;
+}
+
+.sixty-percent {
+	width: 58%;
+}
+
+.top-alignment {
+	vertical-align: top;
+}
+
+.procesado {
+	color: #03A9F4 !important;
+}
+
+.generado {
+	color: #4CAF50 !important;
+}
+
+.enviado {
+	color: #F44336 !important;
+}
+
+.flex-center {
+	display: flex;
+	justify-content: center; /* Centra horizontalmente */
+	align-items: center; /* Centra verticalmente */
+	width: 100%;
+	padding: 1px 10px 20px 40px;
+}
+</style>
+
+		<h:form id="idForm" enctype="multipart/form-data">
+			<p:messages id="messages" showDetail="true" autoUpdate="true"
+				closable="true" showSummary="true" />
+			<div align="center">
+				<h:panelGrid columns="12" id="pgListaVeh" width="100%"
+					layout="grid"
+					rendered="#{cxcAsignacionVehiculosController.pantalla eq 'LISTA_ASIGNACION'}">
+					<ui:include src="listaAsignacionVehiculos.xhtml" />
+				</h:panelGrid>
+				<h:panelGrid columns="12" id="pgContacto" width="100%" layout="grid"
+					rendered="#{cxcAsignacionVehiculosController.pantalla eq 'CONTACTOS'}">
+					<ui:include src="asignacionContactoVehiculo.xhtml" />
+				</h:panelGrid>
+				<h:panelGrid columns="12" id="pgAsignacionVeh" width="100%"
+					layout="grid"
+					rendered="#{cxcAsignacionVehiculosController.pantalla eq 'ASIGNACION'}">
+					<ui:include src="asignacionVehiculo.xhtml" />
+				</h:panelGrid>
+			</div>
+
+			<!-- DIALOGO DATOS CONTACTO -->
+			<p:dialog id="diaContactosVeh" widgetVar="diaContactosVeh"
+				header="REGISTRO DE CONTACTOS: " width="500px"
+				height="180px" modal="true" resizable="false">
+
+				<h:panelGrid columns="2" width="100%">
+
+					<p:outputLabel value="Tipo Contacto:" styleClass="bold"
+						for="selTipo" />
+					<p:selectOneMenu id="selTipo"
+						value="#{cxcAsignacionVehiculosController.contactoSer.tipoContacto}"
+						filter="true" filterMatchMode="contains">
+						<f:selectItem itemLabel="Seleccione" itemValue=""
+							noSelectionOption="true" />
+						<f:selectItem itemLabel="Usuario Servicio" itemValue="S" />
+						<f:selectItem itemLabel="Usuario Vehiculo" itemValue="V" />
+						<p:ajax event="change" process="@this"
+							listener="#{cxcAsignacionVehiculosController.seleccionarTipo}"
+							update=":idForm:txtPlaca :idForm:lblPlaca" />
+					</p:selectOneMenu>
+					<p:outputLabel value="Nombre Contacto: " styleClass="bold"
+						for="txtNomContacto" />
+					<p:inputText id="txtNomContacto" maxlength="100"
+						value="#{cxcAsignacionVehiculosController.contactoSer.nombreContacto}" />
+
+					<p:outputLabel value="Telefono Contacto: " styleClass="bold"
+						for="txtTelefono" />
+					<p:inputText id="txtTelefono" maxlength="10" onkeyup="$(this).val($(this).val().replace(/[^0-9]/g, ''))"
+						value="#{cxcAsignacionVehiculosController.contactoSer.telefono}" />
+
+					<p:outputLabel value="Email Contacto: " styleClass="bold"
+						for="txtEmail" />
+					<p:inputText id="txtEmail" maxlength="100"
+						value="#{cxcAsignacionVehiculosController.contactoSer.email}" />
+
+					<p:outputLabel value="Placa Vehículo: " styleClass="bold"
+						id="lblPlaca"
+						style="display: #{cxcAsignacionVehiculosController.mostrarCamposPlaca ? 'block' : 'none'};" />
+
+					<p:outputLabel id="txtPlaca"
+						style="display: #{cxcAsignacionVehiculosController.mostrarCamposPlaca ? 'block' : 'none'};"
+						value="#{cxcAsignacionVehiculosController.seguimientoVeh.placa}" />
+
+					<p:outputLabel value="Estado: " styleClass="bold" style="COLOR:RED"
+						for="txtEstado" />
+					<p:outputLabel id="txtEstado" styleClass="bold"
+						value="#{cxcAsignacionVehiculosController.contactoSer.estado eq 'A' ? 'Activo':'Inactivo'}" />
+				</h:panelGrid>
+				<br />
+				<center>
+					<p:commandButton value="Guardar Contacto" styleClass="green-btn"
+						icon="fa fa-save"
+						actionListener="#{cxcAsignacionVehiculosController.guardarContacto}"
+						update=":idForm:tblDetContactos :idForm:tblDetConUsuarios" />
+				</center>
+			</p:dialog>
+
+			<!-- DIALOGO MODAL DE CLIENTES -->
+			<p:dialog header="Clientes" widgetVar="modalCLientes" modal="true"
+				showEffect="fade" hideEffect="fade" id="modalCLientes"
+				resizable="true" width="600" height="300" position="center center"
+				closeOnEscape="true">
+				<p:panelGrid columns="5" layout="grid">
+					<p:outputLabel value="Cedula:" />
+					<p:inputText id="clienteIdCC"
+						value="#{cxcAsignacionVehiculosController.cedulaClienteConsulta}"
+						size="10" />
+
+					<p:outputLabel value="Nombre:" />
+					<p:inputText id="idNombreClieC"
+						value="#{cxcAsignacionVehiculosController.nombreClienteConsulta}" />
+
+					<p:commandButton id="clienteCommandink1" icon="ui-icon-search"
+						action="#{cxcAsignacionVehiculosController.ejecutarConsultaClientes}"
+						update="tblCliente" />
+				</p:panelGrid>
+
+				<p:dataTable var="item" id="tblCliente" widgetVar="tblCliente"
+					value="#{cxcAsignacionVehiculosController.lazyModel}" paginator="true"
+					rows="10" lazy="true" rowIndexVar="var" scrollWidth="100%"
+					scrollable="true"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+					rowsPerPageTemplate="25,50" paginatorPosition="bottom"
+					style="width:90%;">
+
+					<p:column headerText="No" width="5%">
+						<p:outputLabel value="#{var + 1}" />
+					</p:column>
+					<p:column headerText="Codigo" width="15%">
+						<p:commandLink id="viClieCommandLink"
+							value="#{item.clientePK.noCliente}"
+							action="#{cxcAsignacionVehiculosController.seleccionarCliente(item)}"
+							oncomplete="PF('modalCLientes').hide();" partialSubmit="true"
+							update=":#{p:component('idPgFiltros')}" process="@this">
+						</p:commandLink>
+					</p:column>
+					<p:column headerText="Cedula" width="30%">
+						<p:outputLabel value="#{item.cedula}" />
+					</p:column>
+					<p:column headerText="Nombres/Apellidos " width="50%"
+						styleClass="txtL">
+						<p:outputLabel value="#{item.nombre}" />
+					</p:column>
+
+				</p:dataTable>
+			</p:dialog>
+
+			<!-- Cuadro de Dialogo Eliminar Contacto de Servicio -->
+			<p:confirmDialog widgetVar="diaEliminar" modal="true"
+				header="Confirmación"
+				message="Está seguro de ELIMINAR el Contacto seleccionado?">
+				<p:commandButton value="Si" process="@this"
+					actionListener="#{cxcAsignacionVehiculosController.eliminarContacto}"
+					update="@this :idForm" oncomplete="PF('diaEliminar').hide();" />
+				<p:commandButton value="No" onclick="PF('diaEliminar').hide();" />
+			</p:confirmDialog>
+
+			<!-- Cuadro de Dialogo Notificacion Arribo Cliente -->
+			<p:confirmDialog widgetVar="diaArriboCliente" modal="true"
+				header="Confirmación"
+				message="Notificar que el cliente se encuentra en la Agencia?">
+				<p:commandButton value="Enviar Notificación" process="@this"
+					actionListener="#{cxcAsignacionVehiculosController.notificarArriboCLiente}"
+					update=":idForm" oncomplete="PF('diaArriboCliente').hide();" />
+				<p:commandButton value="No" onclick="PF('diaArriboCliente').hide();" />
+			</p:confirmDialog>
+			
+				<!-- Cuadro de Dialogo Notificacion entrega manuales garantia -->
+			<p:confirmDialog widgetVar="dialogEntregaManuales" modal="true"
+				header="Confirmación"
+				message="Notificar entrega (manuales de garantia)?">
+				<p:commandButton value="Enviar Notificación" process="@this"
+					actionListener="#{cxcAsignacionVehiculosController.notificarEntregaManualesGarantia}"
+					update=":idForm" oncomplete="PF('dialogEntregaManuales').hide();" />
+				<p:commandButton value="No" onclick="PF('dialogEntregaManuales').hide();" />
+			</p:confirmDialog>
+			
+				<!-- Cuadro de Dialogo Confirmación de registro (contacto vehículo propietario)-->
+			<p:confirmDialog widgetVar="dialogConfirmRegpropietario" modal="true"
+				header="Confirmación"
+				message="Desea registrar al cliente como un contacto del vehículo (usuario)?">
+				<p:commandButton value="Registrar contacto" process="@this"					 
+					actionListener="#{cxcAsignacionVehiculosController.guardarContacto}"
+					update=":idForm :idForm:tblDetContactos :idForm:tblDetConUsuarios" 
+					  oncomplete="PF('dialogEntregaManuales').hide();" />
+				<p:commandButton value="No"
+				update=":idForm :idForm:tblDetContactos :idForm:tblDetConUsuarios" 
+					  actionListener="#{cxcAsignacionVehiculosController.activarCargaContactoManual}"				
+				 onclick="PF('dialogConfirmRegpropietario').hide();" />
+			</p:confirmDialog>
+
+		</h:form>
+
+	</ui:define>
+</ui:composition>

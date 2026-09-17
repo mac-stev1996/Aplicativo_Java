@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<h:outputStylesheet name="css/layout-lightblue.css"
+		library="serenity-layout" />
+	<style type="text/css">
+body {
+	font-size: 12px
+}
+
+body .ui-toolbar {
+	padding: 5px
+}
+
+.ui-datatable thead th, .ui-datatable tfoot td {
+	vertical-align: top;
+}
+
+div.ui-growl {
+	left: 35%;
+}
+</style>
+	<script type="text/javascript">
+		function mayus(e) {
+			e.value = e.value.toUpperCase();
+		}
+		function focoTarea(e) {
+			document.getElementById(e).focus();
+		}
+		function showStatus() {
+			PF('statusDialog').show();
+		}
+
+		function hideStatus() {
+			PF('statusDialog').hide();
+		}
+	</script>
+</h:head>
+<h:body>
+	<p:ajaxStatus onstart="PF('statusDialog').show()"
+		onsuccess="PF('statusDialog').hide()"
+		onerror="PF('statusDialog').hide()" />
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+		closable="false" resizable="false" showHeader="false">
+		<h:graphicImage value="/common/imgs/gifs/ajaxloadingbar.gif" />
+	</p:dialog>
+	<h:form id="idLiquidacionTc" enctype="multipart/form-data">
+		<p:messages id="messages" showDetail="true" autoUpdate="true"
+			closable="true" showSummary="true" />
+		<p:growl id="idGrowl" globalOnly="true" autoUpdate="true"
+			widgetVar="groMessages" showDetail="true" />
+		<p:toolbar>
+			<f:facet name="left">
+				<p:outputLabel value="LIQUIDACION DE TARJETAS DE CREDITO (CON DIARIO A)"></p:outputLabel>
+			</f:facet>
+			<f:facet name="right">
+				<p:commandButton id="idProcesar" value="Procesar"
+					icon="fa fa-caret-square-o-right"
+					action="#{cxcLiquidacionTarjetasCreditoController.cargaArchivo}"
+					ajax="false"
+					onclick="PrimeFaces.monitorDownload(showStatus, hideStatus)" update="frmResult"/>
+			</f:facet>
+		</p:toolbar>
+		<p:fieldset id="datosLiqTarjetas"
+			legend="DATOS DE LIQUIDACION TARJETA" toggleable="false">
+			<h:panelGrid columns="2">
+				<h:outputText value="Liquidar tarjeta de:" />
+				<p:selectOneMenu id="idTarjetas"
+					style="width: 150px; font-weight:bold;"
+					value="#{cxcLiquidacionTarjetasCreditoController.noCliente}"
+					filter="true" filterMatchMode="contains">
+					<f:selectItem itemLabel="SELECCIONE" itemValue="" />
+					<f:selectItems
+						value="#{cxcLiquidacionTarjetasCreditoController.clientes}"
+						var="itemTarj" itemLabel="#{itemTarj.nombre}"
+						itemValue="#{itemTarj.clientePK.noCliente}" />
+					<p:ajax event="change"
+						listener="#{cxcLiquidacionTarjetasCreditoController.limpiarDatos}"
+						process="@this" />
+
+				</p:selectOneMenu>
+			</h:panelGrid>
+			<p:selectOneRadio id="tipoLiq"
+				value="#{cxcLiquidacionTarjetasCreditoController.tipoLiquidacion}">
+				<f:selectItems
+					value="#{cxcLiquidacionTarjetasCreditoController.tiposLiquidacion}"
+					var="codigo" itemValue="#{codigo}" itemLabel="#{name}" />
+				<p:ajax event="change"
+					listener="#{cxcLiquidacionTarjetasCreditoController.limpiarDatos}"
+					update="@this"
+					process="@this" />
+			</p:selectOneRadio>
+			<br />
+			<p:outputLabel
+				value="PARA MES ACTUAL: Solo escoger opciones para cancelar RETENCION Y COMISION Individualmente"></p:outputLabel>
+			<br />
+			<p:outputLabel
+				value="PARA MESES ANTERIORES: Habilitadas todas las opciones"></p:outputLabel>
+			<br />
+			<p:fileUpload mode="simple" dragDropSupport="false"
+				value="#{cxcLiquidacionTarjetasCreditoController.file}"
+				update="messages :#{p:component('tipoLiq')}" sizeLimit="20000000"
+				skinSimple="true" fileLimit="20" allowTypes="/(\.|\/)(xls|xlsx)$/"
+				label="Seleccionar Archivo">
+			</p:fileUpload>
+		</p:fieldset>
+	</h:form>
+	<p:dialog id="DlgResultado" widgetVar="DlgResultado"  modal="true" header="Resultado">
+<h:form id="frmResult">	
+	
+	<h:outputLabel value="se ha generado el siguiente diario A : #{cxcLiquidacionTarjetasCreditoController.diarioA}" style="color:blue" rendered="#{cxcLiquidacionTarjetasCreditoController.hayDiario}"/>
+	<h:outputLabel value="No se ha generado ningun diario A, debido a que no se cancelo ninguna deuda "  rendered="!#{cxcLiquidacionTarjetasCreditoController.hayDiario} "/>
+	<br />
+	<h:outputLabel value="Las siguientes novedades han sido encontradas :" rendered="#{cxcLiquidacionTarjetasCreditoController.hayMensajes}"/>
+	<br />
+	<p:dataTable value="#{cxcLiquidacionTarjetasCreditoController.mensajes}" var="msj" paginator="true"
+	rows="5" rendered="#{cxcLiquidacionTarjetasCreditoController.hayMensajes}">
+	<p:column headerText="Mensajes">
+	<h:outputLabel value="#{msj}" style="color: #d35400"/>
+	</p:column>
+	</p:dataTable>
+	</h:form>
+	</p:dialog>
+</h:body>
+</html>

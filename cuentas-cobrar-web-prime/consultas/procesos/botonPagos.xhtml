@@ -1,0 +1,99 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+	<ui:define name="title">
+       Pagos pendientes boton pagos
+	</ui:define>
+	<ui:define name="buttons">
+		<h:form id="frmButtons" onkeypress="return event.keyCode != 13">
+
+		</h:form>
+	</ui:define>
+	<ui:define name="content">
+		<style type="text/css">
+body {
+	font-size: 11px;
+}
+
+body .ui-panelgrid .ui-panelgrid-cell {
+	padding: 2px 5px;
+}
+
+.table thead th, .table tbody tr td {
+	font-size: 10px !important;
+	padding: 2px 5px !important;
+}
+
+body .ui-messages>div {
+	padding: 4px 4px;
+	margin: 2px 2px;
+}
+
+body .ui-button .ui-button-text {
+	font-size: 11px !important;
+}
+</style>
+		<h:form id="frmBotonPago" onkeypress="return event.keyCode!=13">
+			<p:messages id="messages" showDetail="true" autoUpdate="true"
+				closable="true" showSummary="true" />
+
+			<p:dataTable id="dtRegBotonPag" var="item" resizeMode="true"
+				filterDelay="800" value="#{botonPagoController.pagos}"
+				styleClass="table" widgetVar="dtRegBotonPag" paginator="true"
+				rows="20" paginatorPosition="bottom" rowIndexVar="row"
+				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+				emptyMessage="No existen registros">
+				<p:column headerText="Fecha" style="width:70px; text-align:center">
+					<p:outputLabel value="#{item.fechaIngreso}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</p:outputLabel>
+				</p:column>
+				<p:column headerText="Identificacion" style="width:100px"
+					filterBy="#{item.identificacion}" filterStyle="width:95%;"
+					filterMatchMode="contains">
+					<p:outputLabel value="#{item.identificacion}" />
+				</p:column>
+				<p:column headerText="Nombre" style="width:200px"
+					filterBy="#{item.nombres}" filterStyle="width:95%;"
+					filterMatchMode="contains">
+					<p:outputLabel value="#{item.nombres}" />
+				</p:column>
+				<p:column headerText="Apellidos"
+					style="width:200px; text-align:center">
+					<p:outputLabel value="#{item.apellidos}" />
+				</p:column>
+				<p:column headerText="Motivo" style="width:200px;">
+					<p:outputLabel value="#{item.motivoFacturacion}" />
+				</p:column>
+				<p:column headerText="Monto" styleClass="number" style="width:40px">
+					<p:outputLabel value="#{item.monto}" />
+				</p:column>
+				<p:column headerText="Observacion" style="width:250px">
+					<p:outputLabel value="#{item.observacion}" />
+				</p:column>
+				<p:column headerText="Facturar" style="width:5%;text-align:center">
+					<p:commandButton icon="fa fa-play" title="Facturar"
+						update=":#{p:component('dtRegBotonPag')}" styleClass="green-btn"
+						actionListener="#{botonPagoController.procesarPendiente(item)}">
+						<p:confirm header="Confirmación"
+							message="Esta seguro que desea procesar la factura por el valor de: #{item.monto}"
+							icon="ui-icon-alert" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+		</h:form>
+
+	</ui:define>
+</ui:composition>

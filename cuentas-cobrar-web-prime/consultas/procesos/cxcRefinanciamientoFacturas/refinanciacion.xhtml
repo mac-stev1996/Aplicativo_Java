@@ -1,0 +1,217 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<div class="ui-g dashboard">
+		<div class="ui-g-12 ui-fluid contact-form">
+			<p:fieldset id="fsRefinanciacion">
+				<div class="ui-g-8 nopadding" style="float: right">
+					<h:panelGrid columns="4" columnClasses="w20, w30, w20, w30">
+						<p:outputLabel value="Valor Letra Interés" />
+						<p:inputNumber
+							value="#{cxcRefinanciamientoFacturasController.arccrefi.intMora}"
+							decimalPlaces="2" styleClass="number">
+							<p:ajax event="change" partialSubmit="true" global="false"
+								process="@this :idForm:pestanas:fsRefinanciacion"
+								update=":idForm:pestanas:fsRefinanciacion" />
+						</p:inputNumber>
+						<p:outputLabel value="Plazo" />
+						<p:inputNumber id="plazoMora"
+							value="#{cxcRefinanciamientoFacturasController.arccrefi.plazoMora}"
+							decimalPlaces="2" styleClass="number">
+							<p:ajax event="change" partialSubmit="true" global="false"
+								process="@this :idForm:pestanas:fsRefinanciacion"
+								listener="#{cxcRefinanciamientoFacturasController.changePlazoMora}"
+								update=":idForm:pestanas:fsRefinanciacion" />
+						</p:inputNumber>
+
+						<p:outputLabel value="Interés Diferido" />
+						<p:inputNumber
+							value="#{cxcRefinanciamientoFacturasController.arccrefi.intDiferido}"
+							decimalPlaces="2" styleClass="number">
+							<p:ajax event="change" partialSubmit="true" global="false"
+								process="@this :idForm:pestanas:fsRefinanciacion"
+								update=":idForm:pestanas:fsRefinanciacion" />
+						</p:inputNumber>
+						<p:outputLabel value="Fecha 1er Pago" />
+						<p:calendar pattern="dd/MM/yyyy" locale="es"
+							value="#{cxcRefinanciamientoFacturasController.arccrefi.fechaVencimiento}">
+							<p:ajax event="change" partialSubmit="true" global="false"
+								process="@this :idForm:pestanas:fsRefinanciacion"
+								listener="#{cxcRefinanciamientoFacturasController.changeFechaVencimiento}"
+								update=":idForm:pestanas:fsRefinanciacion" />
+							<p:ajax event="dateSelect" partialSubmit="true" global="false"
+								process="@this :idForm:pestanas:fsRefinanciacion"
+								listener="#{cxcRefinanciamientoFacturasController.changeFechaVencimiento}"
+								update=":idForm:pestanas:fsRefinanciacion" />
+						</p:calendar>
+
+						<p:outputLabel value="Total Interés a Financiar" />
+						<p:inputNumber readonly="true"
+							value="#{cxcRefinanciamientoFacturasController.arccrefi.totalIntereses}"
+							decimalPlaces="2" styleClass="number" />
+						<p:outputLabel value="Cuota Mensual" />
+						<p:inputNumber readonly="true"
+							value="#{cxcRefinanciamientoFacturasController.arccrefi.letraMora}"
+							decimalPlaces="2" styleClass="number" />
+					</h:panelGrid>
+				</div>
+				<div class="ui-g-12 nopadding">
+					<br />
+					<hr />
+					<br />
+				</div>
+				<div class="ui-g-9 nopadding">
+					<p:remoteCommand name="commandCliente"
+						process="@this :idForm:pestanas:fsRefinanciacion"
+						partialSubmit="true" oncomplete="PF('dlgClientesW').show()" />
+					<p:remoteCommand name="commandGarante"
+						process="@this :idForm:pestanas:fsRefinanciacion"
+						partialSubmit="true" oncomplete="PF('dlgGarantesW').show()" />
+					<h:panelGrid columns="3" width="100%" columnClasses="w20, w20, w60">
+						<p:outputLabel value="Cliente" />
+						<p:inputText maxlength="15"
+							value="#{cxcRefinanciamientoFacturasController.arccrefi.cedDeudorNuevo}"
+							onkeydown="if (event.keyCode == 120 ) {commandCliente(); return false;}">
+							<p:ajax event="change" partialSubmit="true"
+								process="@this, :idForm:pestanas:fsRefinanciacion"
+								listener="#{cxcRefinanciamientoFacturasController.validarCedulaDeudor}"
+								update="idForm:pestanas:fsRefinanciacion :idForm:dlgClientes" />
+						</p:inputText>
+						<p:inputText styleClass="nopadding" readonly="true"
+							value="#{cxcRefinanciamientoFacturasController.arccrefi.nomClienteNuevo}" />
+
+						<p:outputLabel value="Otros Cargos" />
+						<p:inputNumber readonly="true"
+							value="#{cxcRefinanciamientoFacturasController.arccrefi.otrosCargos}"
+							decimalPlaces="2" styleClass="number" />
+						<p:outputLabel />
+
+						<p:outputLabel value="Capital Deuda Anterior" />
+						<p:inputNumber readonly="true"
+							value="#{cxcRefinanciamientoFacturasController.arccrefi.subtotal}"
+							decimalPlaces="2" styleClass="number" />
+						<h:panelGrid columnClasses="w100" style="float:right">
+							<p:commandButton value="Calcular Alícuota" partialSubmit="true"
+								process=":idForm:pestanas:fsRefinanciacion"
+								actionListener="#{cxcRefinanciamientoFacturasController.calcularAlicuota}"
+								update=":idForm:pestanas:fsRefinanciacion"
+								style="margin-top:0px;" />
+						</h:panelGrid>
+
+						<p:outputLabel value="TOTAL A REFINANCIAR" />
+						<p:inputNumber readonly="true"
+							value="#{cxcRefinanciamientoFacturasController.arccrefi.saldoRefinanciar}"
+							decimalPlaces="2" styleClass="number" />
+						<p:outputLabel />
+
+					</h:panelGrid>
+
+					<h:panelGrid columns="3" width="100%"
+						columnClasses="w30, dummy, w30">
+
+						<p:outputLabel value="Tipo Entidad Financiera" />
+						<p:selectOneMenu
+							value="#{cxcRefinanciamientoFacturasController.arccrefi.tipoFinanciacion}">
+							<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+							<f:selectItems
+								value="#{cxcRefinanciamientoFacturasController.listaEntidadesFinancieras}"
+								var="item" itemLabel="#{item[0]} - #{item[1]}"
+								itemValue="#{item[0]}" />
+							<p:ajax event="itemSelect" partialSubmit="true" global="false"
+								process="@this :idForm:pestanas:fsRefinanciacion"
+								listener="#{cxcRefinanciamientoFacturasController.changeTipoFinanciacion}"
+								update=":idForm:pestanas:fsRefinanciacion" />
+						</p:selectOneMenu>
+						<h:panelGrid columns="2" columnClasses="w30, w70">
+							<p:outputLabel value="Línea" />
+							<p:inputText readonly="true"
+								value="#{cxcRefinanciamientoFacturasController.arccrefi.lineaFinanciacion}" />
+						</h:panelGrid>
+
+					</h:panelGrid>
+
+					<h:panelGrid columns="3" width="100%" columnClasses="w20, w20, w60">
+
+						<p:outputLabel value="Pagos por año" />
+						<p:selectOneMenu
+							value="#{cxcRefinanciamientoFacturasController.arccrefi.pagosPorAno}">
+							<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+							<f:selectItem itemLabel="Mensual" itemValue="12" />
+							<f:selectItem itemLabel="Bimensual" itemValue="6" />
+							<f:selectItem itemLabel="Trimestral" itemValue="4" />
+							<f:selectItem itemLabel="Cuatrimestral" itemValue="3" />
+							<f:selectItem itemLabel="Semestral" itemValue="2" />
+							<f:selectItem itemLabel="Anual" itemValue="1" />
+							<p:ajax event="change" partialSubmit="true" global="false"
+								process="@this :idForm:pestanas:fsRefinanciacion"
+								listener="#{cxcRefinanciamientoFacturasController.changePagosPorAnio}"
+								update=":idForm:pestanas:fsRefinanciacion" />
+						</p:selectOneMenu>
+						<h:panelGrid columns="2" columnClasses="w30, w70">
+							<p:outputLabel value="Plazo" />
+							<p:inputNumber id="plazoCredito" maxValue="999" decimalPlaces="0"
+								styleClass="number"
+								value="#{cxcRefinanciamientoFacturasController.arccrefi.plazoCredito}">
+								<p:ajax event="change" partialSubmit="true" global="false"
+									process="@this :idForm:pestanas:fsRefinanciacion"
+									listener="#{cxcRefinanciamientoFacturasController.changePlazoCredito}"
+									update=":idForm:pestanas:fsRefinanciacion" />
+							</p:inputNumber>
+						</h:panelGrid>
+
+						<p:outputLabel value="Tasa Financiación (%)" />
+						<p:inputNumber readonly="true"
+							value="#{cxcRefinanciamientoFacturasController.arccrefi.tasaFinancia}"
+							decimalPlaces="2" styleClass="number" />
+						<p:outputLabel />
+
+						<p:outputLabel value="Fecha Primer Pago" />
+						<p:calendar pattern="dd/MM/yyyy" locale="es"
+							value="#{cxcRefinanciamientoFacturasController.arccrefi.fechaPrimerVenc}">
+							<p:ajax event="change" partialSubmit="true" global="false"
+								process="@this :idForm:pestanas:fsRefinanciacion"
+								listener="#{cxcRefinanciamientoFacturasController.changeFechaPrimerVencimiento}"
+								update=":idForm:pestanas:fsRefinanciacion" />
+							<p:ajax event="dateSelect" partialSubmit="true" global="false"
+								process="@this :idForm:pestanas:fsRefinanciacion"
+								listener="#{cxcRefinanciamientoFacturasController.changeFechaPrimerVencimiento}"
+								update=":idForm:pestanas:fsRefinanciacion" />
+						</p:calendar>
+						<h:panelGrid columns="2" columnClasses="w30, w70">
+							<p:outputLabel value="Alícuota" />
+							<p:inputNumber readonly="true" decimalPlaces="2"
+								styleClass="number"
+								value="#{cxcRefinanciamientoFacturasController.arccrefi.cuotaMensual}" />
+						</h:panelGrid>
+
+						<p:outputLabel value="Garante" />
+						<p:inputText maxlength="15"
+							value="#{cxcRefinanciamientoFacturasController.arccrefi.cedulaGarante}"
+							onkeydown="if (event.keyCode == 120 ) {commandGarante(); return false;}">
+							<p:ajax event="change" partialSubmit="true"
+								process="@this, :idForm:pestanas:fsRefinanciacion"
+								listener="#{cxcRefinanciamientoFacturasController.validarCedulaGarante}"
+								update="idForm:pestanas:fsRefinanciacion :idForm:dlgGarantes" />
+						</p:inputText>
+						<p:inputText styleClass="nopadding" readonly="true"
+							value="#{cxcRefinanciamientoFacturasController.arccrefi.nomClienteGarante}" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="2" width="100%" columnClasses="w20, w80">
+						<p:outputLabel value="Observaciones" />
+						<p:inputText styleClass="nopadding" maxlength="120"
+							value="#{cxcRefinanciamientoFacturasController.arccrefi.observaciones2}" />
+						<p:outputLabel />
+					</h:panelGrid>
+				</div>
+			</p:fieldset>
+
+		</div>
+	</div>
+
+
+</ui:composition>

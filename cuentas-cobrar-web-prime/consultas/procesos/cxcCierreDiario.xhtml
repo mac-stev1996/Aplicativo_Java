@@ -1,0 +1,127 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Cuentas por Cobrar - Cierre Diario
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="fmrButtons">
+			<p:commandButton title="Buscar" icon="ui-icon ui-icon-search"
+				partialSubmit="true" process="@this"
+				actionListener="#{cxcCierreDiarioController.cargarLista}"
+				update="@this, :idForm:tblCabecera" />
+			<p:commandButton title="Cerrar" value="CERRAR" styleClass="green-btn"
+				partialSubmit="true" process="@this, :idForm:tblCabecera"
+				actionListener="#{cxcCierreDiarioController.cerrar}"
+				update="@this, :idForm:tblCabecera" />
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+		<style>
+.visualCaja {
+	color: red;
+	font-weight: bold;
+}
+</style>
+		<h:form id="idForm">
+
+			<div class="ui-g dashboard">
+				<div class="ui-g-12 ui-fluid contact-form">
+
+					<ui:remove>
+						<p:panelGrid id="pgFiltros" columns="10">
+							<p:outputLabel value="Centro:" />
+							<p:inputText value="#{cxcCierreDiarioController.centro}"
+								maxlength="2" />
+							<p:outputLabel value="Día Caja:" />
+							<p:calendar value="#{cxcCierreDiarioController.diaCaja}"
+								pattern="dd/MM/yyyy" locale="es" />
+							<p:outputLabel value="Año:" />
+							<p:inputNumber value="#{cxcCierreDiarioController.anio}"
+								maxValue="99999" decimalPlaces="0" thousandSeparator="" />
+							<p:outputLabel value="Mes:" />
+							<p:inputNumber value="#{cxcCierreDiarioController.mes}"
+								maxValue="999" decimalPlaces="0" thousandSeparator="" />
+							<p:outputLabel value="Día:" />
+							<p:calendar value="#{cxcCierreDiarioController.dia}"
+								pattern="dd/MM/yyyy" locale="es" />
+						</p:panelGrid>
+
+						<br />
+					</ui:remove>
+
+					<p:dataTable id="tblCabecera" widgetVar="tblCabeceraW"
+						emptyMessage="No existen registros"
+						rowStyleClass="#{item.rowStyle}"
+						value="#{cxcCierreDiarioController.lista}" var="item"
+						rowKey="#{item.id}" rowIndexVar="var" scrollable="true"
+						scrollHeight="400">
+
+						<p:column headerText="Centro" width="10%">
+							<p:outputLabel value="#{item.id.centro}" />
+						</p:column>
+
+						<p:column headerText="Descripción" width="30%">
+							<p:outputLabel value="#{item.nomCentro}" />
+						</p:column>
+
+						<p:column headerText="Día Caja" width="20%">
+							<p:outputLabel value="#{item.diaProcesoCaja}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</p:outputLabel>
+						</p:column>
+
+						<p:column headerText="Año" width="10%">
+							<p:outputLabel value="#{item.anoProceCxc}" />
+						</p:column>
+
+						<p:column headerText="Mes" width="10%">
+							<p:outputLabel value="#{item.mesProceCxc}" />
+						</p:column>
+
+						<p:column headerText="Día" width="10%">
+							<p:outputLabel value="#{item.diaProcesoCxc}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</p:outputLabel>
+						</p:column>
+
+						<p:column headerText="Semana" width="10%">
+							<p:outputLabel value="#{item.semanaProceCxc}" />
+						</p:column>
+
+						<p:column width="10%">
+							<p:outputLabel value="#{item.faltaContabilizar}" rendered="#{item.faltaContabilizar eq 'NO'}" />
+							<p:commandLink value="#{item.faltaContabilizar}" rendered="#{item.faltaContabilizar eq 'SI'}"
+								actionListener="#{cxcCierreDiarioController.irAGeneracionAsiento(item)}" />
+						</p:column>
+
+					</p:dataTable>
+
+					<div
+						style="width: 20px; height: 20px; background-color: darkturquoise; margin: 15px 0 0 10px; display: inline-flex;" />
+					<p:outputLabel value="Pendiente de Contabilizar" />
+					<br />
+					<div
+						style="width: 20px; height: 20px; background-color: red; margin: 5px 0 0 10px; display: inline-flex;" />
+					<p:outputLabel
+						value="Tiene que cerrar la Caja (Día caja no puede ser menor o igual al día de CXC)" />
+				</div>
+			</div>
+
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+			</p:confirmDialog>
+		</h:form>
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,495 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Aprobacion de Proformas
+	</ui:define>
+
+	<ui:define name="content">
+		<style>
+.w25 {
+	width: 25%;
+}
+
+.firstColumn {
+	width: 8em;
+}
+</style>
+		<script type="text/javascript">
+		function mayus(e) {
+		    e.value = e.value.toUpperCase();
+		}
+	
+	</script>
+		<h:form id="idForm">
+			<div class="ui-g dashboard">
+				<div class="ui-g-12 ui-fluid contact-form">
+					<div class="ui-g-12">
+						<p:tabView>
+							<p:tab title="Aprobacion de Proformas (CXC)">
+								<p:dataTable id="tblCotizacion" widgetVar="tblCotizacion"
+									emptyMessage="No existen registros"
+									value="#{cxcCotizacionRepuestosController.listdoCotizacionRepuestos}"
+									var="item" rowKey="#{item.id}" paginator="true"
+									paginatorAlwaysVisible="false" filterDelay="1000" rows="10"
+									paginatorPosition="bottom" selectionMode="single"
+									paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+									<p:ajax event="rowSelect"
+										listener="#{cxcCotizacionRepuestosController.onRowSelect}"
+										update="idForm" partialSubmit="true" process="@this, idForm"
+										global="true" />
+
+									<p:column headerText="Centro" width="10%"
+										style="text-align: center;">
+										<p:commandLink title="Click para Detalle"
+											actionListener="#{cxcCotizacionRepuestosController.detalleCotizacion(item)}"
+											value="#{item.centro}"
+											style="font-size: 12px !important;font-weight:bold;text-decoration-line: underline;"
+											partialSubmit="true" update=":proformas"
+											process="@this, idForm" />
+									</p:column>
+									<p:column headerText="Estado" width="10%"
+										style="text-align: center;">
+										<p:selectOneMenu value="#{item.aprobadoCredito}"
+											disabled="true">
+											<f:selectItem itemLabel="Pendiente" itemValue="P" />
+											<f:selectItem itemLabel="Aprobado" itemValue="S" />
+											<f:selectItem itemLabel="Negado" itemValue="N" />
+
+										</p:selectOneMenu>
+									</p:column>
+									<p:column headerText="Proformas" width="10%"
+										filterBy="#{item.noFisico}" sortBy="#{item.noFisico}"
+										style="text-align: center;">
+										<p:outputLabel value="#{item.noFisico}" />
+									</p:column>
+
+									<p:column headerText="Numero Cotizacion" width="10%"
+										filterBy="#{item.id.numeroCotizacion}"
+										style="text-align: center;"
+										sortBy="#{item.id.numeroCotizacion}">
+										<p:outputLabel value="#{item.id.numeroCotizacion}" />
+									</p:column>
+									<p:column headerText="Fecha Elaboracion" width="10%"
+										style="text-align: center;" sortBy="#{item.fechaElabora}">
+										<p:outputLabel value="#{item.fechaElabora}">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</p:outputLabel>
+									</p:column>
+
+									<p:column headerText="Vendedor" width="30%"
+										style="text-align: center;">
+										<p:outputLabel value="#{item.nombreVendedor}" />
+									</p:column>
+									<p:column headerText="Cliente" width="30%"
+										style="text-align: center;" filterBy="#{item.nombreCliente}"
+										sortBy="#{item.nombreCliente}">
+										<p:outputLabel value="#{item.nombreCliente}" />
+									</p:column>
+								</p:dataTable>
+								<div class="ui-g-12">
+									<p:outputLabel
+										value="#{cxcCotizacionRepuestosController.cotizacionRepuestoEdited.comentarioAprob}" />
+								</div>
+							</p:tab>
+
+							<p:tab title="Proformas Colaborador">
+								<p:dataTable id="tblColaborador" widgetVar="tblColaborador"
+									emptyMessage="No existen registros"
+									value="#{cxcCotizacionRepuestosController.listdoProformasColaborador}"
+									var="prof" rowKey="#{prof.pk}" paginator="true"
+									paginatorAlwaysVisible="false" filterDelay="1000" rows="10"
+									paginatorPosition="bottom"
+									paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+
+									<p:column headerText="Fecha" width="20%"
+										style="text-align: center;">
+										<p:outputLabel value="#{prof.fecha}">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</p:outputLabel>
+									</p:column>
+
+									<p:column headerText="Tipo Doc" width="7%"
+										style="text-align: center;">
+										<p:outputLabel value="#{prof.pk.tipoDoc}" />
+									</p:column>
+
+									<p:column headerText="No Profor" width="15%"
+										style="text-align: center;">
+										<p:outputLabel value="#{prof.noFisico}" />
+									</p:column>
+									<p:column headerText="Ruta" width="10%"
+										style="text-align: center;">
+										<p:outputLabel value="#{prof.pk.ruta}" />
+									</p:column>
+									<p:column headerText="No Cliente" width="10%"
+										style="text-align: center;">
+										<p:outputLabel value="#{prof.noCliente}" />
+									</p:column>
+									<p:column width="35%" style="text-align: center;">
+										<p:outputLabel value="#{prof.nbrCliente}" />
+									</p:column>
+									<p:column headerText="No Vendedor" width="7%"
+										style="text-align: center;">
+										<p:outputLabel value="#{prof.noVendedor}" />
+									</p:column>
+									<p:column headerText="Total" width="7%"
+										style="text-align: center;">
+										<p:outputLabel value="#{prof.total}">
+											<f:convertNumber pattern="###0.00" />
+										</p:outputLabel>
+									</p:column>
+									<p:column width="5%">
+										<p:commandButton title="Autorizado" partialSubmit="true"
+											value="Aut..?" process="@this, idForm"
+											style="margin-top: 0px !important"
+											actionListener="#{cxcCotizacionRepuestosController.autorizar(prof)}"
+											update="idForm">
+
+											<p:confirm header="Confirmación"
+												message="Esta seguro que desea aprobar esta proforma...?"
+												icon="ui-icon-alert" />
+										</p:commandButton>
+										<p:confirmDialog global="true" showEffect="fade"
+											hideEffect="fade">
+											<p:commandButton value="Si" type="button"
+												styleClass="ui-confirmdialog-yes" icon="fa fa-check" />
+											<p:commandButton value="No" type="button"
+												styleClass="ui-confirmdialog-no" icon="fa fa-times" />
+										</p:confirmDialog>
+									</p:column>
+									<p:column width="7%">
+										<p:commandButton title="Negar" partialSubmit="true"
+											value="Negar..?" process="@this, idForm"
+											style="margin-top: 0px !important"
+											actionListener="#{cxcCotizacionRepuestosController.negar(prof)}"
+											update="idForm">
+
+											<p:confirm header="Confirmación"
+												message="Esta seguro que desea negar esta proforma...?"
+												icon="ui-icon-alert" />
+										</p:commandButton>
+										<p:confirmDialog global="true" showEffect="fade"
+											hideEffect="fade">
+											<p:commandButton value="Si" type="button"
+												styleClass="ui-confirmdialog-yes" icon="fa fa-check" />
+											<p:commandButton value="No" type="button"
+												styleClass="ui-confirmdialog-no" icon="fa fa-times" />
+										</p:confirmDialog>
+									</p:column>
+								</p:dataTable>
+
+							</p:tab>
+						</p:tabView>
+
+					</div>
+				</div>
+			</div>
+		</h:form>
+		<p:dialog widgetVar="proformas" id="proformas"
+			header="Detalle Proforma" resizable="true" modal="true"
+			closable="true" appendTo="@(body)" width="450" height="650"
+			closeOnEscape="true" position="center center">
+			<h:form id="idFrmProformas">
+				<div class="ui-g dashboard">
+					<div class="ui-g-12 ui-fluid contact-form">
+						<div class="ui-g-12">
+							<div class="ui-g-9">
+								<p:outputLabel value="Cedula : " style="width:100%" />
+								<p:inputText
+									value="#{cxcCotizacionRepuestosController.cotizacionRepuestoSelected.cedulaDeudor} #{cxcCotizacionRepuestosController.cotizacionRepuestoSelected.nombreCliente}"
+									readonly="true" />
+							</div>
+							<div class="ui-g-3">
+								<p:outputLabel value="No. Coti : " style="width:100%" />
+								<p:inputText
+									value="#{cxcCotizacionRepuestosController.cotizacionRepuestoSelected.id.numeroCotizacion}"
+									readonly="true" />
+
+							</div>
+						</div>
+
+						<div class="ui-g-12">
+							<p:tabView>
+								<p:tab title="Financiamiento">
+									<p:fieldset legend="Financiamiento" style="margin-bottom:1px">
+										<div class="ui-g-12">
+											<h:panelGrid columns="4">
+												<p:outputLabel value="SubTotal : " style="width:100%" />
+												<p:inputText
+													value="#{cxcCotizacionRepuestosController.cotizacionRepuestoSelected.subtotal}"
+													readonly="true" />
+												<p:outputLabel value="Pagos por año : " style="width:100%" />
+												<p:inputText
+													value="#{cxcCotizacionRepuestosController.cotizacionRepuestoSelected.pagosPorAno}"
+													readonly="true" />
+												<p:outputLabel value="Descuento : " style="width:100%" />
+												<p:inputText
+													value="#{cxcCotizacionRepuestosController.cotizacionRepuestoSelected.descuento}"
+													readonly="true" />
+												<p:outputLabel value="Plazo Credito : " style="width:100%" />
+												<p:inputText
+													value="#{cxcCotizacionRepuestosController.cotizacionRepuestoSelected.plazoCredito}"
+													readonly="true" />
+												<p:outputLabel value="Otros Cargos : " style="width:100%" />
+												<p:inputText
+													value="#{cxcCotizacionRepuestosController.cotizacionRepuestoSelected.otrosCargos}"
+													readonly="true" />
+												<p:outputLabel value="Tasa Financiacimento : "
+													style="width:100%" />
+												<p:inputText
+													value="#{cxcCotizacionRepuestosController.cotizacionRepuestoSelected.tasaFinancia}"
+													readonly="true" />
+												<p:outputLabel value="Neto : " style="width:100%" />
+												<p:inputText
+													value="#{cxcCotizacionRepuestosController.cotizacionRepuestoSelected.neto}"
+													readonly="true" />
+												<p:outputLabel value="Letras : " style="width:100%" />
+												<p:inputText
+													value="#{cxcCotizacionRepuestosController.cotizacionRepuestoSelected.periodo}"
+													readonly="true" />
+												<p:outputLabel value="Iva : " style="width:100%" />
+												<p:inputText
+													value="#{cxcCotizacionRepuestosController.cotizacionRepuestoSelected.iva}"
+													readonly="true" />
+												<p:outputLabel value="Couta Mensual : " style="width:100%" />
+												<p:inputText
+													value="#{cxcCotizacionRepuestosController.cotizacionRepuestoSelected.cuotaMensual}"
+													readonly="true" />
+												<p:outputLabel value="Transporte : " style="width:100%" />
+												<p:inputText
+													value="#{cxcCotizacionRepuestosController.cotizacionRepuestoSelected.transporte}"
+													readonly="true" />
+												<p:outputLabel value="Interes : " style="width:100%" />
+												<p:inputText
+													value="#{cxcCotizacionRepuestosController.cotizacionRepuestoSelected.intereses}"
+													readonly="true" />
+
+												<p:outputLabel value="Cuota de Entrada : "
+													style="width:100%" />
+												<p:inputText
+													value="#{cxcCotizacionRepuestosController.cotizacionRepuestoSelected.cuotaDeEntrada}"
+													readonly="true" />
+												<p:outputLabel value="Total General : " style="width:100%" />
+												<p:inputText
+													value="#{cxcCotizacionRepuestosController.cotizacionRepuestoSelected.totalGeneral}"
+													readonly="true" />
+
+												<p:outputLabel value="Saldo Financiar : " style="width:100%" />
+												<p:inputText
+													value="#{cxcCotizacionRepuestosController.cotizacionRepuestoSelected.saldoFinanciar}"
+													readonly="true" />
+
+											</h:panelGrid>
+
+										</div>
+
+										<div class="ui-g-12">
+											<div class="ui-g-6">
+												<p:commandButton value="Saldos Vencidos"
+													partialSubmit="true" process="@this, idDlgSaldos"
+													style="width:100%"
+													action="#{cxcCotizacionRepuestosController.abrirDialogoSaldo}"
+													update=":idForm, :idFormSaldos"></p:commandButton>
+											</div>
+											<div class="ui-g-6">
+												<p:commandButton partialSubmit="true" value="Estado Cuenta"
+													action="#{cxcCotizacionRepuestosController.abrirDialogReport}"
+													process="@this" update=":idFormEstadoCuenta"
+													style="width:100%" />
+											</div>
+										</div>
+
+
+									</p:fieldset>
+								</p:tab>
+								<p:tab title="Aprobacion" id="aprobacion">
+									<p:fieldset legend="Aprobacion" style="margin-bottom:1px">
+										<div class="ui-g-12">
+											<h:panelGrid columns="2">
+												<h:panelGrid columns="2">
+													<p:outputLabel value="Cupo Cliente : " style="width:100%" />
+													<p:inputText
+														value="#{cxcCotizacionRepuestosController.cotizacionRepuestoSelected.limiteCupo}"
+														readonly="true" />
+													<p:outputLabel />
+													<p:outputLabel />
+													<p:outputLabel value="Cupo Asignado: " style="width:100%" />
+													<p:inputText
+														value="#{cxcCotizacionRepuestosController.cotizacionRepuestoSelected.cupoAsignadoNuevo}">
+
+
+														<p:ajax event="change"
+															listener="#{cxcCotizacionRepuestosController.calcularSobreCupo}"
+															process="@this,aprobacion" update="aprobacion"
+															global="false" partialSubmit="true"></p:ajax>
+
+													</p:inputText>
+
+
+													<p:outputLabel value="Cupo Disponible : "
+														style="width:100%" />
+													<p:inputText
+														value="#{cxcCotizacionRepuestosController.cotizacionRepuestoSelected.cupoDisponbible}"
+														readonly="true" />
+													<p:outputLabel value="Cupo Solicitado : "
+														style="width:100%" />
+													<p:inputText
+														value="#{cxcCotizacionRepuestosController.cotizacionRepuestoSelected.cupoSolicitado}"
+														readonly="true" />
+													<p:outputLabel value="Nuevo Cupo Disponible : "
+														style="width:100%" />
+													<p:inputText
+														value="#{cxcCotizacionRepuestosController.cotizacionRepuestoSelected.nuevoCupoDisponible}"
+														readonly="true" />
+
+												</h:panelGrid>
+
+												<p:fieldset legend="Credito Temporal">
+													<h:panelGrid columns="2">
+														<p:outputLabel value="Dias:" style="width:100%" />
+														<p:inputText
+															value="#{cxcCotizacionRepuestosController.cotizacionRepuestoSelected.dias}"
+															readonly="true" />
+														<p:outputLabel value="Aut:" style="width:75%" />
+														<p:inputText
+															value="#{cxcCotizacionRepuestosController.cotizacionRepuestoSelected.garancheck}" />
+													</h:panelGrid>
+												</p:fieldset>
+											</h:panelGrid>
+										</div>
+
+										<div class="ui-g-3">
+											<p:outputLabel value="Estado : " style="width:90%" />
+											<p:selectOneMenu
+												value="#{cxcCotizacionRepuestosController.cotizacionRepuestoSelected.aprobadoCredito}">
+												<f:selectItem itemLabel="Pendiente" itemValue="P"
+													noSelectionOption="true" />
+												<f:selectItem itemLabel="Aprobado" itemValue="S" />
+												<f:selectItem itemLabel="Negado" itemValue="N" />
+											</p:selectOneMenu>
+										</div>
+										<br />
+										<div class="ui-g-12">
+											<p:outputLabel value="Comentario Apro : " style="width:100%" />
+											<p:inputText
+												value="#{cxcCotizacionRepuestosController.cotizacionRepuestoSelected.comentarioAprob}"></p:inputText>
+										</div>
+
+
+										<br />
+
+										<center>
+											<p:commandButton value="Actualizar" partialSubmit="true"
+												process="@this, proformas" style="width:50%"
+												action="#{cxcCotizacionRepuestosController.actualizar}"
+												update=":idForm, :idFrmProformas"></p:commandButton>
+										</center>
+
+									</p:fieldset>
+
+								</p:tab>
+							</p:tabView>
+						</div>
+					</div>
+				</div>
+				<h:inputHidden value="/reports/EstadoCuentaClienteResumido.jasper"
+					binding="#{cxcCotizacionRepuestosController.reportPath}" />
+			</h:form>
+		</p:dialog>
+		<p:dialog header="Saldos Vencidos" id="idDlgSaldos"
+			widgetVar="idDlgSaldos" modal="true" showEffect="fade"
+			hideEffect="fade" resizable="true" width="400" height="auto"
+			closable="true" position="center center" closeOnEscape="true">
+
+			<h:form id="idFormSaldos">
+
+				<p:dataTable id="tblSaldos" widgetVar="tblSaldos"
+					emptyMessage="No existen registros"
+					value="#{cxcCotizacionRepuestosController.listadoSaldo}"
+					var="saldo" paginator="true" paginatorAlwaysVisible="false"
+					filterDelay="1000" rows="10" paginatorPosition="bottom"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+					<p:column headerText="Concepto" width="30%"
+						style="text-align: center;">
+						<p:outputLabel value="#{saldo[1]}">
+
+						</p:outputLabel>
+					</p:column>
+					<p:column headerText="Monto" width="10%"
+						style="text-align: center;">
+						<p:outputLabel value="#{saldo[2]}" />
+					</p:column>
+
+					<p:column headerText="Linea" width="10%"
+						style="text-align: center;">
+						<p:outputLabel value="#{saldo[3]}" />
+					</p:column>
+
+					<p:summaryRow>
+						<p:column style="text-align:right">
+							<p:outputLabel value="Total:" />
+						</p:column>
+						<p:column>
+							<p:outputLabel
+								value="#{cxcCotizacionRepuestosController.totalSaldo}">
+								<f:convertNumber pattern="##,##0.00" />
+							</p:outputLabel>
+						</p:column>
+					</p:summaryRow>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+		<p:dialog header="Estado De Cuenta" id="idDlgEstadoCuenta"
+			widgetVar="idDlgEstadoCuenta" modal="true" showEffect="fade"
+			hideEffect="fade" resizable="true" width="400" height="150"
+			closable="true" position="center center" closeOnEscape="true">
+			<h:form id="idFormEstadoCuenta">
+				<h:panelGrid columns="2">
+
+					<p:outputLabel value="Linea de negocio:" />
+					<p:selectOneMenu filter="true"
+						value="#{cxcCotizacionRepuestosController.codLinea}">
+						<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+						<f:selectItems
+							value="#{cxcCotizacionRepuestosController.listLineasNegocio}"
+							var="item"
+							itemLabel="#{item.lineaNegocioPK.noLinea} - #{item.descripcion}"
+							itemValue="#{item.lineaNegocioPK.noLinea}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Tipo de reporte: " />
+					<p:selectOneMenu
+						value="#{cxcCotizacionRepuestosController.tipoReporte}">
+						<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+						<f:selectItem itemLabel="Resumido" itemValue="R" />
+						<f:selectItem itemLabel="Detallado clientes" itemValue="D" />
+					</p:selectOneMenu>
+
+				</h:panelGrid>
+
+				<p:commandButton value="Excel"
+					style="margin-top:15px; margin-right: 15px;"
+					icon="fa fa-file-excel-o" styleClass="green-btn" ajax="false"
+					onclick="form.target='_blank'" process="@this" partialSubmit="true"
+					update="@this"
+					actionListener="#{cxcCotizacionRepuestosController.estadoCuentaReport}">
+					<f:param name="format" value="excel" />
+				</p:commandButton>
+
+				<p:commandButton value="PDF" style="margin-top:15px;"
+					icon="fa fa-file-pdf-o" styleClass="blue-btn" ajax="false"
+					onclick="form.target='_blank'" process="@this" update="@this"
+					actionListener="#{ccxcCotizacionRepuestosController.estadoCuentaReport}">
+					<f:param name="format" value="pdf" />
+				</p:commandButton>
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:head>
+
+	<script type="text/javascript">
+     function anular(e) {
+          tecla = (document.all) ? e.keyCode : e.which;
+          return (tecla != 13);
+     }
+</script>
+	<h:outputScript library="js" name="util.js"></h:outputScript>
+
+	<h:outputStylesheet name="css/layout-lightblue.css"
+		library="serenity-layout" />
+
+	<style type="text/css">
+body {
+	font-size: 10px;
+}
+
+body .ui-toolbar {
+	padding: 5px;
+}
+
+.columAlignCenter {
+	text-align: center;
+}
+
+.columAlignRight {
+	text-align: right;
+}
+
+body .ui-dialog .ui-dialog-titlebar {
+	background-color: #0288D1;
+}
+
+table.companyHeaderGrid.ui-panelgrid>tbody>tr {
+	border-color: white !important;
+	margin: 0 auto !important;
+	padding: 1px 2px !important;
+}
+
+body .ui-toolbar {
+	padding: 1px;
+}
+
+div.size-small-text-header.ui-datatable thead th>* {
+	font-size: 10px
+}
+
+.ui-datatable thead th, .ui-datatable tfoot td {
+	vertical-align: top;
+}
+
+div.ui-datatable.less-padding tbody tr td {
+	padding: 1px 2px;
+}
+
+body .ui-panelgrid .ui-panelgrid-cell {
+	padding: 0px 0px !important;
+}
+
+.pgTop>tbody>tr>td {
+    vertical-align: top;
+}
+
+.panelColumns td {
+    vertical-align: top; 
+} 
+
+</style>
+
+</h:head>
+<h:body onkeypress="return anular(event)">
+<p:ajaxStatus onstart="PF('statusDialog').show()"
+		onsuccess="PF('statusDialog').hide()"
+		onerror="PF('statusDialog').hide()" />
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+		closable="false" resizable="false" showHeader="false">
+		<h:graphicImage value="/common/imgs/gifs/ajaxloadingbar.gif" />
+	</p:dialog>
+	<h:form id="form" onkeypress="return anular(event)">
+		<p:ajaxStatus onstart="PF('statusDialog').show()"
+			onsuccess="PF('statusDialog').hide()"
+			onerror="PF('statusDialog').hide()" />
+		<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+			closable="false" resizable="false" showHeader="false">
+			<h:graphicImage value="/common/imgs/gifs/ajaxloadingbar.gif" />
+		</p:dialog>
+		<p:growl id="messages" globalOnly="false" autoUpdate="true" 
+			widgetVar="groMessages" showDetail="true" life="5000" />
+		<p:toolbar styleClass="toolbarStyle">
+			<f:facet name="left">
+				<i class="fa fa-money fa-2x"></i>
+				<b><p:outputLabel style="font-size: 15px;"
+						value="  CAMBIO DE DINERO CLIENTE" /></b>
+			</f:facet>
+			<f:facet name="right">
+				<p:commandButton icon="fa fa-refresh"
+					title="Limpiar Pantalla"
+					actionListener="#{cxcAutomatizacionDiariosAController.limpiarPantalla}"
+					partialSubmit="true" update="form" />
+
+				<p:commandButton icon="fa fa-save" 
+					title="Generar Diarios A"
+					rendered="#{cxcAutomatizacionDiariosAController.desactivarBtnProcesar}"
+					actionListener="#{cxcAutomatizacionDiariosAController.procesar}"
+					partialSubmit="true"
+					process="@this :#{p:component('idPnlgDatos')} :#{p:component('idBeneficiariosTable')}"
+					styleClass="green-btn"
+					update="form :#{p:component('messages')} idFormDlgClientes" />
+				
+				<p:commandButton icon="fa fa-reply"
+					title="Regresar" rendered="#{cxcAutomatizacionDiariosAController.pOrigen eq 'D'}"
+					actionListener="#{cxcAutomatizacionDiariosAController.pantallaDevolucion}"
+					partialSubmit="true" update="form" />
+				
+				
+
+			</f:facet>
+
+		</p:toolbar>
+
+		<p:panelGrid id="idPnlgDatos" style="width: 100%"
+			styleClass="companyHeaderGrid less-padding">
+
+			<p:row>
+
+				<p:column width="20%" colspan="1">
+					<p:commandLink
+						action="#{cxcAutomatizacionDiariosAController.limpiarPanelClientes}"
+						update="idDlgClientes" style="font-weight: bold;" value="Cliente"
+						oncomplete="PF('dlgClientes').show();" />
+				</p:column>
+				<p:column width="75%" colspan="1">
+					<p:inputText style="width: 100%" readonly="true"
+						id="idCedulaCliente"
+						value="#{cxcAutomatizacionDiariosAController.cliente.cedula}" />
+				</p:column>
+				<p:column width="20%" colspan="3">
+					<p:inputText style="width: 100%" readonly="true"
+						id="idNombreCliente"
+						value="#{cxcAutomatizacionDiariosAController.cliente.nombre}" />
+				</p:column>
+				<p:column width="20" colspan="1">
+					<p:commandButton icon="fa fa-search" title="Buscar Anticipos" 
+						styleClass="orange-btn"
+						actionListener="#{cxcAutomatizacionDiariosAController.obtenerAnticipos}"
+						process="@this" partialSubmit="true"
+						update=":#{p:component('idAnticiposDataTable')}" />
+				</p:column>
+			</p:row>
+
+			<p:row>
+				<p:column width="20">Linea Negocio:</p:column>
+				<p:column width="20">
+					<p:inputText style="width: 100%" readonly="true"
+						value="#{cxcAutomatizacionDiariosAController.lineaNegocio}" />
+				</p:column>
+				<p:column width="20" colspan="2">
+					<p:inputText style="width: 100%" readonly="true"
+						value="#{cxcAutomatizacionDiariosAController.descripcionLineaNegocio}" />
+				</p:column>
+			</p:row>
+
+			<p:row>
+				<p:column width="20">Fecha Anticipo:</p:column>
+				<p:column width="20">
+					<p:inputText readonly="true" style="width: 100%"
+						value="#{cxcAutomatizacionDiariosAController.fechaAnticipo}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</p:inputText>
+				</p:column>
+				<p:column width="20">Documentos Tomados:</p:column>
+				<p:column width="20">
+					<p:inputText readonly="true" style="width: 100%"
+						value="#{cxcAutomatizacionDiariosAController.documentosTomados}" />
+				</p:column>
+			</p:row>
+			<p:row>
+				<p:column width="20">N° Documento o U:</p:column>
+				<p:column width="20">
+					<p:inputText readonly="true" style="width: 100%"
+						value="#{cxcAutomatizacionDiariosAController.numero}" />
+				</p:column>
+				<p:column width="20" rendered="#{!cxcAutomatizacionDiariosAController.noEsAdministrador}">
+					<p:commandButton icon="fa fa-search" title="Buscar Memorandos"
+						actionListener="#{cxcAutomatizacionDiariosAController.obtenerMemorandos}"
+						update=":#{p:component('idBeneficiariosTable')}" 
+						styleClass="orange-btn"/>
+				</p:column>
+			</p:row>
+			<p:row>
+				<p:column width="20">Tipo Transaccion:</p:column>
+				<p:column width="20">
+					<p:selectOneMenu id="idEmitirCkkCabecera" style="width: 100%"
+					 	rendered="#{!cxcAutomatizacionDiariosAController.noEsAdministrador}"
+						value="#{cxcAutomatizacionDiariosAController.emiteCheque}">
+						<p:ajax listener="#{cxcAutomatizacionDiariosAController.habilitarBotonAgregarBeneficiarios}"
+						partialSubmit="true"
+						process="@this :#{p:component('idEmitirCkkCabecera')}"
+						update=" :#{p:component('form')} :#{p:component('idCommandButtonBeneficiarios')} :#{p:component('idPnlgContenedor')} "/>
+						<f:selectItem itemLabel="CHEQUE" itemValue="CK" />
+						<f:selectItem itemLabel="TRANSFERENCIA" itemValue="TR" />
+						<f:selectItem itemLabel="CAMBIO DE DINERO" itemValue="N" />
+					 </p:selectOneMenu>
+					 <p:selectOneMenu id="idEmitirCkkCabeceraNoAdministrador" style="width: 100%"
+					  	rendered="#{cxcAutomatizacionDiariosAController.noEsAdministrador}"
+						value="#{cxcAutomatizacionDiariosAController.emiteCheque}">
+						<f:selectItem itemLabel="CAMBIO DE DINERO" itemValue="N" />
+					 </p:selectOneMenu>
+					 
+
+				</p:column>
+
+
+				<p:column width="20"  rendered="#{!cxcAutomatizacionDiariosAController.noEsAdministrador}">Cta. Banco:</p:column>
+				<p:column width="20"  rendered="#{!cxcAutomatizacionDiariosAController.noEsAdministrador}">
+					<p:selectOneMenu style="width: 50%"
+						value="#{cxcAutomatizacionDiariosAController.ctasBancarias}">
+						<f:selectItem itemLabel="Seleccione" itemValue="" />
+						<f:selectItems
+							value="#{cxcAutomatizacionDiariosAController.ctasBancariasSelectItems}" />
+					</p:selectOneMenu>
+				</p:column>
+
+				<p:column width="20">Solicita:</p:column>
+				<p:column width="20">
+					<p:selectOneMenu style="width: 95px;"
+						value="#{cxcAutomatizacionDiariosAController.usuarioSolicita}"
+						filter="true" filterMatchMode="contains">
+						<f:selectItem itemLabel="Seleccione" itemValue="" />
+						<f:selectItems
+							value="#{cxcAutomatizacionDiariosAController.usuariosSelectItems}" />
+					</p:selectOneMenu>
+				</p:column>
+
+
+				<p:column width="5"  rendered="#{!cxcAutomatizacionDiariosAController.noEsAdministrador}">UAF</p:column>
+				<p:column width="1"  rendered="#{!cxcAutomatizacionDiariosAController.noEsAdministrador}">
+					<center>
+						<p:selectBooleanCheckbox
+							value="#{cxcAutomatizacionDiariosAController.uafAplica}" />
+					</center>
+				</p:column>
+			</p:row>
+			<p:row>
+				<p:column width="20">Valor:</p:column>
+				<p:column colspan="1">
+					<p:inputText readonly="true" 
+						value="#{cxcAutomatizacionDiariosAController.valor}" />
+				</p:column>
+
+				<p:column width="20">Saldo a Favor Cliente:</p:column>
+				<p:column colspan="1">
+					<p:inputText readonly="true" style="width: 100%"
+						id="idValorDiferencia"
+						value="#{cxcAutomatizacionDiariosAController.diferencia}" />
+				</p:column>
+				<p:column>Comentario:</p:column>
+				<p:column colspan="2">
+					<p:inputText style="width: 100%"
+						value="#{cxcAutomatizacionDiariosAController.observacionCabecera}" />
+				</p:column>
+			</p:row>
+			<p:row>
+				<p:column width="20">Subir Adjuntos:</p:column>
+				<p:column colspan="2">
+					<p:commandLink title="Click Subir Adjuntos" partialSubmit="true"
+						actionListener="#{cxcAutomatizacionDiariosAController.abriRevisar(cxcAutomatizacionDiariosAController.cliente.clientePK.noCliente)}"
+						update="PnlAdjuntos" process="@this">
+						<i class="fa fa-cloud-upload fa-2x" style="color: #00BCD4;"></i>
+					</p:commandLink>
+
+					<p:commandLink ajax="false" title="Reimpresion de Ingreso U" target="_blank"
+						action="#{cxcAutomatizacionDiariosAController.reportReimpresionIngresoU}">
+						<i class="fa fa-file-pdf-o fa-2x" style="color: red;"></i>
+						<f:param name="format" value="pdf" />
+						<f:param name="reportPath"
+							value="/reportes/comprobanteIngresoU.jasper" />
+					</p:commandLink>
+				</p:column>
+			</p:row>
+		</p:panelGrid>
+
+		<h:panelGrid id="idPnlgContenedor" style="width: 100%; vertical-align: top;" columns="2" columnClasses="pgTop,pgTop" 
+			styleClass="companyHeaderGrid less-padding panelColumns">
+				<p:toolbar>
+					<f:facet name="left">
+						<i class="fa fa-money fa-2x"></i>
+						<b><p:outputLabel style="font-size: 15px;"
+								value="ANTICIPOS RECUPERADOS" /></b>
+					</f:facet>
+				</p:toolbar>
+				
+				<p:toolbar>
+					<f:facet name="left">
+						<i class="fa fa-users fa-2x"></i>
+						<b><p:outputLabel style="font-size: 15px;"
+								value="BENEFICIARIOS" /></b>
+					</f:facet>
+					<f:facet name="right">
+						<p:commandButton id="idCommandButtonBeneficiarios" styleClass="green-btn"
+						    rendered="#{cxcAutomatizacionDiariosAController.emiteCheque eq 'N'}"
+							title="Agregar Beneficiarios"
+							icon="fa fa-users fa-2x" 
+							actionListener="#{cxcAutomatizacionDiariosAController.limpiarPanelClientesBeneficiarios}"
+							update="idDlgBeneficiarios" partialSubmit="true"
+							process="@this :#{p:component('idBeneficiariosTable')}  :#{p:component('idPnlgDatos')}"
+							oncomplete="PF('dlgBeneficiarios').show();" />
+					</f:facet>
+				</p:toolbar>
+				
+				<p:dataTable
+					 id="idAnticiposDataTable" styleClass="less-padding pgTop" style="vertical-align: top;"
+					value="#{cxcAutomatizacionDiariosAController.listaAnticipos}" disabledSelection="#{cxcAutomatizacionDiariosAController.pOrigen eq 'D'}"
+					var="item" rowIndexVar="var" sortBy="#{1}"
+					emptyMessage="Sin Registro"
+					selection="#{cxcAutomatizacionDiariosAController.listaAnticiposSeleccionados}"
+					rowKey="#{item.noFisico}">
+					
+					<p:ajax event="rowSelectCheckbox" partialSubmit="true" global="false" process="@this :#{p:component('idAnticiposDataTable')}"
+						listener="#{cxcAutomatizacionDiariosAController.agregarAnticiposSeleccionados}" update=":#{p:component('idPnlgDatos')} :#{p:component('messages')}"/>				
+					
+					<p:column selectionMode="multiple" width="5" />
+					<p:column headerText="Linea" sortBy="#{item.noLinea}" width="10"
+						filterBy="#{item.noLinea}" filterMatchMode="contains">
+						<h:outputText value="#{item.noLinea}" />
+					</p:column>
+					<p:column headerText="Descripcion" sortBy="#{item.descripcion}"
+						filterBy="#{item.descripcion}" filterMatchMode="contains"
+						width="75">
+						<h:outputText value="#{item.descripcion}" />
+					</p:column>
+					<p:column headerText="Fecha Anticipo" width="25">
+						<h:outputText value="#{item.fecha}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Numero Anticipo" width="25">
+						<h:outputText value="#{item.noFisico}" />
+					</p:column>
+					<p:column headerText="Valor del Anticipo" width="25">
+						<h:outputText value="#{item.saldo}" />
+					</p:column>
+					<p:column headerText="Valor a Tomar" width="25" >
+						<p:inputNumber value="#{item.valorTomar}" size="4"  disabled="#{cxcAutomatizacionDiariosAController.pOrigen eq 'D'}">
+						</p:inputNumber>
+					</p:column>
+					<p:summaryRow>
+						<p:column colspan="5" style="text-align:right">
+							<h:outputText style="font-size: 15px; width: 100%" value="Total:" />
+						</p:column>
+						<p:column>
+							<h:outputText id="idOTsumaTotalAnticiposOcupar"
+								style="font-size: 15px; width: 100%"
+								value="#{cxcAutomatizacionDiariosAController.sumaTotalAnticiposSeleccionados}">
+								<f:convertNumber type="currency" currencySymbol="$" />
+							</h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText id="idOTsumaTotalAnticipos" 
+								style="font-size: 15px; width: 100%" 
+								value="#{cxcAutomatizacionDiariosAController.totalValorATomar}">
+								<f:convertNumber type="currency" currencySymbol="$" />
+							</h:outputText>
+						</p:column>
+					</p:summaryRow>
+				</p:dataTable>
+
+			<p:dataTable id="idBeneficiariosTable"
+				styleClass="less-padding pgTop"
+				value="#{cxcAutomatizacionDiariosAController.listaMemorandos}"
+				var="item" rowIndexVar="var" sortBy="#{1}"
+				emptyMessage="Sin Registro" rowKey="#{item.noCliente}">
+				<p:column headerText="No. Cliente" width="25">
+					<p:outputLabel value="#{item.noCliente}" />
+				</p:column>
+				<p:column headerText="Cedula" width="10%">
+					<p:outputLabel value="#{item.cedula}" style="width: 50" />
+				</p:column>
+				<p:column headerText="Nombre" width="100">
+					<p:outputLabel value="#{item.beneficiario}"></p:outputLabel>
+				</p:column>
+				<p:column headerText="Valor" width="50">
+					<p:inputText value="#{item.valor}">
+						<p:ajax event="blur"
+							listener="#{cxcAutomatizacionDiariosAController.obtenerDiferencia(item)}"
+							process="@this :#{p:component('idBeneficiariosTable')}"
+							partialSubmit="true" update="form" />
+					</p:inputText>
+				</p:column>
+				<p:column headerText="Tipo Transaccion" width="50">
+					<p:selectOneMenu id="idEmitirChequeXbeneficiario"
+						rendered="#{!cxcAutomatizacionDiariosAController.noEsAdministrador}"
+						value="#{item.emitirCheque}" style="font-size: 10px; width: 100%">
+						<p:ajax
+							listener="#{cxcAutomatizacionDiariosAController.desHabilitarBotonProcesar(item)}"
+							partialSubmit="true"
+							process="@this :#{p:component('idEmitirChequeXbeneficiario')}"
+							update=":#{p:component('messages')} :#{p:component('form')}" />
+						<f:selectItem itemLabel="CAMBIO DE DINERO" itemValue="N" />
+						<f:selectItem itemLabel="CHEQUE" itemValue="CK" />
+						<f:selectItem itemLabel="TRANSFERENCIA" itemValue="TR" />
+						<f:selectItem itemLabel="CUENTAS CONTABLES" itemValue="CT" />
+					</p:selectOneMenu>
+					<p:selectOneMenu id="idEmitirChequeXbeneficiarioNoAdministrador"
+						rendered="#{cxcAutomatizacionDiariosAController.noEsAdministrador}"
+						value="#{item.emitirCheque}" style="font-size: 10px; width: 100%">
+						<f:selectItem itemLabel="CAMBIO DE DINERO" itemValue="N" />
+					</p:selectOneMenu>
+				</p:column>
+				<p:column headerText="Cta. Banco" width="50"
+					rendered="#{!cxcAutomatizacionDiariosAController.noEsAdministrador}">
+					<p:selectOneMenu value="#{item.ctaBanco}"
+						style="font-size: 10px; width: 100%">
+						<f:selectItem itemLabel="Seleccione" itemValue="" />
+						<f:selectItems
+							value="#{cxcAutomatizacionDiariosAController.ctasBancariasSelectItems}" />
+					</p:selectOneMenu>
+				</p:column>
+				<p:column headerText="Comentario Cambio Dinero" width="100"
+					id="idComentarioCambioDinero">
+					<p:inputTextarea value="#{item.comentarioCambioDinero}"
+						style="font-size: 10px;" maxlength="50"
+						placeholder="El comentario no puede tener mas de 50 caracteres" />
+				</p:column>
+				<p:column headerText="Comentario Emision Cheque" width="100"
+					id="idComentarioEmisionCheque"
+					rendered="#{!cxcAutomatizacionDiariosAController.noEsAdministrador}">
+					<p:inputTextarea value="#{item.comentarioEmisionCheque}"
+						style="font-size: 10px;" maxlength="50"
+						placeholder="El comentario no puede tener mas de 50 caracteres" />
+				</p:column>
+				<p:column headerText="Aplica UAF" width="25"
+					rendered="#{!cxcAutomatizacionDiariosAController.noEsAdministrador}">
+					<center>
+						<p:selectBooleanCheckbox value="#{item.aplicaUAF}" />
+					</center>
+				</p:column>
+				<p:column headerText="Subir" width="25"
+					rendered="#{!cxcAutomatizacionDiariosAController.noEsAdministrador}">
+					<center>
+						<p:commandLink title="Click Subir Adjuntos" partialSubmit="true"
+							actionListener="#{cxcAutomatizacionDiariosAController.abriRevisar(item.noCliente)}"
+							update="PnlAdjuntos" process="@this">
+							<i class="fa fa-cloud-upload fa-2x" style="color: #00BCD4;"></i>
+						</p:commandLink>
+					</center>
+				</p:column>
+				
+				<p:column headerText="Código U" width="36"
+					rendered="#{!cxcAutomatizacionDiariosAController.noEsAdministrador}">
+					<p:commandLink value=" U " title="Buscar codigos U" 
+						rendered="#{item.codigoU == null}" id="lblCodigoU"
+						actionListener="#{cxcAutomatizacionDiariosAController.cargarCodigosU(item)}"
+						update="#{p:component('dlgCodigosU')}"/>
+					<p:inputText id="txtCodigoU" value="#{item.codigoU}" style="font-size: 10px;"
+					readonly="true"/>
+				</p:column>
+				
+				<p:column width="25">
+					<center>
+						<p:commandButton icon="ui-icon-trash 2px" title="Remover Registro"
+							actionListener="#{cxcAutomatizacionDiariosAController.removerBeneficiario(item)}"
+							update=":#{p:component('idBeneficiariosTable')} :#{p:component('messages')} "
+							styleClass="secondary-red-btn">
+							<p:confirm header="Confirmación"
+								message="Esta Seguro de eliminar el Registro?"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+					</center>
+					<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+						<p:commandButton value="Si" type="button"
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+						<p:commandButton value="No" type="button"
+							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					</p:confirmDialog>
+				</p:column>
+				
+				<p:summaryRow>
+					<p:column colspan="3" style="text-align:right">
+						<h:outputText style="font-size: 15px; width: 100%" value="Total:" />
+					</p:column>
+					<p:column>
+						<h:outputText id="idOTsumaTotalXBeneficiarios"
+							style="font-size: 15px; width: 100%"
+							value="#{cxcAutomatizacionDiariosAController.sumaTotalesXbeneficiarios}">
+							<f:convertNumber type="currency" currencySymbol="$" />
+						</h:outputText>
+					</p:column>
+					<p:column colspan="8" style="text-align:right">
+						<h:outputText style="font-size: 15px; width: 100%" value="Total:" />
+					</p:column>
+				</p:summaryRow>
+			</p:dataTable>
+
+		</h:panelGrid>
+	</h:form>
+	<p:dialog id="idDlgClientes" modal="true" widgetVar="dlgClientes"
+		position="center,center" closable="false" appendTo="@(body)"
+		responsive="true" width="620" closeOnEscape="true">
+		<f:facet name="header">
+			<h:outputLabel style="color: white; font-size: 15px;"
+				value="CLIENTES" />
+		</f:facet>
+		<h:form id="idFormDlgClientes">
+
+			<p:outputLabel style="font-size: 12px; font-weight: bold;"
+				value="Identificacion: " />
+			<p:inputText value="#{cxcAutomatizacionDiariosAController.cedula}" />
+			<p:outputLabel style="font-size: 12px; font-weight: bold;"
+				value="Nombre: " />
+			<p:inputText value="#{cxcAutomatizacionDiariosAController.nombres}" />
+			<p:commandButton style="font-size: 12px;" icon="fa fa-search fa-3x"
+			styleClass="orange-btn"
+				update=":#{p:component('idTblClientes')}"
+				actionListener="#{cxcAutomatizacionDiariosAController.cargarCientes}" />
+			<br />
+			<br />
+			<p:dataTable emptyMessage="Sin Registros" id="idTblClientes"
+				styleClass="less-padding"
+				value="#{cxcAutomatizacionDiariosAController.listarClientes}"
+				paginator="#{not empty cxcAutomatizacionDiariosAController.listarClientes}"
+				paginatorPosition="bottom" rowsPerPageTemplate="5" rows="5"
+				paginatorTemplate="{CurrentPageReport} {PageLinks}"
+				selectionMode="single" rowKey="#{item.clientePK}" var="item">
+				<p:ajax event="rowSelect" oncomplete="PF('dlgClientes').hide();"
+					listener="#{cxcAutomatizacionDiariosAController.seleccionarFilaCliente}"
+					update="form" />
+				<p:column headerText="No. Cliente" styleClass="columAlignCenter">
+					<h:outputLabel value="#{item.clientePK.noCliente}" />
+				</p:column>
+				<p:column headerText="Identificacion">
+					<h:outputLabel value="#{item.cedula}" />
+				</p:column>
+				<p:column headerText="Nombre">
+					<h:outputLabel value="#{item.nombre}" />
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	</p:dialog>
+
+	<p:dialog id="idDlgBeneficiarios" modal="true"
+		widgetVar="dlgBeneficiarios" position="center,center" closable="false"
+		appendTo="@(body)" responsive="true" width="750" closeOnEscape="true">
+		<f:facet name="header">
+			<h:outputLabel style="color: white; font-size: 15px;"
+				value="BENEFICIARIOS" />
+		</f:facet>
+		<h:form id="idFormDlgBeneficiarios">
+			<p:outputLabel style="font-size: 12px; font-weight: bold;"
+				value="Identificacion: " />
+			<p:inputText
+				value="#{cxcAutomatizacionDiariosAController.cedulaBeneficiario}" />
+			<p:outputLabel style="font-size: 12px; font-weight: bold;"
+				value="Nombre: " />
+			<p:inputText
+				value="#{cxcAutomatizacionDiariosAController.nombresBeneficiario}" />
+			<p:commandButton style="font-size: 12px;" icon="fa fa-search fa-3x" styleClass="orange-btn"
+				update=":#{p:component('idTblClientesBeneficiarios')}"
+				partialSubmit="true"
+				process=":#{p:component('idFormDlgBeneficiarios')} @this :#{p:component('idBeneficiariosTable')}"
+				actionListener="#{cxcAutomatizacionDiariosAController.cargarCientesBeneficiarios}" />
+			<br />
+			<br />
+			<p:dataTable emptyMessage="Sin Registros" styleClass="less-padding"
+				id="idTblClientesBeneficiarios"
+				value="#{cxcAutomatizacionDiariosAController.listarClientesBeneficiarios}"
+				paginator="#{not empty cxcAutomatizacionDiariosAController.listarClientesBeneficiarios}"
+				paginatorPosition="bottom" rowsPerPageTemplate="5" rows="5"
+				paginatorTemplate="{CurrentPageReport} {PageLinks}"
+				selectionMode="single" rowKey="#{item.clientePK}" var="item">
+				<p:ajax event="rowSelect"
+					oncomplete="PF('dlgBeneficiarios').hide();" partialSubmit="true"
+					listener="#{cxcAutomatizacionDiariosAController.seleccionarFilaClienteBeneficiarios}"
+					update=":#{p:component('idBeneficiariosTable')} :#{p:component('form')} " />
+				<p:column headerText="No. Cliente" styleClass="columAlignCenter">
+					<h:outputLabel value="#{item.clientePK.noCliente}" />
+				</p:column>
+				<p:column headerText="Identificacion">
+					<h:outputLabel value="#{item.cedula}" />
+				</p:column>
+				<p:column headerText="Nombre">
+					<h:outputLabel value="#{item.nombre}" />
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	</p:dialog>
+		<p:dialog header="Archivos Adjuntos" widgetVar="DlgAdjuntos"
+		modal="true" showEffect="fade" hideEffect="fade" resizable="true"
+		width="600" height="300" position="center center" closeOnEscape="true">
+
+		<h:form id="PnlAdjuntos">
+			<p:fileUpload required="true"
+				fileUploadListener="#{cxcAutomatizacionDiariosAController.cargarArchivo}"
+				mode="advanced" dragDropSupport="true"
+				update="PnlAdjuntos, :#{p:component('messages')} :#{p:component('dtlinksArchivos')}" uploadLabel="Subir Archivo"
+				cancelLabel="Cancelar" label="Seleccionar Archivo" fileLimit="5"
+				fileLimitMessage="Puede subir hasta 5 archivos">
+			</p:fileUpload>
+			<p:spacer height="5"/>
+			<p:dataTable value="#{cxcAutomatizacionDiariosAController.listaAdjuntos}"
+				var="adj" id="dtlinksArchivos">
+				<p:column headerText="Archivo">
+					<p:commandLink ajax="false" target="_blank"
+						action="#{cxcAutomatizacionDiariosAController.verAdjunto(adj)}">
+						<h:outputText value="#{adj}"
+							style="text-decoration: underline; color: blue;"></h:outputText>
+					</p:commandLink>
+				</p:column>
+				<p:column headerText="Eliminar" width="30">
+					<p:commandButton icon="fa fa-minus" title="Quitar Archivo"
+						styleClass="red-btn"
+						action="#{cxcAutomatizacionDiariosAController.quitarArchivo(adj)}"
+						update="PnlAdjuntos:dtlinksArchivos">
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	</p:dialog>
+	<!-- 	DIALOGO DE CODIGOS U -->
+	<p:dialog id="dlgCodigosU" widgetVar="dlgCodigosU"
+		header="Seleccione el codigo de U asociado al cliente..."
+		style="position:fixed;" responsive="true" closeOnEscape="true"
+		modal="true" appendTo="@(body)" width="50%" height="auto">
+		<h:form>
+			<h:panelGrid id="pngCodigosU" columns="1">
+				<p:dataTable id="dtCodigosU" var="item" rowIndexVar="row" rows="10"
+					rowKey="#{item[0]}" paginatorPosition="bottom"
+					emptyMessage="No existen datos"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+					currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+					paginator="true"
+					value="#{cxcAutomatizacionDiariosAController.codigos}"
+					selection="#{cxcAutomatizacionDiariosAController.codigoUSel}"
+					selectionMode="single" styleClass="no-cell-padding"
+					style="font-size:10px !important;">
+					<p:ajax event="rowSelect"
+						listener="#{cxcAutomatizacionDiariosAController.seleccionarCodigoU}"
+						process="@this" partialSubmit="true" />
+
+					<p:column headerText="Codigo U" filterBy="#{item[0]}"
+						filterMatchMode="contains" width="15%">
+						<h:outputText value="#{item[0]}" />
+					</p:column>
+					<p:column headerText="Chasis" width="25%">
+						<h:outputText value="#{item[1]}" />
+					</p:column>
+					<p:column headerText="Nombre" width="60%">
+						<h:outputText value="#{item[2]}" />
+					</p:column>
+				</p:dataTable>
+			</h:panelGrid>
+		</h:form>
+	</p:dialog>
+</h:body>
+</html>

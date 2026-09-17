@@ -1,0 +1,131 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+	<ui:define name="title">
+		Detalle de Anticipos del Cliente
+	</ui:define>
+	<ui:define name="buttons">
+		<h:form id="frmBotones">
+			<p:commandButton value="← Volver" partialSubmit="true"
+				process="@this"
+				actionListener="#{detalleAnticiposClienteController.volver}" />
+			<p:commandButton value="Continuar →" partialSubmit="true"
+				process="@this, :frmDetalleAnticipos:dtDetalleAnticipos"
+				actionListener="#{detalleAnticiposClienteController.continuar}" />
+		</h:form>
+	</ui:define>
+	<ui:define name="content">
+		<style type="text/css">
+body {
+	font-size: 11px;
+}
+
+.table thead th, .table tbody tr td {
+	font-size: 10px !important;
+	white-space: normal !important;
+	word-break: break-word;
+	overflow-wrap: anywhere;
+}
+</style>
+		<p:growl id="growl" showDetail="true" />
+
+		<h:form id="frmDetalleAnticipos" onkeypress="return event.keyCode!=13">
+
+			<p:panel>
+				<div class="ui-g dashboard">
+					<div class="ui-g-12 ui-fluid contact-form">
+						<div class="ui-g-12">
+							<p:outputLabel value="Cliente: " styleClass="bold" />
+							<p:outputLabel value="#{detalleAnticiposClienteController.cliente.nombre}" />
+							<br />
+							<p:outputLabel value="Cédula: " styleClass="bold" />
+							<p:outputLabel value="#{detalleAnticiposClienteController.cliente.cedula}" />
+							<br />
+							<p:outputLabel value="Agencia: " styleClass="bold" />
+							<p:outputLabel value="#{detalleAnticiposClienteController.cliente.nomAgencia}" />
+							<br />
+							<p:outputLabel value="Centro: " styleClass="bold" />
+							<p:outputLabel value="#{detalleAnticiposClienteController.cliente.centro}" />
+						</div>
+						<div class="ui-g-12">
+							<p:dataTable id="dtDetalleAnticipos" var="item" resizeMode="true"
+								value="#{detalleAnticiposClienteController.detalleAnticiposCliente}"
+								styleClass="table" widgetVar="dtDetalleAnticipos" paginator="true"
+								rows="20" paginatorPosition="top" rowIndexVar="row"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+								currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+								emptyMessage="No existen registros"
+								selection="#{detalleAnticiposClienteController.documentosSeleccionados}"
+								rowSelectMode="checkbox" rowKey="#{item.noDocu}">
+
+								<p:column selectionMode="multiple" exportable="false"
+									disabledSelection="#{item.anticipoBloqueado eq 'SI'}"
+									style="width:16px; text-align:center" />
+
+								<p:column headerText="Comprobante"
+									style="width:100px; text-align:center">
+									<p:outputLabel value="#{item.comprobante}" />
+								</p:column>
+
+								<p:column headerText="Fecha" style="width:80px; text-align:center">
+									<p:outputLabel value="#{item.fecha}">
+										<f:convertDateTime pattern="dd MMM yyyy" />
+									</p:outputLabel>
+								</p:column>
+
+								<p:column headerText="Línea" style="width:150px; text-align:center">
+									<p:outputLabel value="#{item.nombreLinea}" />
+								</p:column>
+
+								<p:column headerText="Saldo" style="width:100px; text-align:center">
+									<p:outputLabel value="#{item.saldo}" />
+								</p:column>
+
+								<p:column headerText="Efectivo" style="width:80px; text-align:center">
+									<p:outputLabel value="#{item.efectivo}" />
+								</p:column>
+
+								<p:column headerText="Cheques" style="width:80px; text-align:center">
+									<p:outputLabel value="#{item.cheques}" />
+								</p:column>
+
+								<p:column headerText="Tarjeta" style="width:80px; text-align:center">
+									<p:outputLabel value="#{item.tarjeta}" />
+								</p:column>
+
+								<p:column headerText="Retenciones"
+									style="width:90px; text-align:center">
+									<p:outputLabel value="#{item.retenciones}" />
+								</p:column>
+
+								<p:column headerText="Depósitos" style="width:90px; text-align:center">
+									<p:outputLabel value="#{item.depositos}" />
+								</p:column>
+
+								<p:column headerText="Diario A" style="width:80px; text-align:center">
+									<p:outputLabel value="#{item.diarioA}" />
+								</p:column>
+
+								<p:column headerText="Pagado TC" style="width:80px; text-align:center">
+									<p:outputLabel value="#{item.pagadoTc}"
+										style="color:#{item.pagadoTc eq 'SI' ? 'green' : 'inherit'}; font-weight:bold;" />
+								</p:column>
+
+								<p:column headerText="Anticipo Bloqueado"
+									style="width:110px; text-align:center">
+									<p:outputLabel value="#{item.anticipoBloqueado}"
+										style="color:#{item.anticipoBloqueado eq 'SI' ? 'red' : 'inherit'}; font-weight:bold;" />
+								</p:column>
+							</p:dataTable>
+						</div>
+					</div>
+				</div>
+			</p:panel>
+		</h:form>
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,329 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	template="/jsf/templates/bodyTemplate.xhtml">
+	<ui:define name="title">
+		DETALLE DE DEVOLUCIÓN ANTICIPOS CLIENTES
+</ui:define>
+	<ui:define name="buttons">
+		<h:form id="frmButtons">
+			<p:commandButton icon="fa fa-undo" styleClass="deep-orange-btn"
+				actionListener="#{cxcSolicitudDevAnticipoController.limpiarDatos}"
+				title="Limpiar datos" />
+		</h:form>
+	</ui:define>
+	<ui:define name="content">
+		<h:form id="idForm">
+			<p:growl id="messages" globalOnly="true" autoUpdate="true"
+				widgetVar="groMessages" showDetail="true" life="5000" />
+			<p:panel style="width : 1490px;">
+				<p:tab>
+					<p:dataTable id="tabDatosPrincipales" title="" scrollable="true"
+						value="#{cxcDetDevAntCliController.listaDevSolicitadas}" var="ref"
+						styleClass="table" sortBy="#{6}" rowSelectMode="none"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+						paginator="true" rows="20" rowsPerPageTemplate="20,30,40"
+						selectionPageOnly="false" paginatorPosition="bottom"
+						emptyMessage="No Existen Registros">
+						<f:facet name="header">
+				           Solicitudes de Devolucion de Credito Por Agencia
+				        </f:facet>
+
+						<p:column headerText="Cedula" width="40%" style="text-align:left"
+							filterMatchMode="contains">
+							<h:outputText value="#{ref[1]}" />
+						</p:column>
+						<p:column headerText="Nombre" width="110%" style="text-align:left"
+							filterMatchMode="contains">
+							<h:outputText value="#{ref[2]}" />
+						</p:column>
+						<p:column headerText="No. Solicitud" width="30%"
+							style="text-align:left" filterMatchMode="contains">
+							<h:outputText value="#{ref[6]}" />
+						</p:column>
+						<p:column headerText="Saldo" width="50%" style="text-align:left"
+							filterMatchMode="contains">
+							<h:outputText value="#{ref[3]}" >
+							<f:convertNumber type="currency" currencySymbol="$" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Motivo Devolución" width="100%"
+							style="text-align:left" filterMatchMode="contains">
+							<h:outputText value="#{ref[4]}" />
+						</p:column>
+						<p:column headerText="Asesor Comercial" width="70%"
+							style="text-align:left" filterMatchMode="contains">
+							<h:outputText value="#{ref[12]}" />
+						</p:column>
+						<p:column headerText="Nombre Agencia" width="70%"
+							style="text-align:left" filterMatchMode="contains">
+							<h:outputText value="#{ref[8]}" />
+						</p:column>
+						<p:column headerText="Estado" width="70%"
+							style="text-align:center" filterMatchMode="contains">
+							<h:outputText value="#{ref[11]}" />
+						</p:column>
+						<p:column headerText="Validar" width="40%"
+							style="text-align:center">
+							<p:commandButton title="Validar Solicitud" id="validar"
+								icon="ui-icon ui-icon-check" styleClass="deep-orange-btn"
+								update="#{p:component('dlgVerificacion')}" style="align:center"
+								immediate="true"
+								disabled="#{ref[9] == 'N' or  ref[9] == 'P' or  ref[9] == 'A' or  ref[9] == 'V'}"
+								actionListener="#{cxcDetDevAntCliController.validarInformacion(ref)}">
+							</p:commandButton>
+						</p:column>
+
+						<p:column headerText="Procesar" width="40%"
+							style="text-align:center">
+							<center>
+								<p:commandButton title="Procesar" id="procesar"
+									disabled="#{ref[9] != 'A'}" icon="fa fa-random"
+									actionListener="#{cxcDetDevAntCliController.generarPagoTransferencia(ref)}"
+									styleClass="deep-blue-btn" style="align:center"
+									immediate="true">
+								</p:commandButton>
+							</center>
+						</p:column>
+					</p:dataTable>
+				</p:tab>
+			</p:panel>
+		</h:form>
+		<!-- dialog de devolucion Anticipo -->
+		<p:dialog id="dlgVerificacion" widgetVar="dlgVerificacion"
+			resizable="false" modal="true" appendTo="@(body)" closable="true"
+			closeOnEscape="true"
+			header="Verificación Datos Devolución de Anticipos" height="250%"
+			width="90%">
+			<h:form id="frmdlgVerificacion">
+				<center>
+					<p:panelGrid id="panelVerif" columns="2">
+			
+						<p:outputLabel value="Cedula" />
+						<p:inputText id="iden" autocomplete="off" size="15"
+							value="#{cxcDetDevAntCliController.cedula}" maxlength="13"
+							readonly="#{cxcDetDevAntCliController.origenDialogo eq 'V'}">
+							<p:ajax event="change" partialSubmit="true" process="@this"
+								update="#{p:component('tabDatosPrincipales')}" />
+						</p:inputText>
+					<p:outputLabel value="Aplica Caja Chica:" />						
+						<h:outputText value="#{cxcDetDevAntCliController.aplicaCajaChica eq 'N'?'NO':'SI'}" >
+						</h:outputText>
+						<p:outputLabel value="Cliente:" />
+						<p:inputText id="nombre" autocomplete="off" size="100"
+							value="#{cxcDetDevAntCliController.nombres}" maxlength="100"
+							readonly="#{cxcDetDevAntCliController.origenDialogo eq 'V'}">
+							<p:ajax event="change" partialSubmit="true" process="@this"
+								update="#{p:component('tabDatosPrincipales')}" />
+						</p:inputText>						
+						<p:outputLabel value="Estado de Validacion:" />
+						<p:selectOneMenu id="estadoValidacion"
+							value="#{cxcDetDevAntCliController.estado}">
+							<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+							<f:selectItems
+								value="#{cxcDetDevAntCliController.listaParametros}" var="doc"
+								itemLabel="#{doc.descripcion}" itemValue="#{doc.texto1}" />
+							<p:ajax event="change" partialSubmit="true" process="@this"
+								update="#{p:component('frmdlgVerificacion')},:frmdlgVerificacion:estadoValidacion"></p:ajax>
+						</p:selectOneMenu>
+						<p:outputLabel value="Motivo Devolución Validación"
+							rendered="#{cxcDetDevAntCliController.estado eq ('I') or  cxcDetDevAntCliController.estado eq ('N') or cxcDetDevAntCliController.estado eq ('A')}"></p:outputLabel>
+						<p:inputTextarea id="mDev" rows="2" cols="50" queryDelay="750"
+							value="#{cxcDetDevAntCliController.motDevValidacion}"
+							rendered="#{cxcDetDevAntCliController.estado eq ('I') or cxcDetDevAntCliController.estado eq ('N') or cxcDetDevAntCliController.estado eq ('A')}"
+							minQueryLength="4" maxlength="200">
+							<p:ajax event="change" update="mDev" />
+						</p:inputTextarea>
+					</p:panelGrid>
+				</center>
+				<p:panelGrid columns="2">
+					<p:column>
+						<p:outputLabel style="color: blue"
+							value="Anticipos a Generar Devolución:" />
+					</p:column>
+					<p:column>
+						<p:tab>
+							<p:dataTable id="tabDatos" title="" scrollable="true"
+								value="#{cxcDetDevAntCliController.listaDetalle}" var="ref"
+								styleClass="table" emptyMessage="No Existen Registros">
+								<p:column headerText="Fecha" width="50%"
+									style="text-align:rigth" filterMatchMode="contains">
+									<h:outputText value="#{ref[2]}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</p:column>
+								<p:column headerText="Numero de Documento" width="50%"
+									style="text-align:rigth" filterMatchMode="contains">
+									<h:outputText value="#{ref[0]}" />
+								</p:column>
+								<p:column headerText="Saldo" width="50%"
+									style="text-align:rigth" filterMatchMode="contains">
+									<h:outputText value="#{ref[1]}" >
+									<f:convertNumber type="currency" currencySymbol="$" />
+									</h:outputText>
+								</p:column>
+								<p:column headerText="Valor a Tomar" width="50%"
+									style="text-align:rigth" filterMatchMode="contains">
+									<h:outputText value="#{ref[5]}" />
+								</p:column>
+							</p:dataTable>
+						</p:tab>
+					</p:column>
+					<p:column>
+						<p:outputLabel style="color: blue" value="Doc. Adjunto:" />
+					</p:column>
+					<p:column>
+						<p:tab>
+							<p:dataTable id="tabAdjuntos" title="" scrollable="true"
+								value="#{cxcDetDevAntCliController.listaAdjuntos}" var="ref"
+								styleClass="table" emptyMessage="No Existen Registros">
+								<p:column headerText="feha Creacion" width="10%"
+									style="text-align:rigth" filterMatchMode="contains">
+									<h:outputText value="#{ref.fechaCrea}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</p:column>
+								<p:column headerText="Usuario Creacion" width="15%"
+									style="text-align:rigth" filterMatchMode="contains">
+									<h:outputText value="#{ref.usuarioCrea}" />
+								</p:column>
+								<p:column headerText="Archivo" width="100%"
+									style="text-align:rigth" filterMatchMode="contains">
+									<h:outputText value="#{ref.path}" />
+								</p:column>
+								<p:column headerText="Acciones" width="10%"
+									style="text-align:center" filterMatchMode="contains">
+									<p:commandLink title="Click descargar adjunto"
+										partialSubmit="true" process="@this" ajax="false"
+										target="_blank"
+										action="#{cxcDetDevAntCliController.descargarArchivo(ref.path)}"
+										rendered="#{ref.path ne null}">
+										<i class="fa fa-cloud-download fa-2x" style="color: green;" />
+									</p:commandLink>
+								</p:column>
+							</p:dataTable>
+						</p:tab>
+					</p:column>
+				</p:panelGrid>
+				<center>
+					<p:commandButton styleClass="deep-orange-btn" immediate="true"
+						id="btnaceptar" icon="fa fa-floppy-o" title="Guardar"
+						value="Guardar"
+						update=":idForm:messages, #{p:component('tabDatosPrincipales')}"
+						actionListener="#{cxcDetDevAntCliController.actualizarValidado}"
+						process="@this">
+					</p:commandButton>
+					<p:commandButton styleClass="deep-orange-btn" immediate="true"
+						id="btnverificarCxc" icon="fa fa-university" title="Verificar CXC"
+						rendered="#{cxcDetDevAntCliController.estado eq 'V'}"
+						value="Verificar CXC"
+						update="dlgActualizarCxc,idForm:tabDatosPrincipales"
+						actionListener="#{cxcDetDevAntCliController.validacionCxc}"
+						process="@this">
+					</p:commandButton>
+				</center>
+			</h:form>
+		</p:dialog>
+		<p:dialog id="dlgActualizarCxc" widgetVar="dlgActualizarCxc"
+			resizable="false" modal="true" appendTo="@(body)" closable="true"
+			closeOnEscape="true" header="Envio a Verificacion en CXC"
+			height="250%" width="90%">
+			<h:form id="frmdlgActualizarCxc">
+				<center>
+					<p:panelGrid columns="2">
+						<p:outputLabel value="Estado de Validacion:" />
+						<p:selectOneMenu id="estadoValidacion"
+							disabled="#{cxcDetDevAntCliController.estado eq 'V'}"
+							value="#{cxcDetDevAntCliController.estado}">
+							<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+							<f:selectItems
+								value="#{cxcDetDevAntCliController.listaParametros}" var="doc"
+								itemLabel="#{doc.descripcion}" itemValue="#{doc.texto1}" />
+							<p:ajax event="change" partialSubmit="true" process="@this"
+								update="#{p:component('dlgActualizarCxc')},:frmdlgActualizarCxc:estadoValidacion"></p:ajax>
+						</p:selectOneMenu>
+						<p:outputLabel value="Motivo Devolución Validación:"></p:outputLabel>
+						<p:inputTextarea id="mDev" rows="2" cols="50" queryDelay="750"
+							value="#{cxcDetDevAntCliController.motDevValidacion}"
+							minQueryLength="4" maxlength="200">
+							<p:ajax event="change" update="mDev" />
+						</p:inputTextarea>
+						<p:outputLabel value="Usuario Responsable:"></p:outputLabel>
+						<p:column>
+							<p:selectOneMenu id="somUsuario" filter="true"
+								filterMatchMode="contains"
+								value="#{cxcDetDevAntCliController.usuarioResponsable}">
+								<f:selectItem itemLabel="Seleccione" itemValue="" />
+								<f:selectItems
+									value="#{cxcDetDevAntCliController.listaUsuarios}"
+									var="usuario" itemValue="#{usuario.usuario}"
+									itemLabel="#{usuario.usuario} - #{usuario.nombre}" />
+								<p:ajax event="change" partialSubmit="true" process="@this"
+									update="somUsuario"></p:ajax>
+							</p:selectOneMenu>
+						</p:column>
+						<p:outputLabel value="Cargar Adjuntos:"></p:outputLabel>
+						<p:column headerText="Subir" width="25">
+							<center>
+								<p:commandLink title="Click Subir Adjuntos" partialSubmit="true"
+									actionListener="#{cxcDetDevAntCliController.abriRevisar}"
+									update="PnlAdjuntos1" process="@this">
+									<i class="fa fa-cloud-upload fa-2x" style="color: #00BCD4;"></i>
+								</p:commandLink>
+							</center>
+						</p:column>
+					</p:panelGrid>
+				</center>
+				<center>
+					<p:commandButton styleClass="deep-orange-btn" immediate="true"
+						id="btnaceptar" icon="fa fa-floppy-o" title="Guardar"
+						value="Guardar" update="#{p:component('tabDatosPrincipales')}"
+						actionListener="#{cxcDetDevAntCliController.actualizarVerificacionCxc}"
+						process="@this">
+					</p:commandButton>
+				</center>
+			</h:form>
+		</p:dialog>
+		<p:dialog header="Archivos Adjuntos" widgetVar="DlgAdjuntos1"
+			modal="true" showEffect="fade" hideEffect="fade" resizable="true"
+			width="600" height="300" position="center center"
+			closeOnEscape="true">
+			<h:form id="PnlAdjuntos1">
+				<p:fileUpload required="true"
+					fileUploadListener="#{cxcDetDevAntCliController.cargarArchivo}"
+					mode="advanced" dragDropSupport="true" multiple="true"
+					allowTypes="/(\.|\/)(jpe?g|png|xlsx|doc|docx|pdf|xls|xlsx)$/"
+					update="PnlAdjuntos1, :#{p:component('messages')} :#{p:component('dtlinksArchivos1')}"
+					uploadLabel="Subir Archivo" cancelLabel="Cancelar"
+					label="Seleccionar Archivo"
+					invalidSizeMessage="El archivo no puede pesar mas de 5MB"
+					sizeLimit="5000000" fileLimit="5"
+					fileLimitMessage="Puede subir hasta 5 archivos">
+				</p:fileUpload>
+				<p:spacer height="5" />
+				<p:dataTable value="#{cxcDetDevAntCliController.listaAdjuntos1}"
+					var="adj" id="dtlinksArchivos1">
+					<p:column headerText="Archivo">
+						<p:commandLink ajax="false" target="_blank"
+							action="#{cxcDetDevAntCliController.verAdjunto(adj)}">
+							<h:outputText value="#{adj}"
+								style="text-decoration: underline; color: blue;"></h:outputText>
+						</p:commandLink>
+					</p:column>
+					<p:column headerText="Eliminar" width="40">
+						<p:commandButton icon="fa fa-minus" title="Quitar Archivo"
+							styleClass="red-btn"
+							action="#{cxcDetDevAntCliController.quitarArchivo(adj)}"
+							update="PnlAdjuntos1:dtlinksArchivos1">
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>
