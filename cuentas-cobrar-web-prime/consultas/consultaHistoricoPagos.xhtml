@@ -1,0 +1,132 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Consulta Historico de Pagos
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="idFormButtons">
+			<p:commandButton styleClass="deep-orange-btn" title="Regresar"
+				icon="ui-icon ui-icon-arrow-back" partialSubmit="true"
+				process="@this, :frmHistPagos"
+				action="#{historicoPagosController.regresar}" />
+			<p:commandButton id="printReport" ajax="false" value="Imprimir"
+				onclick="this.form.target='_blank'"
+				disabled="#{empty historicoPagosController.arccrds}"
+				actionListener="#{historicoPagosController.generarReporte}" />
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+		<style type="text/css">
+body {
+	font-size: 11px !important;
+}
+
+.dashboard .contact-form .ui-button {
+	margin-top: 0px !important;
+}
+
+body .ui-datatable.ui-datatable-scrollable thead tr th {
+	font-size: 11px !important;
+}
+
+.tblDocumentos tbody tr td {
+	font-size: 10px !important;
+}
+</style>
+
+		<h:form id="frmHistPagos" onkeypress="return event.keyCode!=13">
+			<h:panelGrid columns="8">
+				<p:outputLabel value="Centro:" styleClass="bold" />
+				<p:inputText
+					value="#{historicoPagosController.historicoDocDto.agencia}"
+					readonly="true" />
+				<p:outputLabel value="Factura:" styleClass="bold" />
+				<p:inputText
+					value="#{historicoPagosController.historicoDocDto.noFisico}"
+					readonly="true" />
+
+				<p:outputLabel value="Linea:" styleClass="bold" />
+				<p:inputText
+					value="#{historicoPagosController.historicoDocDto.serieFisico}"
+					readonly="true" />
+				<p:outputLabel value="Secuencia:" styleClass="bold" />
+				<p:inputText
+					value="#{historicoPagosController.historicoDocDto.cantProrroga}"
+					readonly="true" />
+
+			</h:panelGrid>
+			<h:panelGrid columns="3" style="border-spacing:0">
+				<p:spacer width="40" height="0" />
+				<p:inputText value="#{historicoPagosController.cedulaClienteFac}"
+					readonly="true" />
+				<p:inputText value="#{historicoPagosController.nombreClienteFac}"
+					readonly="true" style="width:400px" />
+			</h:panelGrid>
+			<p:fieldset id="fsDocumentos" legend="Historico de Pagos:"
+				toggleable="false">
+				<p:dataTable var="item" id="tblDoc" rowIndexVar="row"
+					scrollable="true" scrollHeight="170" styleClass="tblDocumentos"
+					value="#{historicoPagosController.arccrds}" widgetVar="tblDoc"
+					emptyMessage="No existen Documentos" rowKey="#{item.arccrdPk}"
+					selection="#{historicoPagosController.documentoSeleccionado}"
+					selectionMode="single">
+					<p:ajax event="rowSelect"
+						update=":idFormButtons,frmHistPagos:txtComentario"
+						listener="#{historicoPagosController.onRowSelect}" />
+					<p:column headerText="Doc." style="text-align: center" width="5%">
+						<p:outputLabel value="#{item.nroDocumento}" style="width:100%;" />
+					</p:column>
+					<p:column headerText="Fecha Vence" width="8%">
+						<p:outputLabel value="#{item.fechaVence}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:outputLabel>
+					</p:column>
+					<p:column headerText="Fecha Canc." width="8%">
+						<p:outputLabel value="#{item.fecha}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:outputLabel>
+					</p:column>
+					<p:column headerText="Dias" width="8%" styleClass="number">
+						<p:outputLabel value="#{item.dias}" style="width:100%;" />
+					</p:column>
+					<p:column headerText="Centro" width="6%">
+						<p:outputLabel value="#{item.centro}" />
+					</p:column>
+					<p:column headerText="Nota Ingreso" width="10%">
+						<p:outputLabel value="#{item.notaIngreso}" />
+					</p:column>
+					<p:column headerText="Valor" width="8%" styleClass="number">
+						<p:outputLabel value="#{item.montoDoc}" />
+					</p:column>
+					<p:column headerText="Interes" width="8%" styleClass="number">
+						<p:outputLabel value="#{item.interes}" />
+					</p:column>
+					<p:column headerText="Descuento" width="8%" styleClass="number">
+						<p:outputLabel value="#{item.descuento}" />
+					</p:column>
+					<p:column headerText="Valor Total" width="8%" styleClass="number">
+						<p:outputLabel value="#{item.totalPago}" />
+					</p:column>
+					<p:column headerText="Fecha proceso" width="8%">
+						<p:outputLabel value="#{item.fecha}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:outputLabel>
+					</p:column>
+				</p:dataTable>
+			</p:fieldset>
+			<p:outputLabel value="Comentario:" styleClass="bold" />
+			<p:inputTextarea id="txtComentario"
+				value="#{historicoPagosController.documentoSeleccionado.comentario}"
+				rows="2" cols="70" readonly="true" />
+
+		</h:form>
+	</ui:define>
+</ui:composition>

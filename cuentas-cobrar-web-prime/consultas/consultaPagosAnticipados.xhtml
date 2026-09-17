@@ -1,0 +1,147 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Visualización pagos anticipados
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmButtons">
+			<p:commandButton styleClass="deep-orange-btn" title="Regresar"
+				icon="ui-icon ui-icon-arrow-back" partialSubmit="true"
+				process="@this, :frmPagosAnt"
+				action="#{pagoAnticipadosController.regresar}" />
+			<p:commandButton value="Consultar" partialSubmit="true"
+				action="#{pagoAnticipadosController.consultar}"
+				process="@this, :frmPagosAnt" icon="ui-icon-search"
+				update=":#{p:component('tblPagos')} :frmButtons" />
+			<p:commandButton id="printReport" ajax="false" value="Imprimir"
+				onclick="this.form.target='_blank'"
+				disabled="#{empty pagoAnticipadosController.pagos}"
+				actionListener="#{pagoAnticipadosController.generarReporte}" />
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+		<style type="text/css">
+body {
+	font-size: 11px !important;
+}
+
+.dashboard .contact-form .ui-button {
+	margin-top: 0px !important;
+}
+
+body .ui-datatable.ui-datatable-scrollable thead tr th {
+	font-size: 11px !important;
+}
+
+.tblDocumentos tbody tr td {
+	font-size: 10px !important;
+}
+</style>
+
+		<h:form id="frmPagosAnt" onkeypress="return event.keyCode!=13">
+			<h:panelGrid columns="10">
+				<p:outputLabel value="Centro:" styleClass="bold" />
+				<p:inputText
+					value="#{pagoAnticipadosController.historicoDocDto.agencia}"
+					readonly="true" />
+				<p:outputLabel value="Factura:" styleClass="bold" />
+				<p:inputText
+					value="#{pagoAnticipadosController.historicoDocDto.noFisico}"
+					readonly="true" />
+
+				<p:outputLabel value="Linea:" styleClass="bold" />
+				<p:inputText
+					value="#{pagoAnticipadosController.historicoDocDto.serieFisico}"
+					readonly="true" />
+				<p:outputLabel value="Secuencia:" styleClass="bold" />
+				<p:inputText
+					value="#{pagoAnticipadosController.historicoDocDto.cantProrroga}"
+					readonly="true" />
+				<h:outputText value="Tipo Oper.:" styleClass="bold" />
+				<p:selectOneMenu value="#{pagoAnticipadosController.tipoOper}">
+					<f:selectItems value="#{pagoAnticipadosController.tiposOper}"
+						var="tipos" itemValue="#{tipos[0]}"
+						itemLabel="#{tipos[0]} - #{tipos[1]}" />
+				</p:selectOneMenu>
+
+			</h:panelGrid>
+			<h:panelGrid columns="3" style="border-spacing:0">
+				<p:outputLabel value="Cliente:" styleClass="bold" />
+				<p:inputText value="#{pagoAnticipadosController.cedulaClienteFac}"
+					readonly="true" />
+				<p:inputText value="#{pagoAnticipadosController.nombreClienteFac}"
+					readonly="true" style="width:400px" />
+			</h:panelGrid>
+			<p:spacer height="15" />
+			<p:dataTable var="item" id="tblPagos" rowIndexVar="row"
+				scrollable="true" styleClass="tblDocumentos"
+				value="#{pagoAnticipadosController.pagos}" widgetVar="tblDoc"
+				emptyMessage="No existen Pagos" sortBy="#{1}">
+				<p:column headerText="Doc." style="text-align: center" width="5%">
+					<p:outputLabel value="#{item.noDocuRefe}" />
+				</p:column>
+				<p:column headerText="Fecha Vence" width="8%">
+					<p:outputLabel value="#{item.fechaVenceOriginal}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</p:outputLabel>
+				</p:column>
+				<p:column headerText="Estado" width="8%">
+					<p:outputLabel value="#{item.estado}" />
+				</p:column>
+				<p:column headerText="Dias" width="8%" styleClass="number">
+					<p:outputLabel value="#{item.dias}" />
+				</p:column>
+				<p:column headerText="Saldo" width="8%" styleClass="number">
+					<p:outputLabel value="#{item.saldo}" />
+				</p:column>
+				<p:column headerText="Interes/Descuento" width="10%"
+					styleClass="number">
+					<p:outputLabel value="#{item.interesDesc}" />
+				</p:column>
+				<p:column headerText="Total" width="8%" styleClass="number">
+					<p:outputLabel value="#{item.total}" />
+				</p:column>
+				<p:summaryRow>
+					<p:column colspan="4" styleClass="number">
+						<p:outputLabel value="Total:" />
+					</p:column>
+					<p:column colspan="1" styleClass="number">
+						<p:outputLabel value="#{pagoAnticipadosController.totalSaldo}"
+							styleClass="bold">
+							<f:convertNumber pattern="##,##0.00" />
+						</p:outputLabel>
+					</p:column>
+					<p:column colspan="1" styleClass="number">
+						<p:outputLabel styleClass="bold"
+							value="#{pagoAnticipadosController.totalInteresDesc}">
+							<f:convertNumber pattern="##,##0.00" />
+						</p:outputLabel>
+					</p:column>
+					<p:column colspan="1" styleClass="number">
+						<p:outputLabel value="#{pagoAnticipadosController.total}"
+							styleClass="bold">
+							<f:convertNumber pattern="##,##0.00" />
+						</p:outputLabel>
+					</p:column>
+				</p:summaryRow>
+				<p:column headerText="Banco" width="8%">
+					<p:outputLabel value="#{item.bancoCheqFuturo}" />
+				</p:column>
+				<p:column headerText="Cuenta" width="10%">
+					<p:outputLabel value="#{item.cuentaCheqFuturo}" />
+				</p:column>
+				<p:column headerText="Monto" width="8%" styleClass="number">
+					<p:outputLabel value="#{item.montoCheqFuturo}" />
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	</ui:define>
+</ui:composition>
