@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>Generación de archivo Cash</title>
+	<style type="text/css">
+body {
+	font-size: 11px
+}
+
+body .ui-toolbar {
+	padding: 5px
+}
+
+.ui-datatable thead th, .ui-datatable tfoot td {
+	vertical-align: top;
+}
+</style>
+	<h:outputStylesheet name="css/layout-lightblue.css"
+		library="serenity-layout" />
+	<h:outputScript name="js/layout.js" library="serenity-layout" />
+	<h:outputScript name="js/ripple.js" library="serenity-layout" />
+	<script type="text/javascript">
+		//<![CDATA[
+		function start() {
+			PF('statusDialog').show();
+		}
+
+		function stop() {
+			PF('statusDialog').hide();
+		}
+		//]]>
+	</script>
+</h:head>
+<body>
+	<h:form id="form">
+		<p:ajaxStatus onstart="PF('statusDialog').show()"
+			onsuccess="PF('statusDialog').hide()"
+			onerror="PF('statusDialog').hide()" />
+		<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+			closable="false" resizable="false" showHeader="false">
+			<h:graphicImage value="/common/imgs/gifs/ajaxloadingbar.gif" />
+		</p:dialog>
+		<p:growl id="messages" globalOnly="true" autoUpdate="true"
+			widgetVar="groMessages" showDetail="true" />
+		<p:panel header="Generaci&oacute;n de Archivo Cash">
+			<p:commandButton ajax="false" value="Descargar archivo"
+				onclick="this.form.target='_blank'" title="Permite Descargar el archivo que se envia a Cash"
+				actionListener="#{generacionArchivoCashController.generarArchivo}"
+				icon="fa fa-download" />			
+		</p:panel>
+	</h:form>
+</body>
+</html>

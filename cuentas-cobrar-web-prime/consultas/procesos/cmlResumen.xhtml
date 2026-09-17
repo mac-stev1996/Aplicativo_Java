@@ -1,0 +1,176 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		GENERACION DE ARCHIVOS RESU
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmBotones">
+			<p:commandButton value="Consultar" partialSubmit="true"
+				update=":frmResumen, frmBotones"
+				actionListener="#{cmlResumenController.consultar}"
+				process="@this :frmResumen, frmBotones" icon="fa fa-search" />
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+		<style>
+body {
+	font-size: 11px !important;
+}
+
+body .ui-button .ui-button-text {
+	font-size: 11px !important;
+}
+
+body .ui-messages>div {
+	padding: 4px 4px;
+	margin: 2px 2px;
+}
+</style>
+		<h:form id="frmResumen">
+			<p:messages id="messages" showDetail="true" autoUpdate="true"
+				closable="true" showSummary="true" />
+			<p:panel>
+				<div style="text-align: center;">
+					<h:panelGrid columns="2">
+						<p:outputLabel value="Año:" />
+						<p:inputNumber autocomplete="off"
+							value="#{cmlResumenController.anio}" maxValue="9999" minValue="0"
+							decimalPlaces="0" decimalSeparator="" thousandSeparator=""
+							inputStyle="width: 100px;" />
+					</h:panelGrid>
+				</div>
+			</p:panel>
+			<p:dataTable id="dtResumen" var="item" resizeMode="true"
+				filterDelay="800" value="#{cmlResumenController.resumens}"
+				styleClass="table" widgetVar="wvResumen" paginator="false" rows="12"
+				rowIndexVar="row" emptyMessage="No existen registros">
+
+				<p:columnGroup type="header">
+					<p:row>
+						<p:column rowspan="2" headerText="Mes" style="width: 80px;" />
+						<p:column rowspan="2" headerText="Fecha envío" style="width: 70px" />
+						<p:column colspan="3" headerText="Totales registros"
+							style="width: 150px;" />
+						<p:column colspan="8" headerText="Montos totales"
+							style="width: 400px;" />
+						<p:column rowspan="2" headerText="Acciones" style="width: 150px;" />
+					</p:row>
+
+					<p:row>
+						<p:column headerText="Clientes" style="width: 50px" />
+						<p:column headerText="Operaciones" style="width: 50px" />
+						<p:column headerText="Transaciones" style="width: 50px" />
+
+						<p:column headerText="Operaciones" style="width: 50px;" />
+						<p:column headerText="Débitos" style="width: 50px;" />
+						<p:column headerText="Créditos" style="width: 50px;" />
+						<p:column headerText="Efectivo" style="width: 50px;" />
+						<p:column headerText="Cheque" style="width: 50px;" />
+						<p:column headerText="TC" style="width: 50px;" />
+						<p:column headerText="Bienes" style="width: 50px;" />
+						<p:column headerText="Valor total" style="width: 50px;" />
+					</p:row>
+				</p:columnGroup>
+				<p:column style="text-align:center">
+					<p:outputLabel
+						value="#{cmlResumenController.getDescripcionMes(item.id.periodo)}" />
+				</p:column>
+				<p:column style="text-align:center">
+					<p:outputLabel value="#{item.fecha}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</p:outputLabel>
+				</p:column>
+				<p:column style="text-align:center">
+					<p:outputLabel value="#{item.totRegClientes}" />
+				</p:column>
+				<p:column style="text-align:center">
+					<p:outputLabel value="#{item.totRegOperaciones}" />
+				</p:column>
+				<p:column style="text-align:center">
+					<p:outputLabel value="#{item.totRegTransacciones}" />
+				</p:column>
+				<p:column styleClass="number">
+					<p:outputLabel value="#{item.totalOperaciones}" />
+				</p:column>
+				<p:column styleClass="number">
+					<p:outputLabel value="#{item.totalDebitos}" />
+				</p:column>
+				<p:column styleClass="number">
+					<p:outputLabel value="#{item.totalCreditos}" />
+				</p:column>
+				<p:column styleClass="number">
+					<p:outputLabel value="#{item.totalEfectivo}" />
+				</p:column>
+				<p:column styleClass="number">
+					<p:outputLabel value="#{item.totalCheque}" />
+				</p:column>
+				<p:column styleClass="number">
+					<p:outputLabel value="#{item.totalTc}" />
+				</p:column>
+				<p:column styleClass="number">
+					<p:outputLabel value="#{item.totTvaloresBienes}" />
+				</p:column>
+				<p:column styleClass="number">
+					<p:outputLabel value="#{item.totValorTotal}" />
+				</p:column>
+				<p:column style="text-align:center">
+					<p:commandButton title="Generar" rendered="#{item.fecha eq null}"
+						update=":#{p:component('dtResumen')}" icon="fa fa-cogs"
+						process="@this"
+						actionListener="#{cmlResumenController.generar(item)}"
+						style="width:20px;height:20px;border-radius:30%">
+						<p:confirm header="Confirmación"
+							message="Esta seguro que desea generar y actualizar los datos"
+							icon="ui-icon-alert" />
+					</p:commandButton>
+					<p:commandButton title="Cerrar" rendered="#{item.fecha eq null}"
+						update=":#{p:component('dtResumen')}" icon="fa fa-indent"
+						process="@this" style="width:20px;height:20px;border-radius:30%"
+						actionListener="#{cmlResumenController.enviar(item)}">
+						<p:confirm header="Confirmación"
+							message="Esta seguro que desea cerrar el RESU"
+							icon="ui-icon-alert" />
+					</p:commandButton>
+					<p:commandButton id="btnRepCliente" ajax="false"
+						title="DESCARGA RESU. CLIENTES"
+						style="width:20px;height:20px;border-radius:30%"
+						onclick="this.form.target='_blank'" styleClass="green-btn"
+						actionListener="#{cmlResumenController.generarReporte(item,'C')}"
+						partialSubmit="true" process="@this" icon="fa fa-file-excel-o" />
+					<p:commandButton id="btnOperaciones" ajax="false"
+						title="DESCARGA RESU. OPERACIONES"
+						style="width:20px;height:20px;border-radius:30%"
+						onclick="this.form.target='_blank'" styleClass="green-btn"
+						actionListener="#{cmlResumenController.generarReporte(item,'O')}"
+						partialSubmit="true" process="@this" icon="fa fa-file-excel-o" />
+					<p:commandButton id="btnRepTransacciones" ajax="false"
+						title="DESCARGA RESU. TRANSACCIONES"
+						style="width:20px;height:20px;border-radius:30%"
+						onclick="this.form.target='_blank'" styleClass="green-btn"
+						actionListener="#{cmlResumenController.generarReporte(item,'T')}"
+						partialSubmit="true" process="@this" icon="fa fa-file-excel-o" />
+					<p:commandButton id="btnRepResumen" ajax="false"
+						title="DESCARGA RESUMEN" onclick="this.form.target='_blank'"
+						styleClass="green-btn"
+						style="width:20px;height:20px;border-radius:30%"
+						actionListener="#{cmlResumenController.generarReporte(item,'R')}"
+						partialSubmit="true" process="@this" icon="fa fa-file-excel-o" />
+				</p:column>
+			</p:dataTable>
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

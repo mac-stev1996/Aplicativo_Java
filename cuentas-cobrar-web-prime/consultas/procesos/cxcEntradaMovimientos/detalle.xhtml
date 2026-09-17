@@ -1,0 +1,117 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<p:dataTable id="tblDetalle" var="det"
+		styleClass="table table-body table-footer"
+		value="#{cxcEntradaMovimientosController.detalle}"
+		emptyMessage="No se han encontrado detalle" rows="10" paginator="true"
+		paginatorPosition="top"
+		currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+		paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink} {Botones}">
+
+		<f:facet name="{Botones}">
+			<p:commandButton style="float:right; margin-top:-5px;"
+				styleClass="deep-orange-btn" partialSubmit="true" process="@this"
+				icon="ui-icon ui-icon-create"
+				disabled="#{cxcEntradaMovimientosController.readonly}"
+				actionListener="#{cxcEntradaMovimientosController.addDetalle}"
+				update="@this :idForm:pestanas:tblDetalle" />
+		</f:facet>
+
+		<p:column headerText="Código cuenta" width="13%">
+			<p:remoteCommand name="commandCtaCon"
+				rendered="#{not cxcEntradaMovimientosController.readonly}"
+				process="@this :idForm:pestanas:tblDetalle" partialSubmit="true"
+				actionListener="#{cxcEntradaMovimientosController.selectDetalleCtaContable(det)}"
+				update=":idForm:tblCtaContables" />
+			<p:inputText value="#{det.id.ctaconId}"
+				disabled="#{cxcEntradaMovimientosController.readonly}"
+				onkeydown="if (event.keyCode == 120 ) {commandCtaCon(); return false;}"
+				onkeyup="this.value = this.value.toUpperCase();">
+				<p:ajax event="change" process="@this" partialSubmit="true"
+					listener="#{cxcEntradaMovimientosController.validarCtaCon(det)}"
+					update=":idForm:pestanas:tblDetalle" />
+			</p:inputText>
+		</p:column>
+
+		<p:column headerText="Cuenta" width="22%">
+			<p:inputText value="#{det.nombreC}" readonly="true" />
+		</p:column>
+
+		<p:column headerText="Centro Costo" width="13%">
+			<p:remoteCommand name="commandUniAdmin"
+				rendered="#{not cxcEntradaMovimientosController.readonly}"
+				process="@this :idForm:pestanas:tblDetalle" partialSubmit="true"
+				actionListener="#{cxcEntradaMovimientosController.selectDetalleUniAdmin(det)}"
+				update=":idForm:tblUniAdmin" />
+			<p:inputText value="#{det.uniadminId}"
+				disabled="#{cxcEntradaMovimientosController.readonly}"
+				onkeydown="if (event.keyCode == 120 ) {commandUniAdmin(); return false;}"
+				onkeyup="this.value = this.value.toUpperCase();">
+				<p:ajax event="change" process="@this" partialSubmit="true"
+					listener="#{cxcEntradaMovimientosController.validarUniAdmin(det)}"
+					update=":idForm:pestanas:tblDetalle" />
+			</p:inputText>
+		</p:column>
+
+		<p:column headerText="Descripción" width="22%">
+			<p:inputText value="#{det.descripcionCentroCosto}" readonly="true" />
+		</p:column>
+
+		<p:column headerText="Débito / Crédito" width="20%">
+			<p:selectOneRadio value="#{det.id.tipo}"
+				disabled="#{cxcEntradaMovimientosController.readonly}">
+				<f:selectItem itemValue="D" itemLabel="Déb" />
+				<f:selectItem itemValue="C" itemLabel="Cré" />
+				<p:ajax event="change" partialSubmit="true" process="@this"
+					listener="#{cxcEntradaMovimientosController.calcularTotalDetalle}"
+					update=":idForm:pestanas:tblDetalle" />
+			</p:selectOneRadio>
+		</p:column>
+
+		<p:column headerText="Monto" width="10%">
+			<p:inputNumber value="#{det.montoDol}" styleClass="number"
+				disabled="#{cxcEntradaMovimientosController.readonly}">
+				<p:ajax event="change" partialSubmit="true" process="@this"
+					listener="#{cxcEntradaMovimientosController.changeMonto(det)}"
+					update=":idForm:pestanas:tblDetalle" />
+			</p:inputNumber>
+		</p:column>
+
+		<p:columnGroup type="footer">
+			<p:row>
+				<p:column colspan="5">
+					<f:facet name="footer">
+						<p:outputLabel value="Total Débito" style="float:right" />
+					</f:facet>
+				</p:column>
+				<p:column styleClass="number">
+					<f:facet name="footer">
+						<p:inputNumber styleClass="number" readonly="true"
+							value="#{cxcEntradaMovimientosController.arccmd.totalDebitos}" />
+					</f:facet>
+				</p:column>
+			</p:row>
+			<p:row>
+				<p:column colspan="5">
+					<f:facet name="footer">
+						<p:outputLabel value="Total Crédito" style="float:right" />
+					</f:facet>
+				</p:column>
+				<p:column styleClass="number" colspan="6">
+					<f:facet name="footer">
+						<p:inputNumber styleClass="number" readonly="true"
+							value="#{cxcEntradaMovimientosController.arccmd.totalCreditos}" />
+					</f:facet>
+				</p:column>
+			</p:row>
+		</p:columnGroup>
+
+	</p:dataTable>
+
+
+</ui:composition>

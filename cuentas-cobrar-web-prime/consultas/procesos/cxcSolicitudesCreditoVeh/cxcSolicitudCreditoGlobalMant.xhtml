@@ -1,0 +1,226 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Mantenimiento Solicitudes de Crédito - Empresas
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="idButtons">
+			<p:commandButton value="Nuevo" icon="fa fa-plus"
+				actionListener="#{cxcSolicitudCreditoGlobalMantController.nuevoAnalista}"
+				process="@this" update="DlgResultGrupo" partialSubmit="true" />
+		</h:form>
+	</ui:define>
+
+
+	<ui:define name="content">
+		<style type="text/css">
+body {
+	font-size: 11px !important;
+}
+
+body .ui-datatable.ui-datatable-scrollable thead tr th {
+	font-size: 12px !important;
+}
+
+body .ui-datatable tbody tr td {
+	padding: 2px 3px;
+}
+
+body .ui-widget-content {
+	padding: 4px 4px;
+}
+
+.ui-panelgrid .ui-grid-responsive .ui-panelgrid-cell {
+	padding: 4px 4px;
+}
+
+body .ui-inputfield {
+	font-size: 12px;
+}
+
+.centrado {
+	display: flex;
+	align-items: center;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+	background-color: #ffffff !important;
+}
+
+.ui-dialog .ui-dialog-content {
+	border: 1px solid #d8d8d8 !important;
+}
+</style>
+		<h:form id="idForm">
+			<h:panelGrid id="idPrincipal" columns="2">
+				<p:dataTable 
+					value="#{cxcSolicitudCreditoGlobalMantController.analistas}"
+					var="item" rowIndexVar="index" paginator="true"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} registros"
+					emptyMessage="No hay registros" paginatorPosition="bottom"
+					styleClass="less-padding">
+					<f:facet name="header">
+		        		Analistas
+		    		</f:facet>
+
+					<p:column headerText="Nombre">
+						<h:outputLabel value="#{item.nombre}" />
+					</p:column>
+					<p:column headerText="Usuario">
+						<h:outputLabel value="#{item.pk.usuario}" />
+					</p:column>
+					<p:column headerText="Rol">
+						<h:outputLabel value="#{item.rol eq 'J' ? 'Jefe' : 'Analista' }" />
+					</p:column>
+					<p:column headerText="Correo">
+						<h:outputLabel value="#{item.correo}" />
+					</p:column>
+					<p:column headerText="Estado" styleClass="txtC" width="20%">
+						<h:outputLabel
+							value="#{item.estado eq 'A' ? 'Activo' : 'Inactivo' }" />
+					</p:column>
+					<p:column headerText="Acciones" styleClass="txtC" width="8%">
+						<p:commandLink title="Editar" process="@this"
+							partialSubmit="true"
+							action="#{cxcSolicitudCreditoGlobalMantController.seleccionarAnalista(item)}"
+							update=":#{p:component('FrmResultGrupo')}">
+							<i class="fa fa-pencil-square-o fa-2x" title="Editar"
+								style="color: unset" />
+						</p:commandLink>
+					</p:column>
+				</p:dataTable>
+			</h:panelGrid>
+		</h:form>
+
+		<!--Dialogo para crear un nuevo usuario y asignar rol -->
+		<p:dialog widgetVar="DlgResultGrupo" id="DlgResultGrupo"
+			header="Crear Analista - #{cxcSolicitudCreditoGlobalMantController.cia}" 
+			resizable="true" modal="true" style="position:fixed"
+			responsive="true" closeOnEscape="true" appendTo="@(body)"
+			draggable="true" width="750">
+			<h:form id="FrmResultGrupo">
+				<h:panelGrid id="idPGFormUsuarios" columns="6">
+
+					<p:commandLink value="Analista: "  process="@this"
+						update="dialogUsuarios"
+						actionListener="#{cxcSolicitudCreditoGlobalMantController.cargarUsuarios}"
+						styleClass="bold" />
+					<p:inputText size="20" maxlength="75" required="true" readonly="true"
+						value="#{cxcSolicitudCreditoGlobalMantController.analista.pk.usuario}" />
+
+					<h:outputLabel value="Nombre: " />
+					<p:inputText size="25" maxlength="150" required="true" readonly="true"
+						requiredMessage="El nombre no puede estar vacío"
+						value="#{cxcSolicitudCreditoGlobalMantController.analista.nombre}" />
+
+					<h:outputLabel value="Rol: " />
+					<p:selectOneMenu style="width:75px"
+						value="#{cxcSolicitudCreditoGlobalMantController.analista.rol}">
+						<f:selectItem itemLabel="Analista" itemValue="A" />
+						<f:selectItem itemLabel="Jefe" itemValue="J" />
+					</p:selectOneMenu>
+					
+					<h:outputLabel value="Télefono " />
+					<p:inputText size="25" maxlength="10" required="true" id="telefono"
+						requiredMessage="El telefono no puede estar vacío" 
+						value="#{cxcSolicitudCreditoGlobalMantController.analista.telefono}">
+						<p:keyFilter mask="num"  />
+						<p:ajax event="change" partialSubmit="true"
+						process="@this, telefono"
+						listener="#{cxcSolicitudCreditoGlobalMantController.validarTelefono}" />
+					</p:inputText>
+
+					<h:outputLabel value="Correo: " />
+					<p:inputText size="25" maxlength="150" required="true"
+						requiredMessage="El correo no puede estar vacío"
+						value="#{cxcSolicitudCreditoGlobalMantController.analista.correo}" />
+
+					<h:outputLabel value="Estado: " />
+					<p:selectOneMenu style="width:75px"
+						value="#{cxcSolicitudCreditoGlobalMantController.analista.estado}">
+						<f:selectItem itemLabel="Activo" itemValue="A" />
+						<f:selectItem itemLabel="Inactivo" itemValue="I" />
+					</p:selectOneMenu>
+					
+					<h:outputLabel  value="Máx Confirmaciones:" />
+					<p:inputNumber maxValue="10" decimalPlaces="0" thousandSeparator="" decimalSeparator="" 
+						value="#{cxcSolicitudCreditoGlobalMantController.analista.numeroRevision}" />
+						
+					<h:outputLabel  value="Usuario Casabaca:" />
+					<p:inputText size="20" maxlength="100" required="true" 
+						value="#{cxcSolicitudCreditoGlobalMantController.analista.usuarioCb}" />
+						
+					<h:outputLabel  value="Usuario Szk:" />
+					<p:inputText size="20" maxlength="100" required="true" 
+						value="#{cxcSolicitudCreditoGlobalMantController.analista.usuarioSzk}" />
+						
+					<h:outputLabel  value="Usuario Toyocosta:" />
+					<p:inputText size="20" maxlength="100" required="true" 
+						value="#{cxcSolicitudCreditoGlobalMantController.analista.usuarioTy}" />
+						
+					<h:outputLabel value="Usuario Nexumcorp:" />
+					<p:inputText size="20" maxlength="100" required="true" 
+						value="#{cxcSolicitudCreditoGlobalMantController.analista.usuarioNx}" />
+						
+					<h:outputLabel value="Usuario 1001GBV:" />
+					<p:inputText size="20" maxlength="100" required="true" 
+						value="#{cxcSolicitudCreditoGlobalMantController.analista.usuarioGbv}" />
+						
+					<h:outputLabel value="Usuario C. Larrea: " />
+					<p:inputText size="20" maxlength="100" required="true" 
+						value="#{cxcSolicitudCreditoGlobalMantController.analista.usuarioCl}" />
+					
+				</h:panelGrid>
+				<br />
+
+				<center>
+					<p:commandButton value="Guardar" icon="fa fa-save"
+						actionListener="#{cxcSolicitudCreditoGlobalMantController.guardar}"
+						partialSubmit="true"
+						process="@this :#{p:component('idPGFormUsuarios')}"
+						update=":idForm:idPrincipal" />
+				</center>
+			</h:form>
+		</p:dialog>
+
+		<!-- dialogo de usuarios -->
+		<p:dialog id="dialogUsuarios" widgetVar="dialogUsuarios"
+			header="Buscar Usuarios" style="position:fixed" responsive="true"
+			closeOnEscape="true" modal="true" appendTo="@(body)" width="575"
+			height="400">
+			<h:form>
+				<p:spacer height="10" />
+				<h:panelGrid id="idPanelUsuarioTable">
+					<p:dataTable id="idUsuariosTable"
+						value="#{cxcSolicitudCreditoGlobalMantController.usuarios}"
+						var="item" rowIndexVar="var" reflow="true" paginator="true"
+						rows="15" paginatorPosition="bottom"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+
+						<p:column headerText="Codigo" width="20%" styleClass="txtC">
+							<p:commandLink value="#{item.usuario}"
+								actionListener="#{cxcSolicitudCreditoGlobalMantController.seleccionarUsuario(item)}"
+								oncomplete="PF('dialogUsuarios').hide();"
+								update=":#{p:component('idPGFormUsuarios')}" />
+						</p:column>
+						<p:column headerText="Nombre" filterBy="#{item.nombre}"
+							styleClass="txtC" filterStyle="background:#e3e3e3;width:80%"
+							filterMatchMode="contains">
+							<h:outputText value="#{item.nombre}" />
+						</p:column>
+					</p:dataTable>
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+
+	</ui:define>
+</ui:composition>

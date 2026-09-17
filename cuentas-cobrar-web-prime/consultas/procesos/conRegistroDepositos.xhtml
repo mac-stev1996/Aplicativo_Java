@@ -1,0 +1,324 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+        Solicitud de Confirmación de Depósitos
+    </ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="idButtons">
+			<p:commandButton icon="fa fa-refresh" title="Limpiar formulario"
+				actionListener="#{registroAnticiposController.init}"
+				update=":frmFormAnticipos" process="@this" />
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+		<style type="text/css">
+body {
+	font-size: 11px;
+}
+</style>
+
+		<script type="text/javascript">
+		
+			//<![CDATA[
+			function soloNumeros(e) {
+				var tecla = (document.all) ? e.keyCode : e.which;
+				return (tecla >= 48 && tecla <= 57);
+			}
+			function soloNumerosDecimal(e) {
+				var tecla = (document.all) ? e.keyCode : e.which;
+				var campo = (document.all) ? e.srcElement : e.target;
+				// Permite: 0-9, punto decimal (solo uno), backspace, tab
+				if (tecla == 46) {
+					return campo.value.indexOf('.') === -1;
+				}
+				return (tecla >= 48 && tecla <= 57);
+			}
+			//]]>
+		</script>
+
+		<h:form id="frmFormAnticipos">
+				<p:messages id="idGrowl" showDetail="true" autoUpdate="true"
+				closable="true" showSummary="true" globalOnly="true" />
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+
+			<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+				closable="false" resizable="false" showHeader="false">
+				<p:graphicImage value="/common/imgs/icons/ajax-loader.gif" />
+			</p:dialog>
+
+			<center>
+				<p:outputPanel style="width:650px; display:block;">
+					<p:fieldset legend="Datos del Depósito" toggleable="false">
+						<p:panelGrid id="idPnlDataDocumentoDinero" columns="2">
+
+							<p:outputLabel value="Línea Anticipo:" for="lineaAnticipo" />
+							<p:selectOneMenu filter="true" id="lineaAnticipo"
+								value="#{registroAnticiposController.conDepositos.noLinea}">
+								<f:selectItem itemLabel="Seleccione" itemValue=""
+									noSelectionOption="true" />
+								<f:selectItems
+									value="#{registroAnticiposController.listLineasNegocio}"
+									var="item" itemValue="#{item.lineaNegocioPK.noLinea}"
+									itemLabel="#{item.lineaNegocioPK.noLinea} - #{item.descripcion}" />
+								<p:ajax event="change"
+									listener="#{registroAnticiposController.seleccionarLineaNegocio}"
+									update="panelAreaConfirma idGrowl" />
+							</p:selectOneMenu>
+
+							<p:outputLabel value="Area confirma:" />
+							<p:outputPanel id="panelAreaConfirma">
+								<p:selectOneMenu id="areaConfirma"
+									value="#{registroAnticiposController.conDepositos.areaConfirma}"
+									filter="true" filterMatchMode="contains"
+									disabled="#{registroAnticiposController.esSuzuki and registroAnticiposController.areaConfirmaBloqueada}">
+									<f:selectItem itemLabel="Seleccione un Area" itemValue=""
+										noSelectionOption="true" />
+									<f:selectItems value="#{registroAnticiposController.listAreas}" />
+								</p:selectOneMenu>
+								<h:inputHidden
+									rendered="#{!registroAnticiposController.areaConfirmaDesbloqueada}"
+									value="#{registroAnticiposController.conDepositos.areaConfirma}" />
+							</p:outputPanel>
+
+							<p:outputLabel value="Banco:" />
+							<p:selectOneMenu
+								value="#{registroAnticiposController.conDepositos.banco}"
+								filter="true" filterMatchMode="contains">
+								<f:selectItem itemLabel="Seleccione un Banco" itemValue=""
+									noSelectionOption="true" />
+								<f:selectItems
+									value="#{registroAnticiposController.listMaestroCuenta}"
+									var="item" itemLabel="#{item.nomBanco}"
+									itemValue="#{item.banco}" />
+							</p:selectOneMenu>
+
+							<p:outputLabel value="Tipo Transaccion:" />
+							<p:selectOneMenu id="tipoTransaccion"
+								value="#{registroAnticiposController.conDepositos.tipoTransaccion}"
+								panelStyle="width:250px">
+								<f:selectItem itemLabel="Seleccione un Tipo de Transaccion"
+									itemValue="" noSelectionOption="true" />
+								<f:selectItems
+									value="#{registroAnticiposController.listaTipoTransaccion}" />
+							</p:selectOneMenu>
+
+							<p:outputLabel value="Fecha de Depósito:" />
+							<p:calendar
+								value="#{registroAnticiposController.conDepositos.fechaDocumento}"
+								pattern="dd-MM-yyyy" />
+
+							<p:outputLabel value="N° Deposito/ Transferencia:" />
+							<p:inputText placeholder="NO IDENTIFICADO"
+								value="#{registroAnticiposController.conDepositos.numeroDocumento}"
+								style="text-align: right" maxlength="20"
+								onkeypress="return soloNumeros(event)" />
+
+							<p:outputLabel value="N° Pedido Ecommerce:"
+								rendered="#{!registroAnticiposController.esSuzuki}" />
+							<p:inputText
+								value="#{registroAnticiposController.conDepositos.noPedido}"
+								style="text-align: right" maxlength="50"
+								rendered="#{!registroAnticiposController.esSuzuki}" />
+
+							<p:outputLabel value="Valor:" />
+							<p:inputText id="valorDocumento"
+								value="#{registroAnticiposController.conDepositos.valorDocumento}"
+								style="text-align: right" maxlength="15"
+								onkeypress="return soloNumerosDecimal(event)" />
+
+							<p:commandLink id="clienteCommandLink1" value="Cliente:"
+								oncomplete="PF('modalCLientes').show();"
+								action="#{registroAnticiposController.ejecutarConsultaClientes}" />
+
+							<p:outputPanel>
+								<p:inputText id="clienteId" size="12"
+									value="#{registroAnticiposController.conDepositos.cedula}">
+									<p:ajax update="clienteId nombreCliente idGrowl" event="change"
+										listener="#{registroAnticiposController.seleccionarClientePorCodigo}" />
+								</p:inputText>
+							</p:outputPanel>
+
+							<p:outputLabel value="Nombre completo del cliente:" />
+							<p:inputText id="nombreCliente" readonly="true" size="50"
+								value="#{registroAnticiposController.conDepositos.nombreCliente}" />
+
+							<p:outputLabel value="Agencia:" />
+							<p:selectOneMenu
+								value="#{registroAnticiposController.conDepositos.agenciaCajero}"
+								filter="true" filterMatchMode="contains">
+								<f:selectItem itemLabel="Seleccione una agencia" itemValue=""
+									noSelectionOption="true" />
+								<f:selectItems
+									value="#{registroAnticiposController.agenciasSelectItems}" />
+							</p:selectOneMenu>
+
+							<p:commandLink value="Cargar Deposito:"
+								oncomplete="PF('dialogArchivo').show();" />
+							<p:outputLabel
+								value="#{registroAnticiposController.conDepositos.pathArchivo}" />
+						</p:panelGrid>
+					</p:fieldset>
+
+					<p:spacer height="10" />
+
+					<p:fieldset legend="Terceros" toggleable="false" collapsed="false"
+						id="fieldsetTerceros">
+						<p:selectBooleanCheckbox value="#{registroAnticiposController.aplicaTerceros}">
+							<p:ajax event="change" listener="#{registroAnticiposController.cambiarAplicaTerceros}"
+								update="panelTerceros panelBotones fieldsetTerceros" />
+						</p:selectBooleanCheckbox>
+						<p:outputLabel value=" Aplica Terceros" style="margin-left:5px;" />
+
+						<p:outputPanel id="panelTerceros" layout="block"
+							style="display:#{registroAnticiposController.aplicaTerceros ? 'block' : 'none'}; margin-top:10px;">
+							<p:panelGrid columns="2">
+								<p:outputLabel value="Cédula/RUC de Terceros:" />
+								<p:inputText id="parentescoId" size="12" maxlength="13"
+									value="#{registroAnticiposController.conDepositos.cedulaTerceros}"
+									onkeypress="return soloNumeros(event)">
+									<p:ajax
+										update="nombreTerceros apellidosTerceros panelTerceros panelBotones idGrowl"
+										event="change"
+										listener="#{registroAnticiposController.seleccionarTerceroPorCodigo}" />
+								</p:inputText>
+								<p:outputLabel value="Nombres de Terceros:" />
+								<p:inputText id="nombreTerceros" size="50" maxlength="100"
+									readonly="#{registroAnticiposController.terceroEncontrado}"
+									value="#{registroAnticiposController.conDepositos.nombreTerceros}"
+									oninput="this.value = this.value.toUpperCase()" />
+								<p:outputLabel value="Apellidos de Terceros:" />
+								<p:inputText id="apellidosTerceros" size="50" maxlength="100"
+									readonly="#{registroAnticiposController.terceroEncontrado}"
+									value="#{registroAnticiposController.conDepositos.apellidosTerceros}"
+									oninput="this.value = this.value.toUpperCase()" />
+								<p:outputLabel value="Parentesco:"
+									rendered="#{!registroAnticiposController.terceroEsArcctf}" />
+								<p:selectOneMenu
+									rendered="#{!registroAnticiposController.terceroEsArcctf}"
+									value="#{registroAnticiposController.conDepositos.codigoParentesco}"
+									filter="true" filterMatchMode="contains">
+									<f:selectItem itemLabel="Seleccione un parentesco" itemValue=""
+										noSelectionOption="true" />
+									<f:selectItems
+										value="#{registroAnticiposController.listaParentescos}"
+										var="item" itemLabel="#{item.descripcion}"
+										itemValue="#{item.id.codigo}" />
+								</p:selectOneMenu>
+								<p:commandLink value="Cargar Formulario:"
+									oncomplete="PF('dialogArchivoTercero').show();" />
+								<p:outputLabel
+									value="#{registroAnticiposController.conDepositos.pathArchivoTercero}" />
+							</p:panelGrid>
+						</p:outputPanel>
+					</p:fieldset>
+
+				</p:outputPanel>
+			</center>
+
+			<p:outputPanel id="panelBotones">
+				<center>
+					<p:commandButton value="Descargar Formulario" icon="ui-icon-print"
+						rendered="#{registroAnticiposController.aplicaTerceros
+                       and not empty registroAnticiposController.conDepositos.cedulaTerceros}"
+						action="#{registroAnticiposController.generarFormularioTercero}"
+						update="panelBotones valorDocumento" />
+
+					<p:commandButton value="Guardar" icon="ui-icon-save"
+						update="idGrowl idModalOK frmFormAnticipos" id="idCommad5"
+						widgetVar="varButtonid" validateClient="true"
+						action="#{registroAnticiposController.guardar}" />
+				</center>
+			</p:outputPanel>
+
+			<p:dialog header="Clientes" widgetVar="modalCLientes" modal="true"
+				showEffect="fade" hideEffect="fade" resizable="true" width="600"
+				height="400" position="center center" closeOnEscape="true">
+				<p:panelGrid columns="5" layout="grid">
+					<p:outputLabel value="Cedula:" />
+					<p:inputText id="clienteIdCC"
+						value="#{registroAnticiposController.cedulaClienteConsulta}"
+						size="10" />
+					<p:outputLabel value="Nombre:" />
+					<p:inputText id="idNombreClieC"
+						value="#{registroAnticiposController.nombreClienteConsulta}" />
+					<p:commandButton id="clienteCommandink1" icon="ui-icon-search"
+						update="carTable"
+						action="#{registroAnticiposController.ejecutarConsultaClientes}" />
+				</p:panelGrid>
+
+				<p:dataTable var="item"
+					value="#{registroAnticiposController.lazyModel}"
+					widgetVar="idTableGeneral" paginator="true" rows="25" lazy="true"
+					rowIndexVar="var" scrollWidth="100%" scrollable="true"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+					rowsPerPageTemplate="25,50" id="carTable"
+					paginatorPosition="bottom" style="width:90%;">
+					<p:column headerText="No" width="5%">
+						<p:outputLabel value="#{var + 1}" />
+					</p:column>
+					<p:column headerText="Codigo" width="15%">
+						<p:commandLink id="viClieCommandLink"
+							value="#{item.clientePK.noCliente}"
+							action="#{registroAnticiposController.seleccionarCliente(item)}"
+							oncomplete="PF('modalCLientes').hide();" partialSubmit="true"
+							update=":frmFormAnticipos:idPnlDataDocumentoDinero :frmFormAnticipos:nombreCliente :frmFormAnticipos:clienteId"
+							process="@this" />
+					</p:column>
+					<p:column headerText="Cedula" width="30%">
+						<p:outputLabel value="#{item.cedula}" />
+					</p:column>
+					<p:column headerText="Nombres/Apellidos" width="50%">
+						<p:outputLabel value="#{item.nombre}" />
+					</p:column>
+				</p:dataTable>
+			</p:dialog>
+
+			<p:dialog header="Cargar Depósito"
+				widgetVar="dialogArchivo" width="550" hideEffect="fade" height="300"
+				resizable="true" position="center center" modal="true">
+				<h:form id="frmUploadCuantitavios" enctype="multipart/form-data">
+					<p:fileUpload label="Archivo" update="frmFormAnticipos"
+						fileLimit="1" oncomplete="PF('dialogArchivo').hide()"
+						fileLimitMessage="¡Se permiten solo un archivo!"
+						fileUploadListener="#{registroAnticiposController.asignarArchivo}"
+						uploadLabel="Upload" />
+				</h:form>
+			</p:dialog>
+
+			<p:dialog header="Cargar Formulario Tercero"
+				widgetVar="dialogArchivoTercero" width="550" hideEffect="fade"
+				height="300" resizable="true" position="center center" modal="true">
+				<h:form id="frmUploadTercero" enctype="multipart/form-data">
+					<p:fileUpload label="Formulario" update="frmFormAnticipos"
+						fileLimit="1" oncomplete="PF('dialogArchivoTercero').hide()"
+						fileLimitMessage="¡Se permiten solo un archivo!"
+						fileUploadListener="#{registroAnticiposController.asignarArchivoTercero}"
+						uploadLabel="Upload" />
+				</h:form>
+			</p:dialog>
+
+			<p:dialog id="idModalOK" widgetVar="modalMensajeOK" modal="true"
+				showHeader="false" showEffect="fade" hideEffect="fade"
+				resizable="true" width="400">
+				<h:form id="idRescas">
+					<center>
+						<p:outputLabel
+							style="COLOR: #ff0000; FONT-WEIGHT: bold; font-size: 20px;"
+							value="Registro realizado con exito..." />
+					</center>
+					<p:spacer height="5" />
+				</h:form>
+			</p:dialog>
+
+		</h:form>
+
+	</ui:define>
+</ui:composition>

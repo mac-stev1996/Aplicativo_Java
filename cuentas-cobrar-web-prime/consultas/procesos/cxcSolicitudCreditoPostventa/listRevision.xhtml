@@ -1,0 +1,139 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Cuentas por Cobrar - LISTADO DE SOLICITUDES DE CREDITO POSTVENTA PENDIENTES DE REVISION
+	</ui:define>
+
+	<ui:define name="buttons">
+
+	</ui:define>
+
+	<ui:define name="content">
+		<style type="text/css">
+input {
+	width: 95%;
+}
+</style>
+
+		<h:form id="idForm">
+
+			<p:panel style="display: flex; justify-content: center;"
+			styleClass="noborder">
+			<h:panelGrid id="grid-1" columns="12">
+				<p:outputLabel value="Agencias:" styleClass="bold" />
+				<p:selectOneMenu id="cmbAgencias"
+					value="#{cxcListadoRevisionCreditoPostventaController.codAgencia}" filter="true"
+					filterMatchMode="contains" autoWidth="false">
+					<f:selectItem itemLabel="Seleccione"
+						noSelectionOption="true" />
+					<f:selectItems
+						value="#{cxcListadoRevisionCreditoPostventaController.listaAgencias}" var="ag"
+						itemLabel="#{ag.nombre}" itemValue="#{ag.agenciaPK.codigo}" />
+				</p:selectOneMenu>
+				<p:spacer />
+				<p:outputLabel for="fechaDesde" value="Fecha Inicio:"
+					styleClass="bold" />
+				<p:calendar id="fechaDesde" pattern="dd-MM-yyyy" showOn="button"
+					size="20" locale="es" navigator="true" maxdate="today"
+					value="#{cxcListadoRevisionCreditoPostventaController.fechaDesde}" />
+				<p:spacer />
+				<p:outputLabel for="fechaHasta" value="Fecha Fin:"
+					styleClass="bold" />
+				<p:calendar id="fechaHasta" pattern="dd-MM-yyyy" showOn="button"
+					mindate="#{cxcListadoRevisionCreditoPostventaController.fechaDesde}" size="20"
+					locale="es" navigator="true" maxdate="today"
+					value="#{cxcListadoRevisionCreditoPostventaController.fechaHasta}" />
+				<p:spacer />
+				<p:commandButton title="Buscar" alt="Buscar solicitud"
+					value="Buscar" icon="fa fa-search" id="buscarSolicitud"
+					process="@this :idForm:cmbAgencias
+					:idForm:fechaDesde :idForm:fechaHasta"
+					action="#{cxcListadoRevisionCreditoPostventaController.buscarSolicitud}"
+					update=":idForm:tblSolicitudes" />
+				</h:panelGrid>
+			</p:panel>
+			<h:panelGrid id="panListado">
+			<p:dataTable id="tblSolicitudes" lazy="true"
+				widgetVar="tblSolicitudesWid"
+				value="#{cxcListadoRevisionCreditoPostventaController.model}" var="item"
+				paginator="true" rows="#{cxcListadoRevisionCreditoPostventaController.SIZE}"
+				rowKey="#{item.noSolicitud}" styleClass="table table-body"
+				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+				paginatorAlwaysVisible="false" paginatorPosition="bottom"
+				emptyMessage="No existen solicitudes" rowIndexVar="row" filterDelay="1000">
+
+					<f:facet name="header">
+					Listado de Solicitudes de Credito Postventa Pendientes de Revision
+				</f:facet>
+					<p:column headerText="No" width="5%">
+						<p:commandLink value="#{item.noSolicitud}"
+							actionListener="#{cxcListadoRevisionCreditoPostventaController.getUrlConsultaRevisado(item)}"
+							update="@form" />
+					</p:column>
+
+					<p:column headerText="Nombres Cliente" width="10%">
+						<p:outputLabel value="#{item.nombres}" />
+					</p:column>
+					<p:column headerText="Cedula" width="10%">
+						<p:outputLabel value="#{item.cedula}" />
+					</p:column>
+					<p:column headerText="Centro" width="10%">
+						<p:outputLabel value="#{item.nomAgencia}" />
+					</p:column>
+					<p:column headerText="Ejecutivo de Ventas" width="10%">
+						<p:outputLabel value="#{item.usuario}" />
+					</p:column>
+
+					<p:column headerText="Fecha Creación" width="5%">
+							<p:outputLabel value="#{item.fecha}"> 
+						<f:convertDateTime pattern="yyyy-MM-dd" />
+						</p:outputLabel>
+					</p:column>
+
+					<p:column headerText="Estado" width="10%">
+						<p:outputLabel
+							value="#{item.estado eq 'E' ? 'ENVIADO':'N/A' or item.estado eq 'V' ? 'DEVUELTO REVISION':'N/A'}" />
+					</p:column>
+
+					<p:column headerText="Ejecutivo Envío" width="10%">
+						<p:outputLabel value="#{item.usuarioEnvia}" />
+					</p:column>
+
+					<p:column headerText="Fecha Envío" width="5%">
+						<p:outputLabel value="#{item.fechaEstEnviado}" />
+					</p:column>
+
+					<p:column headerText="Analista Revisión" width="10%">
+						<p:outputLabel value="#{item.usuarioRevisa}" />
+					</p:column>
+
+					<p:column headerText="Fecha Revisión" width="5%">
+						<p:outputLabel value="#{item.fechaEstAprobado}" > 
+						<f:convertDateTime pattern="yyyy-MM-dd" />
+						</p:outputLabel>
+					</p:column>
+
+					<p:column headerText="Ingresos" width="5%">
+						<p:outputLabel value="#{item.ingreso}" />
+					</p:column>
+
+					<p:column headerText="Egresos" width="5%">
+						<p:outputLabel value="#{item.egreso}" />
+					</p:column>
+
+					<p:column headerText="Disponible" width="5%">
+						<p:outputLabel value="#{item.montoDisponible}" />
+					</p:column>
+				</p:dataTable>
+			</h:panelGrid>
+		</h:form>
+	</ui:define>
+
+</ui:composition>

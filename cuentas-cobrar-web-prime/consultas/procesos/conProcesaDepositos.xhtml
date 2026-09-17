@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"	
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<h:outputStylesheet name="css/layout-lightblue.css"
+		library="serenity-layout" />
+		<style type="text/css">
+			.ui-row-editor .ui-row-editor-pencil {
+				margin-left:8px;
+			}
+			body {
+				font-size: 11px !important;
+			}			
+			body .ui-datatable.ui-datatable-scrollable thead tr th {
+				font-size: 11px !important;
+				padding: 1px 2px;
+			}
+			body .ui-datatable tbody tr td {
+				font-size: 10px !important;
+				padding: 2px 3px;
+			}
+			body .ui-inputfield {
+				font-size: 11px !important;
+		    	width:100%;
+			}
+		    .contenidoCelda{
+		    	font-size: 11px !important;
+		    	width:100%;
+		    }
+		    .ui-editable-column{
+		    	background-color: aliceblue;
+		    }
+		</style>
+</h:head>
+<h:body>
+	<h:form id="frmFormAnticipos">
+		<p:growl id="idGrowl" showDetail="true" life="6000" autoUpdate="true"></p:growl>
+				
+		<p:ajaxStatus onstart="PF('statusDialog').show()"
+			onsuccess="PF('statusDialog').hide()" />
+
+		<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+			closable="false" resizable="false" showHeader="false">
+			<p:graphicImage value="/common/imgs/icons/ajax-loader.gif" />
+		</p:dialog>
+
+		<p:toolbar>
+			<f:facet name="left">
+				<i class="fa fa-money fa-2x"></i>
+				<p:outputLabel value=" PROCESAR DEPOSITOS" style="font-size: 14px;"></p:outputLabel>
+			</f:facet>			
+		</p:toolbar>		
+	    <p:spacer />
+		<p:dataTable id = "idDtDepositosResult" 
+					 value="#{procesaAnticiposController.listConDepositos}"
+					 var = "item"					       
+					 emptyMessage="No hay registros"
+					 rowIndexVar="var"
+					 styleClass="table" scrollable="true" scrollWidth="100%" style="width:100%;"
+					 editable="true" editMode="cell"
+					 paginator="true" rows="25" paginatorPosition="bottom">
+			<f:facet name="header">
+	            Confirmaciones pendientes
+	        </f:facet>
+			<p:ajax event="cellEdit" partialSubmit="true" process="@this"
+								listener="#{procesaAnticiposController.actualizar(item)}"
+								update="@this, idDtDepositosResult" global="false" />
+								
+			<p:column headerText="No. Solicitud" filterBy="#{item.id}" filterMatchMode="contains" width="5%">
+	   			<h:outputLabel value="#{item.id}"/>
+	   		</p:column>
+	   		
+	   		<p:column headerText="Fecha Solicitud" width="6%">
+	     		<h:outputLabel value="#{item.fechaSolicitud}">
+	     			<f:convertDateTime pattern="dd/MM/yyyy"/>
+	     		</h:outputLabel>
+	     	</p:column>			
+	     		
+			<p:column headerText="Tipo Transaccion" filterBy="#{item.nombreTipoTransaccion}" filterMatchMode="contains" width="7%">
+	     	   <h:outputLabel value="#{item.nombreTipoTransaccion}"/>
+	     	</p:column>
+	     	
+     		<p:column headerText="Identificacion" filterBy="#{item.cedula}" filterMatchMode="contains" width="8%">
+     				<h:outputLabel value="#{item.cedula}"/>
+     		</p:column>
+     		<p:column headerText="Nombre" filterBy="#{item.nombreCliente}" filterMatchMode="contains" width="10%">
+     				<h:outputLabel value="#{item.nombreCliente}"/>
+     		</p:column>
+     		<p:column headerText="Banco" filterBy="#{item.nombreBanco}" filterMatchMode="contains" width="6%">
+     				<h:outputLabel value="#{item.nombreBanco}"/>
+     		</p:column>
+     		<p:column headerText="Area confirma" filterBy="#{item.areaConfirma}" filterMatchMode="contains" width="5%"
+     			rendered="#{procesaAnticiposController.compania.noCia eq '01' 
+     				or procesaAnticiposController.compania.noCia eq '08'
+     				or procesaAnticiposController.compania.noCia eq '11'
+     				or procesaAnticiposController.compania.noCia eq '09'}">
+     				<h:outputLabel value="#{item.areaConfirma}"/>
+     		</p:column> 
+     		<p:column headerText="Agencia" filterBy="#{item.nombreAgenciaCajero}" filterMatchMode="contains" width="7%"
+     			rendered="#{procesaAnticiposController.compania.noCia eq '01' 
+     				or procesaAnticiposController.compania.noCia eq '08'
+     				or procesaAnticiposController.compania.noCia eq '11'
+     				or procesaAnticiposController.compania.noCia eq '09'}">
+     				<h:outputLabel value="#{item.nombreAgenciaCajero}"/>
+     		</p:column>
+     		<p:column headerText="Linea Anticipo" width="7%"
+     			rendered="#{procesaAnticiposController.compania.noCia eq '01' 
+     				or procesaAnticiposController.compania.noCia eq '08'
+     				or procesaAnticiposController.compania.noCia eq '11'
+     				or procesaAnticiposController.compania.noCia eq '09'}">
+     				<h:outputLabel value="#{item.nombreLinea}"/>
+     		</p:column>      	
+     		<p:column headerText="Fecha Documento" width="6%">
+     			<p:cellEditor>
+                	<f:facet name="output">
+                		<h:outputText value="#{item.fechaDocumento}">
+	                		<f:convertDateTime pattern="dd/MM/yyyy"/>
+	                	</h:outputText>
+ 					</f:facet>
+                	<f:facet name="input">						
+						<p:calendar styleClass="contenidoCelda"
+							value="#{item.fechaDocumento}"
+							pattern="dd/MM/yyyy">
+						</p:calendar>
+					</f:facet>
+            	</p:cellEditor>
+     		</p:column>
+     		<p:column headerText="Numero Documento" filterBy="#{item.numeroDocumento}" filterMatchMode="contains"  width="6%">     				
+     			<p:cellEditor>
+                	<f:facet name="output"><h:outputText value="#{item.numeroDocumento}" /></f:facet>
+                	<f:facet name="input"><p:inputText value="#{item.numeroDocumento}" styleClass="contenidoCelda" label="Year"/></f:facet>
+            	</p:cellEditor>
+     		</p:column>
+     		<p:column headerText="Valor" 
+     			rendered="#{procesaAnticiposController.compania.noCia ne '01' 
+     			and procesaAnticiposController.compania.noCia ne '08'
+     			and procesaAnticiposController.compania.noCia ne '11'
+     			and procesaAnticiposController.compania.noCia ne '09'}"
+     			filterBy="#{item.valorDocumento}" filterMatchMode="contains" width="5%">
+     			<p:cellEditor>
+                	<f:facet name="output">
+                		<h:outputText value="#{item.valorDocumento}" >
+                			<f:convertNumber pattern="#,##0.00" />
+                		</h:outputText>
+                	</f:facet>
+                	<f:facet name="input">
+                		<p:inputText value="#{item.valorDocumento}" styleClass="contenidoCelda" label="Valor" 
+                			disabled="#{procesaAnticiposController.compania.noCia eq '01' 
+                				or procesaAnticiposController.compania.noCia eq '08'
+                				or procesaAnticiposController.compania.noCia eq '11'
+                				or procesaAnticiposController.compania.noCia eq '09'}"/>
+                	</f:facet>
+            	</p:cellEditor>     			
+     		</p:column>
+     		<p:column headerText="Valor" 
+     			rendered="#{procesaAnticiposController.compania.noCia eq '01' 
+     				or procesaAnticiposController.compania.noCia eq '08'
+     				or procesaAnticiposController.compania.noCia eq '11'
+     				or procesaAnticiposController.compania.noCia eq '09'}"
+     			filterBy="#{item.valorDocumento}" filterMatchMode="contains" width="5%">
+     			<h:outputText value="#{item.valorDocumento}" >
+           			<f:convertNumber pattern="#,##0.00" />
+           		</h:outputText>    			
+     		</p:column>
+     		<p:column headerText="Usuario Solicita" filterBy="#{item.usuario}" filterMatchMode="contains" width="6%">
+     				<h:outputLabel value="#{item.usuario}"/>
+     		</p:column>   
+     		
+     		<p:column headerText="Archivo" style="text-align:center" width="3%">
+				<h:commandLink id="seePhoto"
+						action="#{procesaAnticiposController.seeFile}" target="_blank">
+						<h:graphicImage value="/common/imgs/icons/carpeta.png" height="24"
+							width="24" style="border:none" title="Ver Documento"
+							alt="Ver Documento" />
+						<f:setPropertyActionListener
+							value="#{item.pathArchivo}"
+							target="#{procesaAnticiposController.urlImagen}" />
+				</h:commandLink>	
+			</p:column>		
+			
+			<p:column headerText="Aut. Terc" style="text-align:center" width="3%">
+				<h:commandLink id="seePhotoAutorizacion"  rendered="#{not empty item.pathArchivoTercero}"
+						action="#{procesaAnticiposController.seeFileAutorizacionTerceros}" target="_blank">
+						<h:graphicImage value="/common/imgs/reports/preview.png" height="24"
+							width="24" style="border:none" title="Ver Autorizacion"
+							alt="Ver Autorizacion" />
+						<f:setPropertyActionListener
+							value="#{item.pathArchivoTercero}"
+							target="#{procesaAnticiposController.urlPathArchivoTercero}" />
+				</h:commandLink>	
+			</p:column>			
+     		
+     		<p:column headerText="Observacion" width="11%">
+     		    <p:cellEditor>
+                	<f:facet name="output"><h:outputText value="#{item.condicion}" /></f:facet>
+                	<f:facet name="input"><p:inputText value="#{item.condicion}" styleClass="contenidoCelda" label="Condicion"/></f:facet>
+            	</p:cellEditor>        	
+        	</p:column>
+        	
+        	<p:column headerText="Accion" width="10%">
+		    	<p:commandButton icon="ui-icon-trash" id="idBtAnular" title="Anular" 
+		    					 action="#{procesaAnticiposController.anularSolicitud(item)}"
+		    					 update="idDtDepositosResult, :frmFormAnticipos:idGrowl">
+		    		<p:confirm header="Confirmación"
+							message="¿Esta seguro de anular la solicitud #{item.id}?"
+							icon="ui-icon-alert" />
+		    	</p:commandButton>
+		    	<p:commandButton icon="fa fa-reply" id="idBtRechazar" title="Rechazar"
+		    					rendered="#{procesaAnticiposController.empresaApro}" 
+		    					style="background-color: orange"
+		    					 action="#{procesaAnticiposController.procesarRechazo(item)}"
+		    					 update="idDtDepositosResult, :frmFormAnticipos:idGrowl">
+		    		<p:confirm header="Confirmación"
+							message="¿Esta seguro de rechazar la solicitud #{item.id}?"
+							icon="ui-icon-alert" />
+		    	</p:commandButton>
+		    	<p:commandButton icon="fa fa-gear" id="idBtConfirmarBan" title="Por Confirmar Bancos"
+		    					rendered="#{procesaAnticiposController.empresaApro}" 
+		    					style="background-color: green"
+		    					 action="#{procesaAnticiposController.procesarEsperaConfirmacionBanco(item)}"
+		    					 update="idDtDepositosResult, :frmFormAnticipos:idGrowl">
+		    		<p:confirm header="Pendiente Por Confirmar Bancos"
+							message="¿Esta seguro que la solicitud #{item.id}? es Pendiente por Confirmar Bancos"
+							icon="ui-icon-alert" />
+		    	</p:commandButton>
+        	</p:column>
+        	<ui:remove>
+	        	<p:column headerText="Editar" width="4%">
+	        		    <p:rowEditor editTitle="Editar" cancelTitle="Cancelar" saveTitle="Guardar"/>
+	        	</p:column>        	        	
+        	</ui:remove>
+        </p:dataTable>
+    	<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+			<p:commandButton value="Si" type="button"
+				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+			<p:commandButton value="No" type="button"
+				styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+		</p:confirmDialog>
+    </h:form>
+    
+    <p:dialog id="idDlgMostrarImagenes" widgetVar="wvDlgMostrarImagenes" width="390" height="510" position="center center">
+		<h:form id="idFormMostrarImagenes">
+			<h:graphicImage value="#{procesaAnticiposController.urlImagen}" rendered="#{!procesaAnticiposController.urlImagen.contains('pdf')}" width="400" height="500"/>
+																			
+			
+			<p:media value="#{procesaAnticiposController.urlImagen}" width="100%" height="600px" rendered="#{procesaAnticiposController.urlImagen.contains('pdf')}">
+			</p:media>
+		</h:form>
+	</p:dialog>
+    
+    <p:dialog id="idDlgMostrarImagenesAutorizacion" widgetVar="wvDlgMostrarImagenesAutorizacion" width="390" height="510" position="center center">
+		<h:form id="idFormMostrarImagenesAutorizacion">
+			<h:graphicImage value="#{procesaAnticiposController.urlPathArchivoTercero}" rendered="#{!procesaAnticiposController.urlPathArchivoTercero.contains('pdf')}" width="400" height="500"/>
+			<p:media value="#{procesaAnticiposController.urlPathArchivoTercero}" width="100%" height="600px" rendered="#{procesaAnticiposController.urlPathArchivoTercero.contains('pdf')}">
+			</p:media>
+		</h:form>
+	</p:dialog>
+    
+    
+</h:body>
+</html>

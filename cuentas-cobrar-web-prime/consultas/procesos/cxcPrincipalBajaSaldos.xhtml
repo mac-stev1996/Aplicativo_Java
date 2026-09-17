@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+<head>
+
+</head>
+<ui:composition>
+	<p:panel id="pnlPrincipal"
+		rendered="#{cxcManBajaSaldosController.tipoProceso ne null}">
+		<h:panelGrid columns="2">
+			<p:outputLabel value="Tipo de Baja:"
+				style="font-size: 14px; font-weight: bold;" />
+			<p:selectOneMenu value="#{cxcManBajaSaldosController.tipoBaja}"
+				style="font-size: 14px;">
+				<f:selectItem itemLabel="Normal" itemValue="N" />
+				<f:selectItem itemLabel="Año" itemValue="A" />
+				<f:selectItem itemLabel="Por Fechas" itemValue="F" />
+				<p:ajax event="change"
+					listener="#{cxcManBajaSaldosController.activarCamposReporte}"
+					process="@this" partialSubmit="true" update="idForm"></p:ajax>
+			</p:selectOneMenu>
+		</h:panelGrid>
+
+		<h:panelGrid columns="3">
+			<p:column>
+				<p:outputLabel title="Valor:" value="Valor:"
+					style="font-size: 12px; font-weight: bold;">
+				</p:outputLabel>
+			</p:column>
+			<p:column></p:column>
+			<p:column>
+				<p:inputNumber value="#{cxcManBajaSaldosController.valor}"
+					decimalPlaces="2">
+					<p:ajax event="change" partialSubmit="true" process="@this, idForm" />
+
+
+				</p:inputNumber>
+
+
+			</p:column>
+		</h:panelGrid>
+		<h:panelGrid columns="3"
+			rendered="#{cxcManBajaSaldosController.activaB}">
+			<p:column>
+				<p:outputLabel title="Año:" value="Año:"
+					style="font-size: 12px; font-weight: bold;"></p:outputLabel>
+			</p:column>
+			<p:column></p:column>
+			<p:column>
+				<p:inputText value="#{cxcManBajaSaldosController.anio}"
+					style="width:10em;" autocomplete="off">
+					<p:keyFilter regEx="/[0-9_]/i" preventPaste="false" />
+					<p:ajax event="change" partialSubmit="true" process="@this, idForm" />
+				</p:inputText>
+			</p:column>
+		</h:panelGrid>
+
+		<h:panelGrid columns="4"
+			rendered="#{cxcManBajaSaldosController.activaM}">
+			<h:outputLabel value="Fecha Desde: "
+				style="font-size: 12px; font-weight: bold;" />
+			<p:calendar value="#{cxcManBajaSaldosController.fechaIni}"
+				pattern="dd-MM-yyyy" autocomplete="off" navigator="true">
+				<p:ajax event="dateSelect" partialSubmit="true" process="@this"></p:ajax>
+			</p:calendar>
+			<h:outputLabel value="Fecha Hasta: "
+				style="font-size: 12px; font-weight: bold;" />
+			<p:calendar value="#{cxcManBajaSaldosController.fechaFin}"
+				pattern="dd-MM-yyyy" autocomplete="off" navigator="true">
+				<p:ajax event="dateSelect" partialSubmit="true" process="@this"></p:ajax>
+			</p:calendar>
+		</h:panelGrid>
+	</p:panel>
+
+	<p:panel>
+		<p:dataTable  id="tabDatos"  var="item" styleClass="table"
+			rendered="#{not empty cxcManBajaSaldosController.listArccaux1}"
+			value="#{cxcManBajaSaldosController.listArccaux1}"
+			rowKey="#{item.id}" sortBy="#{6}"
+			paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+			paginator="true" rows="20" rowsPerPageTemplate="20,30,40"
+			paginatorPosition="top" emptyMessage="No Existen Registros">
+			<p:column headerText="Cliente" width="8%" style="text-align:center">
+				<p:outputLabel value="#{item.id.noCliente}" />
+			</p:column>
+			<p:column headerText="Nombre" width="50%">
+				<p:outputLabel value="#{item.descCliente}" />
+			</p:column>
+			<p:column headerText="Tipo Documento" width="8%"
+				style="text-align:center">
+				<p:outputLabel value="#{item.id.tipoDoc}" />
+			</p:column>
+			<p:column headerText="Descripcion" width="50%">
+				<p:outputLabel value="#{item.descTipoDocu}" />
+			</p:column>
+			<p:column headerText="No. Fisico" width="20%"
+				style="text-align:center">
+				<p:outputLabel value="#{item.id.noDocu}" />
+			</p:column>
+			<p:column headerText="Fecha" width="10%" style="text-align:center">
+				<p:outputLabel value="#{item.fecha}">
+					<f:convertDateTime pattern="dd/MM/yyyy" />
+				</p:outputLabel>
+			</p:column>
+			<p:column headerText="Saldo" width="20%" style="text-align:center">
+				<p:outputLabel value="#{item.saldo}" />
+			</p:column>
+			<p:column headerText="Acciones" width="40" style="width:50%">
+				<p:commandButton icon="ui-icon-trash" partialSubmit="true"
+					process="@this"
+					actionListener="#{cxcManBajaSaldosController.eliminar(item)}"
+					update="idForm">
+					<p:confirm header="Confirmación"
+						message="Esta seguro de eliminar el cliente a dar de Baja?"
+						icon="ui-icon-alert" />
+				</p:commandButton>
+			</p:column>
+			<p:summaryRow>
+				<p:column colspan="6" style="text-align:right">
+					<h:outputText value="Total:" />
+				</p:column>
+				<p:column style="text-align:center">
+					<h:outputText value="#{cxcManBajaSaldosController.total}">
+						<f:convertNumber pattern="##,##0.00" />
+					</h:outputText>
+				</p:column>
+				<p:column colspan="8" style="text-align:right">
+
+				</p:column>
+			</p:summaryRow>
+		</p:dataTable>
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+			<p:commandButton value="Si" type="button"
+				styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+				update="idForm" />
+			<p:commandButton value="No" type="button"
+				styleClass="ui-confirmdialog-no" icon="ui-icon-close"
+				update="idForm" />
+		</p:confirmDialog>
+	</p:panel>
+
+</ui:composition>
+</html>

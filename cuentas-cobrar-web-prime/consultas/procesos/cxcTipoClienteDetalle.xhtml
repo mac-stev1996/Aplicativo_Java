@@ -1,0 +1,206 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Mantenimiento Tipo Cliente Detalle
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmButtons">
+			<p:commandButton value="Nuevo" icon="fa fa-file-o"
+				styleClass="green-btn"
+				action="#{cxcTipoClienteDetalleController.agregar}" global="false"
+				update=":dlgNuevo" />
+			<p:commandButton value="Subir Excel" icon="fa fa-file-excel-o"
+				styleClass="green-btn"
+				actionListener="#{cxcTipoClienteDetalleController.abrirCargaExcel}"
+				process="@this" update=":frmArchivo" />
+			<p:commandButton value="Descargar Formato" icon="fa fa-download"
+				ajax="false"
+				actionListener="#{cxcTipoClienteDetalleController.descargarFormato}" />
+			<p:commandButton value="Limpiar" icon="fa fa-undo"
+				actionListener="#{cxcTipoClienteDetalleController.limpiarDatos}"
+				update=":idForm" />
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form id="idForm">
+			<p:messages id="messages" showDetail="true" autoUpdate="true"
+				closable="true" showSummary="true" globalOnly="true" />
+			<p:panel header="Tipos de Cliente Asignados">
+				<p:dataTable id="dtbDetalle" widgetVar="widgetDtbDetalle" var="item"
+					value="#{cxcTipoClienteDetalleController.listaTipoclienteDetalle}"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+					paginatorPosition="bottom" emptyMessage="No existen registros"
+					paginator="true" rows="15">
+
+					<p:column headerText="Tipo Cliente" width="10%">
+						<p:outputLabel value="#{item.id.tipoCliente}" />
+					</p:column>
+					<p:column headerText="Descripción" width="20%">
+						<p:outputLabel value="#{item.cxcTipoCliente.descripcion}" />
+					</p:column>
+					<p:column headerText="No. Línea" width="8%">
+						<p:outputLabel value="#{item.id.noLinea}" />
+					</p:column>
+					<p:column headerText="Identificación" width="12%">
+						<p:outputLabel value="#{item.id.identificacion}" />
+					</p:column>
+					<p:column headerText="Nombre" width="20%">
+						<p:outputLabel value="#{item.nombre}" />
+					</p:column>
+					<p:column headerText="Tipo Conozca" width="10%">
+						<p:outputLabel
+							value="#{item.tipoConozca eq 'F' ? 'Flota' : item.tipoConozca eq 'N' ? 'Persona Natural' : 'Persona Jurídica'}" />
+					</p:column>
+					<p:column headerText="Estado" width="8%">
+						<p:outputLabel
+							value="#{item.estado eq 'A' ? 'ACTIVO' : 'INACTIVO'}" />
+					</p:column>
+					<p:column headerText="Acciones"
+						style="width:40px; text-align:center;">
+						<p:commandButton icon="ui-icon-trash" title="Eliminar"
+							partialSubmit="true"
+							actionListener="#{cxcTipoClienteDetalleController.eliminar(item)}"
+							update=":idForm:dtbDetalle :idForm:messages">
+							<p:confirm header="Confirmación"
+								message="¿Está seguro de eliminar este registro?"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+				<p:commandButton value="Sí" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+		</h:form>
+
+		<!-- DIALOGO DE CREAR DETALLE NUEVOS TIPOS DE CLIENTES-->
+		<p:dialog widgetVar="dlgNuevo" id="dlgNuevo" appendTo="@(body)"
+			header="Asignar Tipo Cliente" resizable="true" responsive="true"
+			modal="true" width="auto" height="auto" closeOnEscape="true"
+			draggable="true">
+
+			<h:form id="idFrmNuevo">
+				<p:panelGrid columns="2">
+					<p:commandLink value="Cliente:" style="font-weight:bold;"
+						action="#{cxcTipoClienteDetalleController.cargarClientes}"
+						update=":frmClientes"
+						oncomplete="$('#frmClientes\\:idTableClientes .ui-column-filter').val('').trigger('keyup'); PF('dialogClientesWV').show();" />
+					<p:outputPanel id="pnlCliente" autoUpdate="true">
+						<p:panelGrid columns="2">
+							<p:inputText readonly="true" size="12"
+								value="#{cxcTipoClienteDetalleController.cliente.cedula}" />
+							<p:inputText readonly="true" size="30"
+								value="#{cxcTipoClienteDetalleController.cliente.nombre}" />
+						</p:panelGrid>
+					</p:outputPanel>
+
+					<p:commandLink value="Tipo Cliente:" style="font-weight:bold;"
+						action="#{cxcTipoClienteDetalleController.abrirDialogoTipoCliente}"
+						update=":frmTipoCliente" />
+					<p:inputText readonly="true" size="25"
+						value="#{cxcTipoClienteDetalleController.tipoClienteSelected.descripcion}" />
+
+					<p:outputLabel value="Línea Negocio" />
+					<p:inputText readonly="true" size="10"
+						value="#{cxcTipoClienteDetalleController.tipoClienteSelected.id.noLinea}" />
+
+					<p:outputLabel for="tipoConozca" value="Tipo Conozca" />
+					<p:selectOneMenu id="tipoConozca"
+						value="#{cxcTipoClienteDetalleController.cxcTipoclienteDetalle.tipoConozca}">
+						<f:selectItem itemLabel="Seleccione..." noSelectionOption="true" />
+						<f:selectItem itemValue="F" itemLabel="F - Flota" />
+						<f:selectItem itemValue="N" itemLabel="N - Persona Natural" />
+						<f:selectItem itemValue="J" itemLabel="J - Persona Jurídica" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="estado" value="Estado" />
+					<p:selectOneMenu id="estado"
+						value="#{cxcTipoClienteDetalleController.cxcTipoclienteDetalle.estado}">
+						<f:selectItem itemLabel="Seleccione..." noSelectionOption="true" />
+						<f:selectItem itemValue="A" itemLabel="Activo" />
+						<f:selectItem itemValue="I" itemLabel="Inactivo" />
+					</p:selectOneMenu>
+
+				</p:panelGrid>
+
+				<div class="dialog-footer"
+					style="margin-top: 15px; text-align: center;">
+					<p:commandButton value="Guardar" icon="fa fa-save"
+						action="#{cxcTipoClienteDetalleController.guardar}"
+						update=":idForm"
+						oncomplete="if(!args.validationFailed) PF('dlgNuevo').hide();" />
+
+					<p:commandButton value="Cancelar" icon="fa fa-times" type="button"
+						onclick="PF('dlgNuevo').hide();" />
+				</div>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog id="dlgTipoCliente" widgetVar="dlgTipoCliente"
+			header="Seleccione Tipo Cliente" modal="true" closable="true"
+			appendTo="@(body)" width="50%" height="auto" closeOnEscape="true">
+			<h:form id="frmTipoCliente">
+				<p:dataTable id="dtbTipoCliente" widgetVar="widgetDtbTipoCliente"
+					var="tc" selectionMode="single" rowIndexVar="row" paginator="true"
+					rows="10" reflow="true"
+					value="#{cxcTipoClienteDetalleController.listaTipoCliente}"
+					rowKey="#{tc.id.tipoCliente}" paginatorPosition="bottom"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} 
+                        {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+					emptyMessage="No existen registros">
+
+					<p:column headerText="Código" width="15%"
+						filterBy="#{tc.id.tipoCliente}" filterMatchMode="contains">
+						<p:commandLink value="#{tc.id.tipoCliente}"
+							actionListener="#{cxcTipoClienteDetalleController.seleccionarTipoCliente(tc)}"
+							oncomplete="PF('dlgTipoCliente').hide();" update=":idFrmNuevo" />
+					</p:column>
+					<p:column headerText="Descripción" width="40%"
+						filterBy="#{tc.descripcion}" filterMatchMode="contains">
+						<p:outputLabel value="#{tc.descripcion}" />
+					</p:column>
+					<p:column headerText="No. Línea" width="15%">
+						<p:outputLabel value="#{tc.id.noLinea}" />
+					</p:column>
+					<p:column headerText="Tipo" width="15%">
+						<p:outputLabel
+							value="#{tc.tipo eq 'C' ? 'Corporativa' : 
+                                   tc.tipo eq 'R' ? 'Renting' : 'Empleados'}" />
+					</p:column>
+					<p:column headerText="Estado" width="15%">
+						<p:outputLabel value="#{tc.estado eq 'A' ? 'Activo' : 'Inactivo'}" />
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Carga Masiva Excel" widgetVar="dlgArchivo"
+			modal="true" width="500" closeOnEscape="true">
+			<h:form id="frmArchivo">
+				<p:fileUpload required="true"
+					fileUploadListener="#{cxcTipoClienteDetalleController.guardarDatosMasivo}"
+					mode="advanced" dragDropSupport="true" update=":frmButtons :idForm"
+					uploadLabel="Procesar" cancelLabel="Cancelar"
+					label="Seleccionar Archivo" fileLimit="1"
+					allowTypes="/(\.|\/)(xlsx)$/"
+					fileLimitMessage="Solo puede subir un archivo"
+					invalidFileMessage="Solo se permiten archivos .xlsx" />
+			</h:form>
+		</p:dialog>
+
+		<ui:include src="/jsf/common/dialog/dialogClientes.xhtml" />
+
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,167 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	template="/jsf/templates/bodyTemplate.xhtml">
+	<ui:define name="title">
+		VERIFICACION DEVOLUCIONES DE SOLICITUDES
+</ui:define>
+	<ui:define name="content">
+		<h:form id="idForm">
+			<p:growl id="messages" globalOnly="true" autoUpdate="true"
+				widgetVar="groMessages" showDetail="true" life="5000" />
+			<p:panel style="width : 1500px;">
+				<p:tab>
+					<p:dataTable id="tabDatosPrincipales" title="" scrollable="true"
+						value="#{cxcVerificacionDevSolicitudesController.listaDevSolicitadas}" var="ref"
+						styleClass="table" sortBy="#{6}" rowSelectMode="none"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+						paginator="true" rows="20" rowsPerPageTemplate="20,30,40"
+						selectionPageOnly="false" paginatorPosition="bottom"
+						emptyMessage="No Existen Registros">
+						<f:facet name="header">
+				           Solicitudes de Devolucion para Verificacion en CXC
+				        </f:facet>
+
+						<p:column headerText="Cedula" width="40%" style="text-align:left"
+							filterMatchMode="contains">
+							<h:outputText value="#{ref[1]}" />
+						</p:column>
+						<p:column headerText="Nombre" width="110%" style="text-align:left"
+							filterMatchMode="contains">
+							<h:outputText value="#{ref[2]}" />
+						</p:column>
+						<p:column headerText="No. Solicitud" width="30%"
+							style="text-align:left" filterMatchMode="contains">
+							<h:outputText value="#{ref[6]}" />
+						</p:column>
+						<p:column headerText="Saldo" width="50%" style="text-align:left"
+							filterMatchMode="contains">
+							<h:outputText value="#{ref[3]}" />
+						</p:column>
+						<p:column headerText="Observación" width="100%"
+							style="text-align:left" filterMatchMode="contains">
+							<h:outputText value="#{ref[4]}" />
+						</p:column>
+						<p:column headerText="Asesor Comercial" width="70%"
+							style="text-align:left" filterMatchMode="contains">
+							<h:outputText value="#{ref[5]}" />
+						</p:column>
+						<p:column headerText="Nombre Agencia" width="70%"
+							style="text-align:left" filterMatchMode="contains">
+							<h:outputText value="#{ref[8]}" />
+						</p:column>
+						<p:column headerText="Estado" width="70%"
+							style="text-align:center" filterMatchMode="contains">
+							<h:outputText value="#{ref[11]}" />
+						</p:column>
+						<p:column headerText="Acciones" width="80%"
+							style="text-align:center">
+							<p:commandButton title="Verificar Solicitud" id="verificar" value="Verificar"
+								icon="fa fa-check-square-o" styleClass="deep-orange-btn"
+								disabled="#{ref[9] == 'A' or  ref[9] == 'N' or  ref[9] == 'I'}"
+								update="#{p:component('dlgVerificacion')}" style="align:center"
+								immediate="true"
+								actionListener="#{cxcVerificacionDevSolicitudesController.validarInformacion(ref)}">
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+				</p:tab>
+			</p:panel>
+		</h:form>
+			<!-- dialog de devolucion Anticipo -->
+		<p:dialog id="dlgVerificacion" widgetVar="dlgVerificacion"
+			resizable="false" modal="true" appendTo="@(body)" closable="true"
+			closeOnEscape="true"
+			header="Verificación Datos Devolución de Anticipos"
+			height="250%" width="90%">
+			<h:form id="frmdlgVerificacion">
+				<center>
+					<p:panelGrid id="panelVerif" columns="2">
+						<p:outputLabel value="Cedula" />
+						<p:inputText id="iden" autocomplete="off" size="15"
+							value="#{cxcVerificacionDevSolicitudesController.cedula}" maxlength="13"
+							readonly="#{cxcVerificacionDevSolicitudesController.origenDialogo eq 'V'}">
+							<p:ajax event="change" partialSubmit="true" process="@this"
+								update="#{p:component('tabDatosPrincipales')}" />
+						</p:inputText>
+						<p:outputLabel value="Cliente:" />
+						<p:inputText id="nombre" autocomplete="off" size="100"
+							value="#{cxcVerificacionDevSolicitudesController.nombres}" maxlength="100"
+							readonly="#{cxcVerificacionDevSolicitudesController.origenDialogo eq 'V'}">
+							<p:ajax event="change" partialSubmit="true" process="@this"
+								update="#{p:component('tabDatosPrincipales')}" />
+						</p:inputText>
+						<p:outputLabel value="Estado de Validacion:" />
+						<p:selectOneMenu id="estadoValidacion"
+							value="#{cxcVerificacionDevSolicitudesController.estado}">
+							<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+							<f:selectItems
+								value="#{cxcVerificacionDevSolicitudesController.listaParametros}" var="doc"
+								itemLabel="#{doc.descripcion}" itemValue="#{doc.texto1}" />
+							<p:ajax event="change" partialSubmit="true" process="@this"
+								update="#{p:component('frmdlgVerificacion')},:frmdlgVerificacion:estadoValidacion"></p:ajax>
+						</p:selectOneMenu>
+						<p:outputLabel value="Motivo Devolución Validación"
+							rendered="#{cxcVerificacionDevSolicitudesController.estado eq ('I') or  cxcVerificacionDevSolicitudesController.estado eq ('N') or cxcVerificacionDevSolicitudesController.estado eq ('A')}"></p:outputLabel>
+						<p:inputTextarea id="mDev" rows="2" cols="50" queryDelay="750"
+							value="#{cxcVerificacionDevSolicitudesController.motDevValidacion}"
+							rendered="#{cxcVerificacionDevSolicitudesController.estado eq ('I') or cxcVerificacionDevSolicitudesController.estado eq ('N') or cxcVerificacionDevSolicitudesController.estado eq ('A')}"
+							minQueryLength="4" maxlength="200">
+							<p:ajax event="change" update="mDev" />
+						</p:inputTextarea>
+					</p:panelGrid>
+				</center>
+				<p:panelGrid columns="2">
+					<p:column>
+						<p:outputLabel style="color: blue" value="Doc. Adjunto:" />
+					</p:column>
+					<p:column>
+						<p:tab>
+							<p:dataTable id="tabAdjuntos" title="" scrollable="true"
+								value="#{cxcVerificacionDevSolicitudesController.listaAdjuntos}" var="ref"
+								styleClass="table" emptyMessage="No Existen Registros">
+								<p:column headerText="feha Creacion" width="10%"
+									style="text-align:rigth" filterMatchMode="contains">
+									<h:outputText value="#{ref.fechaCrea}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</p:column>
+								<p:column headerText="Usuario Creacion" width="15%"
+									style="text-align:rigth" filterMatchMode="contains">
+									<h:outputText value="#{ref.usuarioCrea}" />
+								</p:column>
+								<p:column headerText="Archivo" width="100%"
+									style="text-align:rigth" filterMatchMode="contains">
+									<h:outputText value="#{ref.path}" />
+								</p:column>
+								<p:column headerText="Acciones" width="10%"
+									style="text-align:center" filterMatchMode="contains">
+									<p:commandLink title="Click descargar adjunto"
+										partialSubmit="true" process="@this" ajax="false"
+										target="_blank"
+										action="#{cxcVerificacionDevSolicitudesController.descargarArchivo(ref.path)}"
+										rendered="#{ref.path ne null}">
+										<i class="fa fa-cloud-download fa-2x" style="color: green;" />
+									</p:commandLink>
+								</p:column>
+							</p:dataTable>
+						</p:tab>
+					</p:column>
+				</p:panelGrid>
+				<center>
+					<p:commandButton styleClass="deep-orange-btn" partialSubmit="true"
+						id="btnaceptar" icon="fa fa-floppy-o" title="Guardar"
+						value="Guardar" update=":idForm:tabDatosPrincipales"
+						actionListener="#{cxcVerificacionDevSolicitudesController.actualizarValidado}"
+						process="@this, :idForm">
+					</p:commandButton>
+				</center>
+			</h:form>
+		</p:dialog>			
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,105 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<p:panelGrid columns="1" id="pnlEntregas" width="100%" layout="grid"
+		columnClasses="ui-grid-col-12">
+		<p:panel styleClass="noborder">
+
+
+			<p:fieldset legend="Fecha y hora de entrega" toggleable="false">
+
+				<p:toolbar>
+					<f:facet name="left">
+						<i class="fa fa-edit fa-2x"></i>
+						<p:outputLabel
+							value=" Registro de información de entrega de vehículos "
+							style="font-size: 14px;" />
+					</f:facet>
+
+					<f:facet name="right">
+						<p:commandButton process="@this" styleClass="orange-btn"
+							title="Regresar" icon="fa fa-reply"
+							action="#{cxcContactoServicioController.regresar}"
+							update=":idForm">
+						</p:commandButton>
+					</f:facet>
+				</p:toolbar>
+
+				<br />
+				<p:outputPanel>
+					<h:panelGrid columns="2" id="pgDatosEntrega"
+						styleClass="flex-center">
+
+						<p:outputLabel value="No. Cliente: " styleClass="bold"
+							style="width:200px; font-size: 12px; margin-bottom: 20px !important;" />
+						<p:inputText readonly="true" style="width:300px !important"
+							value="#{cxcContactoServicioController.seguimientoVeh.noCliente}" />
+
+						<p:outputLabel value="Cedula del Cliente: " styleClass="bold"
+							style="width:200px; font-size: 12px; margin-bottom: 20px !important;" />
+						<p:inputText readonly="true" style="width:300px !important"
+							value="#{cxcContactoServicioController.seguimientoVeh.cedulaCliente}" />
+
+						<p:outputLabel value="Nombre del Cliente: " styleClass="bold"
+							style="width:200px; font-size: 12px; margin-bottom: 20px !important;" />
+						<p:inputText readonly="true" style="width:300px !important"
+							value="#{cxcContactoServicioController.seguimientoVeh.nombreCliente}" />
+
+						<p:outputLabel value="Vehiculo: " styleClass="bold"
+							style="width:200px; font-size: 12px; margin-bottom: 20px !important;" />
+						<p:inputText readonly="true" style="width:300px !important"
+							value="#{cxcContactoServicioController.seguimientoVeh.descripcion}" />
+
+
+						<p:outputLabel value="Placa Vehiculo: " styleClass="bold"
+							style="width:200px; font-size: 12px; margin-bottom: 20px !important;" />
+						<p:inputText readonly="true" style="width:300px !important"
+							value="#{cxcContactoServicioController.seguimientoVeh.placa}" />
+
+						<p:outputLabel value="Chasis Vehiculo: " styleClass="bold"
+							style="width:200px; font-size: 12px; margin-bottom: 20px !important;" />
+						<p:inputText readonly="true" style="width:300px !important"
+							value="#{cxcContactoServicioController.seguimientoVeh.chasis}" />
+
+						<p:outputLabel value="Fecha Entrega Vehiculo: " styleClass="bold"
+							style="COLOR:RED; width:200px; font-size: 12px; margin-bottom: 20px !important;" />
+						<p:calendar locale="es" navigator="true" autocomplete="off"
+							placeholder="dd/MM/yyyy" styleClass="widthCalendar"
+							pattern="dd/MM/yyyy HH:mm" style="margin-bottom: 20px;"
+							value="#{cxcContactoServicioController.contactoSer.fechaEntregaVeh}"
+							showTime="true" timeOnly="false" hourFormat="24" />
+					</h:panelGrid>
+				</p:outputPanel>
+				<center>
+					<p:commandButton value="Guardar"
+						style="width: auto; float: center;" icon="fa fa-save"
+						id="btnAsignarEnt" styleClass="green-btn"
+						disabled="#{cxcContactoServicioController.entregaVehiculoGuardada}"
+						widgetVar="btnAsignarEntWidget"
+						onclick="PF('diaConfirmarEntregaVehiculo').show(); return false;"
+						type="button" />
+				</center>
+
+				<p:confirmDialog widgetVar="diaConfirmarEntregaVehiculo"
+					modal="true" header="Confirmaci&#243;n"
+					message="Confirma guardar la fecha de entrega del veh&#237;culo y enviar la cita a Sugar CRM?">
+					<p:commandButton value="S&#237;" icon="fa fa-check"
+						styleClass="green-btn"
+						process="@this :idForm:pgDatosEntrega"
+						onstart="PF('btnAsignarEntWidget').disable(); PF('diaConfirmarEntregaVehiculo').hide();"
+						onerror="PF('btnAsignarEntWidget').enable();"
+						actionListener="#{cxcContactoServicioController.registrarEntregaVehiculo}"
+						update=":idForm" />
+					<p:commandButton value="No" icon="fa fa-close"
+						styleClass="red-btn" process="@this"
+						onclick="PF('diaConfirmarEntregaVehiculo').hide(); return false;" />
+				</p:confirmDialog>
+			</p:fieldset>
+		</p:panel>
+	</p:panelGrid>
+
+</ui:composition>

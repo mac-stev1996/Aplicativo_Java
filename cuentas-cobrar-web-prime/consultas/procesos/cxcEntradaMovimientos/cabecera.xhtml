@@ -1,0 +1,323 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<div class="ui-g dashboard">
+		<div class="ui-g-12 ui-fluid contact-form">
+			<p:fieldset id="fsDatos">
+				<div class="ui-g-12 nopadding">
+					<div class="ui-g-2">
+						<p:outputLabel value="# Interno" />
+						<p:inputText readonly="true"
+							value="#{cxcEntradaMovimientosController.arccmd.id.noDocu}" />
+					</div>
+					<div class="ui-g-4">
+						<p:outputLabel value="Moneda"
+							rendered="#{cxcEntradaMovimientosController.renderMoneda}" />
+						<h:panelGrid columns="2" border="0" width="100%"
+							columnClasses="w30, w70"
+							disabled="#{cxcEntradaMovimientosController.readonly}"
+							rendered="#{cxcEntradaMovimientosController.renderMoneda}">
+							<p:inputText styleClass="nopadding"
+								value="#{cxcEntradaMovimientosController.arccmd.monedaId}" />
+							<p:inputText styleClass="nopadding" readonly="true"
+								value="#{cxcEntradaMovimientosController.nombreMoneda}" />
+						</h:panelGrid>
+					</div>
+					<div class="ui-g-2">
+						<p:outputLabel value="Tipo Cambio" styleClass="blue" />
+						<p:inputText readonly="true" styleClass="blue"
+							value="#{cxcEntradaMovimientosController.arccmd.tipoCambio}" />
+					</div>
+					<div class="ui-g-2">
+						<p:outputLabel value="Año" />
+						<p:inputText readonly="true" styleClass="red"
+							value="#{cxcEntradaMovimientosController.arccmd.periodo}" />
+					</div>
+				</div>
+
+				<div class="ui-g-12 nopadding">
+					<div class="ui-g-5">
+						<p:outputLabel value="Tipo Doc" />
+						<h:panelGrid columns="2" border="0" width="100%"
+							columnClasses="w30, w70">
+							<p:selectOneMenu filter="true" filterMatchMode="contains"
+								required="true"
+								disabled="#{cxcEntradaMovimientosController.readonly}"
+								value="#{cxcEntradaMovimientosController.arccmd.tipoDoc}">
+								<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+								<f:selectItems
+									value="#{cxcEntradaMovimientosController.tiposDocumento}"
+									var="td" itemLabel="#{td.pk.tipo} - #{td.descripcion}"
+									itemValue="#{td.pk.tipo}" />
+								<p:ajax event="itemSelect" partialSubmit="true" process="@this"
+									global="false"
+									listener="#{cxcEntradaMovimientosController.selectTipoDoc}" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+					</div>
+					<div class="ui-g-4">
+						<p:outputLabel value="Negocio"
+							rendered="#{cxcEntradaMovimientosController.renderNegocio}" />
+						<p:selectOneMenu
+							value="#{cxcEntradaMovimientosController.arccmd.negocioId}"
+							required="true"
+							disabled="#{cxcEntradaMovimientosController.readonly}"
+							rendered="#{cxcEntradaMovimientosController.renderNegocio}">
+							<f:selectItem itemLabel="VENTAS QUITO" itemValue="T" />
+							<f:selectItem itemLabel="VENTAS CASABACA S.A." itemValue="B" />
+						</p:selectOneMenu>
+					</div>
+				</div>
+			</p:fieldset>
+
+			<div class="ui-g-12 nopadding">
+				<p:fieldset id="fsCliente" legend="Datos del Cliente">
+					<p:remoteCommand name="commandCliente"
+						rendered="#{not cxcEntradaMovimientosController.readonly}"
+						process="@this :idForm:pestanas:fsCliente" partialSubmit="true"
+						oncomplete="PF('dlgClientes').show()" />
+					<div class="ui-g-2">
+						<p:outputLabel value="Código" />
+						<p:inputText
+							disabled="#{cxcEntradaMovimientosController.readonly}"
+							value="#{cxcEntradaMovimientosController.arccmd.noCliente}"
+							onkeydown="if (event.keyCode == 120 ) {commandCliente(); return false;}">
+							<p:ajax event="change" process="@this" partialSubmit="true"
+								listener="#{cxcEntradaMovimientosController.validarClientePorCodigo}"
+								update=":idForm:pestanas:fsCliente :idForm:pestanas:fsDatos" />
+						</p:inputText>
+					</div>
+					<div class="ui-g-2">
+						<p:outputLabel value="Cédula" />
+						<p:inputText
+							disabled="#{cxcEntradaMovimientosController.readonly}"
+							value="#{cxcEntradaMovimientosController.arccmd.arccmc.cedula}"
+							onkeydown="if (event.keyCode == 120 ) {commandCliente(); return false;}">
+							<p:ajax event="change" process="@this" partialSubmit="true"
+								listener="#{cxcEntradaMovimientosController.validarClientePorCedula}"
+								update=":idForm:pestanas:fsCliente :idForm:pestanas:fsDatos" />
+						</p:inputText>
+					</div>
+					<div class="ui-g-5">
+						<p:outputLabel value="Nombre" />
+						<p:inputText readonly="true"
+							value="#{cxcEntradaMovimientosController.arccmd.arccmc.nombre}" />
+					</div>
+					<div class="ui-g-2">
+						<p:outputLabel value="Fecha Registro CXC" />
+						<p:inputText readonly="true"
+							value="#{cxcEntradaMovimientosController.arccmd.fecha}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:inputText>
+					</div>
+				</p:fieldset>
+			</div>
+
+			<div class="ui-g-12 nopadding">
+				<p:fieldset id="fsDocumento" legend="Datos del Documento">
+					<p:remoteCommand name="commandVendedor"
+						rendered="#{not cxcEntradaMovimientosController.readonly}"
+						process="@this :idForm:pestanas:fsDocumento" partialSubmit="true"
+						oncomplete="PF('dlgVendedores').show()" />
+					<p:remoteCommand name="commandCobrador"
+						rendered="#{not cxcEntradaMovimientosController.readonly}"
+						process="@this :idForm:pestanas:fsDocumento" partialSubmit="true"
+						oncomplete="PF('dlgCobradores').show()" />
+					<div class="ui-g-12 nopadding">
+						<div class="ui-g-2">
+							<p:outputLabel value="Fecha" />
+							<p:calendar locale="es" pattern="dd/MM/yyyy"
+								disabled="#{cxcEntradaMovimientosController.readonly}"
+								value="#{cxcEntradaMovimientosController.arccmd.fechaDocumento}">
+								<p:ajax event="dateSelect" partialSubmit="true"
+									disabled="#{cxcEntradaMovimientosController.readonly}"
+									process="@this :idForm:pestanas:fsDocumento" global="false"
+									listener="#{cxcEntradaMovimientosController.changeFechaDocumento}"
+									update=":idForm:pestanas:fsDocumento" />
+								<p:ajax event="change" partialSubmit="true"
+									disabled="#{cxcEntradaMovimientosController.readonly}"
+									process="@this :idForm:pestanas:fsDocumento" global="false"
+									listener="#{cxcEntradaMovimientosController.changeFechaDocumento}"
+									update=":idForm:pestanas:fsDocumento" />
+							</p:calendar>
+						</div>
+						<div class="ui-g-2">
+							<p:outputLabel value="Vence el" />
+							<p:calendar locale="es" pattern="dd/MM/yyyy"
+								disabled="#{cxcEntradaMovimientosController.readonly}"
+								value="#{cxcEntradaMovimientosController.arccmd.fechaVence}">
+								<p:ajax event="dateSelect" partialSubmit="true"
+									disabled="#{cxcEntradaMovimientosController.readonly}"
+									process="@this :idForm:pestanas:fsDocumento" global="false"
+									listener="#{cxcEntradaMovimientosController.changeFechaVence}"
+									update=":idForm:pestanas:fsDocumento" />
+								<p:ajax event="change" partialSubmit="true"
+									disabled="#{cxcEntradaMovimientosController.readonly}"
+									process="@this :idForm:pestanas:fsDocumento" global="false"
+									listener="#{cxcEntradaMovimientosController.changeFechaVence}"
+									update=":idForm:pestanas:fsDocumento" />
+							</p:calendar>
+						</div>
+						<div class="ui-g-2">
+							<p:outputLabel value="# Documento" />
+							<p:inputText readonly="true"
+								value="#{cxcEntradaMovimientosController.arccmd.noFisico}" />
+						</div>
+						<div class="ui-g-5">
+							<p:outputLabel value="Línea Negocio" />
+							<p:selectOneMenu filter="true" filterMatchMode="contains"
+								disabled="#{cxcEntradaMovimientosController.readonly}"
+								value="#{cxcEntradaMovimientosController.arccmd.serieFisico}">
+								<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+								<f:selectItems
+									value="#{cxcEntradaMovimientosController.lineasNegocio}"
+									var="l"
+									itemLabel="#{l.lineaNegocioPK.noLinea} - #{l.descripcion}"
+									itemValue="#{l.lineaNegocioPK.noLinea}" />
+								<p:ajax event="itemSelect" partialSubmit="true" process="@this"
+									global="false"
+									disabled="#{cxcEntradaMovimientosController.readonly}"
+									listener="#{cxcEntradaMovimientosController.selectLineaNegocio}" />
+							</p:selectOneMenu>
+						</div>
+					</div>
+					<div class="ui-g-12 nopadding">
+						<div class="ui-g-4">
+							<p:outputLabel value="Vendedor" />
+							<h:panelGrid columns="2" border="0" width="100%"
+								columnClasses="w30, w70">
+								<p:inputText styleClass="nopadding"
+									disabled="#{cxcEntradaMovimientosController.readonly}"
+									value="#{cxcEntradaMovimientosController.arccmd.noAgente}"
+									onkeydown="if (event.keyCode == 120 ) {commandVendedor(); return false;}"
+									onkeyup="this.value = this.value.toUpperCase();">
+									<p:ajax event="change" partialSubmit="true"
+										disabled="#{cxcEntradaMovimientosController.readonly}"
+										process="@this :idForm:pestanas:fsDocumento"
+										listener="#{cxcEntradaMovimientosController.validarVendedor}"
+										update=":idForm:pestanas:fsDocumento  #{p:component('tblVendedores')}" />
+								</p:inputText>
+								<p:inputText styleClass="nopadding" readonly="true"
+									value="#{cxcEntradaMovimientosController.arccmd.nomVendedor}" />
+							</h:panelGrid>
+						</div>
+						<div class="ui-g-5">
+							<p:outputLabel value="Concepto" />
+							<p:selectOneMenu filter="true" filterMatchMode="contains"
+								disabled="#{cxcEntradaMovimientosController.readonly}"
+								value="#{cxcEntradaMovimientosController.arccmd.concepto}">
+								<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+								<f:selectItems
+									value="#{cxcEntradaMovimientosController.conceptos}" var="c"
+									itemLabel="#{c.id.concepto} - #{c.descripcion}"
+									itemValue="#{c.id.concepto}" />
+							</p:selectOneMenu>
+						</div>
+						<div class="ui-g-3">
+							<p:outputLabel value="Cobrador" />
+							<h:panelGrid columns="2" border="0" width="100%"
+								columnClasses="w20, w80">
+								<p:inputText styleClass="nopadding"
+									disabled="#{cxcEntradaMovimientosController.readonly}"
+									value="#{cxcEntradaMovimientosController.arccmd.cobrador}"
+									onkeydown="if (event.keyCode == 120 ) {commandCobrador(); return false;}"
+									onkeyup="this.value = this.value.toUpperCase();">
+									<p:ajax event="change" partialSubmit="true"
+										disabled="#{cxcEntradaMovimientosController.readonly}"
+										process="@this :idForm:pestanas:fsDocumento"
+										listener="#{cxcEntradaMovimientosController.validarCobrador}"
+										update=":idForm:pestanas:fsDocumento #{p:component('tblCobradores')}" />
+								</p:inputText>
+								<p:inputText styleClass="nopadding" readonly="true"
+									value="#{cxcEntradaMovimientosController.arccmd.nomCobrador}" />
+							</h:panelGrid>
+						</div>
+					</div>
+				</p:fieldset>
+			</div>
+
+			<div class="ui-g-12 nopadding">
+				<p:fieldset id="fsObservaciones" legend="Observaciones">
+					<div class="ui-g-6">
+						<p:outputLabel value="Observación" />
+						<p:inputTextarea rows="5" maxlength="600"
+							disabled="#{cxcEntradaMovimientosController.readonly}"
+							value="#{cxcEntradaMovimientosController.arccmd.observacion}" />
+					</div>
+					<div class="ui-g-6 nopadding">
+						<h:panelGrid columns="2" columnClasses="w40, w60"
+							style="float:right">
+							<p:outputLabel value="Subtotal" />
+							<p:inputNumber decimalPlaces="2" styleClass="number"
+								disabled="#{cxcEntradaMovimientosController.readonly}"
+								value="#{cxcEntradaMovimientosController.arccmd.subtotal}">
+								<p:ajax event="change"
+									disabled="#{cxcEntradaMovimientosController.readonly}"
+									process="@this :idForm:pestanas:fsObservaciones"
+									partialSubmit="true"
+									listener="#{cxcEntradaMovimientosController.changeSubtotal}"
+									update="@this :idForm:pestanas:fsObservaciones" />
+							</p:inputNumber>
+							<p:outputLabel value="Intereses" />
+							<p:inputNumber decimalPlaces="2" styleClass="number"
+								disabled="#{cxcEntradaMovimientosController.readonly}"
+								value="#{cxcEntradaMovimientosController.arccmd.exento}">
+								<p:ajax event="change"
+									disabled="#{cxcEntradaMovimientosController.readonly}"
+									process="@this :idForm:pestanas:fsObservaciones"
+									partialSubmit="true"
+									listener="#{cxcEntradaMovimientosController.changeExento}"
+									update="@this :idForm:pestanas:fsObservaciones" />
+							</p:inputNumber>
+							<p:outputLabel value="Total Documento" />
+							<p:inputNumber decimalPlaces="2" styleClass="number"
+								readonly="true"
+								value="#{cxcEntradaMovimientosController.arccmd.saldo}" />
+						</h:panelGrid>
+					</div>
+				</p:fieldset>
+			</div>
+
+			<div class="ui-g-12 nopadding">
+				<p:fieldset id="fsUsuario" legend="Usuario">
+					<p:remoteCommand name="commandUsuario"
+						rendered="#{not cxcEntradaMovimientosController.readonly}"
+						process="@this :idForm:pestanas:fsUsuario" partialSubmit="true"
+						oncomplete="PF('dlgUsuarios').show()" />
+					<div class="ui-g-3">
+						<p:outputLabel value="Creación" />
+						<p:inputText readonly="true"
+							value="#{cxcEntradaMovimientosController.arccmd.usuarioCrea}" />
+					</div>
+					<div class="ui-g-3">
+						<p:outputLabel value="Solicita" />
+						<p:inputText
+							disabled="#{cxcEntradaMovimientosController.readonly}"
+							value="#{cxcEntradaMovimientosController.arccmd.usuarioSolicita}"
+							onkeydown="if (event.keyCode == 120 ) {commandUsuario(); return false;}"
+							onkeyup="this.value = this.value.toUpperCase();">
+							<p:ajax event="change" partialSubmit="true" process="@this"
+								disabled="#{cxcEntradaMovimientosController.readonly}"
+								listener="#{cxcEntradaMovimientosController.validarUsuario}"
+								update=":idForm:pestanas:fsUsuario #{p:component('tblUsuarios')}" />
+						</p:inputText>
+					</div>
+					<div class="ui-g-2" style="float: right">
+						<p:commandButton value="Contabilizar" style="margin-top:0px"
+							styleClass="deep-orange-btn" icon="ui-icon ui-icon-attach-money"
+							partialSubmit="true"
+							disabled="#{cxcEntradaMovimientosController.readonly}"
+							process="@this :idForm:pestanas:fsDatos :idForm:pestanas:fsCliente :idForm:pestanas:fsDocumento :idForm:pestanas:fsObservaciones :idForm:pestanas:fsUsuario"
+							actionListener="#{cxcEntradaMovimientosController.contabilizar}"
+							update="@this :idForm:pestanas :fmrButtons" />
+					</div>
+				</p:fieldset>
+			</div>
+		</div>
+	</div>
+
+</ui:composition>

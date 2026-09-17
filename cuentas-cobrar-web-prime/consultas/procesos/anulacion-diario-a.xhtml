@@ -1,0 +1,163 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Anulación Diario A
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmButtons">
+			<p:commandLink ajax="false" id="btnGenerarDocumento"
+				action="#{anulacionDiarioACtrl.generarReportePdf}" target="_blank"
+				value="Generar Documento" style="display: none;"></p:commandLink>
+			<p:commandButton icon="ui-icon ui-icon-cancel" title="Anular"
+				value="Anular" action="#{anulacionDiarioACtrl.anularDiarioA}"
+				process="@this :frmPrincipal" />
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form id="frmPrincipal">
+			<p:messages autoUpdate="true" closable="true" showDetail="true"></p:messages>
+			<p:panelGrid id="pgDatosDiario">
+				<p:row>
+					<p:column>
+						Agencia:
+					</p:column>
+					<p:column>
+						#{anulacionDiarioACtrl.centro}
+					</p:column>
+				</p:row>
+
+				<p:row>
+					<p:column>
+						Grupo:
+					</p:column>
+					<p:column>
+						#{anulacionDiarioACtrl.cliente.clientePK.grupo}
+					</p:column>
+				</p:row>
+
+				<p:row>
+					<p:column>
+						<p:commandLink title="Seleccionar cliente"
+							action="#{anulacionDiarioACtrl.cargarClientes}" value="Cliente:"
+							style="font-weight:bold;"
+							update=":frmClientes" />
+					</p:column>
+					<p:column>
+
+						<p:inputText id="inNoCliente"
+							value="#{anulacionDiarioACtrl.cliente.clientePK.noCliente}" style="width: 90%;"
+							readonly="true">
+						</p:inputText>
+					</p:column>
+				</p:row>
+
+				<p:row>
+					<p:column>
+						Cédula:
+					</p:column>
+					<p:column>
+						<p:inputText id="inCedula"
+							value="#{anulacionDiarioACtrl.cliente.cedula}" readonly="true" style="width: 90%;">
+
+						</p:inputText>
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column>
+						Nombre:
+					</p:column>
+					<p:column colspan="3">
+							#{anulacionDiarioACtrl.cliente.nombre}
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column>
+						<p:commandLink value="&#35; Documento:"
+							onclick="PF('wvDiagDiariosA').show();"></p:commandLink>
+					</p:column>
+					<p:column>
+						<h:outputText
+							value="#{anulacionDiarioACtrl.diarioASeleccionado.noFisico} - #{anulacionDiarioACtrl.diarioASeleccionado.serieFisico}" />
+					</p:column>
+					<p:column>
+						No. Transacción:
+					</p:column>
+					<p:column>
+						#{anulacionDiarioACtrl.diarioASeleccionado.arccdaPk.noDocu}
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column>
+						Monto:
+					</p:column>
+					<p:column>
+						#{anulacionDiarioACtrl.diarioASeleccionado.totalPago}
+					</p:column>
+				</p:row>
+			</p:panelGrid>
+		</h:form>
+
+		<p:dialog widgetVar="wvDiagDiariosA" modal="true"
+			header="Diario A del Cliente">
+			<h:form id="frmDiarios">
+				<p:dataTable var="diario"
+					value="#{anulacionDiarioACtrl.diariosAParaAnular}"
+					emptyMessage="No hay diarios A al momento." paginator="true"
+					rows="7">
+					<p:column headerText="Documento">
+						<p:commandLink value="#{diario.noFisico} - #{diario.serieFisico}"
+							update=":frmPrincipal:pgDatosDiario"
+							oncomplete="PF('wvDiagDiariosA').hide();">
+							<f:setPropertyActionListener value="#{diario}"
+								target="#{anulacionDiarioACtrl.diarioASeleccionado}" />
+						</p:commandLink>
+					</p:column>
+					<p:column headerText="Total Pago">
+						#{diario.totalPago}
+					</p:column>
+					<p:column headerText="Fecha">
+						#{diario.fecha}
+					</p:column>
+					<p:column headerText="No. Docu">
+						#{diario.arccdaPk.noDocu}
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="wvImprimir" modal="true"
+			header="Generacion de documentos...">
+			<h:form id="frmImpresion">
+				<p>Desea generar el documento &#63;</p>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Si" type="button"
+						onclick="PF('wvImprimir').hide();clickGenerarDocumento();"></p:commandButton>
+					<p:commandButton type="button" value="No"
+						onclick="PF('wvImprimir').hide();"></p:commandButton>
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+
+		<ui:include src="/jsf/common/dialog/dialogClientesListener.xhtml">
+			<ui:param name="bean" value="#{anulacionDiarioACtrl}" />
+		</ui:include>
+
+		<script type="text/javascript">
+
+			function clickGenerarDocumento () {
+				document.getElementById('frmButtons:btnGenerarDocumento').click();
+			}
+		</script>
+	</ui:define>
+
+
+</ui:composition>

@@ -1,0 +1,103 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Cuentas por Cobrar - Entrada de Movimientos
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="fmrButtons">
+			<p:commandButton partialSubmit="true"
+				process="@this :idForm:pgFiltro" icon="ui-icon ui-icon-search"
+				actionListener="#{cxcEntradaMovimientosController.buscarEntradas}"
+				update="@this :idForm:tblEntradas" />
+			<p:commandButton icon="ui-icon ui-icon-create"
+				actionListener="#{cxcEntradaMovimientosController.getUrlNuevo}" />
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+		<style type="text/css">
+input {
+	width: 95%;
+}
+</style>
+
+		<h:form id="idForm">
+
+			<p:panelGrid id="pgFiltro" columns="10">
+				<p:outputLabel value="No Docu" />
+				<p:inputText
+					value="#{cxcEntradaMovimientosController.filtro.id.noDocu}" />
+				<p:outputLabel value="No Fisico" />
+				<p:inputText
+					value="#{cxcEntradaMovimientosController.filtro.noFisico}" />
+				<p:outputLabel value="No Cliente" />
+				<p:inputText
+					value="#{cxcEntradaMovimientosController.filtro.noCliente}" />
+				<p:outputLabel value="Cédula" />
+				<p:inputText
+					value="#{cxcEntradaMovimientosController.filtro.arccmc.cedula}" />
+				<p:outputLabel value="Fecha" />
+				<p:calendar value="#{cxcEntradaMovimientosController.filtro.fecha}"
+					locale="es" pattern="dd/MM/yyyy" />
+			</p:panelGrid>
+
+			<p:dataTable id="tblEntradas" var="item" lazy="true"
+				value="#{cxcEntradaMovimientosController.model}"
+				emptyMessage="No existen movimientos" styleClass="table table-body"
+				paginator="true" rows="#{cxcEntradaMovimientosController.size}"
+				rowIndexVar="var" rowKey="#{item.id}" paginatorPosition="bottom"
+				currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+
+				<f:facet name="header">
+					Listado de Movimientos
+				</f:facet>
+
+				<p:column headerText="" width="5%">
+					<p:commandLink value="#{item.noFisico}"
+						actionListener="#{cxcEntradaMovimientosController.getUrlConsulta(item)}" />
+				</p:column>
+
+				<p:column headerText="No Cliente" width="5%">
+					<p:outputLabel value="#{item.noCliente}" />
+				</p:column>
+
+				<p:column headerText="Cliente" width="25%">
+					<p:outputLabel value="#{item.arccmc.nombre}" />
+				</p:column>
+
+				<p:column headerText="Tipo" width="5%">
+					<p:outputLabel value="#{item.tipoDoc}" />
+				</p:column>
+
+				<p:column headerText="Documento" width="20%">
+					<p:outputLabel value="#{item.descTipoDoc}" />
+				</p:column>
+
+				<p:column headerText="Vendedor" width="20%">
+					<p:outputLabel value="#{item.nomVendedor}" />
+				</p:column>
+
+				<p:column headerText="Fecha" width="10%">
+					<p:outputLabel value="#{item.fecha}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</p:outputLabel>
+				</p:column>
+
+				<p:column headerText="Total" width="10%">
+					<p:outputLabel value="#{item.saldo}" />
+				</p:column>
+
+			</p:dataTable>
+
+		</h:form>
+	</ui:define>
+
+</ui:composition>

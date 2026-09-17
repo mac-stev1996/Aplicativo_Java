@@ -1,0 +1,101 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+	<ui:define name="title">
+		Anticipos y Devoluciones
+	</ui:define>
+	<ui:define name="buttons">
+		<h:form id="frmBotones">
+			<p:commandButton id="btnConsultar" value="Buscar"
+				partialSubmit="true" icon="ui-icon-search"
+				update="#{p:component('dtAnticipos')}"
+				process="@this, #{p:component('pnlBusqueda')}"
+				actionListener="#{cxcAnticiposDevolucionController.buscar}"
+				oncomplete="if (PF('dtAnticipos')) { PF('dtAnticipos').clearFilters(); }" />
+		</h:form>
+	</ui:define>
+	<ui:define name="content">
+		<style type="text/css">
+body {
+	font-size: 11px;
+}
+
+.table thead th, .table tbody tr td {
+	font-size: 10px !important;
+	white-space: normal !important;
+	word-break: break-word;
+	overflow-wrap: anywhere;
+}
+</style>
+		<p:growl id="growl" showDetail="true" />
+
+		<h:form id="frmContAnticipos" onkeypress="return event.keyCode!=13">
+
+			<p:panel>
+				<div class="ui-g dashboard">
+					<div class="ui-g-12 ui-fluid contact-form">
+						<div class="ui-g-12">
+							<h:panelGrid id="pnlBusqueda" columns="10">
+								<p:outputLabel value="Nombre:" styleClass="bold" />
+								<p:column>
+									<p:inputText id="idNombreBusqueda"
+										value="#{cxcAnticiposDevolucionController.nombreBusqueda}"
+										placeholder="Nombre del cliente" />
+								</p:column>
+							</h:panelGrid>
+						</div>
+						<div class="ui-g-12">
+							<p:dataTable id="dtAnticipos" var="item" resizeMode="true"
+								filterDelay="800"
+								value="#{cxcAnticiposDevolucionController.listadoClientesUnicos}"
+								styleClass="table" widgetVar="dtAnticipos" paginator="true"
+								rows="20" paginatorPosition="top" rowIndexVar="row"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+								currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+								emptyMessage="No existen registros">
+
+								<p:column headerText="Nombre"
+									style="width:250px; text-align:center"
+									filterBy="#{item.nombre}" filterMatchMode="contains"
+									filterStyle="width:95%;">
+									<p:outputLabel value="#{item.nombre}" />
+								</p:column>
+
+								<p:column headerText="Cédula"
+									style="width:120px; text-align:center"
+									filterBy="#{item.cedula}" filterMatchMode="contains"
+									filterStyle="width:95%;">
+									<p:outputLabel value="#{item.cedula}" />
+								</p:column>
+
+								<p:column headerText="Agencia"
+									style="width:150px; text-align:center">
+									<p:outputLabel value="#{item.nomAgencia}" />
+								</p:column>
+
+								<p:column headerText="Centro"
+									style="width:80px; text-align:center">
+									<p:outputLabel value="#{item.centro}" />
+								</p:column>
+
+								<p:column headerText="Seleccionar"
+									style="width:80px; text-align:center">
+									<p:commandLink title="Click para seleccionar" partialSubmit="true"
+										process="@this"
+										actionListener="#{cxcAnticiposDevolucionController.seleccionar(item)}">
+										<i class="fa fa-check-circle fa-2x" style="color: #29a3d8;" />
+									</p:commandLink>
+								</p:column>
+							</p:dataTable>
+						</div>
+					</div>
+				</div>
+			</p:panel>
+		</h:form>
+	</ui:define>
+
+</ui:composition>
