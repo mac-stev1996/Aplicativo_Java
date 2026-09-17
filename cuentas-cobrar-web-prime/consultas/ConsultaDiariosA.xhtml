@@ -1,0 +1,441 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<style type="text/css">
+body {
+	font-size: 10px;
+}
+
+body .ui-toolbar {
+	padding: 5px;
+}
+
+.columAlignCenter {
+	text-align: center;
+}
+
+.columAlignRight {
+	text-align: right;
+}
+</style>
+	<script type="text/javascript">
+		PrimeFaces.locales["es"] = {
+			    closeText: "Cerrar",
+			    prevText: "Anterior",
+			    nextText: "Siguiente",
+			    monthNames: ["Enero","Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+			    monthNamesShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+			    dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+			    dayNamesShort: ["Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab"],
+			    dayNamesMin: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
+			    weekHeader: "Semana",
+			    firstDay: 0,
+			    isRTL: false,
+			    showMonthAfterYear: false,
+			    yearSuffix: "",
+			    timeOnlyTitle: "Solo hora",
+			    timeText: "Tiempo",
+			    hourText: "Hora",
+			    minuteText: "Minuto",
+			    secondText: "Segundo",
+			    currentText: "Fecha actual",
+			    ampm: false,
+			    month: "Mes",
+			    week: "Semana",
+			    day: "Día",
+			    allDayText : "Todo el día"
+			};
+
+		</script>
+</h:head>
+<h:body>
+	<p:ajaxStatus onstart="PF('statusDialog').show()"
+		onsuccess="PF('statusDialog').hide()"
+		onerror="PF('statusDialog').hide()" />
+
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+		closable="false" resizable="false" showHeader="false">
+		<h:graphicImage value="/common/imgs/gifs/ajaxloadingbar.gif" />
+	</p:dialog>
+		<p:growl id="idGrowl" globalOnly="true" autoUpdate="true"
+		widgetVar="groMessages" showDetail="true" life="5000" />
+	
+	<h:form id="idForm">
+		<p:toolbar>
+			<f:facet name="left">
+				<h:outputLabel style="font-size: 15px;" value=" CONSULTA DIARIOS A" />
+			</f:facet>
+
+			<f:facet name="right">
+				<p:commandButton value="Limpiar" icon="fa fa-refresh"
+					update="idForm" action="#{cxcConsultaDiariosAController.limpiar}"></p:commandButton>
+			</f:facet>
+
+		</p:toolbar>
+
+		<h:panelGrid columns="4">
+			<f:facet name="header">
+				<h:outputText value="Filtros de B&#250;squeda"></h:outputText>
+			</f:facet>
+			<h:outputText value="Por Fecha: " style="font-weight: bold;"></h:outputText>
+			<h:panelGrid columns="2">
+				<h:outputText value="Desde el: "></h:outputText>
+				<p:calendar title="Fecha Inicial"
+					value="#{cxcConsultaDiariosAController.fechaInicial}"
+					autocomplete="off"></p:calendar>
+			</h:panelGrid>
+			<h:panelGrid columns="2">
+				<h:outputText value="Hasta el: "></h:outputText>
+				<p:calendar title="Fecha Final"
+					value="#{cxcConsultaDiariosAController.fechaFinal}"
+					autocomplete="off"></p:calendar>
+			</h:panelGrid>
+			<p:spacer width="5" height="5"></p:spacer>
+
+			<h:outputText value="Por N&#250;mero : " style="font-weight: bold;"></h:outputText>
+			<h:panelGrid columns="2">
+				<h:outputText value="Desde: "></h:outputText>
+				<p:inputText
+					value="#{cxcConsultaDiariosAController.noFisicoInicial}"></p:inputText>
+			</h:panelGrid>
+			<h:panelGrid columns="2">
+				<h:outputText value="Hasta el: "></h:outputText>
+				<p:inputText value="#{cxcConsultaDiariosAController.noFisicoFinal}"></p:inputText>
+			</h:panelGrid>
+			<p:spacer width="5" height="5"></p:spacer>
+		</h:panelGrid>
+		<h:panelGrid columns="4" id="pnlFiltros">
+			<h:outputText value="Por Cliente : " style="font-weight: bold;"></h:outputText>
+			<h:panelGrid columns="2">
+				<p:commandLink oncomplete="PF('DlgClientes').show();"
+					value="Cliente: " update="FrmClientes"/>
+				<p:inputText
+					value="#{cxcConsultaDiariosAController.clienteSeleccionado.nombre}"
+					style="width:270px;" readonly="true"></p:inputText>
+			</h:panelGrid>
+			<p:spacer width="20" height="5"></p:spacer>
+			<p:commandButton value="Buscar" icon="fa fa-search"
+				styleClass="orange-btn"
+				action="#{cxcConsultaDiariosAController.buscarDiariosCriterios}"
+				update="idForm:idTblDiarios"></p:commandButton>
+		</h:panelGrid>
+
+
+		<p:dataTable id="idTblDiarios" emptyMessage="Sin Registros"
+			value="#{cxcConsultaDiariosAController.diariosA}" var="item"
+			paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+			rows="15" paginator="true">
+			<p:column headerText="Fecha" styleClass="columAlignCenter"
+				width="7%">
+				<p:outputLabel value="#{item.fecha}" rendered="#{item.anulado != 'S' and item.estadoRev == null}">
+					<f:convertDateTime pattern="dd-MM-yyyy" />
+				</p:outputLabel>
+				<p:outputLabel value="#{item.fecha}" rendered="#{item.anulado == 'S'}" style="color:red;" title="Anulado">
+					<f:convertDateTime pattern="dd-MM-yyyy" />
+				</p:outputLabel>
+				<p:outputLabel value="#{item.fecha}" rendered="#{item.estadoRev != null}" style="color:green;" title="Revisado">
+					<f:convertDateTime pattern="dd-MM-yyyy" />
+				</p:outputLabel>
+			</p:column>
+			<p:column headerText="Numero " styleClass="columAlignCenter"
+				width="7%">
+				<p:outputLabel value="#{item.numero}" rendered="#{item.anulado != 'S' and item.estadoRev == null}"></p:outputLabel>
+				<p:outputLabel value="#{item.numero}" rendered="#{item.anulado == 'S'}" style="color:red;" title="Anulado"></p:outputLabel>
+				<p:outputLabel value="#{item.numero}" rendered="#{item.estadoRev != null}" style="color:green;" title="Revisado"></p:outputLabel>
+			</p:column>
+			<p:column headerText="Cedula Cliente " 
+				width="9%">
+				<p:outputLabel value="#{item.cedula}" rendered="#{item.anulado != 'S' and item.estadoRev == null}"></p:outputLabel>
+				<p:outputLabel value="#{item.cedula}" rendered="#{item.anulado == 'S'}" style="color:red;"  title="Anulado"></p:outputLabel>
+				<p:outputLabel value="#{item.cedula}" rendered="#{item.estadoRev != null}" style="color:green;" title="Revisado"></p:outputLabel>
+			</p:column>
+			<p:column headerText="Nombre Cliente "  width="25%">
+				<p:outputLabel value="#{item.nombre}" rendered="#{item.anulado != 'S' and item.estadoRev == null}"></p:outputLabel>
+				<p:outputLabel value="#{item.nombre}" rendered="#{item.anulado == 'S'}" style="color:red;"  title="Anulado"></p:outputLabel>
+				<p:outputLabel value="#{item.nombre}" rendered="#{item.estadoRev != null}" style="color:green;" title="Revisado"></p:outputLabel>
+			</p:column>
+			<p:column headerText="Comentario" width="35%">
+				<p:outputLabel value="#{item.comentar}" rendered="#{item.anulado != 'S' and item.estadoRev == null}"></p:outputLabel>
+				<p:outputLabel value="#{item.comentar}" rendered="#{item.anulado == 'S'}" style="color:red;"  title="Anulado"></p:outputLabel>
+				<p:outputLabel value="#{item.comentar}" rendered="#{item.estadoRev != null}" style="color:green;" title="Revisado"></p:outputLabel>
+			</p:column>
+			<p:column headerText="Usuario" styleClass="columAlignCenter"
+				width="7%">
+				<p:outputLabel value="#{item.usuario}" rendered="#{item.anulado != 'S' and item.estadoRev == null}"></p:outputLabel>
+				<p:outputLabel value="#{item.usuario}" rendered="#{item.anulado == 'S'}" style="color:red;"  title="Anulado"></p:outputLabel>
+				<p:outputLabel value="#{item.usuario}" rendered="#{item.estadoRev != null}" style="color:green;" title="Revisado"></p:outputLabel>
+			</p:column>
+			<p:column headerText="Monto" styleClass="columAlignRight"
+				width="6%">
+				<p:outputLabel value="#{item.monto}" rendered="#{item.anulado != 'S' and item.estadoRev == null}"></p:outputLabel>
+				<p:outputLabel value="#{item.monto}" rendered="#{item.anulado == 'S'}" style="color:red;"  title="Anulado"></p:outputLabel>
+				<p:outputLabel value="#{item.monto}" rendered="#{item.estadoRev != null}" style="color:green;" title="Revisado"></p:outputLabel>
+			</p:column>
+			<p:column headerText="Documento" styleClass="columAlignCenter"
+				width="6%">
+				<p:commandLink ajax="false" target="_blank"
+					action="#{cxcConsultaDiariosAController.imprimirDiario(item)}">
+					<p:commandButton icon="fa fa-print" title="Descargar Documento"
+						ajax="false">
+					</p:commandButton>
+				</p:commandLink>
+
+			</p:column>
+			<p:column headerText="Ver Adjuntos" styleClass="columAlignCenter"
+				width="6%">
+				<p:commandButton icon="fa fa-binoculars" title="Ver Adjuntos"
+					styleClass="orange-btn"
+					action="#{cxcConsultaDiariosAController.abrirRevisar(item, true)}"
+					update="PnlAdjuntos" process="@this" partialSubmit="true">
+				</p:commandButton>
+
+			</p:column>
+
+			<p:column headerText="Revision" styleClass="columAlignCenter"
+				width="7%" rendered="#{cxcConsultaDiariosAController.esRevision}">
+				<p:commandButton icon="fa fa-check-square-o" title="Revisar"
+					styleClass="green-btn"
+					action="#{cxcConsultaDiariosAController.abrirRevisar(item, false)}"
+					update="PnlRevision" process="@this" partialSubmit="true">
+				</p:commandButton>
+
+			</p:column>
+
+			<p:column headerText="Ver Depósitos" styleClass="columAlignCenter"
+				width="7%">
+				<p:commandButton icon="fa fa-list-alt"
+					rendered="#{item.deposito gt 0}"
+					title="Datos depósitos confirmados" update="frmDepositos"
+					styleClass="green-btn"
+					actionListener="#{cxcConsultaDiariosAController.cargarDepositos(item)}" />
+			</p:column>
+
+		</p:dataTable>
+
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+			<p:commandButton value="Yes" type="button"
+				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+			<p:commandButton value="No" type="button"
+				styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+		</p:confirmDialog>
+
+
+	</h:form>
+
+		<p:dialog widgetVar="DlgClientes" id="DlgClientes"
+			header="Seleccione Cliente" resizable="true" modal="true"
+			closable="true" appendTo="@(body)" width="480" height="500">
+			<h:form id="FrmClientes">
+			<p:dataTable id="dtClientes"
+				value="#{cxcConsultaDiariosAController.clientes}" var="cliente"
+				emptyMessage="No existen registros" selectionMode="single"
+				selection="#{cxcConsultaDiariosAController.clienteSeleccionado}"
+				rowKey="#{cliente.clientePK}" paginator="true" rows="10" lazy="true"
+				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+				<p:column headerText="Cedula/Ruc" filterBy="#{cliente.cedula}"
+					width="90">
+					<h:outputText value="#{cliente.cedula}" />
+				</p:column>
+				<p:column headerText="Nombre" filterBy="#{cliente.nombre}"
+					filterMatchMode="startsWith">
+					<h:outputText value="#{cliente.nombre}" />
+				</p:column>
+			</p:dataTable>
+			<br> </br>
+			<center>
+				<p:commandButton value="Seleccionar "
+					action="#{cxcConsultaDiariosAController.seleccionarCliente}"
+					update="idForm:pnlFiltros"></p:commandButton>
+			</center>
+			</h:form>
+		</p:dialog>
+
+	<p:dialog widgetVar="DlgUsuarios" id="DlgUsuarios"
+		header="Seleccione Usuario" resizable="true" modal="true"
+		closable="true" appendTo="@(body)" width="480" height="500">
+		<h:form id="FrmUsuarios">
+			<p:dataTable id="dtUsuarios"
+				value="#{cxcConsultaDiariosAController.usuariosContabilidad}"
+				var="user" emptyMessage="No existen registros"
+				selectionMode="single"
+				selection="#{cxcConsultaDiariosAController.usuarioSeleccionado}"
+				rowKey="#{user}" paginator="true" rows="10"
+				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+				<p:column headerText="Nombre Usuario" filterBy="#{user.nombre}">
+					<h:outputText value="#{user.nombre}" />
+				</p:column>
+				<p:column headerText="Usuario" filterBy="#{user.usuario}" width="90">
+					<h:outputText value="#{user.usuario}" />
+				</p:column>
+			</p:dataTable>
+			<br> </br>
+			<center>
+				<p:commandButton value="Seleccionar "
+					action="#{cxcConsultaDiariosAController.seleccionarUsuario}"
+					update="PnlRevision"></p:commandButton>
+			</center>
+		</h:form>
+	</p:dialog>
+
+	<p:dialog header="Revision" widgetVar="DlgRevision" modal="true"
+		showEffect="fade" hideEffect="fade" resizable="true" width="550"
+		height="270" position="center center" closeOnEscape="true">
+
+		<h:form id="PnlRevision">
+			<h:panelGrid columns="2">
+				<h:outputText value="Revisado: "></h:outputText>
+				<p:selectBooleanCheckbox
+					value="#{cxcConsultaDiariosAController.aprobadoRevision}"
+					rendered="#{!cxcConsultaDiariosAController.aprobadoRevision}"></p:selectBooleanCheckbox>
+				<p:commandButton icon="fa fa-check" title="Revisado"
+					styleClass="green-btn"
+					rendered="#{cxcConsultaDiariosAController.aprobadoRevision}">
+				</p:commandButton>
+				<h:outputText value="Observaciones:" />
+				<p:inputTextarea
+					value="#{cxcConsultaDiariosAController.revision.observacion}"
+					style="width:320px;"></p:inputTextarea>
+
+				<h:outputText value="Devolver: "></h:outputText>
+				<p:selectBooleanCheckbox
+					value="#{cxcConsultaDiariosAController.devolver}"
+					disabled="#{cxcConsultaDiariosAController.aprobadoRevision}"></p:selectBooleanCheckbox>
+
+				<h:outputText value="Realizar Ajuste: "></h:outputText>
+				<h:panelGrid columns="3">
+					<p:selectBooleanCheckbox
+						value="#{cxcConsultaDiariosAController.ajustar}"
+						disabled="#{cxcConsultaDiariosAController.aprobadoRevision}"></p:selectBooleanCheckbox>
+						<p:commandLink value="Usuario Ajuste: " title="Usuario que realizara el ajuste" oncomplete="PF('DlgUsuarios').show();" update="FrmUsuarios" disabled="#{cxcConsultaDiariosAController.aprobadoRevision}"></p:commandLink>
+						<p:inputText value="#{cxcConsultaDiariosAController.revision.usuarioAjuste}" readonly="true" disabled="#{cxcConsultaDiariosAController.aprobadoRevision}"></p:inputText>
+				</h:panelGrid>
+				<h:outputText value="Usuario Revision: " rendered="#{cxcConsultaDiariosAController.aprobadoRevision}"></h:outputText>
+				<h:outputText value="#{cxcConsultaDiariosAController.revision.usuario}" rendered="#{cxcConsultaDiariosAController.aprobadoRevision}"></h:outputText>
+				<h:outputText value="Fecha de Revision: " rendered="#{cxcConsultaDiariosAController.aprobadoRevision}"></h:outputText>
+				<h:outputText value="#{cxcConsultaDiariosAController.revision.fecha}" rendered="#{cxcConsultaDiariosAController.aprobadoRevision}">
+					<f:convertDateTime pattern="dd-MM-yyyy" />
+				</h:outputText>
+			</h:panelGrid>
+
+			<br />
+			<center>
+				<p:commandButton value="Guardar"
+					action="#{cxcConsultaDiariosAController.guardarRevision(false)}"
+					process="PnlRevision"
+					rendered="#{!cxcConsultaDiariosAController.aprobadoRevision}"
+					partialSubmit="true"></p:commandButton>
+			</center>
+		</h:form>
+	</p:dialog>
+
+	<p:dialog header="Archivos Adjuntos" widgetVar="DlgAdjuntos"
+		modal="true" showEffect="fade" hideEffect="fade" resizable="true"
+		width="600" height="300" position="center center" closeOnEscape="true">
+
+		<h:form id="PnlAdjuntos">
+			<p:fileUpload
+				fileUploadListener="#{cxcConsultaDiariosAController.cargarArchivo}"
+				mode="advanced" dragDropSupport="true"
+				update="PnlAdjuntos:dtlinksArchivos" uploadLabel="Subir Archivo"
+				cancelLabel="Cancelar" label="Seleccionar Archivo" fileLimit="5"
+				fileLimitMessage="Puede subir hasta 5 archivos">
+			</p:fileUpload>
+			<br />
+			<p:dataTable value="#{cxcConsultaDiariosAController.listaAdjuntos}"
+				var="adj" id="dtlinksArchivos">
+				<p:column headerText="Archivo">
+					<p:commandLink ajax="false" target="_blank"
+						action="#{cxcConsultaDiariosAController.verAdjunto(adj)}">
+						<h:outputText value="#{adj}"
+							style="text-decoration: underline; color: blue;"></h:outputText>
+					</p:commandLink>
+
+				</p:column>
+				<p:column headerText="Eliminar" width="30">
+					<p:commandButton icon="fa fa-minus" title="Quitar Archivo"
+						styleClass="red-btn"
+						action="#{cxcConsultaDiariosAController.quitarArchivo(adj)}"
+						update="PnlAdjuntos:dtlinksArchivos">
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+			<br />
+			<center>
+				<p:commandButton value="Guardar"
+					action="#{cxcConsultaDiariosAController.guardarRevision(true)}"
+					process="PnlAdjuntos" partialSubmit="true"></p:commandButton>
+			</center>
+		</h:form>
+	</p:dialog>
+	
+	<p:dialog header="Datos depósitos" widgetVar="dlgDepositos"
+			id="dlgDepositos" modal="true" showEffect="slide" hideEffect="slide"
+			style="position:fixed" resizable="true" width="95%" height="auto"
+			closeOnEscape="true">
+			<h:form id="frmDepositos">
+			<p:dataTable id="dtDepositos" var="item" rowIndexVar="row"
+				value="#{cxcConsultaDiariosAController.depositosConfirmados}"
+				rowKey="#{item.id}" emptyMessage="No existe depositos"
+				paginator="true" filterDelay="1000" rows="5"
+				paginatorPosition="bottom"
+				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+				<p:column width="3%" headerText="N°"
+					style="text-align: center !important">
+					<h:outputText value="#{row + 1}" />
+				</p:column>
+				<p:column headerText="Banco" width="18%">
+					<p:outputLabel value="#{item.nombreBanco}" />
+				</p:column>
+				<p:column headerText="Cuenta" width="9%">
+					<p:outputLabel value="#{item.id.noCta}" />
+				</p:column>
+				<p:column headerText="Número" width="8%">
+					<p:outputLabel value="#{item.id.noFisico}" />
+				</p:column>
+				<p:column width="7%" headerText="Fecha dep.">
+					<p:outputLabel value="#{item.id.fechaDeposito}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</p:outputLabel>
+				</p:column>
+				<p:column headerText="Monto" width="7%" styleClass="columAlignRight">
+					<p:outputLabel value="#{item.valor}" />
+				</p:column>
+				<p:column headerText="Comentario" width="25%">
+					<p:outputLabel value="#{item.comentario}" />
+				</p:column>
+				<p:column headerText="Usuario sol." width="9%">
+					<p:outputLabel value="#{item.usuarioSolicita}" />
+				</p:column>
+				<p:column width="7%" headerText="Fecha sol.">
+					<p:outputLabel value="#{item.fechaSolicita}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</p:outputLabel>
+				</p:column>
+				<p:column headerText="# Sol. seguimiento" width="8%">
+					<p:outputLabel value="#{item.codeSegDeptrans}" />
+				</p:column>
+				<p:column headerText="Obs. confirmación" width="20%">
+					<p:outputLabel value="#{item.observacionConfirmacion}" />
+				</p:column>
+
+				<p:column headerText="Adjunto" width="5%" style="text-align:center">
+					<p:commandLink title="Click descargar adjunto" partialSubmit="true"
+						process="@this" ajax="false" target="_blank"
+						action="#{cxcConsultaDiariosAController.descargarArchivo(item.pathDeposito)}"
+						rendered="#{item.pathDeposito ne null}">
+						<i class="fa fa-cloud-download fa-2x" style="color: green;" />
+					</p:commandLink>
+				</p:column>
+
+			</p:dataTable>
+		</h:form>
+		</p:dialog>
+
+	<h:outputStylesheet name="css/layout-lightblue.css"
+		library="serenity-layout" />
+</h:body>
+</html>
