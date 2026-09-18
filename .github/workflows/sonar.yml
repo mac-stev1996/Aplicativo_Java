@@ -148,6 +148,8 @@ jobs:
       
           Write-Host "POM seleccionado:"
           Write-Host $pom.FullName
+
+          Set-Location $pom.DirectoryName
       
           Write-Host ""
           Write-Host "================================="
