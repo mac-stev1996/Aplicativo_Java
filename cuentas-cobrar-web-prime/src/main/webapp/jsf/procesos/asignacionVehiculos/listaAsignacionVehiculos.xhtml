@@ -1,0 +1,177 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<p:panelGrid columns="1" id="pgListaGeneral" width="100%" layout="grid"
+		columnClasses="ui-grid-col-12">
+
+		<p:panel style="display: flex; justify-content: flex-end;"
+			rendered="#{cxcAsignacionVehiculosController.pantalla eq 'LISTA_ASIGNACION'}"
+			styleClass="noborder">
+			<p:fieldset legend="Filtros de Búsqueda" toggleable="false">
+				<h:panelGrid columns="12" id="idPgFiltros" style="width:100%">
+
+					<p:commandLink id="clienteCommandLink" value="Cliente: "
+						oncomplete="PF('modalCLientes').show();" styleClass="bold"
+						update=":#{p:component('modalCLientes')}"
+						action="#{cxcAsignacionVehiculosController.ejecutarConsultaClientes}">
+					</p:commandLink>
+					<p:inputText id="cedCliente" readonly="true"
+						value="#{cxcAsignacionVehiculosController.cedulaCliente}" />
+
+					<p:outputLabel value="Fecha Entrega Desde:" />
+					<p:calendar id="fechaDesde" locale="es" navigator="true"
+						autocomplete="off" pattern="dd/MM/yyyy"
+						maxdate="#{cxcAsignacionVehiculosController.fechaActual}"
+						value="#{cxcAsignacionVehiculosController.fechaDesde}">
+						<p:ajax event="dateSelect" process="@this"
+							listener="#{cxcAsignacionVehiculosController.actualizarFechaDesde}"
+							update="fechaHasta" />
+					</p:calendar>
+
+					<p:outputLabel value="Fecha Entrega Hasta:" />
+					<p:calendar id="fechaHasta" locale="es" navigator="true"
+						autocomplete="off" pattern="dd/MM/yyyy"
+						mindate="#{cxcAsignacionVehiculosController.fechaDesde}"
+						value="#{cxcAsignacionVehiculosController.fechaHasta}" />
+
+					<p:commandButton value="Buscar" icon="ui-icon ui-icon-search"
+						title="Buscar" partialSubmit="true"
+						process="@this :idForm:idPgFiltros"
+						actionListener="#{cxcAsignacionVehiculosController.buscarVehiculos}"
+						update=":idForm:dtDetalle" />
+					<p:commandButton value="Limpiar" icon="fa fa-eraser"
+						title="Limpiar filtros" partialSubmit="true" process="@this"
+						actionListener="#{cxcAsignacionVehiculosController.limpiarFiltros}"
+						update=":idForm:idPgFiltros :idForm:dtDetalle" />
+				</h:panelGrid>
+			</p:fieldset>
+			<p:spacer />
+			<p:panelGrid columns="1" id="idPgDatos" style="width:100%">
+				<p:dataTable id="dtDetalle" lazy="true" widgetVar="wdtDetalle"
+					value="#{cxcAsignacionVehiculosController.model}" var="item"
+					paginator="true"
+					rows="#{cxcAsignacionVehiculosController.batchSize}"
+					rowKey="#{item.chasis}" styleClass="table table-body"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+					paginatorPosition="bottom"
+					emptyMessage="No existe información de seguimiento de vehículos"
+					rowIndexVar="row" filterDelay="1000">
+					<f:facet name="header">
+						<p:outputLabel value="Listado de Seguimiento de Vehiculos Nuevos" />
+					</f:facet>
+
+					<p:column headerText="No." width="10">
+						<p:outputLabel value="#{row +1}" />
+					</p:column>
+
+					<p:column headerText="Cedula Cliente" width="70">
+						<p:outputLabel value="#{item.cedulaCliente}" readonly="true" />
+					</p:column>
+
+					<p:column headerText="Nombre Cliente" width="70">
+						<p:outputLabel value="#{item.nombreCliente}" readonly="true" />
+					</p:column>
+
+					<p:column headerText="Agencia" width="70">
+						<p:outputLabel value="#{item.nombreAgencia}" readonly="true" />
+					</p:column>
+
+					<p:column headerText="Línea Negocio" width="70">
+						<p:outputLabel value="#{item.lineaNegocio}" readonly="true" />
+					</p:column>
+
+					<p:column headerText="Numero Fisico" width="70">
+						<p:outputLabel value="#{item.noFisico}" readonly="true" />
+					</p:column>
+
+					<p:column headerText="Fecha Factura" width="68">
+						<p:outputLabel value="#{item.fechaFactura}" readonly="true">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:outputLabel>
+					</p:column>
+
+					<p:column headerText="Fecha Salida" width="68">
+						<p:outputLabel value="#{item.fechaSalida}" readonly="true">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:outputLabel>
+					</p:column>
+
+					<p:column headerText="Usuario Salida" width="70">
+						<p:outputLabel value="#{item.usuarioSalida}" readonly="true" />
+					</p:column>
+
+					<p:column headerText="Vehículo" width="60">
+						<p:outputLabel value="#{item.descripcion}" readonly="true" />
+					</p:column>
+
+					<p:column headerText="Placa" width="60">
+						<p:outputLabel value="#{item.placa}" readonly="true" />
+					</p:column>
+
+					<p:column headerText="Fecha y hora Entrega" width="100">
+						<p:outputLabel styleClass="bold" value="#{item.fechaEntregaVeh}"
+							readonly="true">
+							<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+						</p:outputLabel>
+					</p:column>
+
+					<p:column headerText="Asesor Asignado" width="80">
+						<p:outputLabel value="#{item.usuarioEntregaVeh}" readonly="true" />
+					</p:column>
+
+					<p:column headerText="Control"
+						style="text-align:center;color:red !important" width="150">
+						
+						<p:commandButton id="btnEntregaVeh" icon="fa fa-car"
+							styleClass="green-btn" update="@form"  
+							actionListener="#{cxcAsignacionVehiculosController.asignarEntregaVehiculos(item)}" />
+						<p:tooltip id="toolEntregaVeh" for="btnEntregaVeh"
+							value="Gestión acercamiento cliente" position="top" />
+
+						<p:commandButton id="btnArribo" icon="fa fa-send"
+							styleClass="green-btn" rendered="#{item.usuarioEntregaVeh!=null and item.usuarioEntregaVeh ne ''}"
+							disabled="#{item.estadoEntrega eq 'C'}"
+							onclick="PF('diaArriboCliente').show();">
+							<f:setPropertyActionListener value="#{item}"
+								target="#{cxcAsignacionVehiculosController.seguimientoVeh}" />
+						</p:commandButton>
+						<p:tooltip id="toolArriboCli" for="btnArribo"
+							value="Notificar arribo cliente" position="top" />
+
+						<p:commandButton id="btnEntregaGarantia" icon="fa fa-send"
+							styleClass="red-btn" rendered="#{item.usuarioEntregaVeh!=null and item.usuarioEntregaVeh ne ''}"
+							disabled="#{item.estadoEntrega eq 'C'}"
+							onclick="PF('dialogEntregaManuales').show();">
+							<f:setPropertyActionListener value="#{item}"
+								target="#{cxcAsignacionVehiculosController.seguimientoVeh}" />
+						</p:commandButton>
+						<p:tooltip id="toolEntGarantia" for="btnEntregaGarantia"
+							value="Notificar entrega (manuales de garantia)" position="top" />
+
+
+						<p:commandButton id="btnAgregar" icon="fa fa-user-plus"
+							title="Agregar Contactos" styleClass="green-btn" rendered="#{item.usuarioEntregaVeh!=null and item.usuarioEntregaVeh ne '' }"
+							actionListener="#{cxcAsignacionVehiculosController.editar(item)}"
+							update="@form" />
+						<p:tooltip id="toolAgregarContacto" for="btnAgregar"
+							value="Agregar contactos del vehículo" position="top" />
+
+						<p:commandButton id="btnCliente" icon="fa fa-user"
+							title="Ver Cliente" styleClass="blue-btn" partialSubmit="true"
+							process="@this"
+							action="#{cxcAsignacionVehiculosController.verPantallaCliente(item)}" />
+						<p:tooltip id="toolInforCliente" for="btnCliente"
+							value="Ver información del cliente" position="top" />
+
+					</p:column>
+
+				</p:dataTable>
+			</p:panelGrid>
+		</p:panel>
+	</p:panelGrid>
+</ui:composition>

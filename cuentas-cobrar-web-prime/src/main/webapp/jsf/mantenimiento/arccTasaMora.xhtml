@@ -1,0 +1,197 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Comision Cobro por Mora
+	</ui:define>
+
+
+
+	<ui:define name="content">
+		<style>
+.w25 {
+	width: 25%;
+}
+</style>
+		<h:form id="idForm">
+			<p:toolbar>
+				<f:facet name="left">
+					<p:outputLabel value="Mantenimiento Comision Cobro por Mora"></p:outputLabel>
+				</f:facet>
+				<f:facet name="right">
+					<p:commandButton title="Nuevo" icon="fa fa-file-o"
+						update="dlgNuevo" oncomplete="PF('dlgNuevo').show();"
+						action="#{cxcArcctasaMoraController.nuevo}" />
+				</f:facet>
+			</p:toolbar>
+
+			<div class="ui-g dashboard">
+				<div class="ui-g-12 ui-fluid contact-form">
+
+					<div class="ui-g-12">
+
+						<p:dataTable id="tblArccTasa" widgetVar="tblArccTasa"
+							emptyMessage="No existen registros"
+							value="#{cxcArcctasaMoraController.listado}" var="item"
+							selection="#{cxcArcctasaMoraController.arccTasaMoraSelected}"
+							rowKey="#{item.id}" rowIndexVar="var" editable="true"
+							editMode="cell" styleClass="table table-body" paginator="true"
+							paginatorAlwaysVisible="true" paginatorPosition="top"
+							filterDelay="1000" rows="10"
+							currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+							paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+
+							<p:ajax event="cellEdit" partialSubmit="true" process="@this"
+								listener="#{cxcArcctasaMoraController.editar(item)}"
+								update="@this, tblArccTasa" global="false" />
+
+
+							<p:column headerText="Linea" width="15%"
+								filterBy="#{item.id.linea}">
+								<p:outputLabel value="#{item.id.linea}" />
+							</p:column>
+
+							<p:column width="30%">
+								<p:outputLabel
+									value="#{cxcArcctasaMoraController.obtenerDescripcionLinea(item)}" />
+							</p:column>
+							<p:column headerText="Días Gracias Cob Mo" width="20%"
+								filterBy="#{item.diasGracia}">
+								<p:cellEditor>
+									<f:facet name="output">
+										<p:outputLabel value="#{item.diasGracia}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText value="#{item.diasGracia}" />
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							<p:column headerText="Días Gracias Cob Int" width="20%"
+								filterBy="#{item.diasGraciaInt}">
+								<p:cellEditor>
+									<f:facet name="output">
+										<p:outputLabel value="#{item.diasGraciaInt}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText value="#{item.diasGraciaInt}" />
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							<p:column headerText="Tasa Comisión" width="20%"
+								filterBy="#{item.tasaComision}">
+								<p:cellEditor>
+									<f:facet name="output">
+										<p:outputLabel value="#{item.tasaComision}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText value="#{item.tasaComision}" />
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							<p:column headerText="Tasa Mora" width="20%"
+								filterBy="#{item.tasaMora}">
+								<p:cellEditor>
+									<f:facet name="output">
+										<p:outputLabel value="#{item.tasaMora}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText value="#{item.tasaMora}" />
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							<p:column headerText="Mensaje" width="20%">
+								<p:cellEditor>
+									<f:facet name="output">
+										<p:outputLabel value="#{item.mensaje}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText value="#{item.mensaje}" />
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							<p:column width="5%">
+								<p:commandButton title="Eliminar" partialSubmit="true"
+									icon="ui-icon ui-icon-delete" process="@this,tblArccTasa"
+									style="margin-top: 0px !important" styleClass="red-btn"
+									actionListener="#{cxcArcctasaMoraController.eliminar(item)}"
+									update="idForm">
+									<p:confirm header="Confirmación"
+										message="¿Esta seguro que desea eliminar el registro?"
+										icon="pi pi-exclamation-triangle" />
+
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+
+					</div>
+				</div>
+			</div>
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="pi pi-check"
+					update="tblArccTasa" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+			</p:confirmDialog>
+
+
+		</h:form>
+
+		<p:dialog widgetVar="dlgNuevo" id="dlgNuevo"
+			header="Nueva Comision Cobro por Mora" resizable="true" modal="true"
+			closable="true" appendTo="@(body)" width="490" height="300"
+			closeOnEscape="true">
+			<h:form id="FrmResult">
+				<p:panelGrid columns="2">
+					<p:outputLabel value="Linea *" style="width:100%" />
+					<p:selectOneMenu
+						value="#{cxcArcctasaMoraController.arccTasaMoraNuevo.id.linea}"
+						filter="true">
+						<f:selectItem itemLabel="Seleccione" />
+						<f:selectItems value="#{cxcArcctasaMoraController.listadoLineas}"
+							var="linea"
+							itemLabel="#{linea.lineaNegocioPK.noLinea} / #{linea.descripcion} "
+							itemValue="#{linea.lineaNegocioPK.noLinea}"></f:selectItems>
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Días Gracias Cob Mo *" style="width:100%" />
+					<p:inputText
+						value="#{cxcArcctasaMoraController.arccTasaMoraNuevo.diasGracia}"
+						style="width:100%" />
+
+					<p:outputLabel value="Días Gracias Cob Int *" style="width:100%" />
+					<p:inputText
+						value="#{cxcArcctasaMoraController.arccTasaMoraNuevo.diasGraciaInt}"
+						style="width:100%" />
+					<p:outputLabel value="Tasa Comisión *" style="width:100%" />
+					<p:inputText
+						value="#{cxcArcctasaMoraController.arccTasaMoraNuevo.tasaComision}"
+						style="width:100%" />
+					<p:outputLabel value="Tasa Mora *" style="width:100%" />
+					<p:inputText
+						value="#{cxcArcctasaMoraController.arccTasaMoraNuevo.tasaMora}"
+						style="width:100%" />
+					<p:outputLabel value="Mensaje" style="width:100%" />
+					<p:inputText
+						value="#{cxcArcctasaMoraController.arccTasaMoraNuevo.mensaje}"
+						style="width:100%" />
+				</p:panelGrid>
+
+				<br />
+				<center>
+					<p:commandButton value="Guardar" partialSubmit="true"
+						process="@this, dlgNuevo"
+						action="#{cxcArcctasaMoraController.grabar}"
+						oncomplete="PF('dlgNuevo').hide();" update="idForm"></p:commandButton>
+				</center>
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RepCreditosPostventaExpress" pageWidth="3800" pageHeight="900" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="3740" leftMargin="30" rightMargin="30" topMargin="10" bottomMargin="10" isIgnorePagination="true" uuid="441503f2-1753-4a76-85d2-c8fbb6c6f18b">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="0.7697371773460628"/>
+	<property name="ireport.x" value="1918"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<parameter name="fechaFin" class="java.util.Date"/>
+	<parameter name="fechaIni" class="java.util.Date"/>
+	<parameter name="estado" class="java.lang.String"/>
+	<parameter name="IMPRIME_CABECERA" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Boolean(true)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="agencia" class="java.lang.String"/>
+	<parameter name="asesor" class="java.lang.String"/>
+	<parameter name="noCia" class="java.lang.String"/>
+	<parameter name="NombreCia" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT to_char(c.FECHA, 'DD-MON-YYYY') Fecha, to_char(c.FECHA, 'HH24:MI') HoraEnvio,
+ag.NOMBRE as NOM_AGENCIA, c.USUARIO, u.NOMBRE AS NOM_USUARIO, c.NO_SOLICITUD, c.CEDULA, c.NOMBRES,  c.MONTO_DISPONIBLE, c.LIMITE_CREDI,
+c.LIMITE_FACT, c.ESTADO, c.USUARIO_REVISA, c.FECHA_EST_REVISADO, c.OBSERVACION_EST_REVISADO,
+abs(TRUNC(MOD((c.FECHA_EST_REVISADO - c.FECHA_EST_ENVIADO) * (60 * 24), 60))) tiempo,
+DECODE(c.ESTADO, 'I', 'INGRESADO','E','ENVIADO','R','REVISADO','A','APROBADO','N','NEGADO', 'D','DEVUELTO','') Destado,
+abs(TRUNC(MOD((c.FECHA_EST_REVISADO - c.FECHA_EST_ENVIADO) * (60 * 24), 60))) tiempoRev,
+(select e.USUARIO_REVISA||' '||to_char(e.FECHA_EST_REVISADO, 'HH24:MI-DD-MON-YYYY') from CXC_CREDITO_POSTVENTA e where e.no_cia= c.no_cia and e.no_solicitud= c.no_solicitud and rownum<2) usuFechaRev,
+(select e.USUARIO_APRUEBA||' '||to_char(e.FECHA_EST_APROBADO, 'HH24:MI-DD-MON-YYYY') from CXC_CREDITO_POSTVENTA e
+where e.no_cia= c.no_cia and e.no_solicitud= c.no_solicitud and rownum<2) usuFechaApr,
+abs(TRUNC(MOD((c.FECHA_EST_APROBADO - c.FECHA_EST_REVISADO) * (60 * 24), 60))) tiempoApr,
+c.USUARIO_APRUEBA, c.FECHA_EST_APROBADO, c.OBSERVACION_EST_APROBADO, r.NOMBRE AS NOM_USUARIO_R, p.NOMBRE AS NOM_USUARIO_A
+from CXC_CREDITO_POSTVENTA c
+left join ARAFMC a on a.NO_CIA = c.NO_CIA
+left join AGENCIAS ag on (ag.CODIGO = c.CENTRO AND ag.no_cia= $P{noCia})
+left join USUARIOS_SIS u on u.USUARIO = c.USUARIO
+left join USUARIOS_SIS r on r.USUARIO = c.USUARIO_REVISA
+left join USUARIOS_SIS p on p.USUARIO = c.USUARIO_APRUEBA
+WHERE c.NO_CIA = $P{noCia}
+and trunc(c.FECHA) >= trunc($P{fechaIni})
+and trunc(c.FECHA) <= trunc($P{fechaFin})
+and c.USUARIO = nvl($P{asesor}, c.USUARIO)
+and c.ESTADO = nvl($P{estado}, c.ESTADO)
+and c.CENTRO = nvl($P{agencia}, c.CENTRO)]]>
+	</queryString>
+	<field name="FECHA" class="java.lang.String"/>
+	<field name="HORAENVIO" class="java.lang.String"/>
+	<field name="NOM_AGENCIA" class="java.lang.String"/>
+	<field name="USUARIO" class="java.lang.String"/>
+	<field name="NOM_USUARIO" class="java.lang.String"/>
+	<field name="NO_SOLICITUD" class="java.math.BigDecimal"/>
+	<field name="CEDULA" class="java.lang.String"/>
+	<field name="NOMBRES" class="java.lang.String"/>
+	<field name="MONTO_DISPONIBLE" class="java.math.BigDecimal"/>
+	<field name="LIMITE_CREDI" class="java.math.BigDecimal"/>
+	<field name="LIMITE_FACT" class="java.math.BigDecimal"/>
+	<field name="ESTADO" class="java.lang.String"/>
+	<field name="USUARIO_REVISA" class="java.lang.String"/>
+	<field name="FECHA_EST_REVISADO" class="java.sql.Timestamp"/>
+	<field name="OBSERVACION_EST_REVISADO" class="java.lang.String"/>
+	<field name="TIEMPO" class="java.math.BigDecimal"/>
+	<field name="DESTADO" class="java.lang.String"/>
+	<field name="TIEMPOREV" class="java.math.BigDecimal"/>
+	<field name="USUFECHAREV" class="java.lang.String"/>
+	<field name="USUFECHAAPR" class="java.lang.String"/>
+	<field name="TIEMPOAPR" class="java.math.BigDecimal"/>
+	<field name="USUARIO_APRUEBA" class="java.lang.String"/>
+	<field name="FECHA_EST_APROBADO" class="java.sql.Timestamp"/>
+	<field name="OBSERVACION_EST_APROBADO" class="java.lang.String"/>
+	<field name="NOM_USUARIO_R" class="java.lang.String"/>
+	<field name="NOM_USUARIO_A" class="java.lang.String"/>
+	<variable name="TIEMPOREV" class="java.math.BigDecimal" calculation="Average">
+		<variableExpression><![CDATA[$F{TIEMPOREV}]]></variableExpression>
+	</variable>
+	<variable name="TIEMPOAPR" class="java.math.BigDecimal" calculation="Average">
+		<variableExpression><![CDATA[$F{TIEMPOAPR}]]></variableExpression>
+	</variable>
+	<group name="datos">
+		<groupExpression><![CDATA[]]></groupExpression>
+	</group>
+	<group name="datosAccesorios">
+		<groupExpression><![CDATA[]]></groupExpression>
+	</group>
+	<group name="datosDinamica">
+		<groupExpression><![CDATA[]]></groupExpression>
+	</group>
+	<group name="datosEstatica">
+		<groupExpression><![CDATA[]]></groupExpression>
+	</group>
+	<group name="datosCostosGenerales">
+		<groupExpression><![CDATA[]]></groupExpression>
+	</group>
+	<group name="datosGenerales">
+		<groupExpression><![CDATA[]]></groupExpression>
+	</group>
+	<group name="datosVehiculo">
+		<groupExpression><![CDATA[]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="107" splitType="Immediate">
+			<printWhenExpression><![CDATA[$P{IMPRIME_CABECERA}]]></printWhenExpression>
+			<staticText>
+				<reportElement uuid="8c061986-6f1b-4600-bb9f-8157db5d9367" x="1744" y="17" width="295" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE CREDITOS SOLICITUD EXPRESS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="0" y="48" width="106" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA INICIO:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="4d6705ac-58d3-4d90-ab5e-774a92487bc9" x="1875" y="48" width="100" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{fechaFin}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="1768" y="48" width="105" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA HASTA:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="cd0134a6-5023-4093-aa19-605cce14b091" x="106" y="48" width="100" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{fechaIni}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="0" y="64" width="106" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ESTADO:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="cd0134a6-5023-4093-aa19-605cce14b091" x="106" y="64" width="100" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{estado}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="1954" y="64" width="105" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AGENCIA:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="cd0134a6-5023-4093-aa19-605cce14b091" x="2059" y="64" width="100" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{agencia}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="cd0134a6-5023-4093-aa19-605cce14b091" x="2370" y="64" width="100" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{asesor}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="2301" y="64" width="69" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ASESOR:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="4d6705ac-58d3-4d90-ab5e-774a92487bc9" x="1764" y="0" width="252" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{NombreCia}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch">
+			<printWhenExpression><![CDATA[]]></printWhenExpression>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Immediate">
+			<staticText>
+				<reportElement uuid="5473b83c-08f8-4ae8-93ad-08a4de88af56" mode="Opaque" x="0" y="0" width="106" height="20" backcolor="#33CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA CREACION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="619eb246-f778-431b-92d3-b09279873a76" mode="Opaque" x="106" y="0" width="62" height="20" backcolor="#33CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[HORA CREA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5fd513d1-3d97-415a-a5d6-24868030abbe" mode="Opaque" x="168" y="0" width="150" height="20" backcolor="#33CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[AGENCIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5786e293-298f-4a26-866f-c67cf71e7036" mode="Opaque" x="318" y="0" width="200" height="20" backcolor="#33CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMBRE ASESOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3741ca58-0cbf-4173-8cbb-140dfa405e57" mode="Opaque" x="769" y="0" width="280" height="20" backcolor="#33CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[CLIENTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f77b120a-439a-4283-b08f-143a24a44a93" mode="Opaque" x="1299" y="0" width="120" height="20" backcolor="#33CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[LIMITE FACTURA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="fc696377-c0ec-4dca-ac87-cfcafac6ae8c" mode="Opaque" x="1419" y="0" width="120" height="20" backcolor="#33CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ESTADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b7df171c-28ee-40c2-8f0e-1d6754179383" mode="Opaque" x="1739" y="0" width="353" height="20" backcolor="#33CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[USUARIO, FECHA REV.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ec3d374e-93a7-4bcf-a81d-94ae5446e57e" mode="Opaque" x="2305" y="0" width="376" height="20" backcolor="#33CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[OBSERVACION REVISION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f77b120a-439a-4283-b08f-143a24a44a93" mode="Opaque" x="1179" y="0" width="120" height="20" backcolor="#33CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[LIMITE CREDITO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5786e293-298f-4a26-866f-c67cf71e7036" mode="Opaque" x="518" y="0" width="92" height="20" backcolor="#33CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nro SOLICITUD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5786e293-298f-4a26-866f-c67cf71e7036" mode="Opaque" x="609" y="0" width="160" height="20" backcolor="#33CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[CEDULA / RUC CLIENTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f77b120a-439a-4283-b08f-143a24a44a93" mode="Opaque" x="1049" y="0" width="130" height="20" backcolor="#33CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[MONTO DISPONIBLE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b7df171c-28ee-40c2-8f0e-1d6754179383" mode="Opaque" x="2881" y="0" width="203" height="20" backcolor="#33CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[USUARIO FECHA APRUEBA / NIEGA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ec3d374e-93a7-4bcf-a81d-94ae5446e57e" mode="Opaque" x="3364" y="0" width="376" height="20" backcolor="#33CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[OBSERVACION APROBACION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b7df171c-28ee-40c2-8f0e-1d6754179383" mode="Opaque" x="3084" y="0" width="150" height="20" backcolor="#33CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA APROBACION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b7df171c-28ee-40c2-8f0e-1d6754179383" mode="Opaque" x="2025" y="0" width="150" height="20" backcolor="#33CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA REVISION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b7df171c-28ee-40c2-8f0e-1d6754179383" mode="Opaque" x="2175" y="0" width="130" height="20" backcolor="#33CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TIEMPO REVISION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b7df171c-28ee-40c2-8f0e-1d6754179383" mode="Opaque" x="3234" y="0" width="130" height="20" backcolor="#33CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TIEMPO APROBACION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5786e293-298f-4a26-866f-c67cf71e7036" mode="Opaque" x="1539" y="0" width="200" height="20" backcolor="#33CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[USUARIO REVISA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5786e293-298f-4a26-866f-c67cf71e7036" mode="Opaque" x="2681" y="0" width="200" height="20" backcolor="#33CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[USUARIO APROBACION]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="4e3f5b8d-5268-4709-b43a-b32b55017f4f" x="0" y="0" width="106" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="868d149a-80d8-48f1-8e3e-3d875fce43b3" x="106" y="0" width="62" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{HORAENVIO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c756b331-1d73-43de-9bcc-5f724eaf945c" x="168" y="0" width="150" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{NOM_AGENCIA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="663bd5d1-3a63-4f3e-b25b-740a1ab143cb" x="318" y="0" width="200" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{NOM_USUARIO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="02016fa4-c641-45fa-a779-ebf91d98643f" x="769" y="0" width="280" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{NOMBRES}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c86e2565-9759-4f7f-acb0-56b673fa84be" x="1299" y="0" width="120" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{LIMITE_FACT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="74f024fd-52a8-45eb-bcb8-c74c43cf44d4" x="1419" y="0" width="120" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{DESTADO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="b081499b-a339-4f28-a622-3493de7b4407" x="1739" y="0" width="353" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{USUFECHAREV}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="3ef6881d-b7b0-492e-929a-d460669a740f" x="3364" y="0" width="376" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{OBSERVACION_EST_APROBADO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c86e2565-9759-4f7f-acb0-56b673fa84be" x="1179" y="0" width="120" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{LIMITE_CREDI}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="663bd5d1-3a63-4f3e-b25b-740a1ab143cb" x="518" y="0" width="92" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{NO_SOLICITUD}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="663bd5d1-3a63-4f3e-b25b-740a1ab143cb" x="609" y="0" width="160" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{CEDULA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c86e2565-9759-4f7f-acb0-56b673fa84be" x="1049" y="0" width="130" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{MONTO_DISPONIBLE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="b081499b-a339-4f28-a622-3493de7b4407" x="2881" y="0" width="203" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{USUFECHAAPR}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="3ef6881d-b7b0-492e-929a-d460669a740f" x="2305" y="0" width="376" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{OBSERVACION_EST_REVISADO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="b081499b-a339-4f28-a622-3493de7b4407" x="3084" y="0" width="150" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{FECHA_EST_APROBADO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="b081499b-a339-4f28-a622-3493de7b4407" x="2025" y="0" width="150" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{FECHA_EST_REVISADO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="b081499b-a339-4f28-a622-3493de7b4407" x="2175" y="0" width="130" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{TIEMPOREV}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="b081499b-a339-4f28-a622-3493de7b4407" x="3234" y="0" width="130" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{TIEMPOAPR}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="663bd5d1-3a63-4f3e-b25b-740a1ab143cb" x="1539" y="0" width="200" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{NOM_USUARIO_R}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="663bd5d1-3a63-4f3e-b25b-740a1ab143cb" x="2681" y="0" width="200" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{NOM_USUARIO_A}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="15" splitType="Stretch"/>
+	</summary>
+</jasperReport>

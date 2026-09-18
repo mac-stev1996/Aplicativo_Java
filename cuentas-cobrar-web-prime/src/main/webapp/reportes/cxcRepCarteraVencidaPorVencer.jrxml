@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cxcRepCarteraVencidaPorVencer" pageWidth="950" pageHeight="802" columnWidth="946" leftMargin="2" rightMargin="2" topMargin="0" bottomMargin="0" uuid="8bef2b7f-2fa7-478d-9fab-f989d854dbd8">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="267"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="NOCIA" class="java.lang.String"/>
+	<parameter name="NOMBREEMPRESA" class="java.lang.String"/>
+	<parameter name="USUARIO" class="java.lang.String"/>
+	<parameter name="IMPRIME_CABECERA" class="java.lang.Boolean"/>
+	<parameter name="PANIO" class="java.lang.Integer"/>
+	<parameter name="PMES" class="java.lang.Integer"/>
+	<parameter name="LINEA_NEGOCIO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select b.cedula,substr(b.nombre,1,33) nombre,a.centro,no_fisico,serie_fisico,cant_prorrogas,sum(nvl(saldo,0)) sald
+from CXC_SALDOS_MENSUALES a,CXC_CLIENTES_MENSUALES b
+where a.no_cia =$P{NOCIA}
+and a.ANIO_CIERRE=b.ANO_CIERRE
+and a.MES_CIERRE=b.MES_CIERRE
+and a.ANIO_CIERRE=$P{PANIO}
+and a.MES_CIERRE=$P{PMES}
+and a.serie_fisico =$P{LINEA_NEGOCIO}
+and nvl(anulado,' ') = 'N'
+and substr(no_fisico,1,3) <> '600'
+and nvl(saldo,0) > 0
+and nvl(no_docu_refe,' ') >= '1'
+and b.no_cia = a.no_cia
+and b.grupo = a.grupo
+and b.no_cliente = a.no_cliente
+and NVL(b.RELACION,' ') <> 'ER'
+and nvl(incobrable,' ') not in ('1','2')
+group by b.cedula,b.nombre,a.centro,no_fisico,serie_fisico,cant_prorrogas
+order by b.nombre]]>
+	</queryString>
+	<field name="CEDULA" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="CENTRO" class="java.lang.String"/>
+	<field name="NO_FISICO" class="java.lang.String"/>
+	<field name="SERIE_FISICO" class="java.lang.String"/>
+	<field name="CANT_PRORROGAS" class="java.math.BigDecimal"/>
+	<field name="SALD" class="java.math.BigDecimal"/>
+	<variable name="sumTotales" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="SumTotalIva" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<group name="masterGroup">
+		<groupExpression><![CDATA[$V{PAGE_NUMBER}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<staticText>
+					<reportElement uuid="04418fcc-6c54-4f75-a668-4559371c37e2" mode="Opaque" x="17" y="0" width="146" height="15" backcolor="#99CCFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CEDULA/RUC]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="ce0223da-d5e7-4fec-b612-8058ae28b6fa" mode="Opaque" x="163" y="0" width="190" height="15" backcolor="#99CCFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[NOMBRES]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="66ab7c4e-66f8-40d6-b619-bf8dad623bdb" mode="Opaque" x="353" y="0" width="150" height="15" backcolor="#99CCFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CENTRO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="bf94d9fe-fff4-46ec-81d8-bf39762fa64f" mode="Opaque" x="634" y="0" width="130" height="15" backcolor="#99CCFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[SERIE FISICO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="3b6351ca-9ded-4533-bac6-696940fa2a21" mode="Opaque" x="764" y="0" width="83" height="15" backcolor="#99CCFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[PRORROGAS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="50c7af05-0c5f-4305-9d2b-75fbfad80712" mode="Opaque" x="847" y="0" width="83" height="15" backcolor="#99CCFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[SALDO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="66ab7c4e-66f8-40d6-b619-bf8dad623bdb" mode="Opaque" x="503" y="0" width="131" height="15" backcolor="#99CCFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[NO FISICO]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<title>
+		<band height="79" splitType="Stretch">
+			<printWhenExpression><![CDATA[$P{IMPRIME_CABECERA}]]></printWhenExpression>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="5ce8a816-35ca-4231-958e-b8f1da68457a" mode="Transparent" x="140" y="33" width="132" height="20"/>
+				<textElement>
+					<paragraph tabStopWidth="20"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{USUARIO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="088d621b-c466-48e5-9a48-353654935c63" mode="Transparent" x="39" y="33" width="101" height="20" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[USUARIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="088d621b-c466-48e5-9a48-353654935c63" mode="Transparent" x="282" y="14" width="575" height="39" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="24" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REPORTE CARTERA VENCIDA POR VENCER]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="088d621b-c466-48e5-9a48-353654935c63" mode="Transparent" x="39" y="13" width="101" height="20" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COMPAÑIA]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="5ce8a816-35ca-4231-958e-b8f1da68457a" mode="Transparent" x="140" y="13" width="132" height="20"/>
+				<textElement>
+					<paragraph tabStopWidth="20"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{NOMBREEMPRESA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH:mm:ss" isBlankWhenNull="true">
+				<reportElement uuid="5ce8a816-35ca-4231-958e-b8f1da68457a" x="140" y="53" width="132" height="19"/>
+				<textElement>
+					<paragraph tabStopWidth="20"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(new Date())]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="088d621b-c466-48e5-9a48-353654935c63" mode="Transparent" x="39" y="53" width="101" height="19" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="dec09378-c09e-4d10-b396-9459c88e3798" x="17" y="0" width="146" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CEDULA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement uuid="134b3bc4-02d4-4238-907c-2e495c41061b" x="353" y="0" width="150" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CENTRO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="99e80241-ca75-454c-b9e1-37d1ad9eb899" x="634" y="0" width="130" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SERIE_FISICO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="92cb1fef-dcda-451c-8079-b13ed04712da" x="764" y="0" width="83" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CANT_PRORROGAS}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="dec09378-c09e-4d10-b396-9459c88e3798" x="163" y="0" width="190" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="14f49802-cd5d-42e3-9e4b-7328bbad5009" x="847" y="0" width="83" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SALD}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="134b3bc4-02d4-4238-907c-2e495c41061b" x="503" y="0" width="131" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NO_FISICO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

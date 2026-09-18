@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+<h:head>
+	<h:outputStylesheet name="css/layout-lightblue.css"
+		library="serenity-layout" />
+</h:head>
+<h:body>
+	<h:form id="form">
+		<p:growl id="idGrowl" showDetail="true" autoUpdate="true" life="3000" />
+
+		<p:toolbar id="menuSuperior">
+			<f:facet name="left">
+				<b><p:outputLabel style="font-size: 15px;"
+						value="Mantenimiento rangos de antiguedad" /></b>
+			</f:facet>
+		</p:toolbar>
+		<center>
+			<h:panelGrid id="rangosAntiguedad" width="800px"
+				style="padding-top:10px">
+				<p:commandButton value="Nuevo"
+					style="margin-bottom:10px; float: right;" icon="ui-icon-document"
+					styleClass="boton" process="@this,rangosAntiguedad"
+					action="#{rangoAntiguedadController.cargarRangoAntiguedad()}"
+					async="true" global="false" update=":form:panel"
+					oncomplete="PF('dlgRangoAntiguedad').show();" />
+
+				<h:panelGrid id="pnlContieneTblRangosAntiguedad">
+					<p:dataTable id="tblRangosAntiguedad" reflow="true" var="item"
+						value="#{rangoAntiguedadController.listaRangosAntiguedad}"
+						rowIndexVar="#{item}" rowKey="#{item.id}" paginator="true"
+						rows="10" paginatorPosition="bottom" selectionMode="single"
+						styleClass="table table-body" emptyMessage="No existen Registros"
+						paginatorAlwaysVisible="true" multiViewState="true"
+						editable="true" editMode="cell"
+						paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+
+						<p:ajax event="cellEdit"
+							listener="#{rangoAntiguedadController.editarRangosAntiguedad(item)}"
+							update=":form:dlgRangoAntiguedad :form:panel :form:idGrowl"
+							process="@this" partialSubmit="true" />
+
+
+						<p:column headerText="Desde" filterBy="#{item.id.desde}"
+							style="text-align:center">
+							<h:outputText value="#{item.id.desde}" />
+						</p:column>
+						<p:column headerText="Hasta" filterBy="#{item.id.hasta}"
+							style="text-align:center">
+							<p:outputLabel value="#{item.id.hasta}" />
+						</p:column>
+						<p:column headerText="Descripción" filterBy="#{item.descripcion}"
+							style="text-align:center">
+							<p:cellEditor>
+								<f:facet name="output">
+									<p:outputLabel value="#{item.descripcion}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{item.descripcion}" />
+								</f:facet>
+							</p:cellEditor>
+
+						</p:column>
+
+						<p:column headerText="Acciones" style="text-align:center">
+							<center>
+								<p:commandButton title="Eliminar" id="eliminarRegistro"
+									process="form:pnlContieneTblRangosAntiguedad"
+									update="form:pnlContieneTblRangosAntiguedad"
+									action="#{rangoAntiguedadController.eliminarRangosAntiguedad(item)}"
+									styleClass="red-btn" icon="ui-icon ui-icon-trash" />
+							</center>
+						</p:column>
+					</p:dataTable>
+				</h:panelGrid>
+			</h:panelGrid>
+		</center>
+
+		<p:dialog id="dlgRangoAntiguedad" widgetVar="dlgRangoAntiguedad"
+			modal="true" closeOnEscape="true" header="Nuevo rango de antiguedad">
+			<center>
+				<p:panelGrid id="panel" columns="2" style="padding:2px; margin:0px;">
+					<p:outputLabel value="Desde: "></p:outputLabel>
+					<p:inputText
+						value="#{rangoAntiguedadController.rangosAntiguedad.id.desde}">
+					</p:inputText>
+
+					<p:outputLabel value="Hasta: "></p:outputLabel>
+					<p:inputText
+						value="#{rangoAntiguedadController.rangosAntiguedad.id.hasta}">
+					</p:inputText>
+
+					<p:outputLabel value="Descripción: "></p:outputLabel>
+					<p:inputText maxlength="100"
+						value="#{rangoAntiguedadController.rangosAntiguedad.descripcion}">
+					</p:inputText>
+
+				</p:panelGrid>
+				<p:commandButton value="Guardar" style="margin-top:15px;"
+					icon="fa fa-save" onclick="PF('dlgRangoAntiguedad').hide();"
+					styleClass="green-btn" process="@this,dlgRangoAntiguedad"
+					async="true" global="false" partialSubmit="true"
+					update=":form:pnlContieneTblRangosAntiguedad :form:dlgRangoAntiguedad"
+					action="#{rangoAntiguedadController.guardarAgenciaSupervisor()}">
+				</p:commandButton>
+			</center>
+		</p:dialog>
+
+	</h:form>
+</h:body>
+</html>

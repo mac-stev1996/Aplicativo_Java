@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cxcNotaDebito2" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="495b6da0-c25b-499e-96fe-aa26b874318b">
+	<property name="ireport.zoom" value="1.3310000000000004"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="337"/>
+	<parameter name="p_no_cia" class="java.lang.String"/>
+	<parameter name="p_nombre_empresa" class="java.lang.String"/>
+	<parameter name="p_agencia" class="java.lang.String"/>
+	<parameter name="p_no_fisico" class="java.lang.String"/>
+	<parameter name="p_serie_fisico" class="java.lang.String"/>
+	<parameter name="p_cant_prorrogas" class="java.lang.Integer"/>
+	<parameter name="p_tipo" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select c.cedula,c.nombre, a.tot_lin,a.total2,b.intereses,a.total,a.fecha,a.tipo_cambio,
+b.no_docu_refe,b.m_original,b.fecha_vence
+from fac_ventas_cab a,arccmd b, arccmc c
+where  a.no_cia = $P{p_no_cia}
+    and a.centrod = $P{p_agencia}
+    and a.no_fisico = $P{p_no_fisico}
+    and a.serie_fisico = $P{p_serie_fisico}
+    and a.cant_prorrogas = $P{p_cant_prorrogas}
+    and a.no_cia = b.no_cia
+    and a.centrod = b.centro
+    and a.no_fisico = b.no_fisico
+    and a.serie_fisico = b.serie_fisico
+    and a.cant_prorrogas = b.cant_prorrogas
+    and a.no_cia=c.no_cia
+    and a.no_cliente=c.no_cliente
+  order by to_number(no_docu_refe)]]>
+	</queryString>
+	<field name="CEDULA" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="TOT_LIN" class="java.math.BigDecimal"/>
+	<field name="TOTAL2" class="java.math.BigDecimal"/>
+	<field name="INTERESES" class="java.math.BigDecimal"/>
+	<field name="TOTAL" class="java.math.BigDecimal"/>
+	<field name="FECHA" class="java.sql.Timestamp"/>
+	<field name="TIPO_CAMBIO" class="java.math.BigDecimal"/>
+	<field name="NO_DOCU_REFE" class="java.lang.String"/>
+	<field name="M_ORIGINAL" class="java.math.BigDecimal"/>
+	<field name="FECHA_VENCE" class="java.sql.Timestamp"/>
+	<variable name="TOT_LIN_1" class="java.lang.Integer" resetType="Page" calculation="Count">
+		<variableExpression><![CDATA[$F{TOT_LIN}]]></variableExpression>
+	</variable>
+	<variable name="INTERESES_1" class="java.math.BigDecimal" resetType="Page" calculation="Sum">
+		<variableExpression><![CDATA[$F{INTERESES}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="94" splitType="Stretch">
+			<textField>
+				<reportElement uuid="5221dca2-8890-4b5b-8dad-28640f467368" x="0" y="5" width="318" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_nombre_empresa}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="2eca62a6-5e8c-40f5-9337-f2c19763a174" x="418" y="65" width="131" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss").format(new Date())]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="d830bc62-9ae6-4b43-bbc9-4a1daf5d14ba" x="107" y="25" width="342" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["NOTA DE DEBITO DE "+("D".equals($P{p_tipo})?"DESAGIO":"REFINANCIACION")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="2a1c395f-a309-4810-b125-91596deeec3f" x="107" y="45" width="342" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["SE HA GENERADO LA FACTURA PRODUCTO DE "+("D".equals($P{p_tipo})?"DESAGIO":"REFINANCIACION")]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="150" splitType="Stretch">
+			<textField>
+				<reportElement uuid="d4b9cd55-6229-4ec0-8dd3-015343815a2d" x="52" y="1" width="22" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_agencia}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="c3c2833c-2218-405a-ae51-c89687b5ef8a" x="0" y="1" width="52" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Sucursal:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="520a00ae-b2a5-412e-9d95-5de2fe192ae7" x="95" y="1" width="47" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Factura:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="1260ede9-9efd-460c-abe1-62780f69be93" x="142" y="1" width="79" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_no_fisico}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="c3d1f3b9-a932-49fc-826f-bca42b6d1be6" x="237" y="1" width="39" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Linea:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="e45bf7aa-dc97-4ca4-a4e0-6489baa2db34" x="276" y="1" width="26" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_serie_fisico}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="f95b8389-435a-4ae7-9f20-b90af770d65b" x="329" y="1" width="66" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Secuencia:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="17178a4d-ea40-4bb6-a168-13b81c266ec9" x="395" y="1" width="35" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_cant_prorrogas}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="f606ecad-cf6d-4726-96ac-009d213a6243" x="0" y="32" width="85" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Nombre Deudor:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="19a04ab8-42cd-436a-821d-428148091683" x="85" y="32" width="100" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CEDULA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="507cd627-060b-4404-8020-36365e7a2343" x="185" y="32" width="338" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="c2b78d7b-525b-4548-9cb7-6535649b9b31" x="0" y="52" width="85" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Valor negocio:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="a694cf53-daa4-4358-b893-34560cec8395" x="85" y="52" width="100" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOT_LIN}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="e605f59c-358f-4761-ac12-ae388f4b715c" x="0" y="72" width="85" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Varios:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="e8d2f942-d943-4d0a-8679-4e2d97ab90ce" x="85" y="72" width="100" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL2}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="d06fbc63-3d0e-4c6f-9e33-b2c4ad9a3f43" x="0" y="92" width="85" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Interes:]]></text>
+			</staticText>
+			<textField evaluationTime="Page" pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="1138c51f-06b7-4fbe-bf4f-5fc4c83f8b15" x="85" y="92" width="100" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{INTERESES_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="72c90455-0c05-48f1-ab7a-eb56b60519a9" x="0" y="112" width="85" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Valor total:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="f13b0f23-19af-41e7-912a-dc1b05a09841" x="85" y="112" width="100" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="7fb08594-209c-4e3c-bf8e-a36516b23656" x="349" y="92" width="69" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Fecha:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="e7ffad7e-2bc3-4be5-a764-865fa2db9919" x="418" y="92" width="100" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="af147c9c-3062-4dc5-87fd-d8625a39839b" x="349" y="112" width="69" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Tipo Cambio:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="4d8bf1d3-0912-4e25-93b4-ff73132207ca" x="418" y="112" width="100" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TIPO_CAMBIO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="42" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="35fe1be8-b97b-4b34-821a-d7962235bea2" x="0" y="0" width="555" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[******************** DOCUMENTOS DE CRÉDITO ********************]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="3dbf3e27-83e2-46ac-8ec8-c06b10568df8" x="0" y="20" width="555" height="1"/>
+			</line>
+			<staticText>
+				<reportElement uuid="81791c6a-3c15-46ee-809e-85d1f4ddab55" x="142" y="21" width="68" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Doc]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3a00918c-91eb-4491-90f1-4869ff944afb" x="210" y="21" width="100" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Valor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c6c7e09f-41b8-49ed-89f3-4238c7e9c1ac" x="318" y="21" width="100" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Fecha]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="a47872bf-cf2d-424b-9c06-f44bd2dea514" x="0" y="41" width="555" height="1"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="6312dfc0-3639-4059-a58a-50547414c327" x="142" y="0" width="68" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NO_DOCU_REFE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="1511dc6a-3585-4395-abd4-fd4e3ecdef13" x="210" y="0" width="100" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{M_ORIGINAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="dd23b93b-af39-4461-a7a9-53d045e1cb98" x="318" y="0" width="100" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA_VENCE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="120">
+			<staticText>
+				<reportElement uuid="27fca7e2-0447-463a-b279-c598bdffe077" mode="Transparent" x="76" y="100" width="161" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Gerente Credito]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a053803a-db01-4be4-9753-62000e5cf369" mode="Transparent" x="339" y="100" width="161" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Cliente]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="c03b122d-4b3d-4dab-8f8a-6931321b55ac" x="76" y="98" width="161" height="1"/>
+			</line>
+			<line>
+				<reportElement uuid="f4075adf-e04a-4c98-9f2f-37e41996b7c6" x="340" y="98" width="161" height="1"/>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

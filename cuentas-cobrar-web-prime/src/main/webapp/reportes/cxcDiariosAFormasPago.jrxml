@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cxcDiariosAFormasPago" pageWidth="553" pageHeight="733" columnWidth="553" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="ee1f736a-a296-4017-81a8-abb5f74c04a8">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_NO_CIA" class="java.lang.String"/>
+	<parameter name="P_NO_DOCU" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT B.TIPO_DOC AN,
+  b.no_fisico numero_doc,
+  b.serie_fisico linea,
+  a.monto_doc monto,
+  '$us' US
+FROM arccan a,
+  arccmd b
+WHERE a.no_cia    =$P{P_NO_CIA}
+AND a.no_docu     = $P{P_NO_DOCU}
+AND a.aplica_como ='SA'
+AND b.no_cia      = a.no_cia
+AND b.no_docu     = a.no_refe
+AND b.moneda      = 'D']]>
+	</queryString>
+	<field name="AN" class="java.lang.String"/>
+	<field name="NUMERO_DOC" class="java.lang.String"/>
+	<field name="LINEA" class="java.lang.String"/>
+	<field name="MONTO" class="java.math.BigDecimal"/>
+	<field name="US" class="java.lang.String"/>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="650b5638-a73f-40d5-b8d0-3e35671397ff" x="0" y="0" width="30" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AN}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="a319b7e8-88d6-4177-a613-f78e6d819996" x="30" y="0" width="80" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NUMERO_DOC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c48b840b-2bfe-4c98-9be5-10c0920cdbdd" x="110" y="0" width="32" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LINEA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+				<reportElement uuid="126debfb-142e-46d1-b389-eedaa7f32e63" x="438" y="0" width="70" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MONTO}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="14166d85-92b0-46b4-aac7-e8bdca53defd" x="508" y="0" width="45" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{US}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

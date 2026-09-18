@@ -1,0 +1,79 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Cuentas por Cobrar - Generación de Asiento
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="fmrButtons">
+			<p:commandButton title="Generar Asiento" value="Generar"
+				actionListener="#{cxcGeneracionAsientoController.generar}"
+				icon="ui-icon ui-icon-build" partialSubmit="true" process="@this, :idForm"
+				update="@this, :idForm" />
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+		<style>
+.visualCaja {
+	color: red;
+	font-weight: bold;
+}
+</style>
+		<h:form id="idForm">
+		
+			<p:messages id="messages" showDetail="true" autoUpdate="true"
+				globalOnly="true" closable="true" showSummary="true" />
+
+			<div class="ui-g dashboard">
+				<div class="ui-g-12 ui-fluid contact-form">
+					<h:panelGrid id="pg">
+						<h:panelGrid columns="6">
+							<p:outputLabel value="Compañía:" />
+							<p:inputText value="#{cxcGeneracionAsientoController.noCia}"
+								readonly="true" />
+							<p:outputLabel value="Año:" />
+							<p:inputText value="#{cxcGeneracionAsientoController.anio}"
+								readonly="true" />
+							<p:outputLabel value="Mes:" />
+							<p:inputText value="#{cxcGeneracionAsientoController.mes}"
+								readonly="true" />
+						</h:panelGrid>
+						<h:panelGrid columns="4">
+							<p:outputLabel value="Centro:" />
+							<p:inputText value="#{cxcGeneracionAsientoController.centro}"
+								readonly="true" />
+							<p:outputLabel value="Fecha de Asiento:" />
+							<p:inputText value="#{cxcGeneracionAsientoController.fecha}"
+								readonly="true">
+								<f:convertDateTime pattern="dd/MM/yyyy"></f:convertDateTime>
+							</p:inputText>
+
+							<p:outputLabel value="No. Asiento:" />
+							<p:inputText value="#{cxcGeneracionAsientoController.noAsiento}"
+								readonly="true" />
+							<p:outputLabel value="No. Asiento Or.:" />
+							<p:inputText
+								value="#{cxcGeneracionAsientoController.noAsientoScb}"
+								readonly="true" />
+						</h:panelGrid>
+					</h:panelGrid>
+				</div>
+			</div>
+
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+			</p:confirmDialog>
+		</h:form>
+	</ui:define>
+
+</ui:composition>

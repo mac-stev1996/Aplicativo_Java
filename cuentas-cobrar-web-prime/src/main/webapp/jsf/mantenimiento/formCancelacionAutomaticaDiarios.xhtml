@@ -1,0 +1,375 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<style type="text/css">
+body {
+	font-size: 10px;
+}
+
+body .ui-toolbar {
+	padding: 5px;
+}
+
+.columAlignCenter {
+	text-align: center;
+}
+
+.columAlignRight {
+	text-align: right;
+}
+
+.estiloLabels12 {
+	font-size: 12px;
+	font-weight: bold;
+}
+
+.estiloLabels14 {
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.estiloLabels18 {
+	font-size: 18px;
+	font-weight: bold;
+}
+
+table.tableAlinearColumnas td {
+	width: 16%;
+}
+
+body .ui-panel .ui-panel-content {
+	height: 100%;
+	box-sizing: border-box;
+	padding: 0px 0px;
+	border: 0px;
+}
+
+.totalMemo {
+	background: #9febd6;
+	text-align: right;
+}
+
+.panelGridMemo {
+	padding: 0px 0px;
+}
+</style>
+</h:head>
+<h:body>
+	<p:growl id="growl" showDetail="true" sticky="true" life="5000" />
+	<h:form id="formPrincipal" onkeypress="if (event.keyCode == 13) { return false; }">
+		<p:toolbar>
+			<f:facet name="left">
+				<i class="fa fa-files-o fa-2x"></i>
+				<h:outputLabel style="font-size: 15px;"
+					value=" DOCUMENTOS DE CLIENTES A CANCELAR" />
+			</f:facet>
+
+			<f:facet name="right">
+				<h:panelGroup>
+					<h:outputText value="MEMO: " />
+					<p:inputSwitch
+						value="#{cancelacionAutomaticaClientesController.ingesarMemo}">
+						<p:ajax update=":#{p:component('formPrincipal')}"
+							partialSubmit="true"
+							process="@this, :#{p:component('formPrincipal')}" />
+					</p:inputSwitch>
+				</h:panelGroup>
+				<p:commandButton style="font-size: 12px;" value="BUSCAR"
+					update=":#{p:component('idTblDetalleLiquidacionPago')} :#{p:component('idTblDTAnticipoPago')} :#{p:component('growl')}"
+					partialSubmit="true" icon="fa fa-search"
+					actionListener="#{cancelacionAutomaticaClientesController.listarLiquidacionesDetallePago}" />
+				<p:commandButton style="font-size: 12px;" value="Guardar"
+					action="#{cancelacionAutomaticaClientesController.guardar}"
+					partialSubmit="true" process="@this :#{p:component('formPrincipal')}" icon="fa fa-save"
+					update=":#{p:component('growl')}" />
+			</f:facet>
+		</p:toolbar>
+
+		<h:panelGroup id="idPCliente">
+			<table style="width: 100%;" class="tableAlinearColumnas">
+				<tr>
+					<td><h:outputLabel style="font-size: 14px; font-weight: bold;"
+							value="FECHA" /></td>
+					<td><h:outputLabel style="font-size: 16px;"
+							value="#{cancelacionAutomaticaClientesController.liquidacionPago.fecha}">
+							<f:convertDateTime
+								locale="#{cancelacionAutomaticaClientesController.locale}"
+								type="date" dateStyle="long" />
+						</h:outputLabel></td>
+					<td><h:outputLabel style="font-size: 14px; font-weight: bold;"
+							value="ESTADO" /></td>
+					<td><h:outputLabel style="font-size: 16px;"
+							value="#{cancelacionAutomaticaClientesController.liquidacionPago.descripcionEstado}" />
+					</td>
+					<td><h:outputLabel style="font-size: 14px; font-weight: bold;"
+							value="SECUENCIA" /></td>
+					<td><h:panelGroup>
+							<h:outputLabel value="####" style="font-size: 16px;"
+								rendered="#{cancelacionAutomaticaClientesController.liquidacionPago.secuencia == 0}" />
+							<h:outputLabel style="font-size: 16px;"
+								value="#{cancelacionAutomaticaClientesController.liquidacionPago.secuencia}"
+								rendered="#{cancelacionAutomaticaClientesController.liquidacionPago.secuencia != 0}" />
+						</h:panelGroup></td>
+				</tr>
+				<tr>
+					<td><p:commandLink update="idDlgClientes"
+							actionListener="#{cancelacionAutomaticaClientesController.accionesClientes}"
+							style="font-size: 14px; font-weight: bold; text-decoration: underline;"
+							value="CLIENTE" oncomplete="PF('dlgClientes').show();" /></td>
+					<td><h:outputLabel style="font-size: 16px;"
+							value="#{cancelacionAutomaticaClientesController.cliente.clientePK.noCliente}" />
+					</td>
+					<td><h:outputLabel style="font-size: 14px; font-weight: bold;"
+							value="DOCUMENTO" /></td>
+					<td><h:outputLabel style="font-size: 16px;"
+							value="#{cancelacionAutomaticaClientesController.cliente.cedula}" />
+					</td>
+					<td colspan="2"><h:outputLabel style="font-size: 16px;"
+							value="#{cancelacionAutomaticaClientesController.cliente.nombre}" />
+					</td>
+				</tr>
+				<tr>
+					<td style="vertical-align: text-top;"><h:outputLabel
+							style="font-size: 14px; font-weight: bold;" value="OBSERVACION" /></td>
+					<td colspan="2"><p:inputTextarea style="background: white;"
+							cols="60" rows="2"
+							value="#{cancelacionAutomaticaClientesController.liquidacionPago.comentario}"></p:inputTextarea>
+					</td>
+				</tr>
+			</table>
+		</h:panelGroup>
+		<p:dataTable id="idTblDetalleLiquidacionPago"
+			value="#{cancelacionAutomaticaClientesController.listLiquidacionDetallePago}"
+			emptyMessage="Sin Registros" var="item" sortBy="#{1}" paginator="true" rows="10">
+			<p:column headerText="TIPO DOC">
+				<p:outputLabel value="#{item.tipoRefe}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="DESCRIPCION">
+				<p:outputLabel value="#{item.descripcion}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="SERIE" styleClass="columAlignCenter">
+				<p:outputLabel value="#{item.serie}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="#DOCUMENTO" styleClass="columAlignCenter">
+				<p:outputLabel value="#{item.noFisico}"></p:outputLabel>
+				&nbsp;&nbsp;&nbsp;
+				<p:commandLink partialSubmit="true" process="@this"
+					actionListener="#{cancelacionAutomaticaClientesController.passSaldoAlValorFactura(item)}">
+					<i class="fa fa-exchange fa-lg"></i>
+				</p:commandLink>
+			</p:column>
+			<p:column headerText="FECHA VENCE">
+				<p:outputLabel value="#{item.fechaVence}">
+					<f:convertDateTime
+						locale="#{cancelacionAutomaticaClientesController.locale}"
+						pattern="dd-MM-yyyy HH:mm:ss" />
+				</p:outputLabel>
+			</p:column>
+			<p:column headerText="LETRA" styleClass="columAlignCenter">
+				<p:outputLabel value="#{item.letra}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="LINEA NEGOCIO" styleClass="columAlignCenter">
+				<p:outputLabel value="#{item.lineaNegocio}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="SALDO" styleClass="columAlignRight">
+				<p:outputLabel value="#{item.saldoAnterior}">
+					<f:convertNumber pattern="###0.00" />
+				</p:outputLabel>
+			</p:column>
+			<p:column styleClass="columAlignRight">
+				<f:facet name="header">
+					<h:outputLabel value="VALOR " />
+					<p:selectBooleanCheckbox id="idSBCSeleccionTodasFacturas"
+						value="#{cancelacionAutomaticaClientesController.seleccionarTodasFacturas}">
+						<p:ajax
+							listener="#{cancelacionAutomaticaClientesController.seleccionTodasFacturas}"
+							process="@this" partialSubmit="true"
+							update=":#{p:component('idTblDetalleLiquidacionPago')}" />
+					</p:selectBooleanCheckbox>
+				</f:facet>
+				<p:inputNumber value="#{item.totalPago}" size="6"
+					rendered="#{item!=null}" id="idINValorDetalle">
+					<p:ajax event="blur" process="@this" partialSubmit="true"
+						listener="#{cancelacionAutomaticaClientesController.calcularTotalDetalles(item)}" />
+				</p:inputNumber>
+			</p:column>
+
+			<p:summaryRow id="idTblSumaryDetalle">
+				<p:column colspan="7" style="text-align:right; font-size:14px;">
+					<h:outputText value="Total:" />
+				</p:column>
+				<p:column styleClass="columAlignRight">
+					<h:outputText style="font-size: 20px;" id="idOTtotalDetalle"
+						value="#{cancelacionAutomaticaClientesController.totalDetalle}">
+						<f:convertNumber type="currency" currencySymbol="$"
+							pattern="###0.00" />
+					</h:outputText>
+				</p:column>
+				<p:column id="idLblTotalDetalleIngresado"
+					styleClass="columAlignRight">
+					<h:panelGroup layout="block" id="idO">
+						<h:outputText style="font-size: 20px;"
+							id="idOTtotalDetalleIngresado"
+							value="#{cancelacionAutomaticaClientesController.totalDetalleIngresado}">
+							<f:convertNumber type="currency" currencySymbol="$"
+								pattern="###0.00" />
+						</h:outputText>
+					</h:panelGroup>
+				</p:column>
+			</p:summaryRow>
+		</p:dataTable>
+
+		<p:spacer width="20" height="20"></p:spacer>
+		<p:dataTable id="idTblDTAnticipoPago" emptyMessage="Sin Registros"
+			value="#{cancelacionAutomaticaClientesController.listAnticipoPago}"
+			var="item" sortBy="#{1}">
+			<f:facet name="header">
+				<i class="fa fa-money fa-2x" />
+				<h:outputLabel style="font-size: 15px;" value=" ANTICIPO CLIENTES" />
+			</f:facet>
+			<p:column headerText="NUMERO" styleClass="columAlignCenter">
+				<h:outputLabel value="#{item.noFisico}" />
+			</p:column>
+			<p:column headerText="LINEA" styleClass="columAlignCenter">
+				<h:outputLabel value="#{item.lineaNegocio}" />
+			</p:column>
+			<p:column headerText="DESCRIPCION">
+				<h:outputLabel value="#{item.descripcion}" />
+			</p:column>
+			<p:column headerText="DOC INTERNO" styleClass="columAlignCenter">
+				<p:outputLabel value="#{item.noRefe}"></p:outputLabel>
+				&nbsp;&nbsp;&nbsp;
+				<p:commandLink partialSubmit="true" process="@this"
+					actionListener="#{cancelacionAutomaticaClientesController.passSaldoAlValorAnticipos(item)}">
+					<i class="fa fa-exchange fa-lg"></i>
+				</p:commandLink>
+			</p:column>
+			<p:column headerText="FECHA ANTICIPO" styleClass="columAlignCenter">
+				<h:outputLabel value="#{item.fecha}">
+					<f:convertDateTime
+						locale="#{cancelacionAutomaticaClientesController.locale}"
+						pattern="dd-MM-yyyy HH:mm:ss" />
+				</h:outputLabel>
+			</p:column>
+			<p:column headerText="VALOR" styleClass="columAlignRight">
+				<h:outputLabel value="#{item.monto}">
+					<f:convertNumber pattern="###0.00" />
+				</h:outputLabel>
+			</p:column>
+
+			<p:column headerText="MONTO UTILIZABLE" styleClass="columAlignRight">
+				<p:inputNumber value="#{item.montoUtilizable}" size="6"
+					rendered="#{item.monto!=null}" id="idINmontoUtilizable">
+					<p:ajax event="blur" process="@this" partialSubmit="true"
+						listener="#{cancelacionAutomaticaClientesController.calcularTotalAnticipos(item)}" />
+				</p:inputNumber>
+			</p:column>
+			<p:summaryRow id="idSRDTAnticipos">
+				<p:column colspan="5" style="text-align:right; font-size:14px;">
+					<h:outputText value="Total:" />
+				</p:column>
+				<p:column styleClass="columAlignRight">
+					<h:outputText style="font-size: 20px;" id="idOTtotalAnticipos"
+						value="#{cancelacionAutomaticaClientesController.totalAnticipos}">
+						<f:convertNumber type="currency" currencySymbol="$"
+							pattern="###0.00" />
+					</h:outputText>
+				</p:column>
+				<p:column styleClass="columAlignRight">
+					<h:outputText style="font-size: 20px;"
+						id="idOTtotalAnticiposIngresado"
+						value="#{cancelacionAutomaticaClientesController.totalAnticiposIngresado}">
+						<f:convertNumber type="currency" currencySymbol="$"
+							pattern="###0.00" />
+					</h:outputText>
+				</p:column>
+			</p:summaryRow>
+		</p:dataTable>
+
+		<p:spacer width="20" height="20"></p:spacer>
+		<p:panel header="MEMO" toggleable="true"
+			rendered="#{cancelacionAutomaticaClientesController.ingesarMemo}">
+			<p:panelGrid columns="6" layout="grid"
+				columnClasses=", , , , ,totalMemo" styleClass="panelGridMemo">
+				<p:outputLabel value="VALOR MEMO " styleClass="estiloLabels12"></p:outputLabel>
+				<p:inputNumber
+					value="#{cancelacionAutomaticaClientesController.liquidacionPago.valorMemo}">
+					<p:ajax event="blur" partialSubmit="true"
+						update=":#{p:component('idOLTotalMemoMasDetalle')}" />
+				</p:inputNumber>
+
+				<p:commandLink value="CUENTA CONTABLE"
+					oncomplete="PF('dlgCuentasContables').show();"
+					style="text-decoration: underline" styleClass="estiloLabels12"></p:commandLink>
+				<p:inputText
+					value="#{cancelacionAutomaticaClientesController.liquidacionPago.cuentaContable}"></p:inputText>
+				<p:column styleClass="columAlignRight">
+					<p:outputLabel value="MEMO + DOCUMENTOS "
+						styleClass="estiloLabels14"></p:outputLabel>
+				</p:column>
+				<p:outputLabel id="idOLTotalMemoMasDetalle"
+					styleClass="estiloLabels18"
+					value="#{cancelacionAutomaticaClientesController.totalAnticiposIngresado + cancelacionAutomaticaClientesController.liquidacionPago.valorMemo}">
+					<f:convertNumber pattern="###0.00" />
+				</p:outputLabel>
+			</p:panelGrid>
+		</p:panel>
+	</h:form>
+
+	<p:dialog id="idDlgClientes" modal="true" widgetVar="dlgClientes"
+		position="center,center" closable="false" appendTo="@(body)"
+		responsive="true" width="650" closeOnEscape="true">
+		<h:form id="idFormDlgClientes">
+			<p:toolbar>
+				<f:facet name="left">
+					<p:outputLabel style="font-size: 12px; font-weight: bold;"
+						value="IDENTIFICACION" />
+					<p:inputText
+						value="#{cancelacionAutomaticaClientesController.cliente.cedula}" />
+					<p:outputLabel style="font-size: 12px; font-weight: bold;"
+						value="NOMBRE" />
+					<p:inputText
+						value="#{cancelacionAutomaticaClientesController.cliente.nombre}" />
+				</f:facet>
+				<f:facet name="right">
+					<p:commandButton style="font-size: 12px;" icon="fa fa-search fa-3x"
+						update=":#{p:component('idTblClientes')}"
+						actionListener="#{cancelacionAutomaticaClientesController.listarClientes}" />
+				</f:facet>
+			</p:toolbar>
+			<p:dataTable emptyMessage="Sin Registros" id="idTblClientes"
+				value="#{cancelacionAutomaticaClientesController.listClientesDisponibles}"
+				paginator="#{not empty cancelacionAutomaticaClientesController.listClientesDisponibles}"
+				paginatorPosition="bottom" rowsPerPageTemplate="5" rows="5"
+				paginatorTemplate="{CurrentPageReport} {PageLinks}"
+				selectionMode="single" rowKey="#{item.clientePK}" var="item">
+				<p:ajax event="rowSelect" oncomplete="PF('dlgClientes').hide();"
+					update=":#{p:component('idPCliente')}"
+					listener="#{cancelacionAutomaticaClientesController.seleccionarFilaCliente}" />
+				<p:column headerText="NO CLIENTE" styleClass="columAlignCenter">
+					<h:outputLabel value="#{item.clientePK.noCliente}" />
+				</p:column>
+				<p:column headerText="IDENTIFICACION">
+					<h:outputLabel value="#{item.cedula}" />
+				</p:column>
+				<p:column headerText="NOMBRE">
+					<h:outputLabel value="#{item.nombre}" />
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	</p:dialog>
+
+	<p:dialog widgetVar="dlgCuentasContables" appendTo="@(body)"
+		modal="true" position="center,center" closable="false"
+		responsive="true" width="650" closeOnEscape="true">
+		<h1>CUENTAS CONTABLES</h1>
+	</p:dialog>
+
+	<h:outputStylesheet name="css/layout-lightblue.css"
+		library="serenity-layout" />
+</h:body>
+</html>

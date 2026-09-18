@@ -1,0 +1,84 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+<head>
+
+</head>
+<ui:composition>
+
+	<p:toolbar>
+		<f:facet name="left">
+
+		</f:facet>
+		<f:facet name="right">
+			<h:panelGrid id="pgComandosRangosRiesgo" columns="2">
+		
+				<p:commandButton title="Editar" icon="fa fa-pencil"
+					value="Editar" partialSubmit="true"
+					actionListener="#{cmlRangosRiesgoController.mostrarDialogoRangosRiesgoEditar}"
+					update=":form:tabViewTablas:pgRangosRiesgo"
+					styleClass="green-btn" style="margin-top:0px !important;"
+				 />	 
+
+			</h:panelGrid>
+		</f:facet>
+	</p:toolbar>
+
+	<p:dataTable var="item" id="tblRangosRiesgo"
+		value="#{cmlRangosRiesgoController.listaRangosRiesgo}"
+		selectionMode="single"
+         selection="#{cmlRangosRiesgoController.cmlRangosRiesgoSeleccionado}" rowKey="#{item.id.codigo}"
+		 scrollable="true"
+		scrollHeight="345" emptyMessage="No se han encontrado elementos"
+		rowIndexVar="var" styleClass="hover-rows table table-body">
+		<p:column headerText="Código" style="width:35px;padding-left:1px;">
+			<h:outputText value="#{item.id.codigo}" />
+		</p:column>
+		<p:column headerText="Desde" style="width:35px;padding-left:1px;">
+			<h:outputText value="#{item.desde}" />
+		</p:column>
+		<p:column headerText="Hasta" style="width:35px;padding-left:1px;">
+			<h:outputText value="#{item.hasta}" />
+		</p:column>
+		<p:column headerText="Estado" style="width:35px;padding-left:1px;">
+			<h:outputText value="#{item.estado}" />
+		</p:column>
+	</p:dataTable>
+
+	<p:dialog id="dlgRangosRiesgo" widgetVar="dlgRangosRiesgoWV"
+		header="Detalle RangosRiesgo" style="position:fixed" responsive="true"
+		closeOnEscape="true" modal="true" appendTo="@(body)" width="500"
+		height="250">
+
+		<p:toolbar>
+			<f:facet name="left">
+
+			</f:facet>
+			<f:facet name="right">
+				<p:commandButton title="Guardar" icon="fa fa-save"
+					partialSubmit="true"
+					process="@this, :form:tabViewTablas:pgRangosRiesgo"
+					actionListener="#{cmlRangosRiesgoController.guardarRangosRiesgo()}"
+					styleClass="deep-orange-btn" style="margin-top:0px !important;"
+					update=":form:tabViewTablas:tblRangosRiesgo" />
+
+			</f:facet>
+		</p:toolbar>
+
+		<h:panelGrid id="pgRangosRiesgo" columns="2"
+			columnClasses="w50 txtR, w70 txtR" width="100%">
+
+            <p:outputLabel id="desdeLbl" style="float:right;font-weight:bold;"  value="Maximo rango bajo"/>
+	        <p:inputNumber id="txtDesde" value="#{cmlRangosRiesgoController.desde}"/>
+	        
+	        <p:outputLabel id="hastaLbl" style="float:right;font-weight:bold;"  value="Maximo rango medio"/>
+	        <p:inputNumber id="txtHasta" value="#{cmlRangosRiesgoController.hasta}"/>
+
+		</h:panelGrid>
+		
+	</p:dialog>
+
+</ui:composition>
+</html>

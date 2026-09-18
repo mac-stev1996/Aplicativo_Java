@@ -1,0 +1,265 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<style type="text/css">
+body {
+	font-size: 10px;
+}
+
+body .ui-toolbar {
+	padding: 5px;
+}
+
+.columAlignCenter {
+	text-align: center;
+}
+
+.columAlignRight {
+	text-align: right;
+}
+</style>
+	<script type="text/javascript">
+		PrimeFaces.locales["es"] = {
+			closeText : "Cerrar",
+			prevText : "Anterior",
+			nextText : "Siguiente",
+			monthNames : [ "Enero", "Febrero", "Marzo", "Abril", "Mayo",
+					"Junio", "Julio", "Agosto", "Septiembre", "Octubre",
+					"Noviembre", "Diciembre" ],
+			monthNamesShort : [ "Ene", "Feb", "Mar", "Abr", "May", "Jun",
+					"Jul", "Ago", "Sep", "Oct", "Nov", "Dic" ],
+			dayNames : [ "Domingo", "Lunes", "Martes", "Miércoles", "Jueves",
+					"Viernes", "Sábado" ],
+			dayNamesShort : [ "Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab" ],
+			dayNamesMin : [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa" ],
+			weekHeader : "Semana",
+			firstDay : 0,
+			isRTL : false,
+			showMonthAfterYear : false,
+			yearSuffix : "",
+			timeOnlyTitle : "Solo hora",
+			timeText : "Tiempo",
+			hourText : "Hora",
+			minuteText : "Minuto",
+			secondText : "Segundo",
+			currentText : "Fecha actual",
+			ampm : false,
+			month : "Mes",
+			week : "Semana",
+			day : "Día",
+			allDayText : "Todo el día"
+		};
+	</script>
+</h:head>
+<h:body>
+	<p:ajaxStatus onstart="PF('statusDialog').show()"
+		onsuccess="PF('statusDialog').hide()"
+		onerror="PF('statusDialog').hide()" />
+
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+		closable="false" resizable="false" showHeader="false">
+		<h:graphicImage value="/common/imgs/gifs/ajaxloadingbar.gif" />
+	</p:dialog>
+	<p:growl id="idGrowl" globalOnly="true" autoUpdate="true"
+		widgetVar="groMessages" showDetail="true" life="5000" />
+
+	<h:form id="idForm">
+		<p:toolbar>
+			<f:facet name="left">
+				<h:outputLabel style="font-size: 15px;"
+					value="MODIFICACION DE FECHAS DE VENCIMIENTO A CUOTAS" />
+			</f:facet>
+
+			<f:facet name="right">
+				<p:commandButton value="Buscar" icon="fa fa-search"
+					styleClass="orange-btn"
+					action="#{cxcModificacionVencimientoCuotasController.buscarDeudas}"
+					update="idForm:idTblDiarios"></p:commandButton>
+				<p:commandButton value="Revisar Cuotas" icon="fa fa-list"
+					styleClass="green-btn" update="FrmCuotasRev"
+					action="#{cxcModificacionVencimientoCuotasController.abrirRevisarCuotas}"></p:commandButton>
+				<p:commandButton value="Limpiar" icon="fa fa-refresh"
+					update="idForm" action="#{cxcModificacionVencimientoCuotasController.limpiar}"></p:commandButton>
+			</f:facet>
+
+		</p:toolbar>
+
+		<h:panelGrid columns="4" id="pnlFiltros">
+			<f:facet name="header">
+				<h:outputText value="Filtros de B&#250;squeda"></h:outputText>
+			</f:facet>
+
+			<p:commandLink oncomplete="PF('DlgClientes').show();"
+				update="FrmClientes">
+				<h:outputText value="Por Cliente : " style="font-weight: bold;"></h:outputText>
+			</p:commandLink>
+
+
+			<p:inputText
+				value="#{cxcModificacionVencimientoCuotasController.clienteSeleccionado.nombre}"
+				style="width:270px;" readonly="true"></p:inputText>
+			<p:spacer width="20" height="5"></p:spacer>
+			<p:spacer width="20" height="5"></p:spacer>
+			<h:outputText value="Por Linea de Negocio : "
+				style="font-weight: bold;"></h:outputText>
+			<p:selectOneMenu
+				value="#{cxcModificacionVencimientoCuotasController.lineaSeleccionada}">
+				<f:selectItem itemLabel="Seleccione.." />
+				<f:selectItems
+					value="#{cxcModificacionVencimientoCuotasController.lineasDeNegocio}"
+					var="ln" itemLabel="#{ln.descripcion}"
+					itemValue="#{ln.lineaNegocioPK.noLinea}"></f:selectItems>
+			</p:selectOneMenu>
+			<p:spacer width="20" height="5"></p:spacer>
+		</h:panelGrid>
+
+
+		<p:dataTable id="idTblDiarios" emptyMessage="Sin Registros"
+			value="#{cxcModificacionVencimientoCuotasController.facturasDeudas}"
+			var="item"
+			selection="#{cxcModificacionVencimientoCuotasController.facturasSeleccionadas}"
+			rowKey="#{item.noFactura}"
+			paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+			rows="15" paginator="true">
+			<p:column selectionMode="multiple"
+				style="width:16px;text-align:center" />
+			<p:column headerText="Centro " styleClass="columAlignCenter"
+				width="60">
+				<p:outputLabel value="#{item.centro}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="Factura " styleClass="columAlignCenter"
+				width="60">
+				<p:outputLabel value="#{item.noFisico}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="Secuencia" styleClass="columAlignCenter"
+				width="40">
+				<p:outputLabel value="#{item.cantProrrogas}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="Total " styleClass="columAlignCenter"
+				width="60">
+				<p:outputLabel value="#{item.total}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="SubTotal " styleClass="columAlignCenter"
+				width="60">
+				<p:outputLabel value="#{item.subtotal}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="IVA " styleClass="columAlignCenter" width="100">
+				<p:outputLabel value="#{item.iva}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="Fecha" styleClass="columAlignCenter"
+				width="120">
+				<p:outputLabel value="#{item.fecha}">
+					<f:convertDateTime pattern="dd-MM-yyyy" />
+				</p:outputLabel>
+			</p:column>
+			<p:column headerText="Saldo Deuda " styleClass="columAlignCenter"
+				width="120">
+				<p:outputLabel value="#{item.saldoDeuda}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="Proxima fecha de Pago "
+				styleClass="columAlignCenter" width="120">
+				<p:outputLabel value="#{item.fechaProxima}">
+					<f:convertDateTime pattern="dd-MM-yyyy" />
+				</p:outputLabel>
+			</p:column>
+			<p:column headerText="Numero Cuotas " styleClass="columAlignCenter"
+				width="90">
+				<p:outputLabel value="#{item.numeroCuotas}"></p:outputLabel>
+			</p:column>
+		</p:dataTable>
+
+	</h:form>
+
+	<p:dialog widgetVar="DlgClientes" id="DlgClientes"
+		header="Seleccione Cliente" resizable="true" modal="true"
+		closable="true" appendTo="@(body)" width="480" height="500">
+		<h:form id="FrmClientes">
+			<p:dataTable id="dtClientes"
+				value="#{cxcModificacionVencimientoCuotasController.clientes}"
+				var="cliente" emptyMessage="No existen registros"
+				selectionMode="single"
+				selection="#{cxcModificacionVencimientoCuotasController.clienteSeleccionado}"
+				rowKey="#{cliente.clientePK}" paginator="true" rows="10" lazy="true"
+				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+				<p:column headerText="Cedula/Ruc" filterBy="#{cliente.cedula}"
+					width="100">
+					<h:outputText value="#{cliente.cedula}" />
+				</p:column>
+				<p:column headerText="Nombre" filterBy="#{cliente.nombre}"
+					filterMatchMode="startsWith">
+					<h:outputText value="#{cliente.nombre}" />
+				</p:column>
+			</p:dataTable>
+			<br> </br>
+			<center>
+				<p:commandButton value="Seleccionar "
+					action="#{cxcModificacionVencimientoCuotasController.seleccionarCliente}"
+					update="idForm:pnlFiltros"></p:commandButton>
+			</center>
+		</h:form>
+	</p:dialog>
+
+	<p:dialog widgetVar="DlgCuotasRev" id="DlgCuotasRev"
+		header="Revision de Cuotas" resizable="true" modal="true"
+		closable="true" appendTo="@(body)" width="480" height="500">
+		<h:form id="FrmCuotasRev">
+			<h:panelGrid columns="4">
+				<h:outputText value="Meses de Gracia" />
+				<p:spinner maxlength="2" size="1"
+					value="#{cxcModificacionVencimientoCuotasController.mesesGracia}"
+					min="0" max="6"></p:spinner>
+				<p:spacer width="10" height="5"></p:spacer>
+				<p:commandButton styleClass="green-btn" value="Aplicar "
+					title="Aplicar meses de gracia"
+					action="#{cxcModificacionVencimientoCuotasController.agregarMesesGracia}"
+					update="FrmCuotasRev:dtCuotas">
+					<p:confirm header="Confirmacion"
+						message="¿Esta seguro que desea aplicar los meses de gracia ingresados?"
+						icon="pi pi-exclamation-triangle" />
+				</p:commandButton>
+			</h:panelGrid>
+			<p:dataTable id="dtCuotas"
+				value="#{cxcModificacionVencimientoCuotasController.letrasDeuda}"
+				var="item" emptyMessage="No existen registros" rowKey="#{item}"
+				paginator="true" rows="8"
+				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+				<p:column headerText="Factura">
+					<h:outputText value="#{item.noFisico}" />
+				</p:column>
+				<p:column headerText="Numero Cuota">
+					<h:outputText value="#{item.noDocuRefe}" />
+				</p:column>
+				<p:column headerText="Saldo">
+					<h:outputText value="#{item.saldo}" />
+				</p:column>
+				<p:column headerText="Fecha Vencimiento">
+					<p:outputLabel value="#{item.fechaVence}">
+						<f:convertDateTime pattern="dd-MM-yyyy" />
+					</p:outputLabel>
+
+				</p:column>
+			</p:dataTable>
+			<br> </br>
+			<center>
+				<p:commandButton value="Cerrar "
+					oncomplete="PF('DlgCuotasRev').hide();" update="idForm"></p:commandButton>
+			</center>
+
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+				<p:commandButton value="Yes" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+		</h:form>
+	</p:dialog>
+
+	<h:outputStylesheet name="css/layout-lightblue.css"
+		library="serenity-layout" />
+</h:body>
+</html>

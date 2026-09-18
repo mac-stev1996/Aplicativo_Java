@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title></title>
+
+	<h:outputStylesheet name="css/layout-lightblue.css"
+		library="serenity-layout" />
+
+	<style type="text/css">
+body .ui-toolbar {
+	padding: 1px;
+}
+</style>
+</h:head>
+<h:body>
+	<h:form>
+		<p:toolbar styleClass="toolbarStyle">
+			<f:facet name="left">
+				<i class="fa fa-shopping-cart fa-lg"></i>
+				<b><p:outputLabel style="font-size: 14px;"
+						value="VENTAS DEL MES CANCELADAS" /></b>
+			</f:facet>
+			<f:facet name="right">
+
+			</f:facet>
+		</p:toolbar>
+
+		<div class="ui-g">
+			<div class="ui-g-2"></div>
+			<div class="ui-g-2">
+				<p:outputLabel value="Fecha Desde:"></p:outputLabel>
+			</div>
+			<div class="ui-g-2">
+				<p:calendar value="#{cxcRepVentasMesCancController.fechaDesde}" pattern="dd/MM/yyyy"></p:calendar>
+			</div>
+			<div class="ui-g-2">
+				<p:outputLabel value="Fecha Hasta:"></p:outputLabel>
+			</div>
+			<div class="ui-g-2">
+				<p:calendar value="#{cxcRepVentasMesCancController.fechaHasta}" pattern="dd/MM/yyyy"></p:calendar>
+			</div>
+			<div class="ui-g-2"></div>
+
+			<div class="ui-g-3"></div>
+			<div class="ui-g-3">
+				<p:outputLabel value="Serie Fisico:"></p:outputLabel>
+			</div>
+			<div class="ui-g-3">
+				<p:inputText value="#{cxcRepVentasMesCancController.pserieFisico}"></p:inputText>
+			</div>
+			<div class="ui-g-3"></div>
+
+			<div class="ui-g-4"></div>
+			<div class="ui-g-1"></div>
+			<div class="ui-g-1">
+				<p:commandLink
+					actionListener="#{cxcRepVentasMesCancController.reportJasper}"
+					ajax="false" target="_blank">
+					<i class="fa fa-file-pdf-o fa-2x" style="color:#FF0000;"></i>
+					<f:param name="format" value="pdf"></f:param>
+				</p:commandLink>
+			</div>
+			<div class="ui-g-1">
+				<p:commandLink
+					actionListener="#{cxcRepVentasMesCancController.reportJasper}"
+					ajax="false" target="_blank">
+					<i class="fa fa-file-excel-o fa-2x" style="color:#00C353;"></i>
+					<f:param name="format" value="xls"></f:param>
+				</p:commandLink>
+			</div>
+			<div class="ui-g-1"></div>
+			<div class="ui-g-4"></div>
+		</div>
+	</h:form>
+</h:body>
+</html>

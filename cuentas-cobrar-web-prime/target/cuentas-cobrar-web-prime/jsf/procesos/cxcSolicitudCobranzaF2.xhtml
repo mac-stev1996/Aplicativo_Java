@@ -1,0 +1,518 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+
+	<ui:define name="title">
+		Formulario de demandas F2
+	</ui:define>
+	
+	<ui:define name="script">
+		<script type="text/javascript">
+			function onShowDialogArchivo(){
+				console.log("Archivo");
+			}
+			
+			function openTab(url){
+				console.log(url);
+				var win = window.open(url, '_blank');
+				win.focus();
+				return false;
+			}
+		</script>
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="fmrButtons">
+
+			<p:toolbar>
+				<p:toolbarGroup align="right">
+					<p:commandButton value="Nuevo" icon="fa fa-file-o" disabled="#{!cxcSolicitudCobranzaF2Controller.usuariosCrean.contains(cxcSolicitudCobranzaF2Controller.usuario.usuario)}"
+						partialSubmit="true" oncomplete="PF('dlgNuevaSolicitudComprobante').show();"
+						update=":idfrmNuevaSolicitud"
+						actionListener="#{cxcSolicitudCobranzaF2Controller.nuevaSolicitud}"/>
+						<p:spacer />
+						<p:commandButton title="limpiar" alt="Limpiar filtros"
+						value="Limpiar" icon="fa fa-eraser" id="limpiar"
+						process="@this" styleClass="green-btn"
+						actionListener="#{cxcSolicitudCobranzaF2Controller.limpiar}"
+						update=":idForm:cmbEstSolicitud :idForm:cedCliente :idForm:nomCliente
+					:idForm:fechaDesde :idForm:fechaHasta :idForm:noFactura :idForm:sctable" />
+				</p:toolbarGroup>
+			</p:toolbar>
+
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+
+		<h:form id="idForm">
+
+			<p:fieldset legend="Filtros de Búsqueda" toggleable="false">
+				<h:panelGrid id="grid-1" columns="12">
+					<p:commandLink id="clienteCommandLink"
+						value="Seleccionar Cliente: "
+						oncomplete="PF('clienteBus').show();"
+						update=":#{p:component('clienteBus')}"
+						action="#{cxcSolicitudCobranzaF2Controller.ejecutarConsultaClientes}">
+					</p:commandLink>
+					<p:inputText id="cedCliente" readonly = "true" placeholder="Cédula Cliente"
+						value="#{cxcSolicitudCobranzaF2Controller.cedulaClienteConsulta}" />
+					<p:inputText id="nomCliente" readonly = "true" placeholder="Nombre Cliente"
+						value="#{cxcSolicitudCobranzaF2Controller.nombreClienteConsulta}" />
+
+					<p:outputLabel value="No. Factura:" styleClass="bold" />
+					<p:inputText id="noFactura" converter="convMay"
+						style="text-transform: uppercase; margin-right:10px"
+						maxlength="13"
+						value="#{cxcSolicitudCobranzaF2Controller.facturaABuscar}" />
+
+					<p:outputLabel for="fechaDesde" value="Fecha Inicio:"
+						styleClass="bold" />
+					<p:calendar id="fechaDesde" pattern="dd-MM-yyyy" showOn="button"
+						size="20" locale="es" navigator="true" maxdate="today"
+						value="#{cxcSolicitudCobranzaF2Controller.fechaDesde}" />
+					<p:outputLabel for="fechaHasta" value="Fecha Fin:"
+						styleClass="bold" />
+					<p:calendar id="fechaHasta" pattern="dd-MM-yyyy" showOn="button"
+						mindate="#{cxcSolicitudCobranzaF2Controller.fechaDesde}" size="20"
+						locale="es" navigator="true" maxdate="today"
+						value="#{cxcSolicitudCobranzaF2Controller.fechaHasta}" />
+
+					<p:outputLabel value="Estado" />
+					<p:selectOneMenu
+						value="#{cxcSolicitudCobranzaF2Controller.estadoABuscar}"
+						id="cmbEstSolicitud">
+						<f:selectItem itemLabel="Seleccione el estado"
+							noSelectionOption="true" />
+						<f:selectItems
+							value="#{cxcSolicitudCobranzaF2Controller.lestados}" var="estado"
+							itemLabel="#{estado.descripcion}" itemValue="#{estado.texto2}"></f:selectItems>
+					</p:selectOneMenu>
+
+					<p:commandButton title="Buscar" alt="Buscar solicitud"
+						value="Buscar" icon="fa fa-search" id="buscarSolicitud"
+						process="@this :idForm:cmbEstSolicitud :idForm:cedCliente
+					:idForm:fechaDesde :idForm:fechaHasta :idForm:noFactura :idForm:nomCliente"
+						action="#{cxcSolicitudCobranzaF2Controller.busquedaSolicitudes}"
+						update=":idForm:sctable" />
+				</h:panelGrid>
+			</p:fieldset>
+			<br/>
+			<p:dataTable var="sc"
+				value="#{cxcSolicitudCobranzaF2Controller.lazySolicitudCobranza}"
+				paginator="true" rows="10"
+				rowKey="#{sc.solicitudCobranzaPK}"
+				rowIndexVar="row"
+				lazy="true"
+				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
+				rowsPerPageTemplate="5,10,15" id="sctable"
+				selection="#{cxcSolicitudCobranzaF2Controller.solicitudCobranza}"
+				selectionMode="single" emptyMessage="No hay registros">
+				<f:facet name="header">
+						<h:outputLabel value="Listado de Formularios F2" />
+				</f:facet>
+				
+				<p:column headerText="No Solicitud" width="5%">
+					<h:outputText value="#{sc.solicitudCobranzaPK.noSolicitud}" />
+				</p:column>
+
+				<p:column headerText="Fecha" width="5%">
+					<h:outputText value="#{sc.fecha}">
+					<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="No. Factura" width="5%" filterBy="#{sc.noFactu}">
+					<h:outputText value="#{sc.noFactu}" />
+				</p:column>
+
+				<p:column headerText="Nombre Cliente" filterBy="#{sc.nombreCliente}">
+					<h:outputText value="#{sc.nombreCliente}" />
+				</p:column>
+
+				<p:column headerText="Tipo Identificacion" width="7%">
+					<h:outputText value="#{cxcSolicitudCobranzaF2Controller.obtenerTipoIdentificacion(sc.tipoIdentificacion)}" />
+				</p:column>
+
+				<p:column headerText="Identificacion" width="10%" filterBy="#{sc.identificacion}">
+					<h:outputText value="#{sc.identificacion}" />
+				</p:column>
+				
+				<p:column headerText="Estado" width="10%">
+					<h:outputText value="#{cxcSolicitudCobranzaF2Controller.obtenerEstado(sc.estado)}" />
+				</p:column>
+				
+				<p:column headerText="Acciones" width="10%">
+				
+					<p:commandLink title="Historial solicitud" partialSubmit="true" oncomplete="PF('dlgHistorial').show();" update=":#{p:component('idFrmHistorial')}" actionListener="#{cxcSolicitudCobranzaF2Controller.cargarHistorialporSoicitud(sc)}">
+						<i class="fa fa-info-circle fa-2x" aria-hidden="true"></i>
+					</p:commandLink>
+					
+					<p:commandLink style="margin-left:10px;" partialSubmit="true" oncomplete="PF('dlgNuevaSolicitudComprobante').show();" update=":#{p:component('idfrmNuevaSolicitud')} :#{p:component('facTableTipArchivos')}" actionListener="#{cxcSolicitudCobranzaF2Controller.editarSolicitud(sc)}">
+						<i class="fa fa-pencil-square-o fa-2x" aria-hidden="true"></i>
+					</p:commandLink>
+					
+					<p:commandLink style="margin-left:10px;" partialSubmit="true" update=":#{p:component('sctable')}" actionListener="#{cxcSolicitudCobranzaF2Controller.enviar(sc)}" title="Siguiente etapa #{cxcSolicitudCobranzaF2Controller.getLabelSiguienteEtapa(sc.estado)}"
+							disabled="#{!cxcSolicitudCobranzaF2Controller.habilitaSiguienteEtapa(sc)}"
+							rendered="#{!sc.estado.equals('DV')}">
+						<i style="color:#3cb371" class="fa fa-paper-plane fa-2x" aria-hidden="true"></i>
+					</p:commandLink>
+				</p:column>
+			</p:dataTable>
+			
+			<p:dialog id="idDlgEnviarFormulario" header="Seleccione su siguiente etapa" modal="true"
+					widgetVar="dlgEnviarFormulario" position="center,center" closable="true"
+					appendTo="@(body)" responsive="true" width="400" closeOnEscape="true">
+					<div>
+						<div class="ui-g">
+							<div class="ui-g-12 ui-md-6" style="text-align: center">
+								<p:commandButton value="DEMANDAR" partialSubmit="true" process="@this" actionListener="#{cxcSolicitudCobranzaF2Controller.enviar(null)}"
+									update=":#{p:component('sctable')}" styleClass="green-btn" icon="fa fa-check">
+									<f:param name="validacionEtapa" value="S" />
+								</p:commandButton>
+							</div>
+							<div class="ui-g-12 ui-md-6" style="text-align: center">
+								<p:commandButton value="NO DEMANDAR" partialSubmit="true" process="@this" actionListener="#{cxcSolicitudCobranzaF2Controller.enviar(null)}"
+									update=":#{p:component('sctable')}" styleClass="red-btn" icon="fa fa-times">
+									<f:param name="validacionEtapa" value="N" />
+								</p:commandButton>
+							</div>
+						</div>
+					</div>	
+			</p:dialog>
+			
+		</h:form>
+
+		<p:dialog id="idDlgNuevaSolicitudComprobante" header="Solicitud Demanda" modal="true"
+			widgetVar="dlgNuevaSolicitudComprobante" position="center,center" closable="true"
+			appendTo="@(body)" responsive="true" width="650" closeOnEscape="true">
+			<h:form id="idfrmNuevaSolicitud">
+			
+				<p:outputPanel autoUpdate="true">
+					<p:tabView id="idTvSolComprobante">
+						<p:tab title="Datos">
+							<div>
+								<div class="ui-g">
+									<div class="ui-g-12 ui-md-6">
+										<p:outputLabel value="Nombre Solicitante:"/>
+									</div>
+									<div class="ui-g-12 ui-md-6">
+										<p:outputLabel value="#{cxcSolicitudCobranzaF2Controller.solicitudCobranza.empleado.nombre}"></p:outputLabel>
+									</div>
+								</div>
+								
+								<div class="ui-g">
+									<div class="ui-g-12 ui-md-6">
+										<p:outputLabel value="Area:"/>
+									</div>
+									<div class="ui-g-12 ui-md-6">
+										<p:inputText value="#{cxcSolicitudCobranzaF2Controller.solicitudCobranza.area}" size="30" readonly="#{cxcSolicitudCobranzaF2Controller.edicion}"></p:inputText>
+									</div>
+								</div>
+								
+								<div class="ui-g">
+									<div class="ui-g-12 ui-md-6">
+										<p:commandLink value="Cliente:" partialSubmit="true" process="@this" style="font-weight:bold;" actionListener="#{cxcSolicitudCobranzaF2Controller.cargarClientes}" update=":frmClientes" disabled="#{'DV'.equals(cxcSolicitudCobranzaF2Controller.solicitudCobranza.estado)}"/>										
+									</div>
+									<div class="ui-g-12 ui-md-6">
+										<p:inputText value="#{cxcSolicitudCobranzaF2Controller.solicitudCobranza.nombreCliente}" size="30" readonly="#{cxcSolicitudCobranzaF2Controller.edicion}"></p:inputText>
+									</div>
+								</div>
+								
+								<div class="ui-g">
+									<div class="ui-g-12 ui-md-6">
+										<p:commandLink value="Factura:" partialSubmit="true" process="@this" style="font-weight:bold;" actionListener="#{cxcSolicitudCobranzaF2Controller.buscarFacturaCliente}" update=":idfrmBuscarFactura" disabled="#{'DV'.equals(cxcSolicitudCobranzaF2Controller.solicitudCobranza.estado)}"/>
+									</div>
+									<div class="ui-g-12 ui-md-6">
+										<p:inputText value="#{cxcSolicitudCobranzaF2Controller.solicitudCobranza.noFactu}" size="30" readonly="true"></p:inputText>
+									</div>
+								</div>
+								
+								<div class="ui-g">
+									<div class="ui-g-12 ui-md-6">
+										<p:outputLabel value="CI/RUC:"/>
+									</div>
+									<div class="ui-g-12 ui-md-6">
+										<p:inputText value="#{cxcSolicitudCobranzaF2Controller.solicitudCobranza.identificacion}" size="30" readonly="#{cxcSolicitudCobranzaF2Controller.edicion}"></p:inputText>
+									</div>
+								</div>
+								
+								<div class="ui-g">
+									<div class="ui-g-12 ui-md-6">
+										<p:outputLabel value="Tipo Identificación:"/>
+									</div>
+									<div class="ui-g-12 ui-md-6">
+										<p:outputLabel value="#{cxcSolicitudCobranzaF2Controller.obtenerTipoIdentificacion(cxcSolicitudCobranzaF2Controller.solicitudCobranza.tipoIdentificacion)}" ></p:outputLabel>
+									</div>
+								</div>
+								
+								<div class="ui-g">
+									<div class="ui-g-12 ui-md-6">
+										<p:outputLabel value="Estado:"/>
+									</div>
+									<div class="ui-g-12 ui-md-6">
+										<p:outputLabel value="#{cxcSolicitudCobranzaF2Controller.obtenerEstado(cxcSolicitudCobranzaF2Controller.solicitudCobranza.estado)}" rendered="false"></p:outputLabel>
+										<p:selectOneMenu value="#{cxcSolicitudCobranzaF2Controller.solicitudCobranza.estado}" disabled="#{'DV'.equals(cxcSolicitudCobranzaF2Controller.solicitudCobranza.estado)}">
+											<f:selectItems value="#{cxcSolicitudCobranzaF2Controller.lestados}" var="estado" itemLabel="#{estado.descripcion}" itemValue="#{estado.texto2}"></f:selectItems>
+										</p:selectOneMenu>
+									</div>
+								</div>
+								
+								<div class="ui-g">
+									<div class="ui-g-12 ui-md-6">
+										<p:outputLabel value="Observación:"/>
+									</div>
+									<div class="ui-g-12 ui-md-6">
+										<p:inputTextarea value="#{cxcSolicitudCobranzaF2Controller.solicitudCobranza.observacion}" size="30"></p:inputTextarea>
+									</div>
+								</div>
+								
+							</div>
+						</p:tab>
+						<p:tab title="Documentos">
+							<p:dataTable var="doc"
+									value="#{cxcSolicitudCobranzaF2Controller.lsolicitudCobranzaArchivo}"
+									rowKey="#{doc.noSolicitudArchivo}"
+									rowIndexVar="row"
+									paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
+									rowsPerPageTemplate="5,10,15" id="facTableTipArchivos">
+								<p:column headerText="Documento" width="15%">
+									<h:outputText value="#{doc.nombreDocumento}" />
+								</p:column>
+								<p:column headerText="Original" width="5%" style="text-align: center;">
+									<p:selectBooleanCheckbox value="#{doc.original}"/>
+								</p:column>
+								<p:column headerText="Copia" width="5%" style="text-align: center;">
+									<p:selectBooleanCheckbox value="#{doc.copia}"/>
+								</p:column>
+								
+								<p:column headerText="Archivo" width="10%" style="text-align: center;">
+									<p:commandLink partialSubmit="true" oncomplete="PF('dlgSubirArchivo').show();" update=":idFrmSubirArchivo" actionListener="#{cxcSolicitudCobranzaF2Controller.mostrarDialogSubirArchivo(doc)}" rendered="#{doc.ruta == null}" >
+										<i class="fa fa-cloud-upload fa-2x" aria-hidden="true"></i>
+									</p:commandLink>
+									<p:outputLabel value="#{doc.nombreArchivo}" rendered="#{doc.ruta != null}"> </p:outputLabel>
+								</p:column>
+								
+								<p:column headerText="Acciones" width="10%" style="text-align: center;">
+									<p:commandLink rendered="#{doc.ruta != null}" style="margin-right: 30px;" actionListener="#{cxcSolicitudCobranzaF2Controller.ver(doc)}" 
+												   title="Ver #{doc.nombreArchivo}" partialSubmit="true" process="@this">
+										<i class="fa fa-eye fa-2x" style="color:#3cb371" aria-hidden="true"></i>
+									</p:commandLink>
+									<p:commandLink rendered="#{doc.ruta != null and cxcSolicitudCobranzaF2Controller.solicitudCobranza.estado != 'DV'}" title="Eliminar #{doc.nombreArchivo}" actionListener="#{cxcSolicitudCobranzaF2Controller.borrar(doc)}" partialSubmit="true" process="@this" update=":#{p:component('facTableTipArchivos')}">
+										<i class="fa fa-trash fa-2x" style="color: red" aria-hidden="true"></i>
+									</p:commandLink>
+								</p:column>
+								
+							</p:dataTable>
+						</p:tab>
+						<p:tab title="Documentos Credito" rendered="#{not empty cxcSolicitudCobranzaF2Controller.lcentroDigital}">
+							<p:dataTable  var="doc"
+									value="#{cxcSolicitudCobranzaF2Controller.lcentroDigital}"
+									rowKey="#{doc.cxcCreditoDigitalPK.solicitud}"
+									rowIndexVar="row"
+									id="facTableDocumentosCredito">
+								<p:column headerText="Descripción" width="30%" style="text-align: center;">
+									<h:outputText value="#{doc.descripcion}" />
+								</p:column>
+								
+								<p:column headerText="Nombre Archivo" width="50%" style="text-align: center;">
+									<h:outputText value="#{doc.nombreArchivo}" title="#{doc.nombreArchivo}"/>
+								</p:column>
+								
+								<p:column headerText="Ver" width="10%" style="text-align: center;">
+									<p:commandLink style="margin-right: 30px;" actionListener="#{cxcSolicitudCobranzaF2Controller.verDocumentoCredito(doc.path)}"  
+												   title="Ver #{doc.nombreArchivo}">
+										<i class="fa fa-eye fa-2x" style="color:#3cb371" aria-hidden="true"></i>
+									</p:commandLink>
+								</p:column>
+							</p:dataTable>
+						</p:tab>
+					</p:tabView>
+				</p:outputPanel>
+				
+				<div class="ui-g">
+					<div class="ui-g-12 ui-md-6" style="text-align: center">
+						<p:commandButton value="GUARDAR" partialSubmit="true" actionListener="#{cxcSolicitudCobranzaF2Controller.guardarNuevaSolicitud}"
+						update=":#{p:component('sctable')}" styleClass="green-btn">
+						</p:commandButton>
+					</div>
+					<div class="ui-g-12 ui-md-6" style="text-align: center">
+						<p:commandButton value="CANCELAR" oncomplete="PF('dlgNuevaSolicitudComprobante').hide()" styleClass="red-btn"></p:commandButton>
+					</div>
+				</div>
+					
+			</h:form>
+		</p:dialog>
+		
+		
+		<p:dialog id="idDlgBuscarFactura" header="Factura" modal="true"
+			widgetVar="dlgDlgBuscarFactura" position="center,center" closable="true"
+			appendTo="@(body)" responsive="true" width="650" closeOnEscape="true">
+			<h:form id="idfrmBuscarFactura">				
+				
+				<p:dataTable var="fact"
+						value="#{cxcSolicitudCobranzaF2Controller.documentosHistoricos}"
+						paginator="true" rows="10"
+						rowKey="#{fact.id}"
+						rowIndexVar="row"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
+						rowsPerPageTemplate="5,10,15" id="facTable"
+						selection="#{cxcSolicitudCobranzaF2Controller.facturaSelect}"
+						selectionMode="single" >
+						
+					<p:ajax event="rowSelect" listener="#{cxcSolicitudCobranzaF2Controller.selectFactura}" 
+							partialSubmit="true" process="@this" update=":#{p:component('idfrmNuevaSolicitud')}"
+							oncomplete="PF('dlgDlgBuscarFactura').hide();"/>
+					<p:column headerText="Agencia" width="5%" >
+						<h:outputText value="#{fact.agencia}" />
+					</p:column>
+					<p:column headerText="Documento" width="10%" filterBy="#{fact.noFisico}" filterMatchMode="contains">
+						<h:outputText value="#{fact.noFisico}" />
+					</p:column>
+					<p:column headerText="Linea" width="10%" filterBy="#{fact.serieFisico}" filterMatchMode="contains">
+						<h:outputText value="#{fact.serieFisico}" />
+					</p:column>
+					<p:column headerText="Tipo D." width="8%">
+						<p:outputLabel value="#{fact.tipoDoc}" />
+					</p:column>
+					<p:column headerText="Saldo"  width="8%">
+						<h:outputText value="#{fact.saldo}" />
+					</p:column>
+					<p:column headerText="Fecha" width="10%">
+						<p:outputLabel value="#{fact.fecha}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:outputLabel>
+					</p:column>
+					<p:column headerText="D/C" width="5%">
+						<p:outputLabel value="#{fact.tipo}" />
+					</p:column>
+				</p:dataTable>
+				
+				
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog id="idDlgSubirArchivo" header="Subir Archivo" modal="true"
+			widgetVar="dlgSubirArchivo" position="center,center" closable="true"
+			appendTo="@(body)" responsive="true" width="650" closeOnEscape="true" onShow="onShowDialogArchivo();">
+			<h:form id="idFrmSubirArchivo" enctype="multipart/form-data">
+				<p:fileUpload mode="advanced" skinSimple="true" allowTypes="/(\.|\/)(pdf|jpeg|jpg|png)$/" 
+							label="Seleccionar" uploadLabel="Subir" cancelLabel="Cancelar" 
+							fileUploadListener="#{cxcSolicitudCobranzaF2Controller.subirArchivo}" 
+							update=":#{p:component('facTableTipArchivos')}"
+							oncomplete="PF('dlgSubirArchivo').hide();"
+							>
+				</p:fileUpload>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog id="idDlgHistorial" header="Historial de Solicitud de Cobranza" modal="true"
+			widgetVar="dlgHistorial" position="center,center" closable="true"
+			appendTo="@(body)" responsive="true" width="650" closeOnEscape="true" onShow="onShowDialogArchivo();">
+			<h:form id="idFrmHistorial" enctype="multipart/form-data">
+				
+				<p:dataTable id="tblHistorial" var="item" rowIndexVar="i"
+									reflow="true" paginator="true" rows="10"
+									paginatorPosition="bottom"
+									paginatorTemplate="{CurrentPageReport} {PageLinks} {RowsPerPageDropdown}"
+									selectionMode="single" style="font-size: 12px;"
+									value="#{cxcSolicitudCobranzaF2Controller.listaHistoriales}"
+									emptyMessage="No existe información disponible"
+									styleClass="table table-body" multiViewState="true"
+									rowKey="#{item.codigo}">
+									<f:facet name="header">
+										<p:outputLabel value="Lista de Historial de Solicitudes de Cobranzas" />
+									</f:facet>
+									<p:column headerText="No" width="1%">
+										<p:outputLabel value="#{i+1}" />
+									</p:column>
+
+									<p:column headerText="Fecha" width="10%">
+										<p:outputLabel value="#{item.fecha}" />
+									</p:column>
+
+									<p:column headerText="Hora" width="5%">
+										<p:outputLabel value="#{item.hora}" >
+										<f:convertDateTime pattern="HH:mm:ss" timeStyle="short" />
+										</p:outputLabel>
+									</p:column>
+
+									<p:column headerText="Usuario" width="10%">
+										<p:outputLabel
+											value="#{item.usuario}" />
+									</p:column>
+
+									<p:column headerText="Observacion" width="10%">
+										<p:outputLabel
+											value="#{item.observacion}" />
+									</p:column>
+									
+									<p:column headerText="Estado Solicitud" width="10%">
+										<p:outputLabel
+											value="#{cxcSolicitudCobranzaF2Controller.obtenerEstado(item.estadoSol)}" />
+									</p:column>
+
+								</p:dataTable>
+			</h:form>
+		</p:dialog>
+		
+			<!-- DIALOGO MODAL DE CLIENTES -->
+			<p:dialog header="Clientes" widgetVar="clienteBus" modal="true"
+				showEffect="fade" hideEffect="fade" id="clienteBus" resizable="true" width="600"
+				height="300" position="center center" closeOnEscape="true">
+					<h:form id="idFrmClienteBus" enctype="multipart/form-data">
+				<p:panelGrid columns="5" layout="grid">
+					<p:outputLabel value="Cedula:" />
+					<p:inputText id="clienteIdCC"
+						value="#{cxcSolicitudCobranzaF2Controller.cedulaClienteConsulta}"
+						size="10" />
+
+					<p:outputLabel value="Nombre:" />
+					<p:inputText id="idNombreClieC"
+						value="#{cxcSolicitudCobranzaF2Controller.nombreClienteConsulta}" />
+
+					<p:commandButton id="clienteCommandink1" icon="ui-icon-search"
+						action="#{cxcSolicitudCobranzaF2Controller.ejecutarConsultaClientes}"
+						update="tblCliente" />
+				</p:panelGrid>
+
+				<p:dataTable var="item" id="tblCliente" widgetVar="tblCliente"
+					value="#{cxcSolicitudCobranzaF2Controller.lazyModel}" paginator="true"
+					rows="10" lazy="true" rowIndexVar="var" scrollWidth="100%"
+					scrollable="true"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+					rowsPerPageTemplate="25,50" paginatorPosition="bottom"
+					style="width:90%;">
+
+					<p:column headerText="No" width="5%">
+						<p:outputLabel value="#{var + 1}" />
+					</p:column>
+					<p:column headerText="Codigo" width="15%">
+						<p:commandLink id="viClieCommandLink"
+							value="#{item.clientePK.noCliente}"
+							action="#{cxcSolicitudCobranzaF2Controller.seleccionarCliente(item)}"
+							oncomplete="PF('clienteBus').hide();" partialSubmit="true"
+							update=":idForm:cedCliente :idForm:nomCliente" process="@this">
+						</p:commandLink>
+					</p:column>
+					<p:column headerText="Cedula" width="30%">
+						<p:outputLabel value="#{item.cedula}" />
+					</p:column>
+					<p:column headerText="Nombres/Apellidos " width="50%"
+						styleClass="txtL">
+						<p:outputLabel value="#{item.nombre}" />
+					</p:column>
+
+				</p:dataTable>
+				</h:form>
+			</p:dialog>
+		
+		<ui:include src="/jsf/common/dialog/dialogClientes.xhtml" />
+	</ui:define>
+
+</ui:composition>

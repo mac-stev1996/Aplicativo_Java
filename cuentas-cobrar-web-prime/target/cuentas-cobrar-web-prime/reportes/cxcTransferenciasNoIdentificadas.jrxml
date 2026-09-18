@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cxcTransferenciasNoIdentificadas" pageWidth="600" pageHeight="900" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="540" leftMargin="30" rightMargin="30" topMargin="10" bottomMargin="10" isIgnorePagination="true" uuid="441503f2-1753-4a76-85d2-c8fbb6c6f18b">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<parameter name="IMPRIME_CABECERA" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Boolean(true)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="noCia" class="java.lang.String"/>
+	<parameter name="envioBanco" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="idBanco" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT c.BANCO,  b.DESCRIP, e.ID_TRIBUTARIO, b.CTACON_ID, c.FECHA_DOCUMENTO, c.FECHA_SOLICITUD, c.NO_CIA, c.DOC_ESTADO_CUENTA,
+c.TIPO_TRANSACCION, c.USUARIO, c.VALOR_DOCUMENTO, c.OBSERVACION_NO_IDENTIFICADA, c.AGENCIA
+from CON_DEPOSITOS c
+LEFT JOIN ARCKTB b ON b.BANCO = c.BANCO and b.Estado = 'A'
+LEFT JOIN ARCGMC e ON e.NO_CIA = c.NO_CIA
+WHERE c.NO_CIA = $P{noCia}
+and c.ESTADO = 'B'
+and c.BANCO = $P{idBanco}
+and c.ENVIO_BANCO = $P{envioBanco}]]>
+	</queryString>
+	<field name="BANCO" class="java.lang.String"/>
+	<field name="DESCRIP" class="java.lang.String"/>
+	<field name="ID_TRIBUTARIO" class="java.lang.String"/>
+	<field name="CTACON_ID" class="java.lang.String"/>
+	<field name="FECHA_DOCUMENTO" class="java.sql.Timestamp"/>
+	<field name="FECHA_SOLICITUD" class="java.sql.Timestamp"/>
+	<field name="NO_CIA" class="java.lang.String"/>
+	<field name="DOC_ESTADO_CUENTA" class="java.lang.String"/>
+	<field name="TIPO_TRANSACCION" class="java.lang.String"/>
+	<field name="USUARIO" class="java.lang.String"/>
+	<field name="VALOR_DOCUMENTO" class="java.math.BigDecimal"/>
+	<field name="OBSERVACION_NO_IDENTIFICADA" class="java.lang.String"/>
+	<field name="AGENCIA" class="java.lang.String"/>
+	<variable name="TIEMPOREV" class="java.math.BigDecimal" calculation="Average">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="TIEMPOAPR" class="java.math.BigDecimal" calculation="Average">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<group name="datos">
+		<groupExpression><![CDATA[]]></groupExpression>
+	</group>
+	<group name="datosAccesorios">
+		<groupExpression><![CDATA[]]></groupExpression>
+	</group>
+	<group name="datosDinamica">
+		<groupExpression><![CDATA[]]></groupExpression>
+	</group>
+	<group name="datosEstatica">
+		<groupExpression><![CDATA[]]></groupExpression>
+	</group>
+	<group name="datosCostosGenerales">
+		<groupExpression><![CDATA[]]></groupExpression>
+	</group>
+	<group name="datosGenerales">
+		<groupExpression><![CDATA[]]></groupExpression>
+	</group>
+	<group name="datosVehiculo">
+		<groupExpression><![CDATA[]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="81" splitType="Immediate">
+			<printWhenExpression><![CDATA[$P{IMPRIME_CABECERA}]]></printWhenExpression>
+			<staticText>
+				<reportElement uuid="8c061986-6f1b-4600-bb9f-8157db5d9367" x="120" y="0" width="320" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FORMATO DE REQUERIMIENTOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="0" y="33" width="120" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Banco:]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement uuid="cd0134a6-5023-4093-aa19-605cce14b091" x="120" y="33" width="150" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCRIP}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="0" y="47" width="120" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Identificación:]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement uuid="cd0134a6-5023-4093-aa19-605cce14b091" x="120" y="47" width="150" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ID_TRIBUTARIO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="0" y="61" width="120" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cuenta:]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement uuid="cd0134a6-5023-4093-aa19-605cce14b091" x="120" y="61" width="150" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(($F{BANCO}.equals("PI")&& $F{NO_CIA}.equals("01")) ? "3087462504" : "")]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch">
+			<printWhenExpression><![CDATA[]]></printWhenExpression>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Immediate">
+			<staticText>
+				<reportElement uuid="5473b83c-08f8-4ae8-93ad-08a4de88af56" mode="Opaque" x="0" y="0" width="120" height="20" backcolor="#33CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Transacción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5786e293-298f-4a26-866f-c67cf71e7036" mode="Opaque" x="270" y="0" width="170" height="20" backcolor="#33CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descripción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5786e293-298f-4a26-866f-c67cf71e7036" mode="Opaque" x="440" y="0" width="100" height="20" backcolor="#33CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5fd513d1-3d97-415a-a5d6-24868030abbe" mode="Opaque" x="120" y="0" width="150" height="20" backcolor="#33CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Número Documento]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="4e3f5b8d-5268-4709-b43a-b32b55017f4f" x="0" y="0" width="120" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{FECHA_SOLICITUD}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c756b331-1d73-43de-9bcc-5f724eaf945c" x="120" y="0" width="150" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{DOC_ESTADO_CUENTA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="663bd5d1-3a63-4f3e-b25b-740a1ab143cb" x="270" y="0" width="170" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[(($F{TIPO_TRANSACCION}.equals("TR")) ? "TRANSFERENCIA MISMO BANCO" :
+($F{TIPO_TRANSACCION}.equals("E")) ? "DEPOSITO EFECTIVO":
+($F{TIPO_TRANSACCION}.equals("CH")) ? "DEPOSITO CHEQUE":
+($F{TIPO_TRANSACCION}.equals("TO")) ? "TRANSFERENCIA OTROS BANCOS":
+($F{TIPO_TRANSACCION}.equals("TA")) ? "TRANSFERENCIA APP":
+($F{TIPO_TRANSACCION}.equals("DP")) ? "DEPOSITO AGENCIA":
+($F{TIPO_TRANSACCION}.equals("DP")) ? "DEPOSITO AGENCIA":
+($F{TIPO_TRANSACCION}.equals("R")) ? "RECAUDACION": "NA")]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="663bd5d1-3a63-4f3e-b25b-740a1ab143cb" x="440" y="0" width="100" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{VALOR_DOCUMENTO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="15" splitType="Stretch"/>
+	</summary>
+</jasperReport>

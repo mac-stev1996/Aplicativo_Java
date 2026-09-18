@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:head>
+
+	<h:outputScript library="js" name="util.js"></h:outputScript>
+
+	<h:outputStylesheet name="css/layout-lightblue.css"
+		library="serenity-layout" />
+
+	<style type="text/css">
+body {
+	font-size: 12px;
+	width: 100%
+}
+
+div.ui-dialog-footer span .ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-only.green-btn,
+	div.ui-dialog-footer span .ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-icon-left.green-btn
+	{
+	background-color: #4CAF50 !important;
+	color: #ffffff !important;
+}
+
+div.ui-dialog-footer span .ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-only.red-btn,
+	div.ui-dialog-footer span .ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-icon-left.red-btn
+	{
+	background-color: #ed1515!important;
+	color: #ffffff !important;
+}
+
+table.companyHeaderGrid.ui-panelgrid>tbody>tr {
+	border-color: white;
+	margin: 0 auto;
+}
+
+table.companyHeaderGrid.ui-panelgrid.ui-panelgrid-content.ui-grid>tbody>tr
+	{
+	border-color: white;
+}
+
+div.companyHeaderGrid div.ui-panelgrid-content.ui-widget-content.ui-grid.ui-grid-responsive
+	{
+	border: 0;
+}
+
+body .ui-toolbar {
+	padding: 1px;
+}
+
+body .ui-dialog .ui-dialog-titlebar {
+	background-color: #0288D1;
+}
+
+.ui-datatable thead th, .ui-datatable tfoot td {
+	vertical-align: top;
+}
+
+.ui-datatable thead th>* {
+	font-size: 11px
+}
+
+.alingRight {
+	text-align: right;
+}
+
+.alingLeft {
+	text-align: left;
+}
+
+.columnStyle {
+	text-align: center;
+}
+
+body .ui-tabs .ui-tabs-nav>li.ui-state-default a {
+	background: #d8f1ff;
+	border-radius: 10px 10px 0px 0px;
+}
+
+tr.ui-widget-content.ui-datatable-empty-message {
+	font-size: 20px;
+	color: red;
+	text-align: center;
+}
+
+.column150 {
+	width: 150px;
+}
+
+.column200 {
+	width: 200px;
+}
+
+.btn-flotante {
+	display: block;
+	width: 70px;
+	height: 70px;
+	color: #fff;
+	position: fixed;
+	bottom: 20px;
+	border-radius: 50%;
+	line-height: 80px;
+	text-align: center;
+	z-index: 999;
+}
+</style>
+
+
+	<script type="text/javascript">
+
+
+</script>
+
+</h:head>
+<h:body>
+	<p:ajaxStatus onstart="PF('statusDialog').show()"
+		onsuccess="PF('statusDialog').hide()"
+		onerror="PF('statusDialog').hide()" />
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+		closable="false" resizable="false" showHeader="false">
+		<h:graphicImage value="/common/imgs/gifs/ajaxloadingbar.gif" />
+	</p:dialog>
+	<p:growl id="idGrowl" globalOnly="true" autoUpdate="true"
+		widgetVar="groMessages" showDetail="true" sticky="true" />
+
+	<h:form>
+		<p:toolbar id="idTlbBotones" styleClass="toolbarStyle">
+			<f:facet name="left">
+				<i class="fa fa-file-text-o fa-lg"></i>
+				<b><p:outputLabel style="font-size: 15px;"
+						value=" COMPROBANTES EXTERNOS" /></b>
+			</f:facet>
+			<f:facet name="right">
+				<p:commandButton id="idCBConsultar" value="Consultar"
+					disabled="#{cxcComprobantesElectronicosController.fechaCierre == null 
+								and cxcComprobantesElectronicosController.agenciaSelect == null }"
+					icon="fa fa-search" styleClass="green-btn"
+					actionListener="#{cxcComprobantesElectronicosController.consultar}"
+					partialSubmit="true" process="@this"
+					update=":#{p:component('idTVConsulta')} :#{p:component('idPGBotomsCerrarCaja')}">
+				</p:commandButton>
+				<p:commandButton id="idCBLimpiar" value="Limpiar"
+					partialSubmit="true" icon="fa fa-trash" styleClass="cyan-btn"
+					update="@form"
+					actionListener="#{cxcComprobantesElectronicosController.limpiar}">
+				</p:commandButton>
+			</f:facet>
+		</p:toolbar>
+
+		<p:panelGrid id="idpgPanelbusqueda" columns="6" layout="grid">
+
+			<p:outputLabel value="FECHA:"></p:outputLabel>
+			<p:calendar
+				value="#{cxcComprobantesElectronicosController.fechaCierre}"
+				pattern="dd/MM/yyyy">
+				<p:ajax event="dateSelect"
+					listener="#{cxcComprobantesElectronicosController.listarAgencias}"
+					partialSubmit="true" process="@this"
+					update=":#{p:component('idpgPanelbusqueda')}"></p:ajax>
+			</p:calendar>
+
+			<p:outputLabel value="AGENCIA:"></p:outputLabel>
+			<p:selectOneMenu
+				value="#{cxcComprobantesElectronicosController.agenciaSelect}">
+				<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+				<f:selectItems
+					value="#{cxcComprobantesElectronicosController.lagencias}"></f:selectItems>
+				<p:ajax partialSubmit="true" process="@this"
+					listener="#{cxcComprobantesElectronicosController.listarUsuarios}"
+					update=":#{p:component('idpgPanelbusqueda')} :#{p:component('idCBConsultar')}"></p:ajax>
+			</p:selectOneMenu>
+
+			<p:outputLabel
+				rendered="#{!cxcComprobantesElectronicosController.tabSelect.equals('TAB3')}"
+				value="USUARIO:"></p:outputLabel>
+			<p:selectOneMenu
+				rendered="#{!cxcComprobantesElectronicosController.tabSelect.equals('TAB3')}"
+				value="#{cxcComprobantesElectronicosController.usuarioSelect}">
+				<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+				<f:selectItems
+					value="#{cxcComprobantesElectronicosController.lusuarios}"></f:selectItems>
+				<p:ajax partialSubmit="true" process="@this"
+					update=":#{p:component('idCBConsultar')}"></p:ajax>
+			</p:selectOneMenu>
+
+		</p:panelGrid>
+
+		<p:tabView id="idTVConsulta">
+
+			<p:ajax event="tabChange" partialSubmit="true"
+				update=":#{p:component('idTVConsulta')} :#{p:component('idpgPanelbusqueda')}"
+				listener="#{cxcComprobantesElectronicosController.onTabChange}" />
+
+			<p:tab id="tab1" title="Cerrar Caja">
+				<p:dataTable id="idDtCierreCaja"
+					value="#{cxcComprobantesElectronicosController.lcomprobantes}"
+					var="item" style="font-size: 10px;" rowIndexVar="row">
+					<p:column width="18" styleClass="columnStyle">
+						<p:outputLabel value="#{row+1}"></p:outputLabel>
+					</p:column>
+
+					<p:column width="18">
+						<f:facet name="header">
+							<p:selectBooleanCheckbox
+								rendered="#{not empty cxcComprobantesElectronicosController.lcomprobantes}"
+								value="#{cxcComprobantesElectronicosController.selectComprobantes}">
+								<p:ajax
+									listener="#{cxcComprobantesElectronicosController.selectAll}"
+									partialSubmit="true" process="@this"
+									update=":#{p:component('idDtCierreCaja')}" />
+							</p:selectBooleanCheckbox>
+						</f:facet>
+						<p:selectBooleanCheckbox value="#{item.seleccionado}">
+						</p:selectBooleanCheckbox>
+					</p:column>
+
+					<p:column headerText="FECHA CARGA" width="60">
+						<h:outputLabel value="#{item.fechaCarga}" />
+					</p:column>
+
+					<p:column headerText="RUTA XML" width="25">
+						<p:commandButton title="Click Para abrir el XML"
+							actionListener="#{cxcComprobantesElectronicosController.seeDocument(item)}"
+							icon="fa fa-file-code-o" styleClass="teal-btn"
+							partialSubmit="true" update=":#{p:component('idDlgDocumentos')}">
+							<f:param name="TIPO_DOC" value="X" />
+						</p:commandButton>
+					</p:column>
+					<p:column headerText="RUTA PDF" width="25">
+						<p:commandButton title="Click Para abrir el PDF"
+							actionListener="#{cxcComprobantesElectronicosController.seeDocument(item)}"
+							icon="fa fa-file-pdf-o" styleClass="red-btn" partialSubmit="true"
+							update=":#{p:component('idDlgDocumentos')}">
+							<f:param name="TIPO_DOC" value="P" />
+						</p:commandButton>
+					</p:column>
+
+					<p:column headerText="USUARIO CARGA" width="50">
+						<h:outputLabel value="#{item.usuarioCarga}" />
+					</p:column>
+
+					<p:column headerText="CLAVE ACCESO" width="142"
+						style="overflow-wrap: break-word;">
+						<h:outputLabel
+							value="#{item.comprobanteElectronicoPK.claveAcceso}" />
+					</p:column>
+
+					<p:column headerText="FECHA RETENCION" width="50">
+						<h:outputLabel value="#{item.fechaDocumento}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputLabel>
+					</p:column>
+
+					<p:column headerText="SERIE RETENCION" width="50">
+						<h:outputLabel
+							value="#{item.establecimiento}-#{item.puntoEmision}" />
+					</p:column>
+
+					<p:column headerText="NUMERO RETENCION" width="50">
+						<h:outputLabel value="#{item.secuencial}" />
+					</p:column>
+
+					<p:column headerText="RAZON SOCIAL" width="150">
+						<h:outputLabel value="#{item.razonSocial}" />
+					</p:column>
+
+					<p:column headerText="NO DOCU" width="50">
+						<h:outputLabel value="#{item.noDocu}" />
+					</p:column>
+
+					<p:column headerText="FECHA" width="60">
+						<h:outputLabel value="#{item.fecha}" />
+					</p:column>
+
+					<p:column headerText="NO FISICO" width="50">
+						<h:outputLabel value="#{item.noFisico}" />
+					</p:column>
+
+					<p:column headerText="CENTRO" width="50">
+						<p:selectOneMenu value="#{item.agencia}" disabled="true">
+							<f:selectItems
+								value="#{cxcComprobantesElectronicosController.lagencias}">
+							</f:selectItems>
+						</p:selectOneMenu>
+					</p:column>
+
+					<p:column headerText="USUARIO" width="55">
+						<h:outputLabel value="#{item.usuario}" />
+					</p:column>
+
+					<p:column headerText="OBSERVACION">
+						<p:inputTextarea value="#{item.observacion}" cols="30" rows="1">
+							<p:ajax event="blur" process="@this" partialSubmit="true"
+								listener="#{cxcComprobantesElectronicosController.actualizarObservacion(item)}" />
+						</p:inputTextarea>
+					</p:column>
+
+				</p:dataTable>
+
+				<h:panelGroup id="idPGBotomsCerrarCaja">
+					<h:panelGroup
+						rendered="#{not empty cxcComprobantesElectronicosController.lcomprobantes}">
+
+						<div class="btn-flotante" style="right: 70px;">
+							<p:tooltip value="Guardar Pre Revision" for="idBtnSavePreReview">
+							</p:tooltip>
+							<p:commandButton id="idBtnSavePreReview"
+								process="@this, #{p:component('idDtCierreCaja')}"
+								actionListener="#{cxcComprobantesElectronicosController.savePreReview}"
+								icon="fa fa-floppy-o fa-5x" styleClass="cyan-btn">
+							</p:commandButton>
+						</div>
+
+						<div class="btn-flotante" style="right: 10px;">
+							<p:tooltip value="Ejecutar Cierre de Caja" for="idBtnCierreCaja">
+							</p:tooltip>
+							<p:commandButton id="idBtnCierreCaja" icon="fa fa-sign-out fa-5x"
+								styleClass="green-btn" partialSubmit="true"
+								process="@this, :#{p:component('idDtCierreCaja')}"
+								actionListener="#{cxcComprobantesElectronicosController.consolidarPreCierre}"
+								update=":#{p:component('idDlgConfirmarCierre')}">
+							</p:commandButton>
+						</div>
+
+					</h:panelGroup>
+				</h:panelGroup>
+			</p:tab>
+			<p:tab id="tab2" title="Cajas Cerradas">
+				<p:dataTable
+					value="#{cxcComprobantesElectronicosController.lcierresCaja}"
+					var="item" rowIndexVar="row" selectionMode="single"
+					rowKey="#{item.id}">
+
+					<p:ajax event="rowSelect"
+						listener="#{cxcComprobantesElectronicosController.viewCloseComprobants}"
+						partialSubmit="true"
+						oncomplete="PF('dlgDocumentosCerrados').show();"
+						update=":#{p:component('idDlgDocumentosCerrados')}" />
+
+					<p:column styleClass="columnStyle">
+						<p:outputLabel value="#{row+1}"></p:outputLabel>
+					</p:column>
+					<p:column headerText="USUARIO CERRO CAJA" styleClass="columnStyle">
+						<p:outputLabel value="#{item.usuarioCierreCaja}"></p:outputLabel>
+					</p:column>
+					<p:column headerText="FECHA CIERRE CAJA" styleClass="columnStyle">
+						<p:outputLabel value="#{item.fechaCierreCaja}">
+							<f:convertDateTime pattern="dd/MM/yyyy"></f:convertDateTime>
+						</p:outputLabel>
+					</p:column>
+					<p:column headerText="USUARIO" styleClass="columnStyle">
+						<p:outputLabel value="#{item.usuarioConsulta}"></p:outputLabel>
+					</p:column>
+					<p:column headerText="VALOR CERRADO" styleClass="alingRight">
+						<p:outputLabel value="#{item.valorRetenido}"></p:outputLabel>
+					</p:column>
+				</p:dataTable>
+			</p:tab>
+
+			<p:tab id="tab3" title="Documentos Pendientes">
+				<p:dataTable
+					value="#{cxcComprobantesElectronicosController.lcomprobantes}"
+					var="item" style="font-size: 10px;" rowIndexVar="row">
+					<p:column width="18" styleClass="columnStyle">
+						<p:outputLabel value="#{row+1}"></p:outputLabel>
+					</p:column>
+
+					<p:column headerText="FECHA CARGA" width="60">
+						<h:outputLabel value="#{item.fechaCarga}" />
+					</p:column>
+
+					<p:column headerText="RUTA XML" width="25">
+						<p:commandButton title="Click Para abrir el XML"
+							actionListener="#{cxcComprobantesElectronicosController.seeDocument(item)}"
+							icon="fa fa-file-code-o" styleClass="teal-btn"
+							partialSubmit="true" update=":#{p:component('idDlgDocumentos')}">
+							<f:param name="TIPO_DOC" value="X" />
+						</p:commandButton>
+					</p:column>
+					<p:column headerText="RUTA PDF" width="25">
+						<p:commandButton title="Click Para abrir el PDF"
+							actionListener="#{cxcComprobantesElectronicosController.seeDocument(item)}"
+							icon="fa fa-file-pdf-o" styleClass="red-btn" partialSubmit="true"
+							update=":#{p:component('idDlgDocumentos')}">
+							<f:param name="TIPO_DOC" value="P" />
+						</p:commandButton>
+					</p:column>
+
+					<p:column headerText="USUARIO CARGA" width="50">
+						<h:outputLabel value="#{item.usuarioCarga}" />
+					</p:column>
+
+					<p:column headerText="CLAVE ACCESO" width="142"
+						style="overflow-wrap: break-word;">
+						<h:outputLabel
+							value="#{item.comprobanteElectronicoPK.claveAcceso}" />
+					</p:column>
+
+					<p:column headerText="FECHA RETENCION" width="50">
+						<h:outputLabel value="#{item.fechaDocumento}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputLabel>
+					</p:column>
+
+					<p:column headerText="SERIE RETENCION" width="50">
+						<h:outputLabel
+							value="#{item.establecimiento}-#{item.puntoEmision}" />
+					</p:column>
+
+					<p:column headerText="NUMERO RETENCION" width="50">
+						<h:outputLabel value="#{item.secuencial}" />
+					</p:column>
+
+					<p:column headerText="RAZON SOCIAL" width="150">
+						<h:outputLabel value="#{item.razonSocial}" />
+					</p:column>
+
+					<p:column headerText="NO DOCU" width="50">
+						<h:outputLabel value="#{item.noDocu}" />
+					</p:column>
+
+					<p:column headerText="FECHA" width="60">
+						<h:outputLabel value="#{item.fecha}" />
+					</p:column>
+
+					<p:column headerText="NO FISICO" width="50">
+						<h:outputLabel value="#{item.noFisico}" />
+					</p:column>
+
+					<p:column headerText="CENTRO" width="50">
+						<p:selectOneMenu value="#{item.agencia}" disabled="true">
+							<f:selectItems
+								value="#{cxcComprobantesElectronicosController.lagencias}">
+							</f:selectItems>
+						</p:selectOneMenu>
+					</p:column>
+
+					<p:column headerText="USUARIO" width="55">
+						<h:outputLabel value="#{item.usuario}" />
+					</p:column>
+
+				</p:dataTable>
+			</p:tab>
+		</p:tabView>
+
+	</h:form>
+
+	<p:dialog id="idDlgConfirmarCierre" widgetVar="wvConfirmarCierre"
+		modal="true" closeOnEscape="true" width="600"
+		header="Verificar Cierre">
+
+		<h:form>
+			<p:dataTable
+				value="#{cxcComprobantesElectronicosController.ltotalImpuestos}"
+				var="item" sortBy="#{1}"
+				emptyMessage="No ha seleccionado ningun comprobante.">
+
+				<p:column headerText="PORCENTAJE1" styleClass="columnStyle">
+					<h:outputLabel value="#{item.porcentajeRetener}%"
+						style="float: left;">
+						<f:convertNumber type="number" pattern="0" />
+					</h:outputLabel>
+				</p:column>
+
+				<p:column headerText="VALOR">
+					<h:outputLabel value="#{item.valorRetenido}" style="float: right;">
+						<f:convertNumber type="currency" currencySymbol="$" />
+					</h:outputLabel>
+				</p:column>
+
+				<p:summaryRow>
+					<p:column style="text-align:right">
+						<h:outputText value="Total:" />
+					</p:column>
+					<p:column>
+						<h:outputText
+							value="#{cxcComprobantesElectronicosController.sumaTotalImpuestos}"
+							style="float: right; font-size: 15px;">
+							<f:convertNumber type="currency" currencySymbol="$" />
+						</h:outputText>
+					</p:column>
+				</p:summaryRow>
+
+			</p:dataTable>
+
+		</h:form>
+		<f:facet name="footer">
+			<p:commandButton icon="fa fa-exclamation-triangle" styleClass="red-btn" style="float: left;"
+				oncomplete="PF('wvDlgDocNoDescargados').show();"
+				value="NO DESCARGADOS"
+				rendered="#{not empty cxcComprobantesElectronicosController.lcomprobantesError}"
+				title="Comprobantes (xml/pdf) no descargados" partialSubmit="true"
+				update=":#{p:component('idDlgDocNoDescargados')}">
+			</p:commandButton>
+
+			<p:commandButton styleClass="green-btn" icon="fa fa-check"
+				value="ACEPTAR"
+				actionListener="#{cxcComprobantesElectronicosController.ejecutarCierre}"
+				partialSubmit="true"
+				process="@this, :#{p:component('idDtCierreCaja')}"
+				update=":#{p:component('idDtCierreCaja')}">
+			</p:commandButton>
+		</f:facet>
+	</p:dialog>
+
+	<p:dialog id="idDlgDocNoDescargados" widgetVar="wvDlgDocNoDescargados"
+		modal="true" closeOnEscape="true" width="700" height="300"
+		header="Documentos electronicos no encontrados en el servidor del Robot">
+		<p:dataTable style="font-size:10px;"
+			value="#{cxcComprobantesElectronicosController.lcomprobantesError}"
+			var="item" rowIndexVar="var">
+			<p:column width="5%">
+				<h:outputLabel value="#{var+1}" />
+			</p:column>
+			<p:column headerText="RAZON SOCIAL" width="30%">
+				<p:outputLabel value="#{item.razonSocial}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="CLAVE ACCESO" width="40%">
+				<p:outputLabel value="#{item.comprobanteElectronicoPK.claveAcceso}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="SERIE" width="10%">
+				<p:outputLabel value="#{item.establecimiento}-#{item.puntoEmision}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="NUMERO RETENCION" width="15%">
+				<p:outputLabel value="#{item.secuencial}"></p:outputLabel>
+			</p:column>
+		</p:dataTable>
+	</p:dialog>
+
+	<p:dialog id="idDlgDocumentos" widgetVar="wvDlgDocumentos" modal="true"
+		closeOnEscape="true"
+		header="#{cxcComprobantesElectronicosController.url}">
+		<h:form>
+
+			<iframe src="#{cxcComprobantesElectronicosController.url}"
+				width="900" height="500" style="font-size: 10px;"></iframe>
+
+		</h:form>
+	</p:dialog>
+
+	<p:dialog id="idDlgDocumentosCerrados" modal="true"
+		closeOnEscape="true" widgetVar="dlgDocumentosCerrados"
+		header="DOCUMENTOS QUE FUERON CERRADAS EN LA CAJA SELECCIONADA">
+		<h:form>
+				<p:dataTable 
+					value="#{cxcComprobantesElectronicosController.lcomprobantes}"
+					var="item" style="font-size: 10px; width:1050px;height:400px" rowIndexVar="row">
+
+					<p:column width="18" styleClass="columnStyle">
+						<p:outputLabel value="#{row+1}"></p:outputLabel>
+					</p:column>
+
+					<p:column headerText="FECHA CARGA" width="60">
+						<h:outputLabel value="#{item.fechaCarga}" />
+					</p:column>
+
+					<p:column headerText="RUTA XML" width="25">
+						<p:commandButton title="Click Para abrir el XML"
+							actionListener="#{cxcComprobantesElectronicosController.seeDocument(item)}"
+							icon="fa fa-file-code-o" styleClass="teal-btn"
+							partialSubmit="true" update=":#{p:component('idDlgDocumentos')}">
+							<f:param name="TIPO_DOC" value="X" />
+						</p:commandButton>
+					</p:column>
+					<p:column headerText="RUTA PDF" width="25">
+						<p:commandButton title="Click Para abrir el PDF"
+							actionListener="#{cxcComprobantesElectronicosController.seeDocument(item)}"
+							icon="fa fa-file-pdf-o" styleClass="red-btn" partialSubmit="true"
+							update=":#{p:component('idDlgDocumentos')}">
+							<f:param name="TIPO_DOC" value="P" />
+						</p:commandButton>
+					</p:column>
+
+					<p:column headerText="USUARIO CARGA" width="50">
+						<h:outputLabel value="#{item.usuarioCarga}" />
+					</p:column>
+
+					<p:column headerText="FECHA RETENCION" width="50">
+						<h:outputLabel value="#{item.fechaDocumento}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputLabel>
+					</p:column>
+
+					<p:column headerText="SERIE RETENCION" width="50">
+						<h:outputLabel
+							value="#{item.establecimiento}-#{item.puntoEmision}" />
+					</p:column>
+
+					<p:column headerText="NUMERO RETENCION" width="50">
+						<h:outputLabel value="#{item.secuencial}" />
+					</p:column>
+
+					<p:column headerText="RAZON SOCIAL" width="150">
+						<h:outputLabel value="#{item.razonSocial}" />
+					</p:column>
+
+					<p:column headerText="NO DOCU" width="50">
+						<h:outputLabel value="#{item.noDocu}" />
+					</p:column>
+
+					<p:column headerText="NO FISICO" width="50">
+						<h:outputLabel value="#{item.noFisico}" />
+					</p:column>
+
+					<p:column headerText="CENTRO" width="50">
+						<p:selectOneMenu value="#{item.agencia}" disabled="true">
+							<f:selectItems
+								value="#{cxcComprobantesElectronicosController.lagencias}">
+							</f:selectItems>
+						</p:selectOneMenu>
+					</p:column>
+
+					<p:column headerText="USUARIO" width="55">
+						<h:outputLabel value="#{item.usuario}" />
+					</p:column>
+
+					<p:column headerText="OBSERVACION" width="100">
+						<p:inputText value="#{item.observacion}">
+							<p:ajax event="blur" process="@this" partialSubmit="true"
+								listener="#{cxcComprobantesElectronicosController.actualizarObservacion(item)}" />
+						</p:inputText>
+					</p:column>
+
+				</p:dataTable>
+		</h:form>
+	</p:dialog>
+</h:body>
+</html>

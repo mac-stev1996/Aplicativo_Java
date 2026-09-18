@@ -1,0 +1,24 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Envio Manual de Recaudacion Diaria
+	</ui:define>
+
+	<ui:define name="buttons">
+		
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form>
+		<h:panelGrid columns="2">
+			<h:outputText value="Enviar Datos"></h:outputText>
+			<p:commandButton value="Enviar" action="#{envioRecaudacionDiariaCtrl.enviarRecaudacionDiaria}"></p:commandButton>
+		</h:panelGrid>
+		</h:form>
+	</ui:define>
+</ui:composition>

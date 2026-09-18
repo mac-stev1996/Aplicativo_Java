@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>Mantenimiento comisiones tarjetas credito</title>
+	<style type="text/css">
+body {
+	font-size: 11px
+}
+
+body .ui-toolbar {
+	padding: 5px
+}
+
+.ui-datatable thead th, .ui-datatable tfoot td {
+	vertical-align: top;
+}
+</style>
+	<h:outputStylesheet name="css/layout-lightblue.css"
+		library="serenity-layout" />
+	<h:outputScript name="js/layout.js" library="serenity-layout" />
+	<h:outputScript name="js/ripple.js" library="serenity-layout" />
+</h:head>
+<h:body>
+	<h:form id="form">
+		<p:ajaxStatus onstart="PF('statusDialog').show()"
+			onsuccess="PF('statusDialog').hide()"
+			onerror="PF('statusDialog').hide()" />
+		<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+			closable="false" resizable="false" showHeader="false">
+			<h:graphicImage value="/common/imgs/gifs/ajaxloadingbar.gif" />
+		</p:dialog>
+		<p:growl id="messages" globalOnly="true" autoUpdate="true"
+			widgetVar="groMessages" showDetail="true" />
+		<p:toolbar>
+			<f:facet name="left">
+				<p:outputLabel value="Mantenimiento comisiones tarjetas de credito"></p:outputLabel>
+			</f:facet>
+			<f:facet name="right">
+				<p:commandButton title="Nueva comision" icon="fa fa-plus-square-o"
+					update="idDialogComision" oncomplete="PF('dialogComision').show();"
+					actionListener="#{comisionesTarjetaCreditoController.crearComision}" />
+			</f:facet>
+		</p:toolbar>
+		<p:dataTable id="dtComisiones" var="comision"
+			value="#{dialogDetComisionesTarjetasController.lazyDataModelComisionesTc}"
+			rowIndexVar="row" rows="10" paginatorPosition="bottom"
+			emptyMessage="No existe comisiones ingresadas"
+			paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+			paginator="true" style="text-align:center" lazy="true"
+			rowKey="#{comision.documento}">
+			<p:column headerText="N°" width="2%">
+				<h:outputText value="#{row+1}" />
+			</p:column>
+			<p:column headerText="Numero Cliente" width="10%">
+				<h:outputText value="#{comision.noCliente}" />
+			</p:column>
+			<p:column headerText="Banco" width="10%">
+				<h:outputText value="#{comision.banco}" />
+			</p:column>
+			<p:column headerText="Cuenta" width="10%">
+				<h:outputText value="#{comision.cuenta}" />
+			</p:column>
+			<p:column headerText="Documento" filterBy="#{comision.documento}"
+				filterStyle="background:#e3e3e3;width:80%" width="20%">
+				<h:outputText value="#{comision.documento}" />
+			</p:column>
+			<p:column headerText="Valor" width="10%">
+				<h:outputText value="#{comision.valor}" />
+			</p:column>
+			<p:column headerText="Estado" filterBy="#{comision.estado}"
+				filterStyle="background:#e3e3e3;width:80%" width="5%">
+				<h:outputText
+					value="#{comision.estado eq 'I'?'Ingresado':'Generado'}" />
+			</p:column>
+			<p:column width="5%">
+				<p:commandButton icon="ui-icon-trash" title="Eliminar Comision" rendered="#{comision.estado eq 'I'}"
+					actionListener="#{comisionesTarjetaCreditoController.eliminarComision(comision)}"
+					update=":#{p:component('dtComisiones')}">
+					<p:confirm header="Confirmación"
+						message="Esta Seguro de eliminar la comision?"
+						icon="ui-icon-alert" />
+				</p:commandButton>
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+					<p:commandButton value="Si" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="No" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+			</p:column>
+		</p:dataTable>
+	</h:form>
+	<p:dialog id="idDialogComision" widgetVar="dialogComision"
+		header="Nueva comision tarjeta de credito" style="position:fixed"
+		closeOnEscape="true" modal="true" closable="true">
+		<h:form id="frmComision">
+			<ui:fragment>
+				<ui:include
+					src="/jsf/mantenimiento/dialogDatosComisionTarjetasCredito.xhtml"></ui:include>
+			</ui:fragment>
+		</h:form>
+	</p:dialog>
+</h:body>
+</html>

@@ -1,0 +1,268 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Solicitudes de Crédito - Empresas
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="idButtons">
+			<p:commandButton icon="fa fa-refresh"
+				actionListener="#{cxcSolicitudCreditoGlobalController.limpiarFiltros}"
+				update="form" process="@this, form"
+				title="Limpiar datos de formulario" />
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+		<style type="text/css">
+body {
+	font-size: 11px !important;
+}
+
+body .ui-datatable.ui-datatable-scrollable thead tr th {
+	font-size: 12px !important;
+}
+
+body .ui-datatable tbody tr td {
+	padding: 2px 3px;
+}
+
+body .ui-widget-content {
+	padding: 4px 4px;
+}
+
+.ui-panelgrid .ui-grid-responsive .ui-panelgrid-cell {
+	padding: 4px 4px;
+}
+
+body .ui-inputfield {
+	font-size: 12px;
+}
+
+.centrado {
+	display: flex;
+	align-items: center;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+	background-color: #ffffff !important;
+}
+
+.ui-dialog .ui-dialog-content {
+	border: 1px solid #d8d8d8 !important;
+}
+</style>
+
+		<h:form id="form">
+			<p:growl id="messages" globalOnly="true" autoUpdate="true"
+				widgetVar="groMessages" showDetail="true" life="5000" />
+				
+			<center>
+			<p:spacer height="5" />
+				<p:panelGrid columns="13" id="idPanelGridParametros" styleClass="txtC">
+					<p:outputLabel value="Empresa" style="width:250px" rendered="cxcSolicitudCreditoGlobalController.aplicaAnalista"/>
+				<p:selectOneMenu rendered="cxcSolicitudCreditoGlobalController.aplicaAnalista"
+						value="#{cxcSolicitudCreditoGlobalController.creditoBusqueda.pk.noCia}"
+						filter="true" filterMatchMode="contains">
+						<f:selectItem itemLabel="TODAS" itemValue="" />
+						<f:selectItems
+							value="#{cxcSolicitudCreditoGlobalController.listCatalogoNomEmpresas}"
+								var="select" itemLabel="#{select.descripcion}"
+										itemValue="#{select.sigla}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Estado" style="width:250px" />
+					<p:selectOneMenu
+						value="#{cxcSolicitudCreditoGlobalController.creditoBusqueda.estado}">
+						<f:selectItem itemLabel="Todos" itemValue="" />	
+						<f:selectItem itemLabel="Enviado" itemValue="E" />					
+						<f:selectItem itemLabel="Aprobado" itemValue="A" />
+						<f:selectItem itemLabel="Negado" itemValue="N" />
+						<f:selectItem itemLabel="Devuelto" itemValue="D" />
+						<f:selectItem itemLabel="En Revisión" itemValue="L" />
+						<f:selectItem itemLabel="Por Confirmar" itemValue="P"/>
+						<f:selectItem itemLabel="Por Aprobar" itemValue="R"/>
+					</p:selectOneMenu>
+					
+					<p:outputLabel value="No Solicitud" style="width:250px" />
+					<p:inputNumber value="#{cxcSolicitudCreditoGlobalController.creditoBusqueda.pk.solicitud}" 
+						decimalPlaces="0" decimalSeparator="" thousandSeparator="" maxlength="10"/>
+
+					<p:outputLabel value="No Cotizacion" style="width:250px" />
+					<p:inputNumber value="#{cxcSolicitudCreditoGlobalController.creditoBusqueda.numeroCotizacion}" 
+						decimalPlaces="0" decimalSeparator="" thousandSeparator="" maxlength="10"/>
+						
+					<p:outputLabel value="Cedula / RUC" style="width:250px" />
+					<p:inputNumber value="#{cxcSolicitudCreditoGlobalController.creditoBusqueda.cedula}" 
+						decimalPlaces="0" decimalSeparator="" thousandSeparator="" maxlength="10"/>
+					
+					<p:outputLabel value="Fecha Desde" />
+					<p:column>
+						<p:calendar navigator="true" effect="fold" value="#{cxcSolicitudCreditoGlobalController.creditoBusqueda.fechaEnviadaDesde}" />
+					</p:column>
+
+					<p:outputLabel value="Fecha Hasta" />
+					<p:column>
+						<p:calendar navigator="true" effect="fold" value="#{cxcSolicitudCreditoGlobalController.creditoBusqueda.fechaEnviadaHasta}" />
+					</p:column>
+
+					<p:commandButton icon="fa fa-search"
+						actionListener="#{cxcSolicitudCreditoGlobalController.buscarSolicitudes}"
+						update="form" process="@this, form" title="Buscar" />
+				</p:panelGrid>
+			</center>
+			<p:spacer height="5" />
+
+			<h:panelGrid id="idPanelTableCxcCreditos">
+				
+				<p:dataTable var="item" value="#{cxcSolicitudCreditoGlobalController.creditos}"
+				filterEvent="blur"
+				emptyMessage="No existen solicitudes de crédito"
+				editMode="cell" widgetVar="idTableGeneral" paginator="true"
+				rows="10" rowIndexVar="var"
+				currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+				rowsPerPageTemplate="10,20,40" 
+				lazy="true" >
+
+					<p:column headerText="Empresa" width="4%">
+						<h:outputText value="#{item.nombreEmpresa}" />
+					</p:column>
+					
+					<p:column headerText="No. Solicitud" styleClass="txtC" width="4%">
+						<h:outputText value="#{item.pk.solicitud}" />
+					</p:column>
+					<p:column headerText="Fecha Solicitud"  styleClass="txtC">
+						<h:outputText value="#{item.fechaEnviada}">
+							<f:convertDateTime pattern="dd/MM/yyyy HH:mm"></f:convertDateTime>
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Asesor / Agencia" styleClass="txtC">
+						<h:outputText value="#{item.nombreVendedor}" />
+						<br />
+						<h:outputText value="#{item.nombreAgencia}"
+							style="font-size: 10px;" />
+					</p:column>
+					<p:column headerText="Cotización"  styleClass="txtC" width="3%">
+						<h:outputText value="#{item.numeroCotizacion}" />
+					</p:column>
+					<p:column headerText="Línea N." width="8%" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+						<h:outputText value="#{item.lineaNegocio}" title="#{item.lineaNegocio}"/>
+					</p:column>
+					<p:column headerText="Financiamiento"  styleClass="txtC">
+						<h:outputText value="#{item.tipoFinanciacion}" />
+					</p:column>
+					<p:column headerText="Fecha Enviada" width="8%" styleClass="txtC">
+						<h:outputText value="#{item.fechaEnviada}">
+							<f:convertDateTime pattern="dd/MM/yyyy HH:mm"></f:convertDateTime>
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Vehículo" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+						<h:outputText value="#{item.vehiculo}"  title="#{item.vehiculo}" />
+					</p:column>
+					<p:column headerText="Cliente" styleClass="txtC" width="15%">
+						<h:outputText value="#{item.nombreCliente}" />
+						<br />
+						<h:outputText value=" #{item.cedula}"
+							style="font-size: 10px;" />
+					</p:column>
+					<p:column headerText="Estado"  styleClass="txtC" width="3%">
+						<h:outputText value="#{item.nombreEstado}" />
+					</p:column>
+					<p:column headerText="Analista"  styleClass="txtC">
+					<h:outputText value="#{item.usuarioRevision}" />
+						<br />
+						<h:outputText value="#{item.fechaUsuarioRevision}" style="font-size: 10px;" >
+							<f:convertDateTime pattern="dd/MM/yyyy HH:mm"></f:convertDateTime>
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Fecha Entrega"  styleClass="txtC">
+						<h:outputText value="#{item.fechaEntrega}">
+							<f:convertDateTime pattern="dd/MM/yyyy HH:mm"></f:convertDateTime>
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Puesto"  styleClass="txtC" width="2%">
+						<h:outputText value="#{item.puesto}" />
+					</p:column>
+					
+					<p:column headerText="Acciones" width="5%" styleClass="txtC">
+						<p:commandLink title="Asignar a Analista" process="@this"
+							partialSubmit="true" id="idAsignar"
+							rendered="#{item.estado eq 'E'}"
+							action="#{cxcSolicitudCreditoGlobalController.cargarAnalistas(item)}"
+						 
+							update="dialogAnalistas">
+							<i class="fa fa-user-plus fa-lg" />
+						</p:commandLink>
+						<p:commandLink title="Por confirmar" process="@this"
+							partialSubmit="true" id="idPorConfirmar"
+							rendered="#{item.estado eq 'L'}"
+							action="#{cxcSolicitudCreditoGlobalController.cambiarEstadoConfirmar(item)}"
+							update="dialogObservacion">
+							<i class="fa fa-pause-circle-o fa-lg" />
+						</p:commandLink>
+					</p:column>
+				</p:dataTable>
+			</h:panelGrid>
+		</h:form>
+		
+		<!-- DIALOGO DE USUARIOS -->
+		<p:dialog id="dialogAnalistas" widgetVar="dialogAnalistas"
+			header="Asignar Solicitud a Analistas" style="position:fixed"
+			responsive="true" closeOnEscape="true" modal="true"
+			appendTo="@(body)" width="450" >
+			<h:form>
+				<p:spacer height="10" />
+				<h:panelGrid id="idPanelAnalistaTable">
+					<p:dataTable id="idAnalistasTable"
+						value="#{cxcSolicitudCreditoGlobalController.analistas}"
+						var="item" rowIndexVar="var" reflow="true" paginator="true"
+						rows="15" paginatorPosition="bottom"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+
+						<p:column headerText="Usuario" width="25%" styleClass="txtC">
+							<p:commandLink value="#{item.pk.usuario}"
+								actionListener="#{cxcSolicitudCreditoGlobalController.seleccionarAnalista(item)}"
+								 update="form" />
+						</p:column>
+						<p:column headerText="Nombre" filterBy="#{item.nombre}"
+							styleClass="txtC" filterStyle="background:#e3e3e3;width:80%"
+							filterMatchMode="contains">
+							<h:outputText value="#{item.nombre}" />
+						</p:column>
+					</p:dataTable>
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+		
+		<!-- DIALOGO DE OBSERVACION -->
+		<p:dialog id="dialogObservacion" widgetVar="dialogObservacion"
+			header="Observación de solicitud" style="position:fixed"
+			responsive="true" closeOnEscape="true" modal="true"
+			appendTo="@(body)" width="500" >
+			<h:form id="idFormObservacion">
+				<h:panelGrid columns="2" columnClasses="w30, w70">
+					<p:outputLabel value="Observación:" style="font-weight: bold;" />
+					<p:inputTextarea style="width:400px"
+						maxlength="400"
+						value="#{cxcSolicitudCreditoGlobalController.creditoSeleccionado.observacion}">
+					</p:inputTextarea>
+				</h:panelGrid>
+				<br />
+				<center>
+					<p:commandButton value="Guardar" icon="fa fa-save"
+						actionListener="#{cxcSolicitudCreditoGlobalController.guardarObservacion}"
+						partialSubmit="true"
+						process="@this :#{p:component('idFormObservacion')}"
+						update=":form" />
+				</center>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

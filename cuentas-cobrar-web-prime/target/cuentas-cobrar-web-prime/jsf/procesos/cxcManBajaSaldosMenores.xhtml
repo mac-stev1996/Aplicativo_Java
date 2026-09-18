@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+	<ui:define name="title">
+		Baja de Saldos Menores 
+	</ui:define>
+	<ui:define name="buttons">
+		<h:form id="frmButtons">
+			<p:commandButton  value="Limpiar"  alt="Limpiar"
+				icon="fa fa-eraser" id="limPro" immediate="true"
+				actionListener="#{cxcManBajaSaldosController.limpiarDatos}"
+				process="@this,idForm" styleClass="blue-btn"
+				style="text-align:right;" update="idForm" />
+			<p:commandButton title="Procesar" value="Procesar" alt="Nuevo"
+				icon="fa fa-file-o" id="bajaPro" immediate="true"
+				actionListener="#{cxcManBajaSaldosController.agregar}"
+				process="@this,idForm" styleClass="green-btn"
+				style="text-align:right;" update="idForm" />
+			<p:commandButton id="idConta" value="Contabilizar" icon="fa fa-save"
+				immediate="true"
+				actionListener="#{cxcManBajaSaldosController.procesarConta}"
+				styleClass="green-btn" style="text-align:right;" update=":idForm"
+				process="@this,:idForm ">
+			</p:commandButton>
+			<p:commandButton id="idExcel" value="Reporte"
+				icon="fa fa-file-excel-o" immediate="true"
+				actionListener="#{cxcManBajaSaldosController.excel}"
+				styleClass="green-btn" style="text-align:right;"
+				process="@this,idForm">
+			</p:commandButton>
+			<p:commandButton id="idBuscar" value="Consultar"
+				icon="ui-icon-search" immediate="true"
+				actionListener="#{cxcManBajaSaldosController.detalleConsulta}"
+				styleClass="blue-btn" style="text-align:right;"
+				process="@this,idForm">
+			</p:commandButton>
+
+
+
+
+		</h:form>
+	</ui:define>
+	<ui:define name="content">
+		<h:form id="idForm">
+
+			<p:panel>
+				<center>
+					<h:panelGrid columns="2">
+						<p:outputLabel value="Tipo proceso:"
+							style="font-size: 14px; font-weight: bold;" />
+						<p:selectOneRadio
+							value="#{cxcManBajaSaldosController.tipoProceso}"
+							style="font-size: 14px;">
+							<f:selectItem itemLabel="Saldos a favor" itemValue="AN" />
+							<f:selectItem itemLabel="Cuentas por cobrar" itemValue="CC" />
+							<p:ajax event="change"
+								listener="#{cxcManBajaSaldosController.limpiarDatos}"
+								process="@this" partialSubmit="true" update="idForm" />
+						</p:selectOneRadio>
+					</h:panelGrid>
+				</center>
+			</p:panel>
+			<ui:fragment>
+				<ui:include src="./cxcPrincipalBajaSaldos.xhtml" />
+			</ui:fragment>
+		</h:form>
+	</ui:define>
+</ui:composition>

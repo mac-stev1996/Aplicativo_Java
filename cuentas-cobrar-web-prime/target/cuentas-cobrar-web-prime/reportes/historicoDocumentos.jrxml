@@ -1,0 +1,615 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="historicoDocumentos" language="groovy" pageWidth="750" pageHeight="842" columnWidth="710" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5346895d-2eb2-4cbe-be14-0cbf8f102b7d">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="historicoDocumentos" uuid="f02ac5d8-542a-4a0e-8348-76daf3d022cb">
+		<parameter name="p_no_cliente" class="java.lang.Long"/>
+		<parameter name="p_no_cia" class="java.lang.String"/>
+		<parameter name="p_linea_negocio" class="java.lang.String"/>
+		<parameter name="p_tipo_doc" class="java.lang.String"/>
+		<parameter name="p_anulados" class="java.lang.String"/>
+		<parameter name="p_documento" class="java.lang.String"/>
+		<parameter name="p_fecha_inicio" class="java.util.Date"/>
+		<parameter name="p_fecha_fin" class="java.util.Date"/>
+		<parameter name="p_sql_adicional0" class="java.lang.String"/>
+		<parameter name="p_sql_adicional1" class="java.lang.String"/>
+		<queryString>
+			<![CDATA[select centro,no_fisico,serie_fisico,cant_prorrogas,tipo_doc,saldo,fecha,
+decode($P{p_documento},2,CXC_GENERAL_PCK.obt_monto_original($P{p_no_cia},$P{p_no_cliente},centro,no_fisico,serie_fisico,cant_prorrogas,fecha),m_original) monto_original,
+tipo_mov,CONTADO,anulado,incobrable,decode(tipo_mov,'C',CXC_GENERAL_PCK.obt_no_pedido($P{p_no_cia},centro,no_fisico,serie_fisico),null) no_pedido
+from (
+SELECT centro,no_fisico,serie_fisico,cant_prorrogas,tipo_doc,
+		sum(saldo) SALDO,trunc(FECHA) fecha,sum(m_original) m_original,
+		(select tipo_mov from arcctd  where no_cia =$P{p_no_cia}  and tipo = a.tipo_doc) tipo_mov,
+		null CONTADO,anulado,decode(incobrable,'1','I','2','IV') incobrable,
+		nvl(moneda_id,'D') moneda_id , 2 DOCUMENTO
+		 from arccmd_all_view a
+		 where no_cia =$P{p_no_cia}
+		 and no_cliente = $P{p_no_cliente}
+		 and serie_fisico like $P{p_linea_negocio}
+		 and tipo_DOC LIKE $P{p_tipo_doc}
+         and nvl(anulado,'N') LIKE $P{p_anulados}
+         and trunc(fecha) >=trunc($P{p_fecha_inicio})
+         and trunc(fecha) <=trunc($P{p_fecha_fin})
+         $P!{p_sql_adicional0}
+          group by trunc(FECHA),nvl(comentario, observacion),usuario_solicita,
+          centro,serie_fisico,no_fisico,cant_prorrogas,tipo_doc,
+          anulado,incobrable, negocio_id, nvl(moneda_id,'D')
+
+          union all
+
+          SELECT a.centrod,a.no_fisico,a.serie_fisico,a.cant_prorrogas,
+		a.tipo_doc,a.saldo_factura SALDO,a.FECHA,a.TOTAL m_original,
+		(select tipo_mov from arcctd  where no_cia =a.no_cia  and tipo = a.tipo_doc) tipo_mov,'CON',a.ind_anu_dev anulado,null,
+		nvl(moneda_id,'D') moneda_id ,1 DOCUMENTO
+		 from fac_ventas_cab a, fac_documentos b
+		 where a.no_cia =$P{p_no_cia}
+		 and a.tipo_doc <> 'NC'
+		 and a.no_cliente = $P{p_no_cliente}
+		 and a.serie_fisico like $P{p_linea_negocio}
+		 and a.tipo_DOC LIKE $P{p_tipo_doc}
+		 and nvl(a.saldo_factura,0) = 0
+         and trunc(a.fecha) >=trunc($P{p_fecha_inicio})
+         and trunc(a.fecha) <=trunc($P{p_fecha_fin})
+         and nvl(a.ind_anu_dev,'N') LIKE $P{p_anulados}
+         and a.no_cia = b.no_cia
+         and a.tipo_doc = b.tipo
+
+         union all
+
+         SELECT centrod,no_fisico,nvl(serie_fisico,'1'),cant_prorrogas,
+		tipo_doc,saldo_factura SALDO,FECHA,total m_original,
+		(select tipo_mov from arcctd  where no_cia =a.no_cia  and tipo = a.tipo_doc) tipo_mov,'CON', ind_anu_dev anulado,null,
+		nvl(moneda_id,'D') moneda_id , 1 DOCUMENTO
+		 from fac_ventas_cab a
+		 where no_cia =$P{p_no_cia}
+		 and nvl(serie_fisico,'1') = '1'
+		 and no_cliente = $P{p_no_cliente}
+		 and serie_fisico like $P{p_linea_negocio}
+		 and tipo_doc = 'FAN'
+         and trunc(fecha) >=trunc($P{p_fecha_inicio})
+         and trunc(fecha) <=trunc($P{p_fecha_fin})
+         and nvl(ind_anu_dev,'N') LIKE '')x
+         WHERE 1=1
+         $P!{p_sql_adicional1}
+          ORDER BY serie_fisico,NO_FISICO]]>
+		</queryString>
+		<field name="CENTRO" class="java.lang.String"/>
+		<field name="NO_FISICO" class="java.lang.String"/>
+		<field name="SERIE_FISICO" class="java.lang.String"/>
+		<field name="CANT_PRORROGAS" class="java.math.BigDecimal"/>
+		<field name="TIPO_DOC" class="java.lang.String"/>
+		<field name="SALDO" class="java.math.BigDecimal"/>
+		<field name="FECHA" class="java.sql.Timestamp"/>
+		<field name="MONTO_ORIGINAL" class="java.math.BigDecimal"/>
+		<field name="TIPO_MOV" class="java.lang.String"/>
+		<field name="CONTADO" class="java.lang.String"/>
+		<field name="ANULADO" class="java.lang.String"/>
+		<field name="INCOBRABLE" class="java.lang.String"/>
+		<field name="NO_PEDIDO" class="java.lang.String"/>
+		<variable name="total_saldo" class="java.lang.Number" calculation="Sum">
+			<variableExpression><![CDATA[$F{SALDO}]]></variableExpression>
+		</variable>
+		<variable name="total_m_original" class="java.lang.Number" calculation="Sum">
+			<variableExpression><![CDATA[$F{MONTO_ORIGINAL}]]></variableExpression>
+		</variable>
+	</subDataset>
+	<parameter name="p_no_cia" class="java.lang.String"/>
+	<parameter name="p_nombre_empresa" class="java.lang.String"/>
+	<parameter name="p_usuario" class="java.lang.String"/>
+	<parameter name="p_no_cliente" class="java.lang.Long"/>
+	<parameter name="p_linea_negocio" class="java.lang.String"/>
+	<parameter name="p_tipo_doc" class="java.lang.String"/>
+	<parameter name="p_anulados" class="java.lang.String"/>
+	<parameter name="p_documento" class="java.lang.String"/>
+	<parameter name="p_fecha_inicio" class="java.util.Date"/>
+	<parameter name="p_fecha_fin" class="java.util.Date"/>
+	<parameter name="p_sql_adicional0" class="java.lang.String"/>
+	<parameter name="p_sql_adicional1" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select  b.cedula,substr(b.nombre,1,30) nombre
+from arccmc b
+where no_cia = $P{p_no_cia}
+and grupo  = '01' and no_cliente = $P{p_no_cliente}]]>
+	</queryString>
+	<field name="CEDULA" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="72" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="528e8fbe-27dd-45a6-91f8-41f15851c75c" x="160" y="32" width="362" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[HISTORICO DE DOCUMENTOS]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="e32f5de2-af41-43e7-8a9f-e3e0f890e8e1" x="565" y="32" width="131" height="20"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_usuario}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="5221dca2-8890-4b5b-8dad-28640f467368" x="160" y="12" width="362" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_nombre_empresa}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="2eca62a6-5e8c-40f5-9337-f2c19763a174" x="565" y="52" width="131" height="20"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss").format(new Date())]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="60" splitType="Stretch">
+			<textField>
+				<reportElement uuid="a454e234-08fb-4203-a787-6f85a2206e6e" x="284" y="0" width="362" height="20"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="6c2d1ac2-dac5-470a-9374-41c48c38d136" x="110" y="0" width="49" height="20"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cliente:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="fab3aa56-9141-42a3-982e-49516b30f79c" x="110" y="20" width="49" height="20"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Linea:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="062a5755-750c-4892-9265-84254977d8c9" x="159" y="0" width="125" height="20"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CEDULA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="e3697423-0b3d-4ff6-ab9b-1e1088b7c55a" x="159" y="20" width="41" height="20"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_linea_negocio}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="6755cefc-60ea-483a-b193-1c45cdc5f1eb" x="110" y="40" width="50" height="20"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tipo Doc:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="8c92f506-83b1-4fc7-8708-9b985c764838" x="160" y="40" width="100" height="20"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_tipo_doc}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="50">
+			<componentElement>
+				<reportElement uuid="55f604cd-48a9-4417-8fbf-83cca47bb80f" key="table 3" x="0" y="0" width="710" height="50"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="historicoDocumentos" uuid="d0798550-6e7c-493c-8437-3f082666f82b">
+						<datasetParameter name="p_no_cliente">
+							<datasetParameterExpression><![CDATA[$P{p_no_cliente}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="p_no_cia">
+							<datasetParameterExpression><![CDATA[$P{p_no_cia}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="p_linea_negocio">
+							<datasetParameterExpression><![CDATA[$P{p_linea_negocio}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="p_tipo_doc">
+							<datasetParameterExpression><![CDATA[$P{p_tipo_doc}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="p_anulados">
+							<datasetParameterExpression><![CDATA[$P{p_anulados}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="p_documento">
+							<datasetParameterExpression><![CDATA[$P{p_documento}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="p_fecha_inicio">
+							<datasetParameterExpression><![CDATA[$P{p_fecha_inicio}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="p_fecha_fin">
+							<datasetParameterExpression><![CDATA[$P{p_fecha_fin}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="p_sql_adicional0">
+							<datasetParameterExpression><![CDATA[$P{p_sql_adicional0}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="p_sql_adicional1">
+							<datasetParameterExpression><![CDATA[$P{p_sql_adicional1}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column uuid="54d8f7b7-7929-473d-8a7d-1baf89dac8c4" width="51">
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement uuid="abafecc4-621b-4cd0-973f-2efd6ed43b22" mode="Opaque" x="0" y="0" width="51" height="16"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Centro]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="16" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement uuid="6aa62f1b-6857-4602-956c-2f2864fe6190" mode="Opaque" x="0" y="0" width="51" height="16"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{CENTRO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column uuid="2da15252-c8f1-4f69-806a-3d21989d88f5" width="71">
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement uuid="a8bb4298-ca43-4d20-8b0b-37198f6a5974" mode="Opaque" x="0" y="0" width="71" height="16"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Comprobante]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="16" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement uuid="ad921e76-4b19-400f-81f0-4bf33d163268" mode="Opaque" x="0" y="0" width="71" height="16"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{NO_FISICO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column uuid="e2e82e81-ea1d-4a93-8cd1-43dcf8e125e8" width="57">
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement uuid="1aa6b38b-98dd-4f1b-9635-fc63ab86431e" mode="Opaque" x="0" y="0" width="57" height="16"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Serie Fisico]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="16" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement uuid="dafff0d2-301d-4b56-9036-e957b30d1acc" mode="Opaque" x="0" y="0" width="57" height="16"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{SERIE_FISICO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column uuid="c7bd5d14-5470-46ec-9768-fff2b494efca" width="29">
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement uuid="1da92f42-83f5-465c-a5e4-2d955b6066c0" mode="Opaque" x="0" y="0" width="29" height="16"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Sec]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="16" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement uuid="58235d42-7ded-452e-a328-6ed49b7ab6cc" mode="Opaque" x="0" y="0" width="29" height="16"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{CANT_PRORROGAS}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column uuid="9c9c62fb-5e3e-41d8-87d8-a0f3538f6241" width="46">
+						<jr:tableFooter height="17" rowSpan="1">
+							<staticText>
+								<reportElement uuid="e085df6b-897d-4473-8582-bf3cf137a20d" mode="Opaque" x="0" y="0" width="46" height="16"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Total:]]></text>
+							</staticText>
+						</jr:tableFooter>
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement uuid="f741eba6-0ae9-475a-8a20-41de7ca4f91d" mode="Opaque" x="0" y="0" width="46" height="16"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Tipo Doc]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="16" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement uuid="1978d93e-b74d-4e5a-8856-0be358f43e06" mode="Opaque" x="0" y="0" width="46" height="16"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{TIPO_DOC}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column uuid="7839ec9a-3c24-4520-8502-220fd9ae42d1" width="70">
+						<jr:tableFooter height="17" rowSpan="1">
+							<textField pattern="#,##0.00">
+								<reportElement uuid="53b87234-245e-4ad8-a538-9fd9b9b5e0a5" mode="Opaque" x="0" y="0" width="70" height="16"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{total_saldo}]]></textFieldExpression>
+							</textField>
+						</jr:tableFooter>
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement uuid="858ccd07-292b-4eae-b866-9c065f28b9cc" mode="Opaque" x="0" y="0" width="70" height="16"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Saldo]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="16" rowSpan="1">
+							<textField pattern="#,##0.00" isBlankWhenNull="true">
+								<reportElement uuid="b7ed1513-002c-4e6b-8ac1-7dafa953f80e" mode="Opaque" x="0" y="0" width="70" height="16"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{SALDO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column uuid="e0b396a5-7bc9-481f-bcc8-0d5ce16144f9" width="58">
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement uuid="1916bd29-b51c-41f9-a30c-e41324758c5a" mode="Opaque" x="0" y="0" width="58" height="16"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Fecha]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="16" rowSpan="1">
+							<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+								<reportElement uuid="cd64371a-e7ac-40cd-825d-a9c0dd258d1e" mode="Opaque" x="0" y="0" width="58" height="16"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column uuid="be778459-9d6f-444c-a5ff-2f279b3a8114" width="71">
+						<jr:tableFooter height="17" rowSpan="1">
+							<textField pattern="#,##0.00">
+								<reportElement uuid="b63880ce-39bd-487c-ade9-6b269e155e6c" mode="Opaque" x="0" y="0" width="71" height="16"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{total_m_original}]]></textFieldExpression>
+							</textField>
+						</jr:tableFooter>
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement uuid="1cfa400e-6f64-4905-a2f8-1a3bc9aaecdb" mode="Opaque" x="0" y="0" width="71" height="16"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[M. Original]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="16" rowSpan="1">
+							<textField pattern="#,##0.00" isBlankWhenNull="true">
+								<reportElement uuid="6b2f6363-4a47-4fd5-b0fb-e6a7325724d3" mode="Opaque" x="0" y="0" width="71" height="16"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{MONTO_ORIGINAL}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column uuid="6c5fef77-b2d1-491e-b07c-1192a5b3a57f" width="27">
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement uuid="70f02ea4-c1b0-4ab5-b191-15235a88dfd0" mode="Opaque" x="0" y="0" width="27" height="16"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Tipo]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="16" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement uuid="1a0b7d27-0ed8-418b-8aa1-076bf5c18ed6" mode="Opaque" x="0" y="0" width="27" height="16"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{TIPO_MOV}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column uuid="9d7beaa2-ab10-4f90-95ca-655b2cdac6aa" width="43">
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement uuid="80b4ea52-6734-47dc-9962-27a67265079c" mode="Opaque" x="0" y="0" width="43" height="16"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Contado]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="16" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement uuid="08522db0-a9e0-4666-927d-e9ccebd9b015" mode="Opaque" x="0" y="0" width="43" height="16"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{CONTADO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column uuid="2f721ef4-b3b4-483b-aff3-52b41eb96e8c" width="34">
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement uuid="3daf839e-6582-4b8f-b33d-bd2990aa6f9f" mode="Opaque" x="0" y="0" width="34" height="16"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Anula]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="16" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement uuid="bf97dc62-46bd-4d03-b7c9-ff752cc8aea1" mode="Opaque" x="0" y="0" width="34" height="16"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{ANULADO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column uuid="2a1e959e-12a0-42de-b3dc-1175547a4fd8" width="60">
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement uuid="2cb1c3a3-e39a-4bfb-a0fe-1332916417a6" mode="Opaque" x="0" y="0" width="60" height="16"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Incobrab.]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="16" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement uuid="b7bd8aff-efdd-434f-b4b6-4505728abccc" mode="Opaque" x="0" y="0" width="60" height="16"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{INCOBRABLE}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column uuid="b1f8a265-1942-4f68-a8b2-5f100bcce375" width="93">
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement uuid="bf116154-05e2-459d-8f6c-d256ee22f84f" mode="Opaque" x="0" y="0" width="93" height="16"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Pedido]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="16" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement uuid="b880bbe4-d8a7-4c58-8fd4-582e9ef4356c" mode="Opaque" x="0" y="0" width="93" height="16"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{NO_PEDIDO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</detail>
+</jasperReport>

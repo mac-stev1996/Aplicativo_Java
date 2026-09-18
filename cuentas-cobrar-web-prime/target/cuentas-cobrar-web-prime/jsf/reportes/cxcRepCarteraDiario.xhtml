@@ -1,0 +1,64 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Reporte Cartera Diario
+	</ui:define>
+
+	<ui:define name="content">
+		<h:body>
+		<h:form id="reportForm" >
+		<p:growl id="messages" globalOnly="true" autoUpdate="true"
+			widgetVar="groMessages" showDetail="true" life="3000" />
+		
+			<p:panel id="botones" style="display: flex; justify-content: center;">
+			
+	  				 	<f:facet name="footer">
+						<center>
+						 <p>Por favor genere Información dando clic en el boton</p>
+							<br />
+							<h:panelGrid columns="2" border="0" id="btnGenRep" 
+								columnClasses="iconCell, iconCell, iconCell" cellpadding="0" >								
+								<p:commandButton ajax="true" value="GENERAR"    action="#{cxcRepDiarioCarteraController.generarProceso()}">
+								</p:commandButton>								
+							</h:panelGrid>
+						</center>
+					</f:facet>   		    
+	  				    
+	  				    
+					<f:facet name="footer">
+						<center>
+						 <p>Por favor seleccione el formato deseado</p>
+							<br />
+							<h:panelGrid columns="2" border="0" id="btnsCompLink"
+								columnClasses="iconCell, iconCell, iconCell" cellpadding="0"
+								cellspacing="0" width="270" 
+								style="text-align:center; background-color: #e6e6e6">
+								<p:commandLink target="_blank" ajax="false" 
+									action="#{cxcRepDiarioCarteraController.generarReporte('excel')}">
+									<h:graphicImage value="/common/imgs/reports/excel.png"
+										style="border:none;align:center;" title="Excel" alt="Excel"
+										width="25" height="25" />
+								</p:commandLink>
+								<p:commandLink target="_blank" ajax="false" 
+									action="#{cxcRepDiarioCarteraController.generarReporte('pdf')}">
+									<h:graphicImage value="/common/imgs/reports/adobe.png"
+										style="border:none" title="Adobe" alt="Adobe" width="25"
+										height="25" />
+								</p:commandLink>
+								<h:outputText value="Excel" styleClass="normal" />
+								<h:outputText value="Pdf" styleClass="normal" />
+							</h:panelGrid>
+						</center>
+					</f:facet>
+				</p:panel>
+		</h:form>
+		</h:body>
+		
+	</ui:define>
+</ui:composition>

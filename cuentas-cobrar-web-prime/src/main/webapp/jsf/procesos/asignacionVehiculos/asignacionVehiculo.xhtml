@@ -1,0 +1,227 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<p:panelGrid columns="1" id="pnlEntregas" width="100%" layout="grid"
+		columnClasses="ui-grid-col-12">
+		<p:panel styleClass="noborder">
+
+			<!-- Tab View -->
+			<p:tabView id="tabViewDatos" style="width: 100%;">
+
+				<!-- Tab 2: Fecha y Hora de Entrega -->
+				<p:tab title="Fecha y hora de entrega">
+					<p:toolbar>
+						<f:facet name="left">
+							<i class="fa fa-edit fa-2x"></i>
+							<p:outputLabel
+								value=" Registro de información de entrega de vehículos "
+								style="font-size: 14px;" />
+						</f:facet>
+
+						<f:facet name="right">
+							<p:commandButton process="@this" styleClass="orange-btn"
+								title="Regresar" icon="fa fa-reply"
+								action="#{cxcAsignacionVehiculosController.regresar}"
+								update=":idForm">
+							</p:commandButton>
+						</f:facet>
+					</p:toolbar>
+					<br />
+					<p:outputPanel>
+						<h:panelGrid columns="4" id="pgDatosEntrega"
+							styleClass="flex-center">
+
+							<p:outputLabel value="No. Cliente: " styleClass="bold"
+								style="width:200px; font-size: 12px; margin-bottom: 20px !important;" />
+							<p:inputText readonly="true" style="width:300px !important"
+								value="#{cxcAsignacionVehiculosController.seguimientoVeh.noCliente}" />
+								
+							<p:outputLabel value="Cedula del Cliente: " styleClass="bold"
+								style="width:200px; font-size: 12px; margin-bottom: 20px !important;" />
+							<p:inputText readonly="true" style="width:300px !important"
+								value="#{cxcAsignacionVehiculosController.seguimientoVeh.cedulaCliente}" />
+
+							<p:outputLabel value="Nombre del Cliente: " styleClass="bold"
+								style="width:200px; font-size: 12px; margin-bottom: 20px !important;" />
+							<p:inputText readonly="true" style="width:300px !important"
+								value="#{cxcAsignacionVehiculosController.seguimientoVeh.nombreCliente}" />
+
+							<p:outputLabel value="Vehiculo: " styleClass="bold"
+								style="width:200px; font-size: 12px; margin-bottom: 20px !important;" />
+							<p:inputText readonly="true" style="width:300px !important"
+								value="#{cxcAsignacionVehiculosController.seguimientoVeh.descripcion}" />
+
+
+							<p:outputLabel value="Placa Vehiculo: " styleClass="bold"
+								style="width:200px; font-size: 12px; margin-bottom: 20px !important;" />
+							<p:inputText readonly="true" style="width:300px !important"
+								value="#{cxcAsignacionVehiculosController.seguimientoVeh.placa}" />
+
+							<p:outputLabel value="Chasis Vehiculo: " styleClass="bold"
+								style="width:200px; font-size: 12px; margin-bottom: 20px !important;" />
+							<p:inputText readonly="true" style="width:300px !important"
+								value="#{cxcAsignacionVehiculosController.seguimientoVeh.chasis}" />
+
+							<p:outputLabel value="Fecha Entrega Vehiculo: " styleClass="bold"
+								style="COLOR:RED; width:200px; font-size: 12px; margin-bottom: 20px !important;" />
+							<p:outputLabel
+								style="width:200px; font-size: 12px; margin-bottom: 20px !important;"
+								value="#{cxcAsignacionVehiculosController.contactoSer.fechaEntregaVeh}">
+								<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+							</p:outputLabel>
+
+							<p:outputLabel value="Asesor Asignado: " styleClass="bold"
+								for="selAsesor"
+								style="COLOR:RED;width:200px; font-size: 12px; margin-bottom: 20px !important;" />
+							<p:selectOneMenu id="selAsesor" required="true"
+								requiredMessage="Debe asignar un asesor para entrega de vehiculo"
+								style="width:200px; font-size: 12px; margin-bottom: 20px !important;"
+								value="#{cxcAsignacionVehiculosController.contactoSer.usuarioEntregaVeh}"
+								filter="true" filterMatchMode="contains" autoWidth="false">
+								<f:selectItem itemLabel="Seleccione Asesor" itemValue=""
+									noSelectionOption="true" />
+								<f:selectItems
+									value="#{cxcAsignacionVehiculosController.listaAsesoresServicio}"
+									var="var" itemLabel="#{var.nombre}" itemValue="#{var.usuarioRela}" />
+							</p:selectOneMenu>
+
+							<p:outputLabel value="Tipo Entrega: " styleClass="bold"
+								for="cmbTipoEntrega" />
+							<p:selectOneMenu id="cmbTipoEntrega" required="true"
+								requiredMessage="Debe seleccionar el tipo de entrega"
+								value="#{cxcAsignacionVehiculosController.contactoSer.tipoEntrega}"
+								filter="true" filterMatchMode="contains">
+								<f:selectItem itemLabel="Seleccione una opción" itemValue=""
+									noSelectionOption="true" />
+								<f:selectItem itemLabel="Agencia Facturacion" itemValue="A" />
+								<f:selectItem itemLabel="Entrega Domicilio" itemValue="D" />
+								<f:selectItem itemLabel="Otra Agencia" itemValue="O" />
+								<p:ajax event="change" process="@this"
+									listener="#{cxcAsignacionVehiculosController.habilitarCmbAgencia}"
+									update="cmbAgencias" />
+							</p:selectOneMenu>
+
+							<p:outputLabel value="Otra Agencia: " styleClass="bold"
+								for="cmbAgencias" />
+							<p:selectOneMenu id="cmbAgencias"
+								disabled="#{!cxcAsignacionVehiculosController.actAgencia}"
+								value="#{cxcAsignacionVehiculosController.contactoSer.centroEntrega}"
+								filter="true" filterMatchMode="contains" autoWidth="false">
+								<f:selectItem itemLabel="Seleccione una agencia" itemValue=""
+									noSelectionOption="true" />
+								<f:selectItems
+									value="#{cxcAsignacionVehiculosController.listaAgencias}"
+									var="ag" itemLabel="#{ag.nombre}"
+									itemValue="#{ag.agenciaPK.codigo}" />
+							</p:selectOneMenu>
+
+						</h:panelGrid>
+
+
+					</p:outputPanel>
+					<center>
+						<p:commandButton value="Guardar"
+							style="width: auto; float: center;" icon="fa fa-save"
+							id="btnAsignarEnt" styleClass="green-btn"
+							disabled="#{cxcAsignacionVehiculosController.contactoSer.estado eq 'C'}"
+							process="@this :idForm:tabViewDatos:pgDatosEntrega"
+							actionListener="#{cxcAsignacionVehiculosController.guardarEntregaVehiculo}"
+							update=":idForm" />
+					</center>
+				</p:tab>
+
+				<!-- Tab 3: Acercamiento al Cliente -->
+				<p:tab title="Acercamiento realizado al cliente">
+					<p:toolbar>
+						<f:facet name="left">
+							<i class="fa fa-edit fa-2x"></i>
+							<p:outputLabel
+								value=" Confirmación Entrega de Información a Clientes "
+								style="font-size: 14px;" />
+						</f:facet>
+							<f:facet name="right">
+							<p:commandButton process="@this" styleClass="orange-btn"
+								title="Regresar" icon="fa fa-reply"
+								action="#{cxcAsignacionVehiculosController.regresar}"
+								update=":idForm">
+							</p:commandButton>
+						</f:facet>
+					</p:toolbar>
+					<br />
+
+					<h:panelGrid columns="4" id="pgInfo" styleClass="flex-center">
+						<p:outputLabel value="Cedula del Cliente: " styleClass="bold"
+							style="width:200px; font-size: 12px; margin-bottom: 20px !important;" />
+						<p:inputText readonly="true" style="width:300px !important"
+							value="#{cxcAsignacionVehiculosController.seguimientoVeh.cedulaCliente}" />
+
+						<p:outputLabel value="Nombre del Cliente: " styleClass="bold"
+							style="width:200px; font-size: 12px; margin-bottom: 20px !important;" />
+						<p:inputText readonly="true" style="width:300px !important"
+							value="#{cxcAsignacionVehiculosController.seguimientoVeh.nombreCliente}" />
+
+						<p:outputLabel value="Vehiculo: " styleClass="bold"
+							style="width:200px; font-size: 12px; margin-bottom: 20px !important;" />
+						<p:inputText readonly="true" style="width:300px !important"
+							value="#{cxcAsignacionVehiculosController.seguimientoVeh.descripcion}" />
+
+						<p:outputLabel value="Placa Vehiculo: " styleClass="bold"
+							style="width:200px; font-size: 12px; margin-bottom: 20px !important;" />
+						<p:inputText readonly="true" style="width:300px !important"
+							value="#{cxcAsignacionVehiculosController.seguimientoVeh.placa}" />
+
+						<p:outputLabel value="Chasis Vehiculo: " styleClass="bold"
+							style="width:200px; font-size: 12px; margin-bottom: 20px !important;" />
+						<p:inputText readonly="true" style="width:300px !important"
+							value="#{cxcAsignacionVehiculosController.seguimientoVeh.chasis}" />
+					</h:panelGrid>
+					<br />
+					<h:panelGrid columns="2" id="pgAcercamiento"
+						styleClass="flex-center">
+
+						<h:outputLabel value="Confirma acercamiento a Cliente:  "
+							styleClass="bold" for="selAcercamiento"
+							style="COLOR:RED; font-size: 12px; margin-bottom: 20px !important;" />
+						<p:selectOneMenu id="selAcercamiento"
+							value="#{cxcAsignacionVehiculosController.contactoSer.opEntrInfoCli}"
+							style="width:200px; font-size: 12px; ">
+							<f:selectItem itemLabel="Seleccione una opcion" itemValue=""
+								noSelectionOption="true" />
+							<f:selectItem itemLabel="SI" itemValue="S" />
+							<f:selectItem itemLabel="NO" itemValue="N" />
+							<f:selectItem itemLabel="NO APLICA" itemValue="O" />
+						</p:selectOneMenu>
+
+						<p:outputLabel value="Comentario: " styleClass="bold"
+							style="COLOR:RED; font-size: 12px; margin-bottom: 20px !important;"
+							for="txtComentario" />
+						<h:panelGroup>
+							<p:inputTextarea id="txtComentario" onkeyup="mayus(this)"
+								maxlength="100" counter="co"
+								style="width:400px;font-size: 12px; margin-bottom: 20px !important;"
+								value="#{cxcAsignacionVehiculosController.contactoSer.observacionEntrInfo}"
+								counterTemplate="{0} caracteres restantes." />
+							<br />
+							<h:outputText id="co" />
+						</h:panelGroup>
+					</h:panelGrid>
+					<center>
+						<p:commandButton value="Confirmar"
+							style="width: auto; float: center;" icon="fa fa-save"
+							id="btnAcercamiento" styleClass="green-btn"
+							disabled="#{cxcAsignacionVehiculosController.contactoSer.estado eq 'C'}"
+							process="@this :idForm:tabViewDatos:selAcercamiento :idForm:tabViewDatos:txtComentario"
+							actionListener="#{cxcAsignacionVehiculosController.confirmarEntregaInformacion}"
+							update=":idForm" />
+					</center>
+				</p:tab>
+			</p:tabView>
+
+		</p:panel>
+	</p:panelGrid>
+
+</ui:composition>

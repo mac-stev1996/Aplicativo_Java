@@ -1,0 +1,660 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Consulta de Contratos Certero
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmButtons">
+			<p:commandButton icon="fa fa-refresh" partialSubmit="true"
+				process="@this, :idForm"
+				actionListener="#{consultaContratosCertController.init}"
+				title="limpiar datos consulta" update="idForm :frmButtons" />
+			<p:commandButton id="btnConsultar" value="Buscar"
+				partialSubmit="true"
+				actionListener="#{consultaContratosCertController.buscarContrato}"
+				process="@this, :idForm" update=":idForm, :frmButtons" />
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+		<style>
+.w25 {
+	width: 25%;
+}
+</style>
+		<script type="text/javascript">
+		function mayus(e) {
+		    e.value = e.value.toUpperCase();
+		}
+	
+	</script>
+		<h:form id="idForm">
+
+			<div class="ui-g dashboard">
+				<div class="ui-g-12 ui-fluid contact-form">
+					<div class="ui-g-6">
+						<h:panelGrid columns="4">
+							<p:outputLabel value="Numero de Contrato: " styleClass="bold" />
+							<p:inputText
+								value="#{consultaContratosCertController.noContrato}" />
+							<p:outputLabel value="Cuotas con Saldo : " styleClass="bold" />
+							<p:selectOneMenu
+								value="#{consultaContratosCertController.aplicaSaldo}">
+								<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+								<f:selectItem itemLabel="Todos" itemValue="T" />
+								<f:selectItem itemLabel="Con Saldo" itemValue="CS" />
+								<f:selectItem itemLabel="Sin Saldo" itemValue="SS" />
+								<p:ajax event="change" global="false" process="@this"></p:ajax>
+							</p:selectOneMenu>
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							<p:outputLabel value="Grupo: " styleClass="bold" />
+							<p:outputLabel
+								value="#{consultaContratosCertController.datosCuota.nombreGrupo}"
+								styleClass="bold" />
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							<p:outputLabel value="Linea Negocio: " styleClass="bold" />
+							<p:outputLabel
+								value="#{consultaContratosCertController.datosCuota.nombreLineaNegocio}"
+								styleClass="bold" />
+						</h:panelGrid>
+					</div>
+				</div>
+
+				<div class="ui-g-12 ui-fluid contact-form">
+					<p:accordionPanel widgetVar="basic" dynamic="true" cache="true"
+						multiple="true">
+						<p:tab title="Tabla de Amortizacion">
+							<p:dataTable id="tblContatos" widgetVar="tblContatos"
+								emptyMessage="No existen registros"
+								value="#{consultaContratosCertController.listadoLetrasContrato}"
+								var="cuota" rowKey="#{cuota.id}" rowIndexVar="var"
+								paginator="true" paginatorAlwaysVisible="false"
+								filterDelay="1000" rows="10" paginatorPosition="bottom"
+								paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+
+								<p:column headerText="Nombre Cliente" width="30%"
+									style="text-align: center;">
+									<p:outputLabel value="#{cuota.nombreCliente}" />
+								</p:column>
+
+								<p:column headerText="Cedula Cliente" width="10%"
+									style="text-align: center;">
+									<p:outputLabel value="#{cuota.cedulaCliente}" />
+								</p:column>
+								<p:column headerText="Tipo Tabla" width="10%"
+									filterBy="#{cuota.tipoDoc}" style="text-align: center;">
+									<p:outputLabel value="#{cuota.tipoDoc}" />
+								</p:column>
+
+								<p:column headerText="Tipo Cuota" width="10%"
+									filterBy="#{cuota.claseDocumento}" style="text-align: center;">
+									<p:outputLabel value="#{cuota.claseDocumento}" />
+								</p:column>
+								<p:column headerText="Numero de Cuota" width="10%"
+									filterBy="#{cuota.noDocuRefe}" style="text-align: center;">
+									<p:outputLabel value="#{cuota.noDocuRefe}" />
+								</p:column>
+
+								<p:column headerText="Monto Original" width="10%"
+									style="text-align: center;">
+									<p:outputLabel value="#{cuota.MOriginal}" />
+								</p:column>
+								<p:column headerText="Saldo" width="7%"
+									style="text-align: center;">
+									<p:outputLabel value="#{cuota.saldo}" />
+								</p:column>
+								<p:column headerText="Valor Facturable" width="7%"
+									style="text-align: center;">
+									<p:outputLabel value="#{cuota.saldoFacturar}" />
+								</p:column>
+
+								<p:column width="5%">
+									<p:commandButton title="Editar" partialSubmit="true"
+										icon="fa fa-pencil-square-o" process="@this,tblContatos"
+										style="margin-top: 0px !important"
+										action="#{consultaContratosCertController.editarCouta(cuota)}"
+										update="editarCuota">
+									</p:commandButton>
+								</p:column>
+								<p:column width="5%">
+									<p:commandButton title="Detalle Cambios" partialSubmit="true"
+										icon="fa fa-list-ul" process="@this,detCambios"
+										style="margin-top: 0px !important"
+										action="#{consultaContratosCertController.consultarCambiosLetra(cuota)}"
+										update="detCambios">
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</p:tab>
+						<p:tab title="Detalle Pagos">
+							<p:dataTable id="tblpagos" widgetVar="tblpagos"
+								emptyMessage="No existen registros"
+								value="#{consultaContratosCertController.listadoCabeceraPagos}"
+								var="pago" rowKey="#{pago.id}" rowIndexVar="var"
+								paginator="true" paginatorAlwaysVisible="false"
+								filterDelay="1000" rows="10" paginatorPosition="bottom"
+								paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+
+								<p:column headerText="Nombre Cliente" width="30%"
+									style="text-align: center;">
+									<p:outputLabel value="#{pago.nombreCliente}" />
+								</p:column>
+
+								<p:column headerText="Cedula Cliente" width="10%"
+									style="text-align: center;">
+									<p:outputLabel value="#{pago.cedulaCliente}" />
+								</p:column>
+
+								<p:column headerText="Efectivo" width="10%"
+									style="text-align: center;">
+									<p:outputLabel value="#{pago.efectivo$}" />
+								</p:column>
+								<p:column headerText="Tarjeta" width="10%"
+									style="text-align: center;">
+									<p:outputLabel value="#{pago.tarjeta$}" />
+								</p:column>
+								<p:column headerText="Anticipo" width="10%"
+									style="text-align: center;">
+									<p:outputLabel
+										value="#{pago.anticipo eq null ? 0 : pago.anticipo}">
+
+									</p:outputLabel>
+								</p:column>
+								<p:column headerText="No Ingreso" width="7%"
+									style="text-align: center;">
+									<p:outputLabel value="#{pago.noFisico}" />
+								</p:column>
+								<p:column headerText="Documento Pago CB" width="7%"
+									style="text-align: center;">
+									<p:outputLabel value="#{pago.id.noDocu}" />
+								</p:column>
+								<p:column headerText="Documento Pago GIF" width="7%"
+									style="text-align: center;">
+									<p:outputLabel value="#{pago.noRefe}" />
+								</p:column>
+								<p:column headerText="Fecha" width="10%"
+									style="text-align: center;">
+									<p:outputLabel value="#{pago.fecha}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</p:outputLabel>
+								</p:column>
+								<p:column width="5%">
+									<p:commandButton title="Detalle Cont." partialSubmit="true"
+										icon="fa fa-list-ul" process="@this, detPago"
+										style="margin-top: 0px !important"
+										action="#{consultaContratosCertController.consultaDetPago(pago)}"
+										update="detPago">
+									</p:commandButton>
+								</p:column>
+								<p:column width="5%">
+									<p:commandButton title="Letras Pagadas" partialSubmit="true"
+										icon="fa fa-list-ul" process="@this, detCuotas"
+										style="margin-top: 0px !important"
+										action="#{consultaContratosCertController.consultaDetCuotas(pago)}"
+										update="detCuotas">
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</p:tab>
+						<p:tab title="Detalle Diarios">
+							<p:dataTable id="tblDiario" widgetVar="tblDiario"
+								emptyMessage="No existen registros"
+								value="#{consultaContratosCertController.listadoCabeceraDiariosA}"
+								var="diario" rowIndexVar="var" paginator="true"
+								paginatorAlwaysVisible="false" filterDelay="1000" rows="10"
+								paginatorPosition="bottom"
+								paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+
+								<p:column headerText="Nombre Cliente" width="30%"
+									style="text-align: center;">
+									<p:outputLabel value="#{diario[8]}" />
+								</p:column>
+
+								<p:column headerText="Cedula Cliente" width="10%"
+									style="text-align: center;">
+									<p:outputLabel value="#{diario[9]}" />
+								</p:column>
+
+								<p:column headerText="Numero Doc." width="10%"
+									style="text-align: center;">
+									<p:outputLabel value="#{diario[6]}" />
+								</p:column>
+								<p:column headerText="Fecha" width="10%"
+									style="text-align: center;">
+									<p:outputLabel value="#{diario[2]}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</p:outputLabel>
+								</p:column>
+								<p:column headerText="Anticipo" width="7%"
+									style="text-align: center;">
+									<p:outputLabel value="#{diario[3]}" />
+								</p:column>
+								<p:column headerText="Valor" width="7%"
+									style="text-align: center;">
+									<p:outputLabel value="#{diario[7]}" />
+								</p:column>
+								<p:column width="5%">
+									<p:commandButton title="Detalle" partialSubmit="true"
+										icon="fa fa-list-ul" process="@this, tblDiario"
+										style="margin-top: 0px !important"
+										action="#{consultaContratosCertController.consultaDetDiario(diario)}"
+										update="detDiario">
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</p:tab>
+						<p:tab title="Facturas">
+							<p:dataTable id="tblFacturas" widgetVar="tblFacturas"
+								emptyMessage="No existen registros"
+								value="#{consultaContratosCertController.listadoCabeceraFacturas}"
+								var="fact" rowKey="#{fact.facVentasCabPK}" rowIndexVar="var"
+								paginator="true" paginatorAlwaysVisible="false"
+								filterDelay="1000" rows="10" paginatorPosition="bottom"
+								paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+								<p:column headerText="Nombre Cliente" width="30%"
+									style="text-align: center;">
+									<p:outputLabel value="#{fact.nbrCliente}" />
+								</p:column>
+
+								<p:column headerText="Cedula Cliente" width="10%"
+									style="text-align: center;">
+									<p:outputLabel value="#{fact.cedula}" />
+								</p:column>
+								<p:column headerText="Tipo Doc" width="10%"
+									style="text-align: center;">
+									<p:outputLabel value="#{fact.facVentasCabPK.tipoDoc}" />
+								</p:column>
+								<p:column headerText="No Cuota" width="10%"
+									style="text-align: center;">
+									<p:outputLabel value="#{fact.numOrden}" />
+								</p:column>
+								<p:column headerText="No Factura" width="10%"
+									style="text-align: center;" filterBy="#{fact.noFisico}">
+									<p:outputLabel value="#{fact.noFisico}" />
+								</p:column>
+								<p:column headerText="Subtotal" width="10%"
+									style="text-align: center;">
+									<p:outputLabel value="#{fact.subTotal}" />
+								</p:column>
+								<p:column headerText="IVA" width="10%"
+									style="text-align: center;">
+									<p:outputLabel value="#{fact.impuesto}" />
+								</p:column>
+								<p:column headerText="Total" width="10%"
+									style="text-align: center;">
+									<p:outputLabel value="#{fact.total}" />
+								</p:column>
+								<p:column headerText="Fecha" width="10%"
+									style="text-align: center;">
+									<p:outputLabel value="#{fact.fecha}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</p:outputLabel>
+								</p:column>
+								<p:column width="5%">
+									<p:commandButton title="Detalle" partialSubmit="true"
+										icon="fa fa-list-ul" process="@this, detFact"
+										style="margin-top: 0px !important"
+										action="#{consultaContratosCertController.consultaDetFact(fact)}"
+										update="detFact">
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</p:tab>
+					</p:accordionPanel>
+				</div>
+
+			</div>
+		</h:form>
+		<p:dialog widgetVar="editarCuota" id="editarCuota"
+			header="Editar Cuota" resizable="true" modal="true" closable="true"
+			appendTo="@(body)" width="570" height="400" closeOnEscape="true">
+			<h:form id="idFrmNuevo">
+				<div class="ui-g dashboard">
+					<div class="ui-g-12 ui-fluid contact-form">
+						<div class="ui-g-12">
+							<div class="ui-g-3">
+								<p:outputLabel value="Tipo Cuota: " style="width:100%" />
+							</div>
+							<div class="ui-g-3">
+								<p:outputLabel
+									value="#{consultaContratosCertController.cuotaEditada.claseDocumento}" />
+							</div>
+							<div class="ui-g-3">
+								<p:outputLabel value="Numero de Cuota: " style="width:100%" />
+							</div>
+							<div class="ui-g-3">
+								<p:inputText
+									value="#{consultaContratosCertController.cuotaEditada.noDocuRefe}"
+									style="width:100%" onkeyup="mayus(this)" autocomplete="off"
+									readonly="true"></p:inputText>
+							</div>
+							<div class="ui-g-12">
+								<div class="ui-g-3">
+									<p:outputLabel value="Monto Original: " style="width:100%" />
+								</div>
+								<div class="ui-g-3">
+									<p:inputText
+										value="#{consultaContratosCertController.cuotaEditada.mOriginal}"
+										style="width:100%" onkeyup="mayus(this)" autocomplete="off"
+										readonly="true"></p:inputText>
+								</div>
+								<div class="ui-g-3">
+									<p:outputLabel value="Saldo: " style="width:100%" />
+								</div>
+								<div class="ui-g-3">
+									<p:inputText
+										value="#{consultaContratosCertController.cuotaEditada.saldo}"
+										style="width:100%" onkeyup="mayus(this)" autocomplete="off"></p:inputText>
+								</div>
+							</div>
+							<div class="ui-g-12">
+								<div class="ui-g-3">
+									<p:outputLabel value="Valor Facturable: " style="width:100%" />
+								</div>
+								<div class="ui-g-3">
+									<p:inputText
+										value="#{consultaContratosCertController.cuotaEditada.saldoFacturar}"
+										style="width:100%" autocomplete="off" readonly="true"></p:inputText>
+								</div>
+							</div>
+							<div class="ui-g-12">
+								<div class="ui-g-3">
+									<p:outputLabel value="Motivo: " style="width:100%" />
+								</div>
+								<div class="ui-g-9">
+									<p:inputTextarea
+										value="#{consultaContratosCertController.comentarioCambio}"
+										onkeyup="mayus(this)">
+									</p:inputTextarea>
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+				<br />
+				<center>
+					<p:commandButton value="Actualizar" partialSubmit="true"
+						process="@this, editarCuota"
+						action="#{consultaContratosCertController.actualizarCouta}"
+						update=":idForm"></p:commandButton>
+				</center>
+			</h:form>
+		</p:dialog>
+		<p:dialog widgetVar="detPago" id="detPago"
+			header="Contabilizacion Pago" resizable="true" modal="true"
+			closable="true" appendTo="@(body)" width="700px" height="350px"
+			closeOnEscape="true">
+			<h:form id="idFrmdetPago">
+				<div class="ui-g dashboard">
+					<div class="ui-g-12 ui-fluid contact-form">
+						<div class="ui-g-12">
+							<p:dataTable id="tblDetPago" widgetVar="tblDetPago"
+								emptyMessage="No existen registros"
+								value="#{consultaContratosCertController.listadoPagos}"
+								var="detPago" rowIndexVar="var" paginator="true"
+								paginatorAlwaysVisible="true" filterDelay="1000" rows="10"
+								paginatorPosition="bottom"
+								paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+								<p:column headerText="Cuenta Contable" width="25%"
+									style="text-align: center;">
+									<p:outputLabel value="#{detPago[7]}" />
+								</p:column>
+								<p:column headerText="Nombre Cuenta" width="30%"
+									style="text-align: center;">
+									<p:outputLabel value="#{detPago[8]}" />
+								</p:column>
+								<p:column headerText="Unidad Admin." width="20%"
+									style="text-align: center;">
+									<p:outputLabel value="#{detPago[9]}" />
+								</p:column>
+								<p:column headerText="Debito" width="12%"
+									style="text-align: center;">
+									<p:outputLabel value="#{detPago[10]}" />
+								</p:column>
+								<p:column headerText="Credito" width="12%"
+									style="text-align: center;">
+									<p:outputLabel value="#{detPago[11]}" />
+								</p:column>
+								<p:column headerText="No asiento" width="10%"
+									style="text-align: center;">
+									<p:outputLabel value="#{detPago[12]}" />
+								</p:column>
+								<p:column headerText="Fecha" width="20%"
+									style="text-align: center;">
+									<p:outputLabel value="#{detPago[5]}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</p:outputLabel>
+								</p:column>
+							</p:dataTable>
+						</div>
+					</div>
+				</div>
+			</h:form>
+		</p:dialog>
+		<p:dialog widgetVar="detCuotas" id="detCuotas"
+			header="Detalle Cuotas Pagadas" resizable="true" modal="true"
+			closable="true" appendTo="@(body)" width="700px" height="350px"
+			closeOnEscape="true">
+			<h:form id="idFrmdetCuotas">
+				<div class="ui-g dashboard">
+					<div class="ui-g-12 ui-fluid contact-form">
+						<div class="ui-g-12">
+							<p:dataTable id="tblDetCuota" widgetVar="tblDetCuota"
+								emptyMessage="No existen registros"
+								value="#{consultaContratosCertController.listadoCuotasPagadas}"
+								var="detCuota" rowIndexVar="var" paginator="true"
+								paginatorAlwaysVisible="true" filterDelay="1000" rows="10"
+								paginatorPosition="bottom"
+								paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+								<p:column headerText="Cuota Numero" width="25%"
+									style="text-align: center;">
+									<p:outputLabel value="#{detCuota[1]}" />
+								</p:column>
+								<p:column headerText="Saldo Anterior" width="30%"
+									style="text-align: center;">
+									<p:outputLabel value="#{detCuota[2]}" />
+								</p:column>
+								<p:column headerText="Total Pagado" width="20%"
+									style="text-align: center;">
+									<p:outputLabel value="#{detCuota[3]}" />
+								</p:column>
+								<p:column headerText="Saldo luego Pago" width="12%"
+									style="text-align: center;">
+									<p:outputLabel value="#{detCuota[4]}" />
+								</p:column>
+							</p:dataTable>
+						</div>
+					</div>
+				</div>
+			</h:form>
+		</p:dialog>
+		<p:dialog widgetVar="detDiario" id="detDiario"
+			header="Contabilizacion Diario" resizable="true" modal="true"
+			closable="true" appendTo="@(body)" width="700px" height="350px"
+			closeOnEscape="true">
+			<h:form id="idFrmDetDiario">
+				<div class="ui-g dashboard">
+					<div class="ui-g-12 ui-fluid contact-form">
+						<div class="ui-g-12">
+							<p:dataTable id="tblDetDiario" widgetVar="tblDetDiario"
+								emptyMessage="No existen registros"
+								value="#{consultaContratosCertController.listadoDiariosA}"
+								var="detDiario" rowIndexVar="var" paginator="true"
+								paginatorAlwaysVisible="true" filterDelay="1000" rows="10"
+								paginatorPosition="bottom"
+								paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+								<p:column headerText="Cuenta Contable" width="25%"
+									style="text-align: center;">
+									<p:outputLabel value="#{detDiario[7]}" />
+								</p:column>
+								<p:column headerText="Nombre Cuenta" width="30%"
+									style="text-align: center;">
+									<p:outputLabel value="#{detDiario[8]}" />
+								</p:column>
+								<p:column headerText="Unidad Admin." width="20%"
+									style="text-align: center;">
+									<p:outputLabel value="#{detDiario[9]}" />
+								</p:column>
+								<p:column headerText="Debito" width="12%"
+									style="text-align: center;">
+									<p:outputLabel value="#{detDiario[10]}" />
+								</p:column>
+								<p:column headerText="Credito" width="12%"
+									style="text-align: center;">
+									<p:outputLabel value="#{detDiario[11]}" />
+								</p:column>
+								<p:column headerText="No asiento" width="10%"
+									style="text-align: center;">
+									<p:outputLabel value="#{detDiario[12]}" />
+								</p:column>
+								<p:column headerText="Fecha" width="20%"
+									style="text-align: center;">
+									<p:outputLabel value="#{detDiario[5]}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</p:outputLabel>
+								</p:column>
+							</p:dataTable>
+						</div>
+					</div>
+				</div>
+			</h:form>
+		</p:dialog>
+		<p:dialog widgetVar="detFact" id="detFact"
+			header="Contabilizacion Facturas" resizable="true" modal="true"
+			closable="true" appendTo="@(body)" width="700px" height="350px"
+			closeOnEscape="true">
+			<h:form id="idFrmDetFact">
+				<div class="ui-g dashboard">
+					<div class="ui-g-12 ui-fluid contact-form">
+						<div class="ui-g-12">
+							<p:dataTable id="tblDetFact" widgetVar="tblDetFact"
+								emptyMessage="No existen registros"
+								value="#{consultaContratosCertController.listadoFacturas}"
+								var="detFact" rowIndexVar="var" paginator="true"
+								paginatorAlwaysVisible="true" filterDelay="1000" rows="10"
+								paginatorPosition="bottom"
+								paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+								<p:column headerText="Cuenta Contable" width="25%"
+									style="text-align: center;">
+									<p:outputLabel value="#{detFact[7]}" />
+								</p:column>
+								<p:column headerText="Nombre Cuenta" width="30%"
+									style="text-align: center;">
+									<p:outputLabel value="#{detFact[8]}" />
+								</p:column>
+								<p:column headerText="Unidad Admin." width="20%"
+									style="text-align: center;">
+									<p:outputLabel value="#{detFact[9]}" />
+								</p:column>
+								<p:column headerText="Debito" width="12%"
+									style="text-align: center;">
+									<p:outputLabel value="#{detFact[10]}" />
+								</p:column>
+								<p:column headerText="Credito" width="12%"
+									style="text-align: center;">
+									<p:outputLabel value="#{detFact[11]}" />
+								</p:column>
+								<p:column headerText="No asiento" width="10%"
+									style="text-align: center;">
+									<p:outputLabel value="#{detFact[12]}" />
+								</p:column>
+								<p:column headerText="Fecha" width="20%"
+									style="text-align: center;">
+									<p:outputLabel value="#{detFact[5]}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</p:outputLabel>
+								</p:column>
+							</p:dataTable>
+						</div>
+					</div>
+				</div>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="detCambios" id="detCambios"
+			header="Detalle Cambio Letras" resizable="true" modal="true"
+			closable="true" appendTo="@(body)" width="700px" height="350px"
+			closeOnEscape="true">
+			<h:form id="idFrmCambios">
+				<div class="ui-g dashboard">
+					<div class="ui-g-12 ui-fluid contact-form">
+						<div class="ui-g-6">
+							<div class="ui-g-3">
+								<p:outputLabel value="Cuota: " style="width:100%:"
+									styleClass="bold" />
+							</div>
+							<div class="ui-g-6">
+								<p:outputLabel
+									value="#{consultaContratosCertController.cuotaModificada}"
+									onkeyup="mayus(this)" readonly="true" style="width:25%"
+									styleClass="bold">
+								</p:outputLabel>
+							</div>
+
+						</div>
+						<div class="ui-g-6">
+							<div class="ui-g-3">
+								<p:outputLabel value="Contrato: " style="width:100%"
+									styleClass="bold" />
+							</div>
+							<div class="ui-g-6">
+								<p:outputLabel
+									value="#{consultaContratosCertController.noContrato}"
+									onkeyup="mayus(this)" readonly="true" style="width:27%"
+									styleClass="bold">
+								</p:outputLabel>
+							</div>
+
+						</div>
+
+						<div class="ui-g-12">
+							<p:dataTable id="tblDetCambios" widgetVar="tblDetCambios"
+								emptyMessage="No existen registros"
+								value="#{consultaContratosCertController.listadoCambios}"
+								var="det" rowIndexVar="var" paginator="true"
+								paginatorAlwaysVisible="true" filterDelay="1000" rows="10"
+								paginatorPosition="bottom"
+								paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+								<p:column headerText="Saldo Anterior" width="15%"
+									style="text-align: center;">
+									<p:outputLabel value="#{det.saldoAnterior}" />
+								</p:column>
+								<p:column headerText="Saldo Nuevo" width="15%"
+									style="text-align: center;">
+									<p:outputLabel value="#{det.saldoNuevo}" />
+								</p:column>
+								<p:column headerText="Fecha Cambio" width="20%"
+									style="text-align: center;">
+									<p:outputLabel value="#{det.fechaCreacion}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</p:outputLabel>
+								</p:column>
+								<p:column headerText="Usuario Cambio" width="15%"
+									style="text-align: center;">
+									<p:outputLabel value="#{det.usuarioCreacion}" />
+								</p:column>
+								<p:column headerText="Motivo Cambio" width="45%"
+									style="text-align: center;">
+									<p:outputLabel value="#{det.motivo}" />
+								</p:column>
+
+
+							</p:dataTable>
+						</div>
+					</div>
+				</div>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+
+</ui:composition>

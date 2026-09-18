@@ -1,0 +1,54 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Reporte Solicitudes de Devolucion de Anticipos
+	</ui:define>
+	<ui:define name="buttons">
+		<h:form id="frmButtons">
+			<p:commandButton value="Limpiar" alt="Limpiar" icon="fa fa-eraser"
+				id="limPro" immediate="true"
+				actionListener="#{cxcRepDevAnticipoController.limpiarDatos}"
+				process="@this,idForm" styleClass="blue-btn" />
+
+		<p:commandButton id="btnExcel"  value="Reporte" title="Generar el reporte en Excel"
+			icon="fa fa-file-excel-o fa-2x" partialSubmit="true" ajax="false"
+			actionListener="#{cxcRepDevAnticipoController.excel}"
+			styleClass="green-btn" onclick="this.form.target='_blank'" />
+		
+
+		</h:form>
+	</ui:define>
+	<ui:define name="content">
+		<h:form id="idForm">
+			<center>
+				<p:panel id="basic">
+					<br />
+					<p:outputLabel
+						value="Reporte de Devolucion de Solicitudes de Anticipos es necesario seleccionar la fecha inicio y fecha fin" />
+					<br />
+					<br />
+					<h:panelGrid title="Fechas de busqueda" styleClass="normal"
+						columns="2" id="idPanelGridParametros" style="width::100%">
+
+						<h:outputText value="Fecha Desde:" styleClass="normal" />
+						<p:calendar pattern="dd/MM/yyyy" showOn="button" size="27"
+							locale="es" value="#{cxcRepDevAnticipoController.fechaInicio}">
+							<p:ajax event="dateSelect" partialSubmit="true" process="@this" />
+						</p:calendar>
+						<h:outputText value="Fecha Hasta:" />
+						<p:calendar pattern="dd/MM/yyyy" showOn="button" size="27"
+							locale="es" value="#{cxcRepDevAnticipoController.fechaFin}">
+							<p:ajax event="dateSelect" partialSubmit="true" process="@this" />
+						</p:calendar>
+					</h:panelGrid>
+				</p:panel>
+			</center>
+		</h:form>
+	</ui:define>
+</ui:composition>

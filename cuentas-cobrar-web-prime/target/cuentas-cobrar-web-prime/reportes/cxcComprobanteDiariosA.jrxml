@@ -1,0 +1,680 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cxcComprobanteDiariosA" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="19" bottomMargin="20" uuid="04a32507-0dce-4cbd-853c-9d3b158cfaa1">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="326"/>
+	<parameter name="P_NO_CIA" class="java.lang.String"/>
+	<parameter name="P_NO_DOCU" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\proyectos_maven\\cuentas-cobrar-web-prime\\src\\main\\webapp\\reportes\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="USUARIO" class="java.lang.String"/>
+	<parameter name="EMPRESA" class="java.lang.String"/>
+	<parameter name="USUARIO_REVISOR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select a.fecha,
+TO_CHAR(A.FECHA,'HH24:MM:SS')HORAS,
+a.centro,b.cedula,b.nombre nombre,a.no_fisico||'-'||a.serie_fisico||decode(nvl(a.anulado,'N'),'N',null,'ANULADO') comprobante
+  ,a.comentar,
+  c.m_original,
+UPPER(letras( c.m_original,'D'))valor_letras,
+ nvl(a.valor_seguro,0), nvl(c.moneda_id,'02'), d.nombre nomagencia, c.fecha_digitacion, a.usuario,
+ decode(nvl(a.anulado,'N'),'S','ANULADO','N',null)estado
+
+  from arccda a,arccmc b,arccmd c, agencias d
+  where a.no_cia = $P{P_NO_CIA}
+  and a.no_docu = $P{P_NO_DOCU}
+  and a.no_cia = b.no_cia
+  and a.grupo  = b.grupo
+  and a.no_cliente = b.no_cliente
+  and a.no_cia = c.no_cia
+  and a.no_docu = c.no_docu
+  and a.no_cia = d.no_cia
+  and a.centro = d.codigo]]>
+	</queryString>
+	<field name="FECHA" class="java.sql.Timestamp"/>
+	<field name="HORAS" class="java.lang.String"/>
+	<field name="CENTRO" class="java.lang.String"/>
+	<field name="CEDULA" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="COMPROBANTE" class="java.lang.String"/>
+	<field name="COMENTAR" class="java.lang.String"/>
+	<field name="M_ORIGINAL" class="java.math.BigDecimal"/>
+	<field name="VALOR_LETRAS" class="java.lang.String"/>
+	<field name="NVL(A.VALOR_SEGURO,0)" class="java.math.BigDecimal"/>
+	<field name="NVL(C.MONEDA_ID,&apos;02&apos;)" class="java.lang.String"/>
+	<field name="NOMAGENCIA" class="java.lang.String"/>
+	<field name="FECHA_DIGITACION" class="java.sql.Timestamp"/>
+	<field name="USUARIO" class="java.lang.String"/>
+	<field name="ESTADO" class="java.lang.String"/>
+	<group name="MasterGroup">
+		<groupExpression><![CDATA[$F{FECHA}]]></groupExpression>
+		<groupHeader>
+			<band height="100">
+				<staticText>
+					<reportElement uuid="aa47f606-cabc-4222-8e78-c4aca6165db9" x="0" y="0" width="100" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[FECHA:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="1a7d6347-0a0a-482e-8690-e055afc4ba37" x="0" y="15" width="100" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[AGENCIA:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="24598620-cc1b-455d-98c3-dd85c721914a" x="0" y="30" width="100" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[RUC / CI:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="8fecc86c-6e65-4cc7-afc8-c0ef4ca7cfe7" x="0" y="45" width="100" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[RECIBIMOS DE:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="2932df99-7b2d-4486-91d6-ca752c75e833" x="0" y="60" width="100" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[POR EL VALOR DE:]]></text>
+				</staticText>
+				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+					<reportElement uuid="7bd336ea-ab6d-4655-a911-6f44fe868340" x="100" y="0" width="90" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="7d9cd552-cc6a-44f8-9f7e-c8130b9754e3" x="100" y="30" width="100" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CEDULA}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="8a8ca42f-c7bc-4259-8a58-23f88faa2a00" x="100" y="15" width="100" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NOMAGENCIA}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="f7db103d-b6db-4524-83ab-b5e38abeaf79" x="100" y="45" width="313" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="0fa6af1f-56a7-41ea-89eb-336e596faa72" x="100" y="60" width="455" height="15"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{VALOR_LETRAS}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="d6cc5462-0dd1-44e2-99e0-ac6a088f7ac1" x="0" y="75" width="100" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CONCEPTO:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="405cdc91-ae36-4cd7-8f09-5417bcf58bc8" x="100" y="75" width="455" height="15"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{COMENTAR}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="a3cf27f0-1ff8-496e-a7d3-240c8453c121" x="190" y="0" width="40" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[HORA:]]></text>
+				</staticText>
+				<textField pattern="HH:mm:ss" isBlankWhenNull="true">
+					<reportElement uuid="34c5855f-cba0-4cd0-b022-53e6fba0a86f" x="230" y="0" width="55" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FECHA_DIGITACION}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="d7484f83-612f-4b45-a117-02ab7e27c385" x="285" y="0" width="55" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[USUARIO:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="a540f0fb-470f-4e22-b856-dcce222eed23" x="341" y="0" width="90" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{USUARIO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="4e35e560-c2e7-4e64-a181-ad4a6403ef34" x="327" y="15" width="131" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[TOTAL ACREDITADO: $us]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="24c45cd8-49cc-458c-861b-968933d7531d" x="327" y="30" width="131" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[VALOR ABONO: $us]]></text>
+				</staticText>
+				<subreport>
+					<reportElement uuid="224f196e-02d6-4a62-a06f-6dd19f965e0e" x="458" y="15" width="97" height="15"/>
+					<subreportParameter name="P_NO_CIA">
+						<subreportParameterExpression><![CDATA[$P{P_NO_CIA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_NO_DOCU">
+						<subreportParameterExpression><![CDATA[$P{P_NO_DOCU}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "cxcTotalDiario.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport>
+					<reportElement uuid="eb61b868-cdf5-4a2f-a2c2-874876a9d723" x="458" y="30" width="97" height="15"/>
+					<subreportParameter name="P_NO_CIA">
+						<subreportParameterExpression><![CDATA[$P{P_NO_CIA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_NO_DOCU">
+						<subreportParameterExpression><![CDATA[$P{P_NO_DOCU}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "cxcTotalDiario.jasper"]]></subreportExpression>
+				</subreport>
+				<staticText>
+					<reportElement uuid="d8505a6d-0e83-42ca-ad3e-6feecf0852db" x="431" y="0" width="125" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[REALIZADO EN DOLARES]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="203">
+				<staticText>
+					<reportElement uuid="937fdcb2-68f1-4fb8-beda-2f5f96850c32" x="0" y="0" width="555" height="13"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true" isUnderline="true" isStrikeThrough="false"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="f12238fb-3390-414c-bdfe-3a8a12b60284" x="0" y="13" width="115" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[TOTALES:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="d8e49eeb-30e9-4a7f-9199-f39d3125dc59" x="0" y="28" width="115" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[INTERES POR MORA:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="c939b4b8-38a0-425e-b243-f6447730d8f5" x="0" y="43" width="115" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[ANTICIPOS:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="1f4a5bae-87e2-442a-96cf-b376bd9e6dc7" x="0" y="58" width="115" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[DESCUENTOS:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="60b9c718-63c1-4f5c-8e4b-b5b679929547" x="0" y="73" width="235" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[SALDO NETO RECIBIDO:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="3dca165d-e7f5-4509-b359-e4dbefca796a" x="0" y="88" width="235" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[TOTAL ACREDITAR CUENTAS POR COBRAR:]]></text>
+				</staticText>
+				<textField pattern="###0.00;-###0.00">
+					<reportElement uuid="c7561ad0-2497-4404-ab22-6d8553c2564c" x="115" y="13" width="100" height="15"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{M_ORIGINAL}.doubleValue()]]></textFieldExpression>
+				</textField>
+				<subreport>
+					<reportElement uuid="a298c941-f733-4488-b9e3-790c96c4d42a" x="115" y="28" width="100" height="15"/>
+					<subreportParameter name="P_NO_CIA">
+						<subreportParameterExpression><![CDATA[$P{P_NO_CIA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_NO_DOCU">
+						<subreportParameterExpression><![CDATA[$P{P_NO_DOCU}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "cxcTotalInteresMora.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport>
+					<reportElement uuid="15101916-2f5f-4081-84b7-639115eec704" x="115" y="43" width="100" height="15"/>
+					<subreportParameter name="P_NO_CIA">
+						<subreportParameterExpression><![CDATA[$P{P_NO_CIA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_NO_DOCU">
+						<subreportParameterExpression><![CDATA[$P{P_NO_DOCU}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "cxcTotalAnticipos.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport>
+					<reportElement uuid="2f0d408e-26f4-48b5-b145-a0f43036daa5" x="115" y="58" width="100" height="15"/>
+					<subreportParameter name="P_NO_CIA">
+						<subreportParameterExpression><![CDATA[$P{P_NO_CIA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_NO_DOCU">
+						<subreportParameterExpression><![CDATA[$P{P_NO_DOCU}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "cxcTotalDescuento.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport>
+					<reportElement uuid="0832a689-6de1-4bc1-87cf-78e8b9293565" x="235" y="73" width="154" height="15"/>
+					<subreportParameter name="P_NO_CIA">
+						<subreportParameterExpression><![CDATA[$P{P_NO_CIA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_NO_DOCU">
+						<subreportParameterExpression><![CDATA[$P{P_NO_DOCU}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "cxcTotalDiario.jasper"]]></subreportExpression>
+				</subreport>
+				<textField pattern="###0.00;-###0.00">
+					<reportElement uuid="7ddea28f-f959-4a2f-9bde-d73e6c097b5c" x="235" y="88" width="100" height="15"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{M_ORIGINAL}.doubleValue()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="930c8fa5-7bad-44d5-a0c5-e5f125b80f0c" x="37" y="180" width="171" height="19"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[REALIZADO POR]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="0d0c5431-c14d-495f-9dbd-cb17ac338947" x="353" y="180" width="171" height="19"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[REVISADO POR]]></text>
+				</staticText>
+				<line>
+					<reportElement uuid="22112150-f578-48b8-be9f-4d59c6c90607" x="37" y="176" width="177" height="1"/>
+				</line>
+				<line>
+					<reportElement uuid="9fa2a4a1-aef8-4b3c-876e-02d42544ab7f" x="351" y="175" width="177" height="1"/>
+				</line>
+				<textField>
+					<reportElement uuid="10f528c2-6d16-4ce2-935c-fbd7a9ad4888" x="68" y="155" width="113" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{USUARIO}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="10f528c2-6d16-4ce2-935c-fbd7a9ad4888" x="389" y="154" width="113" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{USUARIO_REVISOR}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="MasterFormaPago">
+		<groupExpression><![CDATA[$F{FECHA}]]></groupExpression>
+		<groupHeader>
+			<band height="53" splitType="Immediate">
+				<staticText>
+					<reportElement uuid="4fc0738f-8afc-4c0e-b749-400e65e5b537" x="0" y="0" width="555" height="29"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true" isUnderline="true" isStrikeThrough="false"/>
+					</textElement>
+					<text><![CDATA[FORMAS DE PAGO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="b0d43723-d637-4602-b4b9-02a4bf29a436" x="0" y="30" width="30" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[TIPO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="5029c3e5-550e-4308-96aa-b3c2d2c3878d" x="30" y="30" width="80" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[DOCUMENTO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="e977e037-4057-425d-943e-9b05c148c474" x="110" y="30" width="32" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[BANCO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="aa320483-948f-433c-aeff-ffa20f80779c" x="142" y="30" width="88" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CTA. CTE.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="3d0c0444-c59e-4350-8607-57c2f1c851ad" x="230" y="30" width="144" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[GIRADORDUENO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="7d878c4c-277b-4009-8f4c-ddc236f6ece2" x="374" y="30" width="66" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[FECHA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="eadae1b9-70e4-431d-ad67-8cc98be7bc5e" x="440" y="30" width="70" height="15"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[VALOR]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="13951fee-1ca3-4a04-afa6-a24dadbde75c" x="510" y="30" width="45" height="15"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MON.]]></text>
+				</staticText>
+				<line>
+					<reportElement uuid="d7d9768b-89f4-40eb-8333-057f1c778dc8" x="0" y="29" width="555" height="1"/>
+				</line>
+				<line>
+					<reportElement uuid="77b38b80-5be3-4216-bc10-1e701e14373a" x="0" y="0" width="555" height="1"/>
+				</line>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="61">
+				<subreport>
+					<reportElement uuid="21282203-4120-4771-adb1-a0eb9bec92d5" x="0" y="44" width="555" height="16"/>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_NO_CIA">
+						<subreportParameterExpression><![CDATA[$P{P_NO_CIA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_NO_DOCU">
+						<subreportParameterExpression><![CDATA[$P{P_NO_DOCU}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "cxcDiariosADistribucionContable.jasper"]]></subreportExpression>
+				</subreport>
+				<staticText>
+					<reportElement uuid="0e4f7a96-91b9-437b-8819-f8a287730a5c" x="0" y="26" width="555" height="17"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true" isUnderline="true" isStrikeThrough="false"/>
+					</textElement>
+					<text><![CDATA[DISTRIBUCION CONTABLE]]></text>
+				</staticText>
+				<line>
+					<reportElement uuid="57c90051-228d-4c70-9c45-9f698c848a6d" x="0" y="25" width="555" height="1"/>
+				</line>
+				<line>
+					<reportElement uuid="6bfb4ca9-ab9c-4cea-9710-195ef46309eb" x="0" y="43" width="555" height="1"/>
+				</line>
+				<staticText>
+					<reportElement uuid="937fdcb2-68f1-4fb8-beda-2f5f96850c32" x="0" y="0" width="555" height="25"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="true" isUnderline="true" isStrikeThrough="false"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="MasterGroupDetallePago">
+		<groupExpression><![CDATA[$F{FECHA}]]></groupExpression>
+		<groupHeader>
+			<band/>
+			<band height="15">
+				<subreport>
+					<reportElement uuid="50f258da-74ba-4b35-837a-ae18deb7c84e" x="0" y="0" width="555" height="15"/>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_NO_CIA">
+						<subreportParameterExpression><![CDATA[$P{P_NO_CIA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_NO_DOCU">
+						<subreportParameterExpression><![CDATA[$P{P_NO_DOCU}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "cxcDiariosAFormasPago.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+			<band height="15">
+				<subreport>
+					<reportElement uuid="76960d4a-de2a-4d8a-b9ad-a9133b72ef3e" x="0" y="0" width="555" height="15"/>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_NO_CIA">
+						<subreportParameterExpression><![CDATA[$P{P_NO_CIA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_NO_DOCU">
+						<subreportParameterExpression><![CDATA[$P{P_NO_DOCU}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "cxcDiariosAFormasPagoRT.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+			<band height="15">
+				<subreport>
+					<reportElement uuid="02a92b90-8f90-40eb-b7aa-cc4e05ab7e70" x="0" y="0" width="555" height="15"/>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_NO_CIA">
+						<subreportParameterExpression><![CDATA[$P{P_NO_CIA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_NO_DOCU">
+						<subreportParameterExpression><![CDATA[$P{P_NO_DOCU}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "cxcDiariosAFormasPagoME.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+			<band height="15">
+				<subreport>
+					<reportElement uuid="a6731c26-41e4-4868-806f-a3ef2f03934c" x="0" y="0" width="555" height="15"/>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_NO_CIA">
+						<subreportParameterExpression><![CDATA[$P{P_NO_CIA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_NO_DOCU">
+						<subreportParameterExpression><![CDATA[$P{P_NO_DOCU}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "cxcDiariosAFormasPagoDP.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+			<band height="15">
+				<subreport>
+					<reportElement uuid="4dda6089-0630-4bc0-b26f-7f2ed872e5b9" x="0" y="0" width="555" height="15"/>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_NO_CIA">
+						<subreportParameterExpression><![CDATA[$P{P_NO_CIA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_NO_DOCU">
+						<subreportParameterExpression><![CDATA[$P{P_NO_DOCU}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "cxcDiariosAFormasPagoCE.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+			<band height="15">
+				<subreport>
+					<reportElement uuid="4dda6089-0630-4bc0-b26f-7f2ed872e5b9" x="0" y="0" width="555" height="15"/>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_NO_CIA">
+						<subreportParameterExpression><![CDATA[$P{P_NO_CIA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_NO_DOCU">
+						<subreportParameterExpression><![CDATA[$P{P_NO_DOCU}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "cxcDiariosAFormasPagoNC.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="55">
+				<staticText>
+					<reportElement uuid="3ca12974-81ba-45fd-82d1-e32bf0e11e77" x="1" y="17" width="555" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true" isUnderline="true" isStrikeThrough="false"/>
+					</textElement>
+					<text><![CDATA[DETALLE DE PAGOS]]></text>
+				</staticText>
+				<line>
+					<reportElement uuid="46bac870-8147-4a93-a449-30b78f111c54" x="0" y="16" width="555" height="1"/>
+				</line>
+				<line>
+					<reportElement uuid="d4462f3b-e6a5-4717-843c-29648784b0aa" x="0" y="34" width="555" height="1"/>
+				</line>
+				<subreport>
+					<reportElement uuid="055de8a3-564f-40db-8c18-0b8edbfb4a51" x="1" y="36" width="554" height="18"/>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_NO_CIA">
+						<subreportParameterExpression><![CDATA[$P{P_NO_CIA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_NO_DOCU">
+						<subreportParameterExpression><![CDATA[$P{P_NO_DOCU}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "cxcDiariosADetallePagos.jasper"]]></subreportExpression>
+				</subreport>
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="58aa6eb1-cdb3-461f-bc80-22a5f71a6695" x="0" y="0" width="555" height="16"/>
+					<textElement/>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<title>
+		<band height="49" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="2252d9ad-101e-4291-88ef-37d901fe8313" x="70" y="0" width="215" height="19"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[COMPROBANTE DE DIARIO A No.]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="3790ab6f-ac96-4b96-bd01-911244ef2973" x="285" y="0" width="157" height="19"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COMPROBANTE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="a9a80f6b-1b5a-4c86-9a7b-33b31a48a890" x="384" y="19" width="100" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA IMPRESION:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a3b93e32-e49f-44e1-903b-1e162e1ab5de" x="384" y="34" width="100" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[HORA IMPRESION:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="e5b7832c-8bd2-4ab9-b87e-5582579c106e" x="484" y="19" width="71" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
+			</textField>
+			<textField pattern="HH.mm.ss" isBlankWhenNull="true">
+				<reportElement uuid="c3fb4bb5-26da-4fff-a3de-5553d3a79d80" x="484" y="34" width="71" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="7510560c-037a-4639-b24c-ddb7ec99c9af" x="0" y="19" width="155" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{EMPRESA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="a9a80f6b-1b5a-4c86-9a7b-33b31a48a890" x="442" y="0" width="42" height="19"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ESTADO:]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement uuid="7bd336ea-ab6d-4655-a911-6f44fe868340" x="484" y="0" width="71" height="19"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ESTADO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+</jasperReport>

@@ -1,0 +1,316 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Cuentas por Cobrar - Entrada de Movimientos
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="fmrButtons">
+			<p:commandButton styleClass="green-btn" partialSubmit="true"
+				process="@this :idForm:pestanas" icon="ui-icon ui-icon-save"
+				actionListener="#{cxcEntradaMovimientosController.guardar}"
+				update="@this :idForm:pestanas"
+				disabled="#{cxcEntradaMovimientosController.readonly}"
+				rendered="#{cxcEntradaMovimientosController.activaDetalle}" />
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+		<style type="text/css">
+input {
+	width: 95%;
+}
+</style>
+
+		<h:form id="idForm">
+
+			<p:tabView id="pestanas" cache="false"
+				activeIndex="#{cxcEntradaMovimientosController.tabActiveIndex}"
+				rendered="#{cxcEntradaMovimientosController.activaPantalla}">
+
+				<p:ajax event="tabChange" partialSubmit="true"
+					process="@this, :idForm:pestanas"
+					listener="#{cxcEntradaMovimientosController.changeTab}"
+					update="@this, :idForm:pestanas :fmrButtons" />
+
+				<p:tab id="tabCabecera" title="CABECERA">
+					<ui:include src="cabecera.xhtml" />
+				</p:tab>
+
+				<p:tab id="tabDetalle" title="DETALLE"
+					rendered="#{cxcEntradaMovimientosController.activaDetalle or cxcEntradaMovimientosController.readonly}">
+					<ui:include src="detalle.xhtml" />
+				</p:tab>
+
+			</p:tabView>
+
+			<p:dialog header="Seleccione un cliente..." widgetVar="dlgClientes"
+				modal="true" height="400" width="750" showEffect="clip"
+				hideEffect="blind">
+
+				<p:dataTable id="tblClientesDisponibles" var="cliente"
+					value="#{cxcEntradaMovimientosController.clientes}"
+					emptyMessage="No se han encontrado clientes" rows="10"
+					paginator="true" paginatorPosition="bottom"
+					currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+
+					<f:facet name="header">
+						<p:inputText id="filtroCliente"
+							value="#{cxcEntradaMovimientosController.filtroCliente}"
+							placeholder="Buscar">
+							<p:ajax event="change" partialSubmit="true" process="@this"
+								listener="#{cxcEntradaMovimientosController.buscarClientes}"
+								update="@this, #{p:component('tblClientesDisponibles')}" />
+						</p:inputText>
+					</f:facet>
+
+					<p:column headerText="Código" width="10%">
+						<p:commandLink value="#{cliente.clientePK.noCliente}"
+							process="@this" partialSubmit="true"
+							actionListener="#{cxcEntradaMovimientosController.selectCliente(cliente)}"
+							oncomplete="PF('dlgClientes').hide()"
+							update=":idForm:pestanas:fsCliente" />
+					</p:column>
+
+					<p:column headerText="Cédula" width="15%">
+						<h:outputText value="#{cliente.cedula}" />
+					</p:column>
+
+					<p:column headerText="Nombre" width="60%">
+						<h:outputText value="#{cliente.nombre}" />
+					</p:column>
+
+					<p:column headerText="Teléfono" width="15%">
+						<h:outputText value="#{cliente.telefono}" />
+					</p:column>
+
+				</p:dataTable>
+
+			</p:dialog>
+
+			<p:dialog header="Seleccione un vendedor..."
+				widgetVar="dlgVendedores" modal="true" height="400" width="400"
+				showEffect="clip" hideEffect="blind">
+
+				<p:dataTable id="tblVendedores" var="v"
+					value="#{cxcEntradaMovimientosController.vendedores}"
+					emptyMessage="No se han encontrado vendedores" rows="10"
+					paginator="true" paginatorPosition="bottom"
+					currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+
+					<f:facet name="header">
+						<p:inputText id="filtroVendedor"
+							value="#{cxcEntradaMovimientosController.filtroVendedor}"
+							placeholder="Buscar">
+							<p:ajax event="change" partialSubmit="true" process="@this"
+								listener="#{cxcEntradaMovimientosController.buscarVendedores}"
+								update="@this, #{p:component('tblVendedores')}" />
+						</p:inputText>
+					</f:facet>
+
+					<p:column headerText="Código" width="20%">
+						<p:commandLink value="#{v[0]}" process="@this"
+							partialSubmit="true"
+							actionListener="#{cxcEntradaMovimientosController.selectVendedor(v)}"
+							oncomplete="PF('dlgVendedores').hide()"
+							update=":idForm:pestanas:fsDocumento" />
+					</p:column>
+
+					<p:column headerText="Nombre" width="80%">
+						<h:outputText value="#{v[1]}" />
+					</p:column>
+
+				</p:dataTable>
+
+			</p:dialog>
+
+			<p:dialog header="Seleccione un cobrador..."
+				widgetVar="dlgCobradores" modal="true" height="400" width="400"
+				showEffect="clip" hideEffect="blind">
+
+				<p:dataTable id="tblCobradores" var="c"
+					value="#{cxcEntradaMovimientosController.cobradores}"
+					emptyMessage="No se han encontrado cobradores" rows="10"
+					paginator="true" paginatorPosition="bottom"
+					currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+
+					<f:facet name="header">
+						<p:inputText id="filtroCobrador"
+							value="#{cxcEntradaMovimientosController.filtroCobrador}"
+							placeholder="Buscar">
+							<p:ajax event="change" partialSubmit="true" process="@this"
+								listener="#{cxcEntradaMovimientosController.buscarCobradores}"
+								update="@this, #{p:component('tblCobradores')}" />
+						</p:inputText>
+					</f:facet>
+
+					<p:column headerText="Código" width="20%">
+						<p:commandLink value="#{c[0]}" process="@this"
+							partialSubmit="true"
+							actionListener="#{cxcEntradaMovimientosController.selectCobrador(c)}"
+							oncomplete="PF('dlgCobradores').hide()"
+							update=":idForm:pestanas:fsDocumento" />
+					</p:column>
+
+					<p:column headerText="Nombre" width="80%">
+						<h:outputText value="#{c[1]}" />
+					</p:column>
+
+				</p:dataTable>
+
+			</p:dialog>
+
+			<p:dialog header="Seleccione un usuario..." widgetVar="dlgUsuarios"
+				modal="true" height="400" width="400" showEffect="clip"
+				hideEffect="blind">
+
+				<p:dataTable id="tblUsuarios" var="u"
+					value="#{cxcEntradaMovimientosController.usuarios}"
+					emptyMessage="No se han encontrado usuarios" rows="10"
+					paginator="true" paginatorPosition="bottom"
+					currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+
+					<f:facet name="header">
+						<p:inputText id="filtroUsuario"
+							value="#{cxcEntradaMovimientosController.filtroUsuario}"
+							placeholder="Buscar">
+							<p:ajax event="change" partialSubmit="true" process="@this"
+								listener="#{cxcEntradaMovimientosController.buscarUsuarios}"
+								update="@this, #{p:component('tblUsuarios')}" />
+						</p:inputText>
+					</f:facet>
+
+					<p:column headerText="Código" width="20%">
+						<p:commandLink value="#{u.usuario}" process="@this"
+							partialSubmit="true"
+							actionListener="#{cxcEntradaMovimientosController.selectUsuario(u)}"
+							oncomplete="PF('dlgUsuarios').hide()"
+							update=":idForm:pestanas:fsUsuario" />
+					</p:column>
+
+					<p:column headerText="Nombre" width="80%">
+						<h:outputText value="#{u.nombre}" />
+					</p:column>
+
+				</p:dataTable>
+
+			</p:dialog>
+
+			<p:dialog id="dlgCtaContables"
+				header="Seleccione una Cuenta Contable..."
+				widgetVar="dlgCtaContables" modal="true" height="400" width="700"
+				showEffect="clip" hideEffect="blind">
+
+				<p:dataTable id="tblCtaContables" var="cta"
+					value="#{cxcEntradaMovimientosController.planCtas}"
+					emptyMessage="No se han encontrado cuentas contables" rows="10"
+					paginator="true" paginatorPosition="bottom"
+					currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+
+					<f:facet name="header">
+						<p:inputText id="filtroPlanCta"
+							value="#{cxcEntradaMovimientosController.filtroPlanCta}"
+							placeholder="Filtro Código"
+							onkeyup="this.value = this.value.toUpperCase();">
+							<p:ajax event="change" partialSubmit="true" process="@this"
+								listener="#{cxcEntradaMovimientosController.cargarPlanCtas}"
+								update="@this, #{p:component('tblCtaContables')}" />
+						</p:inputText>
+						<p:inputText id="filtroNombrePlanCta"
+							value="#{cxcEntradaMovimientosController.filtroNombrePlanCta}"
+							placeholder="Filtro Nombre"
+							onkeyup="this.value = this.value.toUpperCase();">
+							<p:ajax event="change" partialSubmit="true" process="@this"
+								listener="#{cxcEntradaMovimientosController.cargarPlanCtas}"
+								update="@this, #{p:component('tblCtaContables')}" />
+						</p:inputText>
+					</f:facet>
+
+					<p:column headerText="Código" width="20%">
+						<p:commandLink value="#{cta.conPlatasPk.ctaconId}" process="@this"
+							partialSubmit="true"
+							actionListener="#{cxcEntradaMovimientosController.selectPlanCta(cta, null)}"
+							oncomplete="PF('dlgCtaContables').hide()"
+							update=":idForm:pestanas:tblDetalle" />
+					</p:column>
+
+					<p:column headerText="Nombre" width="65%">
+						<h:outputText value="#{cta.nombre}" />
+					</p:column>
+
+					<p:column headerText="CenCosN" width="15%">
+						<h:outputText value="#{cta.cencosn}" />
+					</p:column>
+
+				</p:dataTable>
+
+			</p:dialog>
+
+			<p:dialog id="dlgUniAdmin" header="Seleccione un Centro de Costos..."
+				widgetVar="dlgUniAdmin" modal="true" height="400" width="500"
+				showEffect="clip" hideEffect="blind">
+
+				<p:dataTable id="tblUniAdmin" var="cen"
+					value="#{cxcEntradaMovimientosController.uniAdmin}"
+					emptyMessage="No se han encontrado centros de costo" rows="10"
+					paginator="true" paginatorPosition="bottom"
+					currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+
+					<f:facet name="header">
+						<p:inputText id="filtroUniAdmin"
+							value="#{cxcEntradaMovimientosController.filtroUniAdmin}"
+							placeholder="codigo">
+							<p:ajax event="change" partialSubmit="true" process="@this"
+								listener="#{cxcEntradaMovimientosController.cargarUniAdmin}"
+								update="@this, #{p:component('tblUniAdmin')}" />
+						</p:inputText>
+					</f:facet>
+
+					<p:column headerText="Código" width="20%">
+						<p:commandLink value="#{cen.pk.uniAdminId}" process="@this"
+							partialSubmit="true"
+							actionListener="#{cxcEntradaMovimientosController.selectUniAdmin(cen, null)}"
+							oncomplete="PF('dlgUniAdmin').hide()"
+							update=":idForm:pestanas:tblDetalle" />
+					</p:column>
+
+					<p:column headerText="Nombre" width="80%">
+						<h:outputText value="#{cen.nombre}" />
+					</p:column>
+
+				</p:dataTable>
+
+			</p:dialog>
+
+			<p:dialog id="dlgImpresion" header="Impresión del comprobante"
+				widgetVar="dlgImpresion" modal="true" height="auto" width="auto"
+				showEffect="clip" hideEffect="blind">
+
+				<p:outputLabel value="Desea imprimir el comprobante ahora mismo?" />
+
+				<f:facet name="footer">
+					<p:commandButton title="Si" value="Si" styleClass="green-btn"
+						actionListener="#{cxcEntradaMovimientosController.imprimirSi}"
+						oncomplete="PF('dlgImpresion').hide();" update=":idForm" />
+					<p:commandButton title="No" value="No" styleClass="red-btn" immediate="true"
+						actionListener="#{cxcEntradaMovimientosController.imprimirNo}" />
+				</f:facet>
+
+			</p:dialog>
+
+		</h:form>
+	</ui:define>
+
+</ui:composition>

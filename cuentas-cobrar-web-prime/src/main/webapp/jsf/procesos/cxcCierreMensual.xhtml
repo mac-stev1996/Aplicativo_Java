@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:head>
+
+	<script type="text/javascript">
+     function anular(e) {
+          tecla = (document.all) ? e.keyCode : e.which;
+          return (tecla != 13);
+     }
+</script>
+	<h:outputScript library="js" name="util.js"></h:outputScript>
+
+	<h:outputStylesheet name="css/layout-lightblue.css"
+		library="serenity-layout" />
+
+	<style type="text/css">
+body {
+	font-size: 10px;
+}
+
+table.companyHeaderGrid.ui-panelgrid>tbody>tr {
+	border-color: white;
+}
+
+body .ui-toolbar {
+	padding: 0px;
+}
+
+body .ui-dialog .ui-dialog-titlebar {
+	background-color: #0288D1;
+}
+</style>
+
+</h:head>
+<h:body onkeypress="return anular(event)">
+	<p:ajaxStatus onstart="PF('statusDialog').show()"
+		onsuccess="PF('statusDialog').hide()"
+		onerror="PF('statusDialog').hide()" />
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+		closable="false" resizable="false" showHeader="false">
+		<h:graphicImage value="/common/imgs/gifs/ajaxloadingbar.gif" />
+	</p:dialog>
+	<h:form id="form" onkeypress="return anular(event)">
+		<p:ajaxStatus onstart="PF('statusDialog').show()"
+			onsuccess="PF('statusDialog').hide()"
+			onerror="PF('statusDialog').hide()" />
+		<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+			closable="false" resizable="false" showHeader="false">
+			<h:graphicImage value="/common/imgs/gifs/ajaxloadingbar.gif" />
+		</p:dialog>
+		<p:growl id="messages" globalOnly="true" autoUpdate="true"
+			widgetVar="groMessages" showDetail="true" life="3000" />
+		<p:toolbar styleClass="toolbarStyle">
+			<f:facet name="left">
+				<i class="fa fa-money fa-2x"></i>
+				<b><p:outputLabel style="font-size: 15px;"
+						value="CIERRE MENSUAL DE COBRANZAS" /></b>
+			</f:facet>
+			<f:facet name="right">
+
+			</f:facet>
+
+		</p:toolbar>
+		<p:commandButton title="Enviar Correos NPS Pendientes" id="btnEnviarCorreos"  
+				icon="fa fa-mail"
+				styleClass="boton"											
+				style="float:right;"
+				rendered="#{cxcCierreMensualController.presentarEnvioNpsPendientes()}"
+				actionListener="#{cxcCierreMensualController.envioNpsPendientes}"
+				update="@this"
+				value="Enviar Correos NPS Pendientes"/>
+		<center>
+<br />
+<br />
+			<p:dataTable id="dtCompaniaCierre"
+				value="#{cxcCierreMensualController.listaCierres}"
+				rowKey="#{cierreCompania.cierreMensualCompaniaPk.noCia}" var="cierreCompania" style="width: 80%" selection="#{cxcCierreMensualController.listaSeleccionada}">
+				<p:column headerText="No Cia" width="50">
+					<h:outputText
+						value="#{cierreCompania.cierreMensualCompaniaPk.noCia}" />
+				</p:column>
+				<p:column headerText="Nombre Compa&#241;&#237;a">
+					<h:outputText value="#{cierreCompania.nombreCompania}" />
+				</p:column>
+				<p:column headerText="Fecha Cierre">
+					<p:calendar
+						value="#{cierreCompania.cierreMensualCompaniaPk.fechaCierre}">
+					</p:calendar>
+				</p:column>
+				<p:column headerText="Realizar Cierre" selectionMode="multiple" width="40" style="text-align:center;">
+				
+				</p:column>
+				<p:column headerText="Revisar Respaldo" width="40" >
+					<h:outputText value="#{cierreCompania.contadorRespaldo}" />
+				</p:column>
+				<p:column headerText="Novedad Cierre">
+					<h:outputText value="#{cierreCompania.novedadCierre}" />
+				</p:column>
+
+			</p:dataTable>
+			
+			<br />
+			<p:commandButton value="Cerrar"
+				action="#{cxcCierreMensualController.realizarCierreEmpresas}"
+				update="form" ></p:commandButton>
+		</center>
+
+	</h:form>
+</h:body>
+</html>

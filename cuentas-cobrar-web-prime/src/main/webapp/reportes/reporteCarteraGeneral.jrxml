@@ -1,0 +1,1095 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reporteCarteraGeneral" pageWidth="6500" pageHeight="802" columnWidth="6500" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="9b3eb703-052a-4e3e-a46c-04f99300b711">
+	<property name="ireport.zoom" value="1.3310000000000057"/>
+	<property name="ireport.x" value="7443"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Casbaca Prod Replica "/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<parameter name="P_NOCIA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_ANIO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_MES" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select 	a.NO_CIA,
+	a.ANO,
+	a.MES,
+	a.NO_DOCU,
+	a.NOMEMPRESA,
+	a.CEDULA,
+	a.NO_CLIENTE,
+	a.NOMBRECLI,
+	a.TIPO_DOC,
+	a.FECHA,
+	a.FECHA_VENCE,
+	a.CENTRO,
+	a.NOMAGENCIA,
+	a.NO_FISICO,
+	a.LINEA_NEGOCIO,
+	a.DESCLINEA_NEGOCIO,
+	a.CANT_PRORROGAS,
+	a.VALOR_ORIGINAL,
+	a.VALOR_PAGO,
+	a.SALDO,
+	a.CAPITAL,
+	a.INTERES,
+	a.PORVENCER,
+	a.VENCIDO,
+	a.VALORTOTKF,
+	a.SALDOSINCKF,
+	a.PAGOCONNC,
+	a.ESTADOCARTERA,
+	a.DIASVENCE,
+	a.RANGO_ANTIGUEDAD,
+	a.LINEA_INTERNA,
+	a.PLACA,
+	a.NO_SINIESTRO,
+	a.TIPOENTIDADFIN,
+	a.DESC_FINANCIERA,
+	a.VENDEDOR,
+	a.DIAS_TEMPORALES,
+	a.RELACION,
+	a.TIPO_CLIENTE,
+	a.COMENTARIO_APROBACION,
+	a.ZONA,
+	a.CANAL,
+	a.PROVINCIA,
+	a.CIUDAD,
+	a.APLICA_RETENCION,
+	a.TIENE_RETENCION,
+	a.GIRO,
+	a.CLIENTE_RELACIONADO,
+	a.ANIOVENCE,
+	a.LINEACARTERA,
+	a.CARTERA,
+	b.LINEA_NEGOCIO_REAL ,
+	fc.refer ORDEN_REPARACION,
+   	nvl((SELECT decode(nvl(c1.paga_cliente, 'N'), 'S', 'SI', 'NO') paga_cliente
+          FROM
+            svfcoti b1, veh_param_cuota_alcance c1
+          WHERE
+            b1.no_cia = a.no_cia
+            AND b1.cedula_deudor = a.CEDULA
+            AND b1.serie_fisico = a.linea_negocio
+            AND b1.no_fisico = a.NO_FISICO
+            AND c1.no_cia = b1.no_cia
+            AND c1.tipo = b1.tipo_financiacion
+            AND c1.estado = 'A'
+            AND ROWNUM = 1),'-')  PAGA_CLIENTE,
+    NVL(fc.man_prepagado,'N') man_prepagado
+from cxc_cartera_general_mesano a
+left join arccmd b on  a.no_cia = b.no_cia  AND a.no_docu = b.no_docu
+left join fac_ventas_cab fc on fc.no_cia = a.no_cia and fc.no_fisico = a.no_fisico and fc.no_cliente = a.no_cliente and fc.tipo_doc = a.tipo_doc and fc.centrod = a.centro
+      and trunc(fc.fecha) = trunc(a.fecha) and fc.serie_fisico = b.serie_fisico
+      and fc.cant_prorrogas = b.cant_prorrogas
+WHERE a.no_cia = $P{P_NOCIA}
+and a.ano = $P{P_ANIO}
+and a.mes = $P{P_MES}
+order by 12,5]]>
+	</queryString>
+	<field name="NO_CIA" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="NO_CIA"/>
+	</field>
+	<field name="ANO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="ANO"/>
+	</field>
+	<field name="MES" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="MES"/>
+	</field>
+	<field name="NO_DOCU" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="NO_DOCU"/>
+	</field>
+	<field name="NOMEMPRESA" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="NOMEMPRESA"/>
+	</field>
+	<field name="CEDULA" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="CEDULA"/>
+	</field>
+	<field name="NO_CLIENTE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="NO_CLIENTE"/>
+	</field>
+	<field name="NOMBRECLI" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="NOMBRECLI"/>
+	</field>
+	<field name="TIPO_DOC" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="TIPO_DOC"/>
+	</field>
+	<field name="FECHA" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.label" value="FECHA"/>
+	</field>
+	<field name="FECHA_VENCE" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.label" value="FECHA_VENCE"/>
+	</field>
+	<field name="CENTRO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="CENTRO"/>
+	</field>
+	<field name="NOMAGENCIA" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="NOMAGENCIA"/>
+	</field>
+	<field name="NO_FISICO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="NO_FISICO"/>
+	</field>
+	<field name="LINEA_NEGOCIO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="LINEA_NEGOCIO"/>
+	</field>
+	<field name="DESCLINEA_NEGOCIO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="DESCLINEA_NEGOCIO"/>
+	</field>
+	<field name="CANT_PRORROGAS" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="CANT_PRORROGAS"/>
+	</field>
+	<field name="VALOR_ORIGINAL" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="VALOR_ORIGINAL"/>
+	</field>
+	<field name="VALOR_PAGO" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="VALOR_PAGO"/>
+	</field>
+	<field name="SALDO" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="SALDO"/>
+	</field>
+	<field name="CAPITAL" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="CAPITAL"/>
+	</field>
+	<field name="INTERES" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="INTERES"/>
+	</field>
+	<field name="PORVENCER" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="PORVENCER"/>
+	</field>
+	<field name="VENCIDO" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="VENCIDO"/>
+	</field>
+	<field name="VALORTOTKF" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="VALORTOTKF"/>
+	</field>
+	<field name="SALDOSINCKF" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="SALDOSINCKF"/>
+	</field>
+	<field name="PAGOCONNC" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="PAGOCONNC"/>
+	</field>
+	<field name="ESTADOCARTERA" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="ESTADOCARTERA"/>
+	</field>
+	<field name="DIASVENCE" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="DIASVENCE"/>
+	</field>
+	<field name="RANGO_ANTIGUEDAD" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="RANGO_ANTIGUEDAD"/>
+	</field>
+	<field name="LINEA_INTERNA" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="LINEA_INTERNA"/>
+	</field>
+	<field name="PLACA" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="PLACA"/>
+	</field>
+	<field name="NO_SINIESTRO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="NO_SINIESTRO"/>
+	</field>
+	<field name="TIPOENTIDADFIN" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="TIPOENTIDADFIN"/>
+	</field>
+	<field name="DESC_FINANCIERA" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="DESC_FINANCIERA"/>
+	</field>
+	<field name="VENDEDOR" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="VENDEDOR"/>
+	</field>
+	<field name="DIAS_TEMPORALES" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="DIAS_TEMPORALES"/>
+	</field>
+	<field name="RELACION" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="RELACION"/>
+	</field>
+	<field name="TIPO_CLIENTE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="TIPO_CLIENTE"/>
+	</field>
+	<field name="COMENTARIO_APROBACION" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="COMENTARIO_APROBACION"/>
+	</field>
+	<field name="ZONA" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="ZONA"/>
+	</field>
+	<field name="CANAL" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="CANAL"/>
+	</field>
+	<field name="PROVINCIA" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="PROVINCIA"/>
+	</field>
+	<field name="CIUDAD" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="CIUDAD"/>
+	</field>
+	<field name="APLICA_RETENCION" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="APLICA_RETENCION"/>
+	</field>
+	<field name="TIENE_RETENCION" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="TIENE_RETENCION"/>
+	</field>
+	<field name="GIRO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="GIRO"/>
+	</field>
+	<field name="CLIENTE_RELACIONADO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="CLIENTE_RELACIONADO"/>
+	</field>
+	<field name="ANIOVENCE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="ANIOVENCE"/>
+	</field>
+	<field name="LINEACARTERA" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="LINEACARTERA"/>
+	</field>
+	<field name="CARTERA" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="CARTERA"/>
+	</field>
+	<field name="LINEA_NEGOCIO_REAL" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="LINEA_NEGOCIO_REAL"/>
+	</field>
+	<field name="ORDEN_REPARACION" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="ORDEN_REPARACION"/>
+	</field>
+	<field name="PAGA_CLIENTE" class="java.lang.String"/>
+	<field name="MAN_PREPAGADO" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="12" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="56c7d62e-be32-4372-a64a-0da4e1f89014" mode="Opaque" x="1799" y="0" width="100" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[INTERES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="059a3f46-11d8-40e9-8ff1-ca9abade1165" mode="Opaque" x="1899" y="0" width="100" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PORVENCER]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4b0a3741-0040-4c8d-9076-10f8dc028e16" mode="Opaque" x="1999" y="0" width="100" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VENCIDO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e8ca7ee4-5915-4160-ba22-047806a268e2" mode="Opaque" x="2099" y="0" width="100" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VALORTOTCKF]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3f09069f-7a10-4603-b954-e47fd74d48a7" mode="Opaque" x="2199" y="0" width="100" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SALDOSINCKF]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="cb644566-4624-41a2-a335-2e8b873af9bc" mode="Opaque" x="2299" y="0" width="100" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PAGOCONNC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="280c6de3-de47-4c84-9475-3f6f4250a41f" mode="Opaque" x="2399" y="0" width="115" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ESTADOCARTERA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="cad5b150-0ce7-40b5-b7e2-62cefa108a2e" mode="Opaque" x="2514" y="0" width="57" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DIAS VENCE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6accd96d-0099-44bc-9f88-79d37737da5f" mode="Opaque" x="2571" y="0" width="77" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RANGO ANTIGUEDAD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="85604509-7101-4cdf-9d6f-5889a3a1a5ec" mode="Opaque" x="2648" y="0" width="112" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LINEA INTERNA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="72cab577-7ef6-4a4a-a202-2fea1ccd32fb" mode="Opaque" x="2760" y="0" width="38" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PLACA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b0624322-bb87-461a-bb39-9caede50ab26" mode="Opaque" x="2798" y="0" width="66" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NO SINIESTRO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="98ecfcbb-e52f-4f4f-980d-1efbf5370b97" mode="Opaque" x="2864" y="0" width="100" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TIPO ENTIDAD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="92af6513-022c-4aaa-89a5-1f40a3653676" mode="Opaque" x="2964" y="0" width="215" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FINANCIERA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d560b3e7-a037-466a-9303-f4cd898755ba" mode="Opaque" x="3179" y="0" width="177" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VENDEDOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6dc8c46a-1df5-4ba8-bea3-2e6435ba398c" mode="Opaque" x="3356" y="0" width="81" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DIAS TEMPORALES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3b08edc9-e07a-4eb9-9e95-c9ec5e49d794" mode="Opaque" x="3437" y="0" width="165" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RELACION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="41302b91-581f-4965-a510-b998218c9e4d" mode="Opaque" x="3602" y="0" width="192" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TIPO_CLIENTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9b35d88e-cd1e-40fd-9206-9c7ba7102558" mode="Opaque" x="3794" y="0" width="659" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COMENTARIO_APROBACION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="57416459-fcc5-4ce6-bb87-2f40a743f94c" mode="Opaque" x="4453" y="0" width="100" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ZONA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f92a1768-b5fd-4a2f-bf29-9e30c389e3da" mode="Opaque" x="4553" y="0" width="171" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CANAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="76c4517e-cad4-4815-8ea8-70250c9cbc06" mode="Opaque" x="4724" y="0" width="204" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PROVINCIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="fd3b11a0-d122-471b-8ca4-376a60c86153" mode="Opaque" x="4928" y="0" width="179" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CIUDAD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="121259c5-4e04-424e-86d8-00cbfef01d02" mode="Opaque" x="5107" y="0" width="75" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[APLICA_RETENCION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f3a52464-d49e-4212-a01f-92aa216ced88" mode="Opaque" x="5182" y="0" width="70" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TIENE_RETENCION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1c15a220-f711-44ac-9dda-52d78afab8a3" mode="Opaque" x="5252" y="0" width="49" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[GIRO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c82d80a9-6e87-47dc-bae8-2b3d24853aaf" mode="Opaque" x="5301" y="0" width="100" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CLIENTE_RELACIONADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="54e857ea-a533-4981-ab68-4f76f960af22" mode="Opaque" x="5401" y="0" width="67" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AÑO VENCE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="52b658b9-d61b-4c9a-9ebc-0dbd397f4192" mode="Opaque" x="5468" y="0" width="302" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LINEACARTERA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d208a682-2ff2-435c-b45e-ed273c0da3a8" mode="Opaque" x="5770" y="0" width="292" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CARTERA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="56c7d62e-be32-4372-a64a-0da4e1f89014" mode="Opaque" x="1729" y="0" width="70" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CAPITAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="56c7d62e-be32-4372-a64a-0da4e1f89014" mode="Opaque" x="1659" y="0" width="70" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SALDO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="56c7d62e-be32-4372-a64a-0da4e1f89014" mode="Opaque" x="1589" y="0" width="70" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VALOR PAGO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="56c7d62e-be32-4372-a64a-0da4e1f89014" mode="Opaque" x="1519" y="0" width="70" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VALOR ORIGINAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="56c7d62e-be32-4372-a64a-0da4e1f89014" mode="Opaque" x="1498" y="0" width="21" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SEC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="56c7d62e-be32-4372-a64a-0da4e1f89014" mode="Opaque" x="1248" y="0" width="250" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LINEA DE NEGOCIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="56c7d62e-be32-4372-a64a-0da4e1f89014" mode="Opaque" x="1187" y="0" width="61" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DOCUMENTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="56c7d62e-be32-4372-a64a-0da4e1f89014" mode="Opaque" x="0" y="0" width="181" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[EMPRESA.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="56c7d62e-be32-4372-a64a-0da4e1f89014" mode="Opaque" x="181" y="0" width="100" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CEDULA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="56c7d62e-be32-4372-a64a-0da4e1f89014" mode="Opaque" x="281" y="0" width="40" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NO CLIE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="56c7d62e-be32-4372-a64a-0da4e1f89014" mode="Opaque" x="321" y="0" width="249" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMBRE CLIENTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="56c7d62e-be32-4372-a64a-0da4e1f89014" mode="Opaque" x="774" y="0" width="78" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="56c7d62e-be32-4372-a64a-0da4e1f89014" mode="Opaque" x="747" y="0" width="27" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[T DOC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="56c7d62e-be32-4372-a64a-0da4e1f89014" mode="Opaque" x="852" y="0" width="69" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA VENCE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="56c7d62e-be32-4372-a64a-0da4e1f89014" mode="Opaque" x="921" y="0" width="266" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AGENCIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d208a682-2ff2-435c-b45e-ed273c0da3a8" mode="Opaque" x="6062" y="0" width="57" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DOC. INTERNO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="936617ff-ecda-49b2-b861-77b7397d8099" mode="Opaque" x="618" y="0" width="129" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LINEA NEGOCIO REAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="aaeacfe1-73eb-4b7c-8392-fb4ee0eaee2b" mode="Opaque" x="570" y="0" width="48" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ORDEN REPARACION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d208a682-2ff2-435c-b45e-ed273c0da3a8" mode="Opaque" x="6119" y="0" width="80" height="12" backcolor="#66CCFF"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PAGA CLIENTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d208a682-2ff2-435c-b45e-ed273c0da3a8" mode="Opaque" x="6199" y="0" width="50" height="12" backcolor="#66CCFF"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MPP]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="baad19b7-c6db-43de-86be-ebc6b37bba91" x="0" y="0" width="181" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMEMPRESA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="5900afd1-0c58-40d9-adde-e0b9d82547c4" x="281" y="0" width="40" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NO_CLIENTE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="e2538df9-c40e-4a6b-9512-d89e0d8424e7" x="321" y="0" width="249" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRECLI}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="0bba6ba2-8079-442d-84ee-854b0eab20cb" x="774" y="0" width="78" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="6d9ea955-eeda-4e9b-b770-3247c88dedbb" x="181" y="0" width="100" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CEDULA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="d1b64703-f4cd-4ca7-964d-2d0cd91c786c" x="747" y="0" width="27" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TIPO_DOC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="e06271fd-f2c8-4e04-b66a-2654b09d55a8" x="852" y="0" width="69" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA_VENCE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="8d7a23a7-f116-4afa-9ed0-c599632dd310" x="921" y="0" width="40" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CENTRO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="6f5a808a-3dd0-4023-bf93-fb6383446d80" x="961" y="0" width="226" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMAGENCIA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="108cd131-bd78-42a4-9378-bf861210fc21" x="1187" y="0" width="61" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NO_FISICO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="569ce871-9b54-46f8-a450-54748b6cd9a3" x="1248" y="0" width="25" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LINEA_NEGOCIO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="a87bd841-40c0-4d96-9f87-01ea4929e6e2" x="1273" y="0" width="225" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCLINEA_NEGOCIO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="84d04e71-56e2-4e38-9f15-1a0ff02bf22b" x="1498" y="0" width="21" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CANT_PRORROGAS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+				<reportElement uuid="acf8e7ff-333b-496e-a426-078e4c555f56" x="1589" y="0" width="70" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VALOR_PAGO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+				<reportElement uuid="a84ac9ee-d9ca-4b72-a3b6-8cebf618e122" x="1659" y="0" width="70" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SALDO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+				<reportElement uuid="2358ef02-5d94-477e-b655-fa95c1c469cd" x="1729" y="0" width="70" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CAPITAL}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="13e57fbb-d751-48b1-a1e6-6a1e36d2a952" x="2571" y="0" width="77" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RANGO_ANTIGUEDAD}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="4e90f2e0-647a-4fcf-a1e8-e245d5cc1102" x="2864" y="0" width="100" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TIPOENTIDADFIN}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="57e0e2e5-aa02-4122-83b8-a7e4de176ab4" x="2964" y="0" width="215" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESC_FINANCIERA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="d0c0f07c-f86c-4313-bf2d-e198f29e8589" x="3179" y="0" width="177" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VENDEDOR}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="70da96af-26a4-435e-b90d-217b3e3c5d87" x="3356" y="0" width="81" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DIAS_TEMPORALES}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="6d94a7aa-6489-44a2-93ca-9d8f53a845be" x="3437" y="0" width="165" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RELACION}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="72370e1e-e993-4ba7-ac14-c95c72d5e43d" x="3602" y="0" width="192" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TIPO_CLIENTE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c8ff833f-037c-4a30-9c0f-f8db09d6a6ad" x="3794" y="0" width="659" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COMENTARIO_APROBACION}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="bd55d889-64bd-4f55-a7e5-16f82abb5283" x="4453" y="0" width="100" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ZONA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="67365269-b584-433e-996b-1b48e1fec097" x="4553" y="0" width="171" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CANAL}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="1a7136cf-6401-4ea7-885c-99fcb2fe869d" x="4724" y="0" width="204" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PROVINCIA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="106de61a-a904-42f9-8e43-befb4c2d02c1" x="4928" y="0" width="179" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CIUDAD}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="7fbd25ca-c713-42e9-9d06-592c005e7ec2" x="5107" y="0" width="75" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{APLICA_RETENCION}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c23d0490-3e60-460a-a4cc-e8d9c89fcbf2" x="5182" y="0" width="70" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TIENE_RETENCION}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="0500902e-87d1-4790-8c2a-471b73459496" x="5252" y="0" width="49" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GIRO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="3e80f33e-6061-447c-a2cf-b2c2ca973aed" x="5301" y="0" width="100" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CLIENTE_RELACIONADO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="d110b55b-33bd-4bb1-80b7-71c3c12dd4da" x="5401" y="0" width="67" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ANIOVENCE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="ae16245e-1628-4968-ba07-2c462f8ce2ab" x="5468" y="0" width="302" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LINEACARTERA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="97f0fb13-adc8-453c-b7c3-e23cdefa0f2a" x="5770" y="0" width="292" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CARTERA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="eba645df-9028-4274-88a3-63e8e7d8a915" x="2798" y="0" width="66" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NO_SINIESTRO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="19f5f059-4ec1-4ecf-9722-202620b0052b" x="2760" y="0" width="38" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PLACA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="a81bccb7-d52f-4eb4-9bb7-35fb981308d7" x="2648" y="0" width="112" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LINEA_INTERNA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="9d35028a-292c-43e0-b036-bb57aeaaee93" x="2399" y="0" width="115" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ESTADOCARTERA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="695a062b-0462-4859-9b42-355551b0ad87" x="2514" y="0" width="57" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DIASVENCE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+				<reportElement uuid="379bd6f6-0cde-437c-9c4c-b188f78323e7" x="1799" y="0" width="100" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INTERES}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+				<reportElement uuid="cc02bb07-448b-42d7-8cdb-cfe9754e9303" x="1899" y="0" width="100" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PORVENCER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+				<reportElement uuid="6c674b68-c7f2-4dba-832f-3e76fadfd1fd" x="1999" y="0" width="100" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VENCIDO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+				<reportElement uuid="d6621754-22fc-48cb-b2dd-edf8b728ecf4" x="2099" y="0" width="100" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VALORTOTKF}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+				<reportElement uuid="96e46ed5-3057-4ec6-be99-b84d35be76ff" x="2199" y="0" width="100" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SALDOSINCKF}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+				<reportElement uuid="90481bb3-863d-4c81-a720-86f32edcefaa" x="2299" y="0" width="100" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PAGOCONNC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+				<reportElement uuid="3ea5347e-0347-4f93-8530-5e9af2262b97" x="1519" y="0" width="70" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VALOR_ORIGINAL}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="97f0fb13-adc8-453c-b7c3-e23cdefa0f2a" x="6062" y="0" width="57" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NO_DOCU}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="be3ece58-f708-4e0d-9e79-4610dcc2e3b4" x="618" y="0" width="129" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LINEA_NEGOCIO_REAL}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="36be124d-673f-4289-9919-36c574721c26" x="570" y="0" width="48" height="12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORDEN_REPARACION}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="eb66b413-704f-49fa-8b9b-99f3af60ee9b" x="6119" y="0" width="80" height="12"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PAGA_CLIENTE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="eb66b413-704f-49fa-8b9b-99f3af60ee9b" x="6199" y="0" width="50" height="12"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["S".equals($F{MAN_PREPAGADO})?"SI":"NO"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

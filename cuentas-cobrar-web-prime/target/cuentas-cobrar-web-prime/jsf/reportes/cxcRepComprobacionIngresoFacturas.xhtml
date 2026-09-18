@@ -1,0 +1,75 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Comprobación de Ingreso de Facturas
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmButtons">
+			<p:commandButton value="Html" partialSubmit="true"
+				process="@this, :idForm" styleClass="secondary-btn"
+				actionListener="#{cxcComprobacionIngresoFacturasController.html}" />
+			<p:commandButton value="Pdf" partialSubmit="true"
+				process="@this, :idForm" styleClass="red-btn"
+				actionListener="#{cxcComprobacionIngresoFacturasController.pdf}" />
+			<p:commandButton value="Excel" partialSubmit="true"
+				process="@this, :idForm" styleClass="green-btn"
+				actionListener="#{cxcComprobacionIngresoFacturasController.excel}" />
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">	
+		<h:form id="idForm">
+						
+			
+			<div class="ui-g-8 dashboard">
+				<div class="ui-g-8 ui-fluid contact-form">
+					<div class="ui-g-4">
+						<p:fieldset legend="Parámetros">
+
+							<h:panelGrid id="pgFiltrosFechas" style="width:600px" columns="2" columnClasses="w30,w70">
+							
+								<h:outputText value="Fecha Desde: " styleClass="normal" />
+								<p:calendar id="FechaDesde" 
+									maxdate="new Date()" autocomplete="off"
+									value="#{cxcComprobacionIngresoFacturasController.fechaDesde}"
+									pattern="dd/MM/yyyy" />					
+
+									
+								<h:outputText value="Fecha Hasta: " styleClass="normal" />
+								<p:calendar id="FechaHasta" 
+									maxdate="new Date()" autocomplete="off"
+									value="#{cxcComprobacionIngresoFacturasController.fechaHasta}" 
+									pattern="dd/MM/yyyy"   />
+
+								
+								<h:outputText value="Cliente: " styleClass="normal" />
+								<p:selectOneMenu id="clienteOpt" value="#{cxcComprobacionIngresoFacturasController.noCliente}">
+				                    <f:selectItem itemLabel="1001CARROS GBVCOSTA S.A.S." itemValue="1042941"/>
+				                    <f:selectItem itemLabel="CASABACA" itemValue="13969" />
+				                    <f:selectItem itemLabel="SUZUKI" itemValue="838440"/>  
+				                </p:selectOneMenu>
+
+						</h:panelGrid>
+
+
+
+						</p:fieldset>
+
+					</div>
+				</div>
+			</div>
+			
+			
+			
+			
+			
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,176 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+	</f:facet>
+	<title>Frecuencia de Ventas</title>
+	<h:outputScript name="js/layout.js" library="serenity-layout" />
+	<h:outputScript name="js/ripple.js" library="serenity-layout" />
+	<style type="text/css">
+		.center {
+			margin: auto;
+			width: 50%;
+			padding: 10px;
+		}
+	</style>
+	<script type="text/javascript">
+		function check(e) {
+		    tecla = (document.all) ? e.keyCode : e.which;
+		
+		    //Tecla de retroceso para borrar, siempre la permite
+		    if (tecla == 8) {
+		        return true;
+		    }
+		
+		    // Patrón de entrada, en este caso solo acepta numeros y letras
+		    patron = /[A-Za-z0-9]/;
+		    tecla_final = String.fromCharCode(tecla);
+		    return patron.test(tecla_final);
+		}
+	</script>
+</h:head>
+<h:body>
+
+
+	<h:form id="form">
+		<p:growl id="messages" globalOnly="true" autoUpdate="true"
+			widgetVar="groMessages" showDetail="true" />
+
+		<p:toolbar>
+			<f:facet name="left">
+				<p:outputLabel value="Frecuencia de Ventas"></p:outputLabel>
+			</f:facet>
+
+			<f:facet name="right">
+				<p:commandButton value="Nueva Frecuencia" style="float: right;"
+					icon="fa fa-plus-circle" styleClass="boton" process="@this"
+					partialSubmit="true" oncomplete="PF('dlgNewTipoFactorRiesgo').show();"
+					update=":frmNewCmlTipoFactorRiesgo"
+					action="#{cmlFrecuenciaController.nuevaFrecuenciaDeVenta}" />
+			</f:facet>
+		</p:toolbar>
+
+
+		<p:panel id="panelTablas">
+
+            <p:dataTable id="tablaDetalle" var="item"
+				value="#{cmlFrecuenciaController.tipoFrecuenciaLst}"
+				paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+				paginator="true" rows="10" rowsPerPageTemplate="20,30,40"
+				paginatorPosition="bottom" emptyMessage="No existen registros" rowIndexVar="row">
+
+				<p:column width="5%" headerText="N°">
+					<p:commandLink value="#{row+1}" actionListener="#{cmlFrecuenciaController.editarFrecuenciaDeVenta(item)}" update=":frmNewCmlTipoFactorRiesgo"/>
+				</p:column>
+
+				<p:column width="5%"  headerText="Codigo" filterBy="#{item.id.codigo}" filterMatchMode="contains">
+					<h:outputText 
+						value="#{item.id.codigo}" />
+				</p:column>
+
+				<p:column headerText="Inicio" >
+					<h:outputText
+						value="#{item.campoInicio}" />
+				</p:column>
+				
+				<p:column headerText="Fin" >
+					<h:outputText
+						value="#{item.campoFin}" />
+				</p:column>
+				
+				<p:column headerText="Valor" >
+					<h:outputText
+						value="#{item.campoValor}" />
+				</p:column>
+				
+				<p:column width="5%"  headerText="Estado">
+					<h:outputText
+						value="#{item.campoEstado == 'A' ? 'Activo' : 'Inactivo'}" />
+				</p:column>
+
+				<p:column width="6%" headerText="Inactivar">
+					<p:commandButton icon="fa fa-remove" title="Inactivar" update="form"
+						actionListener="#{cmlFrecuenciaController.inactivarFrecuenciaDeVenta(item)}"
+						onclick="if (!confirm('¿Esta seguro que desea inactivar el tipo?')){return false;}" />
+				</p:column>
+				
+				
+			</p:dataTable>
+
+		</p:panel>
+	</h:form>
+
+	<p:dialog id="dlgNewTipoFactorRiesgo"	widgetVar="dlgNewTipoFactorRiesgo"
+		position="center,center"  responsive="true"  width="800px" height="100%"
+	    resizable="true" modal="true" appendTo="@(body)" closable="true"
+		closeOnEscape="true" header="Frecuencia">
+		<div class="card">
+		<h:form id="frmNewCmlTipoFactorRiesgo">
+		<p:messages id="messages" showDetail="true" closable="true"/>
+		<h:panelGrid id="detalleFrecuencia" columns="2">
+		
+			<p:outputLabel style="font-size: 12px; font-weight: bold;"
+				value="Codigo: " for="codigo"/>
+	        <p:inputText id="codigo" 
+	        			 disabled="#{cmlFrecuenciaController.estadoCampoCodigo}"
+	        			 
+	        			 value="#{cmlFrecuenciaController.tipoFrecuenciaSel.id.codigo}" maxlength="2" onkeypress="return check(event)" onblur="value=value.toUpperCase()" style="text-transform: uppercase" />
+	    </h:panelGrid> 
+	    <h:panelGrid id="detalleFrecuencia2" columns="6">   
+			<p:outputLabel style="font-size: 12px; font-weight: bold;"
+				value="Inicio: " for="inicio"/>
+	        <p:inputText id="inicio" value="#{cmlFrecuenciaController.tipoFrecuenciaSel.campoInicio}" >
+	        	<p:keyFilter mask="num" />
+			</p:inputText>
+	        
+	        <p:outputLabel style="font-size: 12px; font-weight: bold;"
+				value="Fin: " for="fin"/>
+	        <p:inputText id="fin" value="#{cmlFrecuenciaController.tipoFrecuenciaSel.campoFin}" >
+	        	<p:keyFilter mask="num" />
+			</p:inputText>
+			
+	        <p:outputLabel style="font-size: 12px; font-weight: bold;"
+				value="Valor: " for="valor"/>
+	        <p:inputText id="valor" value="#{cmlFrecuenciaController.tipoFrecuenciaSel.campoValor}" >
+	        	<p:keyFilter mask="num" />
+			</p:inputText>
+		
+		</h:panelGrid>
+		<h:panelGrid id="detalleFrecuencia3" columns="2">
+			<p:outputLabel style="font-size: 12px; font-weight: bold;"
+				value="Estado: " />
+			<p:selectOneMenu style="float:left; font-size: 12px;" 
+				value="#{cmlFrecuenciaController.tipoFrecuenciaSel.campoEstado}">
+				<f:selectItem itemLabel="Activo" itemValue="A" />
+				<f:selectItem itemLabel="Inactivo" itemValue="I" />
+			</p:selectOneMenu>
+		</h:panelGrid>
+
+		<h:panelGrid id="detalleFrecuenciaBtn" columns="2">
+				<p:commandButton value="Guardar" icon="fa fa-floppy-o"
+				update=":form, :frmNewCmlTipoFactorRiesgo" 
+				action="#{cmlFrecuenciaController.guardar}" />
+
+				<p:commandButton value="Cerrar" icon="fa fa-close"
+				update="@form, :frmNewCmlTipoFactorRiesgo"
+				onclick="PF('dlgNewTipoFactorRiesgo').hide();" />
+		</h:panelGrid>	
+		</h:form>
+		</div>
+	</p:dialog>
+
+	<h:outputStylesheet name="css/layout-lightblue.css"
+		library="serenity-layout" />
+
+</h:body>
+</html>

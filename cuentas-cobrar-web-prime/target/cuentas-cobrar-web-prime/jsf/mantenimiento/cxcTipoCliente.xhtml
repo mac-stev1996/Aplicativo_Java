@@ -1,0 +1,139 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Cuentas por Cobrar - Mantenimiento de Tipos Clientes
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmButtons">
+			<p:commandButton title="Nuevo" partialSubmit="true"
+				icon="fa fa-file-o" process="@this"
+				style="margin-top: 0px !important; float:right;"
+				styleClass="green-btn" oncomplete="PF('dlgNuevo').show();"
+				update="@this, :dlgNuevo" />
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+		<style>
+.w25 {
+	width: 25%;
+}
+</style>
+		<script type="text/javascript">
+		function mayus(e) {
+		    e.value = e.value.toUpperCase();
+		}
+	
+	</script>
+		<h:form id="idForm">
+
+			<div class="ui-g dashboard">
+				<div class="ui-g-12 ui-fluid contact-form">
+					<div class="ui-g-12">
+						<p:dataTable id="tblArcctc" widgetVar="tblArcctc"
+							emptyMessage="No existen registros"
+							value="#{cxcTipoClienteController.listadoArcctc}" var="arcctc"
+							rowKey="#{arcctc.id}" rowIndexVar="var" paginator="true"
+							paginatorAlwaysVisible="false" editable="true" editMode="cell"
+							filterDelay="1000" rows="10" paginatorPosition="bottom"
+							selection="#{cxcTipoClienteController.arcctcSelected}"
+							paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+
+
+							<p:ajax event="cellEdit" partialSubmit="true" process="@this"
+								listener="#{cxcTipoClienteController.actualizar(arcctc)}"
+								update="@this, tblArcctc" global="false" />
+							<p:column headerText="No Cia" width="10%"
+								filterBy="#{arcctc.id.noCia}">
+								<p:outputLabel value="#{arcctc.id.noCia}" />
+							</p:column>
+
+							<p:column headerText="Tipo Cliente" width="10%"
+								filterBy="#{arcctc.id.tipoCliente}">
+								<p:outputLabel value="#{arcctc.id.tipoCliente}" />
+							</p:column>
+
+							<p:column headerText="Descripción" width="50%"
+								filterBy="#{arcctc.descripcion}">
+								<p:cellEditor>
+									<f:facet name="output">
+										<p:outputLabel value="#{arcctc.descripcion}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText value="#{arcctc.descripcion}"></p:inputText>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+
+							<p:column width="5%">
+								<p:commandButton title="Eliminar" partialSubmit="true"
+									icon="fa fa-trash" process="@this"
+									style="margin-top: 0px !important" styleClass="red-btn"
+									actionListener="#{cxcTipoClienteController.eliminar(arcctc)}"
+									update="tblArcctc">
+
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+					</div>
+				</div>
+			</div>
+
+		</h:form>
+		<p:dialog widgetVar="dlgNuevo" id="dlgNuevo"
+			header="Nuevo Tipo Cliente" resizable="true" modal="true"
+			closable="true" appendTo="@(body)" width="570" height="400"
+			closeOnEscape="true">
+			<h:form id="idFrmNuevo">
+				<div class="ui-g dashboard">
+					<div class="ui-g-18 ui-fluid contact-form">
+
+						<div class="ui-g-12">
+							<div class="ui-g-3">
+								<p:outputLabel value="Tipo Cliente: " style="width:100%" />
+
+							</div>
+							<div class="ui-g-3">
+								<p:inputText
+									value="#{cxcTipoClienteController.arcctcNuevo.id.tipoCliente}"
+									onkeyup="mayus(this)" maxlength="2" autocomplete="off">
+
+
+								</p:inputText>
+							</div>
+							<div class="ui-g-3">
+								<p:outputLabel value="Descripción: " style="width:100%" />
+
+							</div>
+
+							<div class="ui-g-3">
+								<p:inputText
+									value="#{cxcTipoClienteController.arcctcNuevo.descripcion}"
+									style="width:100%" onkeyup="mayus(this)" autocomplete="off"></p:inputText>
+							</div>
+
+
+						</div>
+
+					</div>
+
+				</div>
+				<br />
+				<center>
+					<p:commandButton value="Grabar" partialSubmit="true"
+						process="@this, dlgNuevo"
+						action="#{cxcTipoClienteController.grabar}"
+						oncomplete="PF('dlgNuevo').hide();" update=":idForm"></p:commandButton>
+				</center>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+
+</ui:composition>

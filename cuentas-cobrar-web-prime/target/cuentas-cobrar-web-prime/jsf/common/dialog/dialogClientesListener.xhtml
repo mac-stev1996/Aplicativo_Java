@@ -1,0 +1,52 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core">
+<head>
+<script type="text/javascript">
+	function mayus(e) {
+		e.value = e.value.toUpperCase();
+	}
+</script>
+</head>
+<ui:composition>
+	
+	
+	<p:dialog id="idDlgClientes" header="Seleccione Cliente" modal="true"
+		widgetVar="dialogClientesWV" position="center,center" closable="true"
+		appendTo="@(body)" responsive="true" width="650" closeOnEscape="true">
+		<h:form id="frmClientes">
+			<p:dataTable id="idTableClientes" var="item" selectionMode="single"
+				multiViewState="true" rowIndexVar="row" rows="10" filterDelay="600"
+				rowKey="#{item.clientePK}" paginatorPosition="bottom"
+				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+				paginator="true" lazy="true"
+				value="#{dialogClientesController.lazyDataModelClientes}"
+				selection="#{dialogClientesController.cliente}">
+
+				
+				<p:ajax event="rowSelect" process="@this" partialSubmit="true"
+					update="@parent"
+					listener="#{bean.seleccionarClienteListener}" />
+					
+				<p:column headerText="No Cliente"
+					filterBy="#{item.clientePK.noCliente}"
+					filterStyle="background:#e3e3e3;width:80%" width="20%">
+					<h:outputText value="#{item.clientePK.noCliente}" />
+				</p:column>
+				<p:column headerText="Cedula" filterBy="#{item.cedula}"
+					filterStyle="background:#e3e3e3;width:80%" width="20%">
+					<h:outputText value="#{item.cedula}" />
+				</p:column>
+				<p:column headerText="Nombre" filterBy="#{item.nombre}"
+					filterStyle="background:#e3e3e3;width:80%" width="60%">
+					<h:outputText value="#{item.nombre}" />
+				</p:column>
+
+			</p:dataTable>
+		</h:form>
+	</p:dialog>
+</ui:composition>
+</html>

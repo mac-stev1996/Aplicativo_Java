@@ -1,0 +1,263 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<div class="ui-g dashboard">
+		<div class="ui-g-12 ui-fluid contact-form">
+			<div class="ui-g-12 nopadding">
+				<p:fieldset id="fsCia">
+					<div class="ui-g-1">
+						<p:outputLabel value="Cia" />
+						<p:inputText readonly="true"
+							value="#{cxcRefinanciamientoFacturasController.noCia}" />
+					</div>
+					<div class="ui-g-3">
+						<p:outputLabel value="Centro" />
+						<p:selectOneMenu
+							value="#{cxcRefinanciamientoFacturasController.centro}">
+							<f:selectItems
+								value="#{cxcRefinanciamientoFacturasController.agencias}"
+								var="a" itemLabel="#{a[0]} - #{a[1]}" itemValue="#{a[0]}"></f:selectItems>
+						</p:selectOneMenu>
+					</div>
+					<div class="ui-g-3">
+						<p:remoteCommand name="commandFactura"
+							process="@this :idForm:pestanas:fsCia" partialSubmit="true"
+							oncomplete="PF('dlgFacturasW').show()" />
+						<p:outputLabel value="Factura" />
+						<p:inputText id="noFisico" maxlength="12"
+							value="#{cxcRefinanciamientoFacturasController.noFisico}"
+							onkeydown="if (event.keyCode == 120 ) {commandFactura(); return false;}">
+							<p:ajax event="change" partialSubmit="true"
+								process="@this, :idForm:pestanas:fsCia"
+								listener="#{cxcRefinanciamientoFacturasController.changeNoFisico}"
+								update=":idForm:pestanas:fsCia :idForm:pestanas:fsCliente :idForm:pestanas:fsDocumentos :idForm:pestanas:fsTotales :idForm:dlgFacturas" />
+						</p:inputText>
+					</div>
+					<div class="ui-g-2">
+						<p:outputLabel value="Línea" />
+						<p:inputText id="serieFisico" maxlength="15"
+							value="#{cxcRefinanciamientoFacturasController.serieFisico}"
+							onkeydown="if (event.keyCode == 120 ) {commandFactura(); return false;}">
+							<p:ajax event="change" partialSubmit="true"
+								process="@this, :idForm:pestanas:fsCia"
+								listener="#{cxcRefinanciamientoFacturasController.changeSerieFisico}"
+								update=":idForm:pestanas:fsCia :idForm:pestanas:fsCliente :idForm:pestanas:fsDocumentos :idForm:pestanas:fsTotales :idForm:dlgFacturas" />
+						</p:inputText>
+					</div>
+					<div class="ui-g-1">
+						<p:outputLabel value="Secuencia" />
+						<p:inputNumber id="cantProrrogas" decimalPlaces="0" maxValue="99"
+							styleClass="number"
+							value="#{cxcRefinanciamientoFacturasController.cantProrrogas}">
+							<p:ajax event="change" partialSubmit="true"
+								process="@this, :idForm:pestanas:fsCia"
+								listener="#{cxcRefinanciamientoFacturasController.changeCantProrrogas}"
+								update=":idForm:pestanas:fsCia :idForm:pestanas:fsCliente :idForm:pestanas:fsDocumentos :idForm:pestanas:fsTotales :idForm:dlgFacturas" />
+						</p:inputNumber>
+					</div>
+					<div class="ui-g-2">
+						<p:outputLabel value="Fecha Sistema" />
+						<p:calendar pattern="dd/MM/yyyy" disabled="true"
+							value="#{cxcRefinanciamientoFacturasController.fecha}"
+							locale="es" />
+					</div>
+				</p:fieldset>
+			</div>
+
+			<div class="ui-g-12 nopadding">
+				<p:fieldset id="fsCliente">
+					<div class="ui-g-12 nopadding">
+						<div class="ui-g-7">
+							<p:outputLabel value="Cliente" />
+							<h:panelGrid columns="2" border="0" width="100%"
+								columnClasses="w20, w80">
+								<p:inputText styleClass="nopadding" readonly="true"
+									value="#{cxcRefinanciamientoFacturasController.cliente.cedula}" />
+								<p:inputText styleClass="nopadding" readonly="true"
+									value="#{cxcRefinanciamientoFacturasController.cliente.nombre}" />
+							</h:panelGrid>
+						</div>
+						<div class="ui-g-5">
+							<p:outputLabel value="Estado" />
+							<p:inputText maxlength="15" readonly="true"
+								value="#{cxcRefinanciamientoFacturasController.clasePrestamo}" />
+						</div>
+					</div>
+					<div class="ui-g-12 nopadding">
+						<div class="ui-g-3">
+							<p:outputLabel value="Fecha Factura" />
+							<p:calendar disabled="true"
+								value="#{cxcRefinanciamientoFacturasController.fecha}"
+								locale="es" pattern="dd/MM/yyyy" />
+						</div>
+						<div class="ui-g-6">
+							<p:outputLabel value="Tasa Financiación(%)" />
+							<p:inputNumber styleClass="nopadding" readonly="true"
+								value="#{cxcRefinanciamientoFacturasController.tasaFinanciacion}"
+								decimalPlaces="2" />
+						</div>
+						<div class="ui-g-3">
+							<p:outputLabel value="Saldo a Facturar" />
+							<p:inputNumber readonly="true" decimalPlaces="2"
+								value="#{cxcRefinanciamientoFacturasController.mOriginal}" />
+						</div>
+					</div>
+					<div class="ui-g-12 nopadding">
+						<div class="ui-g-3">
+							<p:outputLabel value="Fecha Vcto" />
+							<p:calendar disabled="true"
+								value="#{cxcRefinanciamientoFacturasController.fechaVenceOriginal}"
+								locale="es" pattern="dd/MM/yyyy" />
+						</div>
+						<div class="ui-g-6"></div>
+						<div class="ui-g-3">
+							<p:outputLabel value="Saldo a Hoy" />
+							<p:inputNumber readonly="true"
+								value="#{cxcRefinanciamientoFacturasController.saldo}"
+								decimalPlaces="2" />
+						</div>
+					</div>
+				</p:fieldset>
+			</div>
+
+			<div class="ui-g-12 nopadding">
+				<p:fieldset id="fsDocumentos" legend="Documentos">
+					<div class="ui-g-12 nopadding">
+						<p:dataTable id="tblDocumentos" widgetVar="tblDocumentosW"
+							rows="10" paginator="true" paginatorPosition="bottom"
+							currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+							paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+							styleClass="table table-body table-footer"
+							emptyMessage="No existen registros"
+							value="#{cxcRefinanciamientoFacturasController.detalle}"
+							var="item">
+							<p:column headerText="Tipo Doc" width="20%">
+								<p:selectOneMenu disabled="true" value="#{item.claseDocumento}">
+									<f:selectItem itemLabel="Pago Mensual" itemValue="PM" />
+									<f:selectItem itemLabel="Pago Especial" itemValue="PE" />
+									<f:selectItem itemLabel="Pago Adicional" itemValue="PA" />
+									<f:selectItem itemLabel="Cuota Alcance" itemValue="CA" />
+									<f:selectItem itemLabel="Cuota Interes" itemValue="CI" />
+								</p:selectOneMenu>
+							</p:column>
+							<p:column headerText="No Docu" width="10%">
+								<p:inputText readonly="true" value="#{item.id.noDocu}" />
+							</p:column>
+							<p:column headerText="Documento" width="10%">
+								<p:inputText readonly="true" value="#{item.noDocuRefe}" />
+							</p:column>
+							<p:column headerText="Fecha Vcto" width="15%">
+								<p:calendar disabled="true" value="#{item.fechaVence}"
+									locale="es" pattern="dd/MM/yyyy" />
+							</p:column>
+							<p:column headerText="Días" width="5%">
+								<p:inputNumber readonly="true" value="#{item.dias}"
+									decimalPlaces="0" styleClass="number" />
+							</p:column>
+							<p:column headerText="Saldo" width="10%">
+								<p:inputNumber readonly="true" value="#{item.saldo}"
+									decimalPlaces="2" styleClass="number" />
+							</p:column>
+							<p:column headerText="Interés / Descuento" width="10%">
+								<p:inputNumber readonly="true"
+									styleClass="number #{item.cssInteresDescuento}"
+									value="#{item.interesesDescuento}" decimalPlaces="2" />
+							</p:column>
+							<p:column headerText="Capital" width="10%">
+								<p:inputNumber readonly="true" value="#{item.saldoParcialTab}"
+									decimalPlaces="2" styleClass="number" />
+							</p:column>
+							<p:column headerText="Total" width="10%">
+								<p:inputNumber readonly="true" value="#{item.total}"
+									decimalPlaces="2" styleClass="number" />
+							</p:column>
+							<p:columnGroup type="footer">
+								<p:row>
+									<p:column colspan="5">
+										<f:facet name="footer">
+											<p:outputLabel style="float:right" value="Totales:" />
+										</f:facet>
+									</p:column>
+									<p:column>
+										<f:facet name="footer">
+											<p:inputNumber readonly="true"
+												value="#{cxcRefinanciamientoFacturasController.totalSaldo}"
+												decimalPlaces="2" styleClass="number" />
+										</f:facet>
+									</p:column>
+									<p:column>
+										<f:facet name="footer">
+											<p:inputNumber readonly="true"
+												value="#{cxcRefinanciamientoFacturasController.totalInteresesDescuento}"
+												decimalPlaces="2" styleClass="number" />
+										</f:facet>
+									</p:column>
+									<p:column />
+									<p:column>
+										<f:facet name="footer">
+											<p:inputNumber readonly="true"
+												value="#{cxcRefinanciamientoFacturasController.totalTotal}"
+												decimalPlaces="2" styleClass="number" />
+										</f:facet>
+									</p:column>
+								</p:row>
+							</p:columnGroup>
+						</p:dataTable>
+					</div>
+				</p:fieldset>
+			</div>
+
+			<p:fieldset id="fsTotales">
+				<div class="ui-g-5 nopadding" style="float: right">
+					<div class="ui-g-12 nopadding">
+						<div class="ui-g-6">
+							<p:outputLabel value="Total Vencido" />
+							<p:inputNumber readonly="true"
+								value="#{cxcRefinanciamientoFacturasController.totalVencido}"
+								decimalPlaces="2" styleClass="number" />
+						</div>
+						<div class="ui-g-6">
+							<p:outputLabel value="Total por Vencer" />
+							<p:inputNumber readonly="true"
+								value="#{cxcRefinanciamientoFacturasController.totalXVencer}"
+								decimalPlaces="2" styleClass="number" />
+						</div>
+					</div>
+					<div class="ui-g-12 nopadding">
+						<div class="ui-g-6">
+							<p:outputLabel value="Total Interés Mora" />
+							<p:inputNumber readonly="true"
+								value="#{cxcRefinanciamientoFacturasController.totalInteresMora}"
+								decimalPlaces="2" styleClass="number" />
+						</div>
+						<div class="ui-g-6">
+							<p:commandButton value="Refinanciación" style="margin-top:0px;"
+								partialSubmit="true" process="@this"
+								actionListener="#{cxcRefinanciamientoFacturasController.refinanciar}"
+								update=":idForm:pestanas" />
+						</div>
+					</div>
+					<div class="ui-g-12 nopadding">
+						<div class="ui-g-6">
+							<p:outputLabel value="Total Descuento" />
+							<p:inputNumber readonly="true"
+								value="#{cxcRefinanciamientoFacturasController.totalDescuento}"
+								decimalPlaces="2" styleClass="number" />
+						</div>
+						<div class="ui-g-6">
+							<p:outputLabel value="Saldo a Refinanciar" />
+							<p:inputNumber readonly="true"
+								value="#{cxcRefinanciamientoFacturasController.totalSaldoRefinanciar}"
+								decimalPlaces="2" styleClass="number" />
+						</div>
+					</div>
+				</div>
+			</p:fieldset>
+		</div>
+	</div>
+
+</ui:composition>

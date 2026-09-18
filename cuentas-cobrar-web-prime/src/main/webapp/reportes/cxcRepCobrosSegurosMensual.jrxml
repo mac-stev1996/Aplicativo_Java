@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cxcRepCobrosSegurosMensual" pageWidth="1610" pageHeight="842" columnWidth="1570" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ac7576c1-2ec5-49c6-8c9f-0176468031ef">
+	<property name="ireport.zoom" value="1.3310000000000004"/>
+	<property name="ireport.x" value="1093"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="p_no_cia" class="java.lang.String"/>
+	<parameter name="p_nombre_empresa" class="java.lang.String"/>
+	<parameter name="p_fecha_inicio" class="java.util.Date"/>
+	<parameter name="p_fecha_fin" class="java.util.Date"/>
+	<parameter name="p_modulo" class="java.lang.String"/>
+	<parameter name="p_imprime_cabecera" class="java.lang.Boolean"/>
+	<queryString>
+		<![CDATA[select   a.centro, ag. nombre agrencia,a.usuario usuuarioCaja, u.nombre nombreUsuario,to_char(a.fecha,'MM')mes
+,rownum id, to_char(a.fecha,'DD/MM/RRRR')FECHA, a.no_fisico ci, d.cedula, d.nombre, c.no_fisico, c.no_docu_refe, b.total_pago monto, c.saldo montoCxc,
+b.total_pago - c.saldo diferencia,e.cuenta_clientes_scb
+from arcjca a, arccrd b, arccmd c, arccmc d, arcjli e, usuarios_sis u, agencias ag
+where a.no_cia = $P{p_no_cia}
+and trunc(a.fecha) >= $P{p_fecha_inicio}
+and trunc(a.fecha) < $P{p_fecha_fin} + 1
+and nvl(a.anulado,'N') = 'N'
+and a.no_cia = b.no_cia
+and a.no_docu = b.no_docu
+and b.no_cia = c.no_cia
+and b.no_refe = c.no_docu
+and a.no_cia = d.no_cia
+and a.no_cliente = d.no_cliente
+and c.serie_fisico = (SELECT p.TEXTO1 FROM PARAM_DET p
+WHERE NO_CIA = $P{p_no_cia}
+AND CODIGO = 'SEGL'
+AND CODIGO_DET = c.serie_fisico)
+and c.no_cia = e.no_cia
+and c.serie_fisico = e.no_linea
+and a.usuario = u.usuario
+and a.no_cia = ag.no_cia
+and a.centro = ag.codigo]]>
+	</queryString>
+	<field name="CENTRO" class="java.lang.String"/>
+	<field name="AGRENCIA" class="java.lang.String"/>
+	<field name="USUUARIOCAJA" class="java.lang.String"/>
+	<field name="NOMBREUSUARIO" class="java.lang.String"/>
+	<field name="MES" class="java.lang.String"/>
+	<field name="ID" class="java.math.BigDecimal"/>
+	<field name="FECHA" class="java.lang.String"/>
+	<field name="CI" class="java.lang.String"/>
+	<field name="CEDULA" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="NO_FISICO" class="java.lang.String"/>
+	<field name="NO_DOCU_REFE" class="java.lang.String"/>
+	<field name="MONTO" class="java.math.BigDecimal"/>
+	<field name="MONTOCXC" class="java.math.BigDecimal"/>
+	<field name="DIFERENCIA" class="java.math.BigDecimal"/>
+	<field name="CUENTA_CLIENTES_SCB" class="java.lang.String"/>
+	<variable name="sumMonto" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{MONTO}]]></variableExpression>
+	</variable>
+	<variable name="sumMontoCxc" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{MONTOCXC}]]></variableExpression>
+	</variable>
+	<variable name="sumdiferencia" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{DIFERENCIA}]]></variableExpression>
+	</variable>
+	<group name="Master_Principal">
+		<groupHeader>
+			<band height="16">
+				<staticText>
+					<reportElement uuid="67955b14-7591-4aaf-a5c7-83285cd33d63" mode="Opaque" x="1" y="0" width="114" height="16" forecolor="#000000" backcolor="#9999FF"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[AGRENCIA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="aa2081e0-e141-4a81-8a28-76e4267f5d8b" mode="Opaque" x="115" y="0" width="90" height="16" forecolor="#000000" backcolor="#9999FF"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[USUARIO CAJA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="ab9bd60d-66b5-4278-a328-d6811eeefad2" mode="Opaque" x="205" y="0" width="153" height="16" forecolor="#000000" backcolor="#9999FF"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[NOMBRE CAJERO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="fa830c76-d480-4c12-9612-ff416d1e3122" mode="Opaque" x="358" y="0" width="54" height="16" forecolor="#000000" backcolor="#9999FF"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MES]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="c1595741-a520-4187-8ee3-c24cb1598be8" mode="Opaque" x="412" y="0" width="100" height="16" forecolor="#000000" backcolor="#9999FF"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[FECHA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="eb3d202f-f744-49a5-9d0a-aeea77437356" mode="Opaque" x="512" y="0" width="136" height="16" forecolor="#000000" backcolor="#9999FF"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[COMPROBANTE INGRESO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="ec7e8d46-959e-43b2-a7e7-291dc0e2e65e" mode="Opaque" x="648" y="0" width="103" height="16" forecolor="#000000" backcolor="#9999FF"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CEDULA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="cf432132-4d1b-4cf0-bf31-d499267801b7" mode="Opaque" x="751" y="0" width="201" height="16" forecolor="#000000" backcolor="#9999FF"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[NOMBRE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="0bcd3647-9c9b-46ed-8580-1bbf1b51aa38" mode="Opaque" x="952" y="0" width="100" height="16" forecolor="#000000" backcolor="#9999FF"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[NO. FISICO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="5427242c-4138-47ce-81ff-c0e0ad4c669a" mode="Opaque" x="1052" y="0" width="52" height="16" forecolor="#000000" backcolor="#9999FF"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[NO. CUOTA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="e85f1e08-b253-4ff8-92ec-7481f512ac06" mode="Opaque" x="1104" y="0" width="100" height="16" forecolor="#000000" backcolor="#9999FF"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MONTO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="470e9d43-a56d-49e4-932f-185525b50f39" mode="Opaque" x="1204" y="0" width="100" height="16" forecolor="#000000" backcolor="#9999FF"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MONTOCXC]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="683426ef-aad4-4130-8120-3ec2582cf676" mode="Opaque" x="1304" y="0" width="100" height="16" forecolor="#000000" backcolor="#9999FF"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[DIFERENCIA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="c93d3a23-5d00-4fdd-9259-dc6231365542" mode="Opaque" x="1404" y="0" width="168" height="16" forecolor="#000000" backcolor="#9999FF"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CUENTA CONTABLE]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="16">
+				<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+					<reportElement uuid="8d00e8a7-d36d-4445-bd2e-96da5a67f695" x="1304" y="0" width="100" height="16"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{sumdiferencia}]]></textFieldExpression>
+				</textField>
+				<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+					<reportElement uuid="3726e603-b9d6-4b68-babf-71178d4f7f61" x="1204" y="0" width="100" height="16"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{sumMontoCxc}]]></textFieldExpression>
+				</textField>
+				<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+					<reportElement uuid="82b150e1-2969-4ede-81ba-0d420771184f" x="1104" y="0" width="100" height="16"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{sumMonto}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<title>
+		<band height="48" splitType="Stretch">
+			<printWhenExpression><![CDATA[$P{p_imprime_cabecera}]]></printWhenExpression>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="5ce8a816-35ca-4231-958e-b8f1da68457a" mode="Transparent" x="101" y="16" width="132" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="5"/>
+					<paragraph tabStopWidth="20"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_modulo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="088d621b-c466-48e5-9a48-353654935c63" mode="Transparent" x="0" y="16" width="101" height="16" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MODULO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="088d621b-c466-48e5-9a48-353654935c63" mode="Transparent" x="233" y="0" width="1337" height="48" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REPORTE COBROS SEGUROS MENSUAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="088d621b-c466-48e5-9a48-353654935c63" mode="Transparent" x="0" y="0" width="101" height="16" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COMPAÑIA]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="5ce8a816-35ca-4231-958e-b8f1da68457a" mode="Transparent" x="101" y="0" width="132" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="5"/>
+					<paragraph tabStopWidth="20"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_nombre_empresa}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH:mm:ss" isBlankWhenNull="true">
+				<reportElement uuid="5ce8a816-35ca-4231-958e-b8f1da68457a" x="101" y="32" width="132" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="5"/>
+					<paragraph tabStopWidth="20"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(new Date())]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="088d621b-c466-48e5-9a48-353654935c63" mode="Transparent" x="0" y="32" width="101" height="16" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="d7119377-763e-47ad-ac16-93c293ca0d14" x="1" y="0" width="114" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AGRENCIA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="cbec92ac-5c3a-4574-874d-c7e9eac34255" x="115" y="0" width="90" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{USUUARIOCAJA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="02fb235e-3ad5-48e3-bd42-d5926362eb90" x="205" y="0" width="153" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBREUSUARIO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="4ab3dcb6-e177-4789-ae19-1babb5920bf7" x="358" y="0" width="54" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MES}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="ece5e4e0-509b-4c2f-99aa-4752113d84f4" x="412" y="0" width="100" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="4b17c8e2-0757-4f47-a211-6c717be7da50" x="512" y="0" width="136" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CI}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="b8657238-3956-4f0d-a3d4-739c6686d256" x="648" y="0" width="103" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CEDULA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="b8b41e21-0e2d-498c-924a-99cf946a254c" x="751" y="0" width="201" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="aa9404f8-9592-4861-a4c2-d83cf3b7b59b" x="952" y="0" width="100" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NO_FISICO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0;-###0" isBlankWhenNull="true">
+				<reportElement uuid="74ec985f-cb36-4b15-86c2-490e7a57b273" x="1052" y="0" width="52" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NO_DOCU_REFE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+				<reportElement uuid="d4c34d11-b1b5-45c8-8644-2a4d13542a25" x="1104" y="0" width="100" height="16"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MONTO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+				<reportElement uuid="5da89eeb-b33d-443e-88d7-a931d21a8e75" x="1204" y="0" width="100" height="16"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MONTOCXC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+				<reportElement uuid="6ef86889-de41-46ad-9444-84c2b5f22966" x="1304" y="0" width="100" height="16"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DIFERENCIA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="15030591-94f8-4e93-9830-ee09ada6b106" x="1404" y="0" width="168" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CUENTA_CLIENTES_SCB}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

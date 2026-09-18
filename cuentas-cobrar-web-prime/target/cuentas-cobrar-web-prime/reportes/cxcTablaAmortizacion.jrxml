@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cxcTablaAmortizacion" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5d8b2bdb-641e-4b4f-be43-a3b54a0f71da">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="detalleTablaAmortizacion" uuid="ef246110-c17f-4f49-b9e4-d8756f8d6847">
+		<parameter name="p_no_cia" class="java.lang.String"/>
+		<parameter name="p_agencia" class="java.lang.String"/>
+		<parameter name="p_no_fisico" class="java.lang.String"/>
+		<parameter name="p_serie_fisico" class="java.lang.String"/>
+		<parameter name="p_cant_prorrogas" class="java.lang.Integer"/>
+		<parameter name="p_no_cliente" class="java.lang.String"/>
+		<parameter name="p_fecha" class="java.util.Date"/>
+		<queryString>
+			<![CDATA[select no_docu_refe,fecha_vence,dias,
+(nvl(saldo_capital,0) - OBT_SALDO_ANTCLIENTE(no_cia, centro, no_cliente, no_fisico, trunc(fecha), serie_fisico, to_number(no_docu_refe), $P{p_cant_prorrogas})) saldo_inicial,
+m_original, saldo_parcial,   intereses,
+(nvl(saldo_capital,0) - OBT_SALDO_ANTCLIENTE(no_cia, centro, no_cliente, no_fisico, trunc(fecha), serie_fisico, to_number(no_docu_refe), $P{p_cant_prorrogas}) - nvl(capital,0)) saldo_capital from (
+select b.no_cia, b.no_cliente, b.fecha, trunc(b.fecha_vence - b.fecha) dias,
+b.centro, b.no_fisico, b.serie_fisico, b.no_docu_refe, b.fecha_vence, b.saldo_parcial capital, b.m_original cuota, b.intereses,
+       b.m_original, saldo_parcial, (select sum(saldo_parcial) saldo_capital
+from arccmd a
+where a.no_cia = b.no_cia
+and a.centro = b.centro
+and a.no_cliente = b.no_cliente
+and a.no_fisico = b.no_fisico
+and a.serie_fisico = b.serie_fisico
+and trunc(a.fecha) = trunc(b.fecha)
+and a.cant_prorrogas = $P{p_cant_prorrogas}) saldo_capital
+from arccmd b
+where b.no_cia = $P{p_no_cia}
+and b.centro = $P{p_agencia}
+and b.no_cliente = $P{p_no_cliente}
+and b.no_fisico = $P{p_no_fisico}
+and b.serie_fisico = $P{p_serie_fisico}
+and trunc(b.fecha) = trunc($P{p_fecha})
+and b.cant_prorrogas = $P{p_cant_prorrogas}
+and tipo_doc <> 'CA'
+order by to_number(b.no_docu_refe))]]>
+		</queryString>
+		<field name="NO_DOCU_REFE" class="java.lang.String"/>
+		<field name="FECHA_VENCE" class="java.sql.Timestamp"/>
+		<field name="DIAS" class="java.math.BigDecimal"/>
+		<field name="SALDO_INICIAL" class="java.math.BigDecimal"/>
+		<field name="M_ORIGINAL" class="java.math.BigDecimal"/>
+		<field name="SALDO_PARCIAL" class="java.math.BigDecimal"/>
+		<field name="INTERESES" class="java.math.BigDecimal"/>
+		<field name="SALDO_CAPITAL" class="java.math.BigDecimal"/>
+		<variable name="total_mensual" class="java.lang.Number" calculation="Sum">
+			<variableExpression><![CDATA[$F{M_ORIGINAL}]]></variableExpression>
+		</variable>
+		<variable name="total_capital" class="java.lang.Number" calculation="Sum">
+			<variableExpression><![CDATA[$F{SALDO_PARCIAL}]]></variableExpression>
+		</variable>
+		<variable name="total_interes" class="java.lang.Number" calculation="Sum">
+			<variableExpression><![CDATA[$F{INTERESES}]]></variableExpression>
+		</variable>
+	</subDataset>
+	<parameter name="p_no_cia" class="java.lang.String"/>
+	<parameter name="p_agencia" class="java.lang.String"/>
+	<parameter name="p_no_fisico" class="java.lang.String"/>
+	<parameter name="p_serie_fisico" class="java.lang.String"/>
+	<parameter name="p_cant_prorrogas" class="java.lang.Integer"/>
+	<parameter name="p_no_cliente" class="java.lang.String"/>
+	<parameter name="p_fecha" class="java.util.Date"/>
+	<parameter name="p_nombre_empresa" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select   (select b.descripcion||', '
+      from agencias a, arcccan b
+     where a.no_cia = $P{p_no_cia}
+       and a.provincia = b.provincia
+       and a.ciudad = b.canton
+       and a.codigo = $P{p_agencia}) CIUDAD,sum(b.saldo_parcial) total_financiar,sum(b.intereses) total_interes,  sum(b.m_original) total_pago,
+c.tasa_financia,round((SELECT ((POWER((1+((c.tasa_financia/100) / 12)), 12))-1)*100  FROM DUAL),2) tasa_efectiva,
+letras(sum(b.m_original), 'D') texto_letras,d.cedula,d.nombre,rtrim(d.nombre_cyj) nom_conyugue, d.cedula_cyj cedula_conyugue
+from arccmd b,fac_ventas_cab c, arccmc d
+where b.no_cia = $P{p_no_cia}
+and b.centro = $P{p_agencia}
+and b.no_cliente = $P{p_no_cliente}
+and b.no_fisico = $P{p_no_fisico}
+and b.serie_fisico = $P{p_serie_fisico}
+and trunc(b.fecha) = trunc($P{p_fecha})
+and b.cant_prorrogas = $P{p_cant_prorrogas}
+and b.tipo_doc <> 'CA'
+and b.no_cia=c.no_cia
+and b.centro=c.centrod
+and b.no_fisico=c.no_fisico
+and b.serie_fisico=c.serie_fisico
+and b.cant_prorrogas=c.cant_prorrogas
+and b.no_cliente=c.no_cliente
+and b.periodo=c.periodo
+and b.no_cia=d.no_cia
+and b.no_cliente=d.no_cliente
+and b.grupo=d.grupo
+GROUP by c.tasa_financia,d.cedula,d.nombre, d.nombre_cyj , d.cedula_cyj]]>
+	</queryString>
+	<field name="CIUDAD" class="java.lang.String"/>
+	<field name="TOTAL_FINANCIAR" class="java.math.BigDecimal"/>
+	<field name="TOTAL_INTERES" class="java.math.BigDecimal"/>
+	<field name="TOTAL_PAGO" class="java.math.BigDecimal"/>
+	<field name="TASA_FINANCIA" class="java.math.BigDecimal"/>
+	<field name="TASA_EFECTIVA" class="java.math.BigDecimal"/>
+	<field name="TEXTO_LETRAS" class="java.lang.String"/>
+	<field name="CEDULA" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="NOM_CONYUGUE" class="java.lang.String"/>
+	<field name="CEDULA_CONYUGUE" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="162" splitType="Stretch">
+			<textField>
+				<reportElement uuid="5221dca2-8890-4b5b-8dad-28640f467368" x="0" y="0" width="318" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_nombre_empresa}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="2450cd9e-b5f0-4d35-a183-1c67c10abeba" x="163" y="20" width="275" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[TABLA DE AMORTIZACIONES]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="2eca62a6-5e8c-40f5-9337-f2c19763a174" x="406" y="40" width="149" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss").format(new Date())]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd MMMMM yyyy">
+				<reportElement uuid="0c1f4969-bb08-4890-8c54-4542d4df2636" x="119" y="62" width="121" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_fecha}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="ab459246-a433-47c8-af7f-04bd86e4f524" x="0" y="62" width="36" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="f0ae0d79-3dbd-41d9-b512-e3e8a06d073a" x="36" y="62" width="83" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CIUDAD}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="9bb9f7da-d86b-44f5-9920-c51e6acce284" x="265" y="62" width="53" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Factura:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="9d55fc59-27a1-4e5c-973e-a0fe4c72bb62" x="318" y="62" width="100" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_no_fisico}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="a6efcf63-8402-4090-9e42-4a4867c829b6" x="338" y="82" width="100" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SALDO FINANCIAR:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="5d28fb9f-a306-4fff-bf7a-40f1cc3ad4d6" x="438" y="82" width="88" height="16"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL_FINANCIAR}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="2cdf207b-5d94-40cf-8ea4-14272a59eaa6" x="338" y="98" width="100" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[INTERES:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="984925eb-e691-44f4-ae32-34a783c60963" x="438" y="98" width="88" height="16"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL_INTERES}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="50505f91-ffdd-4380-9501-66387d4590da" x="338" y="114" width="100" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="2496ced6-4076-43f2-a1bb-9e277898a9cc" x="438" y="114" width="88" height="16"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL_PAGO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="0e491f8d-e710-4016-8793-520392703fe0" x="338" y="130" width="100" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TASA NOMINAL:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="9c4f5bd7-f517-40c1-a83d-4e4a666c6789" x="438" y="130" width="88" height="16"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TASA_FINANCIA}+" %"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="25e3f6df-615d-40f6-ae3d-fcbe9e1e376a" x="338" y="146" width="100" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TASA EFECTIVA:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="6d20fba9-57a9-4cbc-ba91-6288f10128c1" x="438" y="146" width="88" height="16"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TASA_EFECTIVA}+" %"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="b9e01772-1c73-4f0a-8e20-6fe3179cf8e7" x="0" y="82" width="328" height="80"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Debo y pagare en esta ciudad o en el lugar donde se me reconvenga, solidaria e incondicionalmente a la orden de "+$P{p_nombre_empresa}+"  , la suma de "+$F{TEXTO_LETRAS}+" (USD\$ "+$F{TOTAL_PAGO}+"), de acuerdo al siguiente detalle de vencimientos sucesivos."]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="50" splitType="Stretch">
+			<componentElement>
+				<reportElement uuid="ca019c80-8062-4290-8801-f0a3c51c7430" key="table" x="0" y="0" width="555" height="50"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="detalleTablaAmortizacion" uuid="0ddfdd81-2f01-481e-8091-9246039327cf">
+						<datasetParameter name="p_no_cia">
+							<datasetParameterExpression><![CDATA[$P{p_no_cia}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="p_agencia">
+							<datasetParameterExpression><![CDATA[$P{p_agencia}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="p_no_fisico">
+							<datasetParameterExpression><![CDATA[$P{p_no_fisico}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="p_serie_fisico">
+							<datasetParameterExpression><![CDATA[$P{p_serie_fisico}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="p_cant_prorrogas">
+							<datasetParameterExpression><![CDATA[$P{p_cant_prorrogas}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="p_no_cliente">
+							<datasetParameterExpression><![CDATA[$P{p_no_cliente}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="p_fecha">
+							<datasetParameterExpression><![CDATA[$P{p_fecha}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column uuid="0f2c3dda-4959-49a8-bc70-5cb50f852f19" width="40">
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement uuid="0fb693b4-487d-4deb-b85a-0ce893d7a810" mode="Opaque" x="0" y="0" width="40" height="16"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[CUOTA]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="16" rowSpan="1">
+							<textField>
+								<reportElement uuid="a579fc92-6c84-4bf1-9d79-34514cc26969" mode="Opaque" x="0" y="0" width="40" height="16"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{NO_DOCU_REFE}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column uuid="ce646ee1-6b7a-4635-b86f-fd5967ff2408" width="69">
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement uuid="1624d635-44fc-403a-aed6-f66f20641352" mode="Opaque" x="0" y="0" width="69" height="16"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[VENCE EN]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="16" rowSpan="1">
+							<textField>
+								<reportElement uuid="6c22fd3a-3f62-4f78-bbd6-747e095386c0" mode="Opaque" x="0" y="0" width="69" height="16"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{FECHA_VENCE}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column uuid="1485ec97-02ef-4969-9b03-52dfc0d93ec5" width="31">
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement uuid="207e8082-4314-4538-a652-ea6b805bd330" mode="Opaque" x="0" y="0" width="31" height="16"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[DIAS]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="16" rowSpan="1">
+							<textField>
+								<reportElement uuid="4cb13f61-b7cd-4ccb-91f3-4eac4325ef0e" mode="Opaque" x="0" y="0" width="31" height="16"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{DIAS}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column uuid="ece4945d-ae43-417b-a117-801cfcdf1dff" width="71">
+						<jr:tableFooter height="17" rowSpan="1">
+							<staticText>
+								<reportElement uuid="10f6defa-5fae-481a-94ca-744a647718d0" x="0" y="0" width="71" height="17"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Total:]]></text>
+							</staticText>
+						</jr:tableFooter>
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement uuid="70aac907-e176-404c-94d5-b9b97aee24b3" mode="Opaque" x="0" y="0" width="71" height="16"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[CAP. INICIAL]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="16" rowSpan="1">
+							<textField>
+								<reportElement uuid="f28725f0-c3e9-47c3-9e54-19d69fabb5fa" mode="Opaque" x="0" y="0" width="71" height="16"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{SALDO_INICIAL}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column uuid="9f4f2b65-e9cc-4dde-a74b-881a703afc25" width="90">
+						<jr:tableFooter height="17" rowSpan="1">
+							<textField pattern="#,##0.00">
+								<reportElement uuid="ea2744bb-b829-4dae-b2f7-a65e64f63654" mode="Opaque" x="0" y="0" width="90" height="16"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{total_mensual}]]></textFieldExpression>
+							</textField>
+						</jr:tableFooter>
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement uuid="e80c0561-1b24-44a3-a800-6d2ebb81cb84" mode="Opaque" x="0" y="0" width="90" height="16"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[PAGO MENSUAL]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="16" rowSpan="1">
+							<textField>
+								<reportElement uuid="a5381a09-6e42-4306-9d41-5ecc33a28068" mode="Opaque" x="0" y="0" width="90" height="16"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{M_ORIGINAL}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column uuid="1d5b8445-eff9-4a88-a9cc-151c37d072c7" width="90">
+						<jr:tableFooter height="17" rowSpan="1">
+							<textField pattern="#,##0.00">
+								<reportElement uuid="f0445a0a-a5c6-4133-a4e4-eb2f50e07c9f" mode="Opaque" x="0" y="0" width="90" height="16"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{total_capital}]]></textFieldExpression>
+							</textField>
+						</jr:tableFooter>
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement uuid="4e4e5074-f3eb-428a-b440-1e8bdb82d9a8" mode="Opaque" x="0" y="0" width="90" height="16"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[VALOR CAPITAL]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="16" rowSpan="1">
+							<textField>
+								<reportElement uuid="ac142300-e767-4c37-9133-7f97c8d0074f" mode="Opaque" x="0" y="0" width="90" height="16"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{SALDO_PARCIAL}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column uuid="b791fbbb-b29a-4b0f-95ac-0c4feeb3a0af" width="73">
+						<jr:tableFooter height="17" rowSpan="1">
+							<textField pattern="#,##0.00">
+								<reportElement uuid="8a6c8737-a448-4930-9570-2121c67a901e" mode="Opaque" x="0" y="0" width="73" height="16"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{total_interes}]]></textFieldExpression>
+							</textField>
+						</jr:tableFooter>
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement uuid="9aac7d16-0553-4a14-9c6c-497949ac649f" mode="Opaque" x="0" y="0" width="73" height="16"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[INTERES]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="16" rowSpan="1">
+							<textField>
+								<reportElement uuid="192712df-1b21-4a62-a319-3c3c31f9404b" mode="Opaque" x="0" y="0" width="73" height="16"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{INTERESES}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column uuid="a7c3437b-2d7f-4119-891a-be38d00566d8" width="90">
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement uuid="30c4d29a-695c-4315-9e93-4c4c51e6dfd9" mode="Opaque" x="0" y="0" width="90" height="16"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Arial" size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[CAPITAL FINAL]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="16" rowSpan="1">
+							<textField>
+								<reportElement uuid="a9efc515-9c4d-4c25-beb1-99bb426618e7" mode="Opaque" x="0" y="0" width="90" height="16"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Arial" size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{SALDO_CAPITAL}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</detail>
+	<summary>
+		<band height="160">
+			<staticText>
+				<reportElement uuid="8781959c-9284-40d9-9fa5-c5a48f997a89" x="0" y="0" width="265" height="20"/>
+				<textElement/>
+				<text><![CDATA[Acepto(amos) la tabla amortizacion que antecede]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="a14e06db-5e32-4b9b-b094-9ea186360f11" x="36" y="59" width="169" height="1"/>
+			</line>
+			<textField>
+				<reportElement uuid="a08498d6-3cd7-4d60-ab0f-1fc6e6e9b723" x="36" y="60" width="169" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="74998570-327d-4131-a0c2-46b792855b66" x="36" y="73" width="169" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["C.I/RUC No. "+$F{CEDULA}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="a14e06db-5e32-4b9b-b094-9ea186360f11" x="36" y="133" width="169" height="1">
+					<printWhenExpression><![CDATA[$F{CEDULA_CONYUGUE}!=null]]></printWhenExpression>
+				</reportElement>
+			</line>
+			<textField>
+				<reportElement uuid="07498246-11e7-4905-9dfb-15d569a8890b" x="36" y="134" width="169" height="13">
+					<printWhenExpression><![CDATA[$F{NOM_CONYUGUE}!=null]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOM_CONYUGUE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="f863ffd4-d348-4187-87ca-4ad491a046c0" x="36" y="147" width="169" height="13">
+					<printWhenExpression><![CDATA[$F{CEDULA_CONYUGUE}!=null]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["C.I/RUC No. "+$F{CEDULA_CONYUGUE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

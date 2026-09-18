@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cxcAnticipos_subreport2" pageWidth="244" pageHeight="802" columnWidth="244" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" uuid="552165c7-c91a-40f3-8723-eb20be7d4667">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="PNO_CIA" class="java.lang.String"/>
+	<parameter name="PREFER" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select a.no_cia,a.no_refe,a.monto_doc,b.no_fisico||'-'||b.serie_fisico vingreso,b.fecha from arccan a, arccmd b
+where a.no_cia =$P{PNO_CIA}
+and a.no_refe =  $P{PREFER}
+and a.no_cia = b.no_cia
+and a.no_docu = b.no_docu
+and a.aplica_como ='SA'
+and nvl(b.anulado,'N') = 'N']]>
+	</queryString>
+	<field name="NO_CIA" class="java.lang.String"/>
+	<field name="NO_REFE" class="java.lang.String"/>
+	<field name="MONTO_DOC" class="java.math.BigDecimal"/>
+	<field name="VINGRESO" class="java.lang.String"/>
+	<field name="FECHA" class="java.sql.Timestamp"/>
+	<variable name="monto2" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{MONTO_DOC}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+				<reportElement uuid="3b790f4d-6715-40a9-a4ef-32c14dc33908" x="0" y="0" width="82" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{MONTO_DOC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="d3138d48-76bd-4cfc-8da8-981210e765bb" x="82" y="0" width="82" height="20"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{VINGRESO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="d3138d48-76bd-4cfc-8da8-981210e765bb" x="164" y="0" width="80" height="20"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,264 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<style type="text/css">
+body {
+	font-size: 10px;
+}
+
+body .ui-toolbar {
+	padding: 5px;
+}
+
+.columAlignCenter {
+	text-align: center;
+}
+
+.columAlignRight {
+	text-align: right;
+}
+</style>
+	<script type="text/javascript">
+		PrimeFaces.locales["es"] = {
+			    closeText: "Cerrar",
+			    prevText: "Anterior",
+			    nextText: "Siguiente",
+			    monthNames: ["Enero","Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+			    monthNamesShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+			    dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+			    dayNamesShort: ["Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab"],
+			    dayNamesMin: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
+			    weekHeader: "Semana",
+			    firstDay: 0,
+			    isRTL: false,
+			    showMonthAfterYear: false,
+			    yearSuffix: "",
+			    timeOnlyTitle: "Solo hora",
+			    timeText: "Tiempo",
+			    hourText: "Hora",
+			    minuteText: "Minuto",
+			    secondText: "Segundo",
+			    currentText: "Fecha actual",
+			    ampm: false,
+			    month: "Mes",
+			    week: "Semana",
+			    day: "Día",
+			    allDayText : "Todo el día"
+			};
+
+		</script>
+</h:head>
+<h:body>
+	<p:ajaxStatus onstart="PF('statusDialog').show()"
+		onsuccess="PF('statusDialog').hide()"
+		onerror="PF('statusDialog').hide()" />
+
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+		closable="false" resizable="false" showHeader="false">
+		<h:graphicImage value="/common/imgs/gifs/ajaxloadingbar.gif" />
+	</p:dialog>
+	<p:growl id="idGrowl" globalOnly="true" autoUpdate="true"
+		widgetVar="groMessages" showDetail="true" life="5000" />
+
+	<h:form id="idForm">
+		<p:toolbar>
+			<f:facet name="left">
+				<h:outputLabel style="font-size: 15px;"
+					value="BANDEJA DE ENTREGA DE DOCUMENTACION A CLIENTES" />
+			</f:facet>
+
+
+		</p:toolbar>
+
+
+		<p:dataTable id="idTblDiarios"
+			emptyMessage="No tiene documentaciona entregar en su bandeja"
+			value="#{cxcBandejaDocumentosEntregaController.entregasEnBandeja}"
+			var="item"
+			paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+			rows="15" paginator="true">
+
+			<p:column headerText="Factura " styleClass="columAlignCenter"
+				width="60">
+				<p:outputLabel value="#{item.noFisico}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="Cedula Cliente " styleClass="columAlignCenter"
+				width="60">
+				<p:outputLabel value="#{item.cedulaCliente}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="Cliente " styleClass="columAlignCenter"
+				>
+				<p:outputLabel value="#{item.nombreCliente}"></p:outputLabel>
+			</p:column>
+
+			<p:column headerText="Fecha Envio" width="80">
+				<p:outputLabel value="#{item.entregaClientesPk.fechaSeguimiento}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="Usuario Envio" width="80">
+				<p:outputLabel value="#{item.entregaClientesPk.usuarioSeguimiento}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="Estado" width="50">
+			<p:outputLabel value="ENVIADO" rendered="#{item.estadoSeguimiento == 'ENV'}"></p:outputLabel>
+					<p:outputLabel value="RECEPTADO" rendered="#{item.estadoSeguimiento == 'REC'}"></p:outputLabel>
+					<p:outputLabel value="ENTREGADO" rendered="#{item.estadoSeguimiento == 'ENC'}"></p:outputLabel>
+				
+			</p:column>
+			<p:column headerText="Observacion">
+				<p:outputLabel value="#{item.observacion}"></p:outputLabel>
+			</p:column>
+
+			<p:column headerText="Adjuntos" styleClass="columAlignCenter"
+				width="60">
+				<p:commandButton icon="fa fa-folder-open" styleClass="orange-btn"
+					title="Ver Adjuntos" update="FrmAdjuntos"
+					action="#{cxcBandejaDocumentosEntregaController.verAdjuntos(item)}"></p:commandButton>
+			</p:column>
+
+			<p:column headerText="Receptar" styleClass="columAlignCenter"
+				width="120">
+				<p:commandButton value="Receptar" update="idForm"
+					title="Receptar documentos" styleClass="white-btn"
+					icon="fa fa-download" disabled="#{item.estadoSeguimiento == 'REC'}"
+					action="#{cxcBandejaDocumentosEntregaController.recibirSeguimiento(item)}"></p:commandButton>
+			</p:column>
+
+			<p:column headerText="Enviar" styleClass="columAlignCenter"
+				width="120">
+				<p:commandButton value="Enviar" title="Enviar a otro Colaborador"
+					icon="fa fa-paper-plane" update="FrmReenvio"
+					disabled="#{item.estadoSeguimiento != 'REC'}"
+					action="#{cxcBandejaDocumentosEntregaController.reenviarSeguimiento(item)}"></p:commandButton>
+			</p:column>
+
+			<p:column headerText="Entregar" styleClass="columAlignCenter"
+				width="120">
+				<p:commandButton value="Entregar" update="FrmEntrega"
+					icon="fa fa-upload" styleClass="green-btn"
+					title="Entregar a Cliente"
+					disabled="#{item.estadoSeguimiento != 'REC'}"
+					action="#{cxcBandejaDocumentosEntregaController.entregarCliente(item)}"></p:commandButton>
+			</p:column>
+
+		</p:dataTable>
+
+	</h:form>
+
+	<p:dialog widgetVar="DlgAdjuntos" id="DlgAdjuntos"
+		header="Documentos adjuntos" resizable="true" modal="true"
+		closable="true" appendTo="@(body)" width="450" height="450"
+		closeOnEscape="true">
+		<h:form id="FrmAdjuntos">
+			<p:dataTable
+				value="#{cxcBandejaDocumentosEntregaController.listaAdjuntos}"
+				var="adj" id="dtlinksArchivos">
+				<p:column headerText="Archivo">
+					<p:commandLink ajax="false" target="_blank"
+						action="#{cxcBandejaDocumentosEntregaController.verAdjunto(adj)}">
+						<h:outputText value="#{adj}"
+							style="text-decoration: underline; color: blue;"></h:outputText>
+					</p:commandLink>
+
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	</p:dialog>
+
+	<p:dialog widgetVar="DlgEntrega" id="DlgEntrega"
+		header="Entrega documentacion al cliente" resizable="true"
+		modal="true" closable="true" appendTo="@(body)">
+		<h:form id="FrmEntrega">
+			<h:panelGrid columns="2">
+				<p:outputLabel value="Observacion: "></p:outputLabel>
+				<p:inputTextarea
+					value="#{cxcBandejaDocumentosEntregaController.seguimientoEntrega.observacion}"></p:inputTextarea>
+			</h:panelGrid>
+
+			<br />
+			<p:fileUpload
+				fileUploadListener="#{cxcBandejaDocumentosEntregaController.cargarArchivo}"
+				mode="advanced" dragDropSupport="true"
+				update="FrmEntrega:linkArchivo"
+				uploadLabel="Subir Archivo" cancelLabel="Cancelar"
+				label="Seleccionar Archivo" fileLimit="1"
+				fileLimitMessage="Puede subir solo un archivo">
+			</p:fileUpload>
+			<br />
+
+			<p:commandLink ajax="false" target="_blank" id="linkArchivo"
+				action="#{cxcBandejaDocumentosEntregaController.verAdjunto(cxcBandejaDocumentosEntregaController.archivoEntrega)}">
+				<h:outputText
+					value="#{cxcBandejaDocumentosEntregaController.archivoEntrega}"
+					style="text-decoration: underline; color: blue;"
+					rendered="#{cxcBandejaDocumentosEntregaController.archivoEntrega != null}"></h:outputText>
+			</p:commandLink>
+
+			
+			<br />
+			<center>
+				<p:commandButton value="Entregar a Cliente "
+					action="#{cxcBandejaDocumentosEntregaController.guardarEntregar}"
+					update="idForm"></p:commandButton>
+			</center>
+
+		</h:form>
+	</p:dialog>
+
+	<p:dialog widgetVar="DlgReenvio" id="DlgReenvio"
+		header="Enviar documentacion" resizable="true" modal="true"
+		closable="true" appendTo="@(body)">
+		<h:form id="FrmReenvio">
+			<h:panelGrid columns="2">
+				<p:commandLink oncomplete="PF('DlgUsuarios').show();"
+					update="FrmUsuarios" value="Colaborador" />
+				<p:inputText
+					value="#{cxcBandejaDocumentosEntregaController.seguimientoEntrega.usuarioAsignado}"
+					readonly="true"></p:inputText>
+				<p:outputLabel value="Observacion: "></p:outputLabel>
+				<p:inputTextarea
+					value="#{cxcBandejaDocumentosEntregaController.seguimientoEntrega.observacion}"></p:inputTextarea>
+			</h:panelGrid>
+
+			<center>
+				<p:commandButton value="Enviar "
+					action="#{cxcBandejaDocumentosEntregaController.guardarReenvio}"
+					update="idForm"></p:commandButton>
+			</center>
+
+		</h:form>
+	</p:dialog>
+
+	<p:dialog widgetVar="DlgUsuarios" id="DlgUsuarios"
+		header="Seleccione Usuario" resizable="true" modal="true"
+		closable="true" appendTo="@(body)" width="480" height="500">
+		<h:form id="FrmUsuarios">
+			<p:dataTable id="dtUsuarios"
+				value="#{cxcBandejaDocumentosEntregaController.listaUsuarios}"
+				var="user" emptyMessage="No existen registros"
+				selectionMode="single"
+				selection="#{cxcBandejaDocumentosEntregaController.usuarioSeleccionado}"
+				rowKey="#{user}" paginator="true" rows="10"
+				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+				<p:column headerText="Nombre Usuario" filterBy="#{user.nombre}">
+					<h:outputText value="#{user.nombre}" />
+				</p:column>
+				<p:column headerText="Usuario" filterBy="#{user.usuario}" width="90">
+					<h:outputText value="#{user.usuario}" />
+				</p:column>
+			</p:dataTable>
+			<br> </br>
+			<center>
+				<p:commandButton value="Seleccionar "
+					action="#{cxcBandejaDocumentosEntregaController.seleccionarUsuario}"
+					update="FrmReenvio"></p:commandButton>
+			</center>
+		</h:form>
+	</p:dialog>
+
+	<h:outputStylesheet name="css/layout-lightblue.css"
+		library="serenity-layout" />
+</h:body>
+</html>

@@ -1,0 +1,161 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		<h:outputText value="Protección Datos Personales"></h:outputText>
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmButtons">
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+
+		<style type="text/css">
+.select {
+	background-color: white;
+	color: #212121;
+	max-height: 20px;
+	right: 10%;
+	top: 5px;
+}
+</style>
+
+		<div class="ui-g dashboard">
+			<div class="ui-g-12 ui-fluid contact-form">
+				<div class="ui-g-11" style="background-color: white;">
+
+					<h:form id="form">
+
+						<div align="center">
+
+							<p:panel header="AVISO"
+								style="width:80%; font-weight: bold; font-size: 2em !important;"
+								rendered="#{!proteccionDatosController.muestraMensaje}">
+								<h1
+									style="font-weight: bold; text-align: center; min-height: 0 !important; font-size: 2.4em;">Gracias</h1>
+								<br />
+								<p:outputLabel
+									style="text-align: center; min-height: 0 !important; font-size: 1em !important;"
+									value="Su autorización de Protección de Datos Personales fue registrada con éxito" />
+							</p:panel>
+							<p:panel header="Autorización de Protección de Datos Personales"
+								style="width:60%; font-weight: bold; font-size: 1.5em !important;"
+								rendered="#{proteccionDatosController.muestraMensaje}">
+
+								<div class="ui-lg-12 ui-md-12ui-g-12"
+									style="width: 50% !important;">
+									<br />
+									<h:panelGroup styleClass="md-inputfield">
+										<p:inputText id="txtNombre" readonly="true"
+											style="font-weight: bold;"
+											value="#{proteccionDatosController.cotizacionVeh.nombres}" />
+										<p:message for="txtNombre"></p:message>
+										<label>Nombres:</label>
+									</h:panelGroup>
+									<br />
+									<h:panelGroup styleClass="md-inputfield">
+										<p:inputText id="txtApellido" readonly="true"
+											style="font-weight: bold;"
+											value="#{proteccionDatosController.cotizacionVeh.apellidos}" />
+										<p:message for="txtApellido"></p:message>
+										<label>Apellidos:</label>
+									</h:panelGroup>
+									<br />
+									<h:panelGroup styleClass="md-inputfield">
+										<p:inputText id="txtCedula" readonly="true"
+											style="font-weight: bold;"
+											value="#{proteccionDatosController.cotizacionVeh.cedulaDueno}" />
+										<p:message for="txtCedula"></p:message>
+										<label>Cédula:</label>
+									</h:panelGroup>
+									<br />
+									<h:panelGroup styleClass="md-inputfield">
+										<p:inputText id="txtTelefono" readonly="true"
+											style="font-weight: bold;"
+											value="#{proteccionDatosController.cotizacionVeh.telefono1}" />
+										<p:message for="txtTelefono"></p:message>
+										<label>Teléfono:</label>
+									</h:panelGroup>
+									<br />
+									<h:panelGroup styleClass="md-inputfield">
+										<p:inputText id="txtEmail" readonly="true"
+											style="font-weight: bold;"
+											value="#{proteccionDatosController.cotizacionVeh.mail}" />
+										<p:message for="txtEmail"></p:message>
+										<label>Email:</label>
+									</h:panelGroup>
+								</div>
+
+								<br />
+								<h:panelGrid id="idPanAcuerdo" columns="1">
+									<p:outputLabel
+										style="font-weight: bold; text-align: center; font-size: 0.9em !important;"
+										value="Tu seguridad es nuestra prioridad, autoriza el tratamiento de sus datos personales. " />
+								</h:panelGrid>
+								<br />
+								<h:panelGrid columns="2" style="width:40%">
+									<p:commandButton value="SI" styleClass="green-btn"
+										proccess="@this"
+										actionListener="#{proteccionDatosController.aceptarProteccionDatos}"
+										onclick="PF('diaAviso').show();"
+										oncomplete="javascript: setTimeout('window.close()',5000)" />
+									<p:commandButton value="NO" styleClass="red-btn"
+										proccess="@this"
+										actionListener="#{proteccionDatosController.negarProteccionDatos}"
+										onclick="PF('diaAvisoNO').show();"
+										oncomplete="javascript: setTimeout('window.close()',4000)" />
+								</h:panelGrid>
+
+							</p:panel>
+
+							<p:fieldset
+								rendered="#{proteccionDatosController.muestraMensaje}"
+								legend="El uso de sus Datos serán utilizados para las siguientes finalidades: "
+								style="width:58%">
+								<ul
+									style="list-style-type: square; text-align: left;  font-size: 1.2em !important;">
+									<li>Envío de ofertas y promociones</li>
+									<li>Envío de encuestas de satisfacción</li>
+									<li>Envío de información y gestión de citas y
+										mantenimientos (postventa)</li>
+									<li>Envío de información de nuevos productos y servicios</li>
+								</ul>
+							</p:fieldset>
+							<f:facet name="footer">
+								<h:inputText styleClass="normal" style="font-weight:bold"
+									value="Copyright Centric - Ecuador IT © 2023 All rights reserved.">
+								</h:inputText>
+							</f:facet>
+						</div>
+
+
+						<!-- Cuadro de Dialogo para mostrar notificacion de aceptacion de politica -->
+						<p:confirmDialog widgetVar="diaAviso" modal="true"
+							closable="false" showEffect="fade" hideEffect="fade"
+							position="top center" header="Notificación de Autorización "
+							style="font-weight: bold; text-align: center; color:red; min-height: 0 !important;"
+							message="La Política de Protección de Datos Personales ha sido registrada exitosamente, Gracias por preferirnos.">
+						</p:confirmDialog>
+						
+						<!-- Cuadro de Dialogo para mostrar notificacion de aceptacion de politica -->
+						<p:confirmDialog widgetVar="diaAvisoNO" modal="true"
+							closable="false" showEffect="fade" hideEffect="fade"
+							position="top center" header="Notificación de Autorización "
+							style="font-weight: bold; text-align: center; color:red; min-height: 0 !important;"
+							message="Gracias su respuesta ha sido registrada.">
+						</p:confirmDialog>
+
+					</h:form>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+
+</ui:composition>

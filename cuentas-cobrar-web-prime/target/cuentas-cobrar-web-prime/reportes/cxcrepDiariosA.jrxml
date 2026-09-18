@@ -1,0 +1,1491 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cxcrepDiariosA" language="groovy" pageWidth="595" pageHeight="842" columnWidth="590" leftMargin="5" rightMargin="0" topMargin="0" bottomMargin="0" uuid="3a8c7e19-8103-4daf-9b82-112adf7f607e">
+	<property name="ireport.zoom" value="1.6934217901613318"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="70"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 5">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 5_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 5_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 5_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 6">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 6_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 6_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 6_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 7">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 7_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 7_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 7_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="c_pagos" uuid="ca512b47-3ab6-46a3-83da-14573b52c32e">
+		<parameter name="noCia" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="noDocu" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="totalValor" class="java.math.BigDecimal">
+			<defaultValueExpression><![CDATA[0]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select b.tipo_doc,b.centro,b.no_fisico,b.serie_fisico,b.cant_prorrogas
+,b.no_docu_refe,b.fecha_vence,a.monto_doc,a.descuento,a.interes,a.total_pago,' usd'
+, (case when a.descuento > 0 then (a.descuento*-1) else a.interes end) descuento_interes
+from arccrd a,arccmd b
+where a.no_cia = $P{noCia}
+and  a.no_docu = $P{noDocu}
+and a.no_cia = b.no_cia
+and a.no_refe = b.no_docu]]>
+		</queryString>
+		<field name="TIPO_DOC" class="java.lang.String"/>
+		<field name="CENTRO" class="java.lang.String"/>
+		<field name="NO_FISICO" class="java.lang.String"/>
+		<field name="SERIE_FISICO" class="java.lang.String"/>
+		<field name="CANT_PRORROGAS" class="java.math.BigDecimal"/>
+		<field name="NO_DOCU_REFE" class="java.lang.String"/>
+		<field name="FECHA_VENCE" class="java.sql.Timestamp"/>
+		<field name="MONTO_DOC" class="java.math.BigDecimal"/>
+		<field name="DESCUENTO" class="java.math.BigDecimal"/>
+		<field name="INTERES" class="java.math.BigDecimal"/>
+		<field name="TOTAL_PAGO" class="java.math.BigDecimal"/>
+		<field name="&apos;USD&apos;" class="java.lang.String"/>
+		<field name="DESCUENTO_INTERES" class="java.math.BigDecimal"/>
+	</subDataset>
+	<subDataset name="c_ant" uuid="620b824a-8617-422c-821a-8dea4b0cb2a9">
+		<parameter name="noCia" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="noDocu" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select ' AN' an, b.no_fisico numero_doc,b.serie_fisico linea,a.monto_doc monto, '   usd'
+from arccan a,arccmd b
+      where a.no_cia       = $P{noCia} and
+            a.no_docu      = $P{noDocu} and
+            a.aplica_como ='SA' and
+            b.no_cia = a.no_cia and
+            b.no_docu = a.no_refe and
+            b.moneda = 'D']]>
+		</queryString>
+		<field name="AN" class="java.lang.String"/>
+		<field name="NUMERO_DOC" class="java.lang.String"/>
+		<field name="LINEA" class="java.lang.String"/>
+		<field name="MONTO" class="java.math.BigDecimal"/>
+		<field name="&apos;USD&apos;" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="c_rtd" uuid="684eeb0d-e0b8-431d-a62e-72114379f99f">
+		<parameter name="noCia" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="noDocu" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select ' RT' rt, numero_doc, monto, '   '||'usd' moneda
+      from arccmm
+      where no_cia       = $P{noCia}  and
+            no_docu      = $P{noDocu} and
+            moneda       = 'D' and
+            tipo_mov='R']]>
+		</queryString>
+		<field name="RT" class="java.lang.String"/>
+		<field name="NUMERO_DOC" class="java.lang.String"/>
+		<field name="MONTO" class="java.math.BigDecimal"/>
+		<field name="MONEDA" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="c_me" uuid="6393d77e-9d21-4423-8ba2-a23f1b4646a6">
+		<parameter name="noCia" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="noDocu" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select 'ME' me, memo_$ memo_usd, '   '||'usd' moneda
+      from arccda
+      where no_cia       =  $P{noCia} and
+            no_docu      = $P{noDocu}]]>
+		</queryString>
+		<field name="ME" class="java.lang.String"/>
+		<field name="MEMO_USD" class="java.math.BigDecimal"/>
+		<field name="MONEDA" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="c_ded" uuid="83f6e9b5-ae98-4326-bfe7-4791bf4e5eb6">
+		<parameter name="noCia" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="noDocu" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select ' DP' dp, numero_doc,BANCO,FECHA,CUENTA, monto, '   '||simbolo_moneda('D') moneda
+      from arccmm
+      where no_cia       = $P{noCia}  and
+            no_docu      = $P{noDocu} and
+            moneda       = 'D' and
+            tipo_mov='E']]>
+		</queryString>
+		<field name="DP" class="java.lang.String"/>
+		<field name="NUMERO_DOC" class="java.lang.String"/>
+		<field name="BANCO" class="java.lang.String"/>
+		<field name="FECHA" class="java.sql.Timestamp"/>
+		<field name="CUENTA" class="java.lang.String"/>
+		<field name="MONTO" class="java.math.BigDecimal"/>
+		<field name="MONEDA" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="c_ced" uuid="4a02deba-441e-492d-9b7c-7941b770ac9a">
+		<parameter name="noCia" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="noDocu" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select ' CE' ce, numero_doc, BANCO,FECHA,CUENTA,monto, '   '||simbolo_moneda('D') moneda
+      from arccmm
+      where no_cia       = $P{noCia}  and
+            no_docu      = $P{noDocu} and
+            moneda       = 'D' and
+            tipo_mov='C']]>
+		</queryString>
+		<field name="CE" class="java.lang.String"/>
+		<field name="NUMERO_DOC" class="java.lang.String"/>
+		<field name="BANCO" class="java.lang.String"/>
+		<field name="FECHA" class="java.sql.Timestamp"/>
+		<field name="CUENTA" class="java.lang.String"/>
+		<field name="MONTO" class="java.math.BigDecimal"/>
+		<field name="MONEDA" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="g_centro2" uuid="b93c7f4e-8a37-4576-bbba-6103cdd76517">
+		<parameter name="noCia" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="noDocu" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select (a.uniadmin_id) centro, a.ctacon_id cuenta_con,
+          substr(b.nombre,1,30) nombre_cta,a.tipo,a.monto_dol
+	, (case when a.tipo = 'C' then a.monto_dol else 0 end) credito
+	, (case when a.tipo = 'C' then 0 else a.monto_dol end) debito
+from arccdc_scb a,con_planctas b
+          where a.no_cia = $P{noCia}
+            and a.no_cia = b.empresa_id
+            and a.ctacon_id = b.ctacon_id
+            and a.no_docu = $P{noDocu}]]>
+		</queryString>
+		<field name="CENTRO" class="java.lang.String"/>
+		<field name="CUENTA_CON" class="java.lang.String"/>
+		<field name="NOMBRE_CTA" class="java.lang.String"/>
+		<field name="TIPO" class="java.lang.String"/>
+		<field name="MONTO_DOL" class="java.math.BigDecimal"/>
+		<field name="CREDITO" class="java.math.BigDecimal"/>
+		<field name="DEBITO" class="java.math.BigDecimal"/>
+	</subDataset>
+	<subDataset name="c_discon" uuid="e53a1fd6-f67a-4211-a0c0-8fca384cf052">
+		<parameter name="noCia" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="noDocu" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select (a.cc_1||' '||a.cc_2||' '||a.cc_3) centro, (substr(a.codigo,1,3)||'-'||
+          substr(a.codigo,4,3)||'-'||substr(a.codigo,7,3)||'-'||
+          substr(a.codigo,10,3)||'-'||substr(a.codigo,13,3)) cuenta_con,
+          substr(b.descri,1,30) nombre_cta,a.tipo,a.monto_dol
+	, (case when a.tipo = 'C' then a.monto_dol else 0 end) credito
+	, (case when a.tipo = 'C' then 0 else a.monto_dol end) debito
+	from arccdc a,con_cuentas b
+          where a.no_cia = $P{noCia}
+            and a.no_cia = b.no_cia
+            and a.codigo = b.cuenta
+            and a.no_docu = $P{noDocu}]]>
+		</queryString>
+		<field name="CENTRO" class="java.lang.String"/>
+		<field name="CUENTA_CON" class="java.lang.String"/>
+		<field name="NOMBRE_CTA" class="java.lang.String"/>
+		<field name="TIPO" class="java.lang.String"/>
+		<field name="MONTO_DOL" class="java.math.BigDecimal"/>
+		<field name="CREDITO" class="java.math.BigDecimal"/>
+		<field name="DEBITO" class="java.math.BigDecimal"/>
+	</subDataset>
+	<parameter name="noCia" class="java.lang.String"/>
+	<parameter name="noDocu" class="java.lang.String"/>
+	<parameter name="totalInteres" class="java.math.BigDecimal">
+		<defaultValueExpression><![CDATA[BigDecimal.ZERO]]></defaultValueExpression>
+	</parameter>
+	<parameter name="totalDescuento" class="java.math.BigDecimal">
+		<defaultValueExpression><![CDATA[BigDecimal.ZERO]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select a.fecha,a.centro,b.cedula,substr(b.nombre,1,20) nombre,a.no_fisico||'-'||a.serie_fisico||decode(nvl(a.anulado,'N'),'N',null,'ANULADO') comprobante
+  ,SUBSTR(a.comentar,1,120) comentario,
+  c.m_original, nvl(a.valor_seguro,0) valor_seguro, nvl(c.moneda_id,'02') moneda, d.nombre nomagencia, c.fecha_digitacion, a.usuario
+, nvl(retenciones_$,0) + nvl(depositos_$,0) +
+         nvl(certificados_$,0) + nvl(memo_$,0) + nvl(anticipo_$,0) total_diario,
+         nvl(anticipo,0) anticipo
+  from arccda a,arccmc b,arccmd c, agencias d
+  where a.no_cia = $P{noCia}
+  and a.no_docu = $P{noDocu}
+  and a.no_cia = b.no_cia
+  and a.grupo  = b.grupo
+  and a.no_cliente = b.no_cliente
+  and a.no_cia = c.no_cia
+  and a.no_docu = c.no_docu
+  and a.no_cia = d.no_cia
+  and a.centro = d.codigo]]>
+	</queryString>
+	<field name="FECHA" class="java.sql.Timestamp"/>
+	<field name="CENTRO" class="java.lang.String"/>
+	<field name="CEDULA" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="COMPROBANTE" class="java.lang.String"/>
+	<field name="COMENTARIO" class="java.lang.String"/>
+	<field name="M_ORIGINAL" class="java.math.BigDecimal"/>
+	<field name="VALOR_SEGURO" class="java.math.BigDecimal"/>
+	<field name="MONEDA" class="java.lang.String"/>
+	<field name="NOMAGENCIA" class="java.lang.String"/>
+	<field name="FECHA_DIGITACION" class="java.sql.Timestamp"/>
+	<field name="USUARIO" class="java.lang.String"/>
+	<field name="TOTAL_DIARIO" class="java.math.BigDecimal"/>
+	<field name="ANTICIPO" class="java.math.BigDecimal"/>
+	<group name="grupo1">
+		<groupHeader>
+			<band height="14">
+				<componentElement>
+					<reportElement uuid="40732aed-de0b-41c3-a10a-2d68ba4b2512" key="C_ANT_TABLE" x="0" y="0" width="590" height="14"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="AllSectionsNoDetail">
+						<datasetRun subDataset="c_ant" uuid="ab651956-d536-4244-bbb9-9a3fd3a7697b">
+							<datasetParameter name="noCia">
+								<datasetParameterExpression><![CDATA[$P{noCia}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="noDocu">
+								<datasetParameterExpression><![CDATA[$P{noDocu}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+						<jr:columnGroup uuid="57b76c3d-78e5-4e23-ba53-f8df54a8bc2c" width="569">
+							<jr:columnHeader height="20" rowSpan="1">
+								<staticText>
+									<reportElement uuid="481a9cbb-2d05-4766-97d2-34deaa56d99f" x="0" y="0" width="569" height="20"/>
+									<textElement>
+										<font fontName="Arial" isBold="true" isUnderline="true"/>
+									</textElement>
+									<text><![CDATA[FORMA DE PAGO]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:column uuid="d337ad66-9d0d-42cb-910d-d4746622d219" width="24">
+								<jr:columnHeader height="20" rowSpan="1">
+									<staticText>
+										<reportElement uuid="296d2b7e-d379-4aa5-aa34-b103cf266902" x="0" y="0" width="24" height="20"/>
+										<textElement>
+											<font fontName="Arial" size="9"/>
+										</textElement>
+										<text><![CDATA[TIPO]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell height="20" rowSpan="1">
+									<textField>
+										<reportElement uuid="fcb65d83-d071-4cf1-907b-8c3ce40789f5" x="0" y="0" width="24" height="20"/>
+										<textElement/>
+										<textFieldExpression><![CDATA[$F{AN}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column uuid="1d7c1bf4-692f-482e-846f-b89977af1002" width="73">
+								<jr:columnHeader height="20" rowSpan="1">
+									<staticText>
+										<reportElement uuid="23a490ce-f121-4133-add7-9adc1306ed7d" x="0" y="0" width="73" height="20"/>
+										<textElement>
+											<font fontName="Arial" size="9"/>
+										</textElement>
+										<text><![CDATA[DOCUMENTO]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell height="20" rowSpan="1">
+									<textField>
+										<reportElement uuid="f355c1e8-2fad-4b35-b553-7409e19917bc" x="0" y="0" width="73" height="20"/>
+										<textElement/>
+										<textFieldExpression><![CDATA[$F{NUMERO_DOC}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column uuid="48f29a46-0210-4615-ad50-9a67ba180402" width="90">
+								<jr:columnHeader height="20" rowSpan="1">
+									<staticText>
+										<reportElement uuid="5420e468-9280-4eb8-8539-1fc097336b29" x="0" y="0" width="90" height="20"/>
+										<textElement>
+											<font fontName="Arial" size="9"/>
+										</textElement>
+										<text><![CDATA[BANCO]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell height="20" rowSpan="1">
+									<textField>
+										<reportElement uuid="e7c1498f-de19-474e-86e3-2ce3da6560ad" x="0" y="0" width="90" height="20"/>
+										<textElement/>
+										<textFieldExpression><![CDATA[$F{LINEA}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column uuid="cb23efe0-fb59-402e-bc6f-8053067e9eee" width="73">
+								<jr:columnHeader height="20" rowSpan="1">
+									<staticText>
+										<reportElement uuid="c79b8887-e527-4016-bfb3-a3d98d4766db" x="0" y="0" width="73" height="20"/>
+										<textElement>
+											<font fontName="Arial" size="9"/>
+										</textElement>
+										<text><![CDATA[CTA. CTE.]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell height="20" rowSpan="1"/>
+							</jr:column>
+							<jr:column uuid="8218f595-b251-481d-ad26-976c7c6e3d9b" width="90">
+								<jr:columnHeader height="20" rowSpan="1">
+									<staticText>
+										<reportElement uuid="1a7c90c0-6da6-4820-9f17-5232cb58be6a" x="0" y="0" width="90" height="20"/>
+										<textElement>
+											<font fontName="Arial" size="9"/>
+										</textElement>
+										<text><![CDATA[GIRADOR/DUEÑO]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell height="20" rowSpan="1"/>
+							</jr:column>
+							<jr:column uuid="2e5d049a-5481-4402-b947-69cae051d92f" width="73">
+								<jr:columnHeader height="20" rowSpan="1">
+									<staticText>
+										<reportElement uuid="67c3a36f-d008-4ef1-9495-100b719adf4c" x="0" y="0" width="73" height="20"/>
+										<textElement>
+											<font fontName="Arial" size="9"/>
+										</textElement>
+										<text><![CDATA[FECHA]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell height="20" rowSpan="1"/>
+							</jr:column>
+							<jr:column uuid="2c8207de-f176-4cca-8eee-18733e01ab48" width="73">
+								<jr:columnHeader height="20" rowSpan="1">
+									<staticText>
+										<reportElement uuid="170e5c39-cf88-4e6e-9118-22ed9f77a36a" x="0" y="0" width="73" height="20"/>
+										<textElement textAlignment="Right">
+											<font fontName="Arial" size="9"/>
+										</textElement>
+										<text><![CDATA[VALOR]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell height="20" rowSpan="1">
+									<textField pattern="#,##0.00">
+										<reportElement uuid="09ec9c42-b87e-464a-ad81-4302af3bc863" x="0" y="0" width="73" height="20"/>
+										<textElement textAlignment="Right"/>
+										<textFieldExpression><![CDATA[$F{MONTO}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column uuid="48651736-beaa-4f3c-85f1-7bc4b0837a97" width="73">
+								<jr:columnHeader height="20" rowSpan="1">
+									<staticText>
+										<reportElement uuid="e590c444-49c8-4201-a9dc-35d60f585f74" x="0" y="0" width="73" height="20"/>
+										<textElement textAlignment="Center">
+											<font fontName="Arial" size="9"/>
+										</textElement>
+										<text><![CDATA[MONEDA]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell height="20" rowSpan="1">
+									<textField>
+										<reportElement uuid="09ec9c42-b87e-464a-ad81-4302af3bc863" x="0" y="0" width="73" height="20"/>
+										<textElement textAlignment="Center"/>
+										<textFieldExpression><![CDATA[$F{'USD'}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+						</jr:columnGroup>
+					</jr:table>
+				</componentElement>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="grupo2">
+		<groupHeader>
+			<band height="14">
+				<componentElement>
+					<reportElement uuid="64b7e18e-5a91-4579-9b40-f6fe70714d80" key="C_RTD_TABLE" positionType="Float" x="0" y="0" width="590" height="14" isRemoveLineWhenBlank="true"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="c_rtd" uuid="3dd8a1d3-edd8-4e27-a0c4-d9b45972ca7c">
+							<datasetParameter name="noCia">
+								<datasetParameterExpression><![CDATA[$P{noCia}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="noDocu">
+								<datasetParameterExpression><![CDATA[$P{noDocu}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+						<jr:column uuid="48328a55-a147-4a99-814a-8c3f27f16192" width="20">
+							<jr:detailCell height="20" rowSpan="1">
+								<textField isBlankWhenNull="true">
+									<reportElement uuid="02958ae4-aabc-4a9b-af89-0ae92a4e2bd1" x="0" y="0" width="20" height="20" isRemoveLineWhenBlank="true"/>
+									<textElement/>
+									<textFieldExpression><![CDATA[$F{RT}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="fe4aaeb4-68f3-400d-8201-9cff2fc54399" width="73">
+							<jr:detailCell height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="f77e8930-1ad6-4b0b-82db-05aa38f37a6d" x="0" y="0" width="73" height="20" isRemoveLineWhenBlank="true"/>
+									<textElement/>
+									<textFieldExpression><![CDATA[$F{NUMERO_DOC}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="5683a423-f038-4765-b925-5e82c428d760" width="90">
+							<jr:detailCell height="20" rowSpan="1"/>
+						</jr:column>
+						<jr:column uuid="b8e1121c-cc7c-44f2-a136-0cbf96733933" width="73">
+							<jr:detailCell height="20" rowSpan="1"/>
+						</jr:column>
+						<jr:column uuid="fe0baa4c-bd0f-4770-8f7d-906fb8d7939a" width="90">
+							<jr:detailCell height="20" rowSpan="1"/>
+						</jr:column>
+						<jr:column uuid="303380ea-2adc-4229-ba29-1bbc4b3a2e02" width="73">
+							<jr:detailCell height="20" rowSpan="1"/>
+						</jr:column>
+						<jr:column uuid="52917b9b-3560-4931-a55d-e9b75e96fef4" width="73">
+							<jr:detailCell height="20" rowSpan="1">
+								<textField pattern="#,##0.00" isBlankWhenNull="true">
+									<reportElement uuid="d0e088fd-3fc0-4665-9317-c692be3c721c" x="0" y="0" width="73" height="20" isRemoveLineWhenBlank="true"/>
+									<textElement textAlignment="Right"/>
+									<textFieldExpression><![CDATA[$F{MONTO}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="15e07f2c-791f-4fd1-b206-b4cfbefed1ce" width="73">
+							<jr:detailCell height="20" rowSpan="1">
+								<textField isBlankWhenNull="true">
+									<reportElement uuid="506ab0ce-212b-44dd-8f29-6da2f21bddae" x="0" y="0" width="73" height="20" isRemoveLineWhenBlank="true"/>
+									<textElement textAlignment="Center" verticalAlignment="Top"/>
+									<textFieldExpression><![CDATA[$F{MONEDA}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="grupo3">
+		<groupHeader>
+			<band height="14">
+				<componentElement>
+					<reportElement uuid="e67c4bc0-17e1-4673-85ea-e40f8a40d197" key="C_ME_TABLE" positionType="Float" x="0" y="0" width="590" height="14" isRemoveLineWhenBlank="true"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="c_me" uuid="1a858470-d48f-4730-ad5e-179a5f4c8de1">
+							<datasetParameter name="noCia">
+								<datasetParameterExpression><![CDATA[$P{noCia}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="noDocu">
+								<datasetParameterExpression><![CDATA[$P{noDocu}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+						<jr:column uuid="24c08138-d673-4906-ad11-5b512b54a445" width="24">
+							<jr:detailCell height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="4e17c2a5-681c-46b4-b880-70feb6be3237" x="0" y="0" width="24" height="20"/>
+									<textElement/>
+									<textFieldExpression><![CDATA[$F{ME}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="4dd5155c-4c6a-4615-bfe2-35973cf53007" width="73">
+							<jr:detailCell height="20" rowSpan="1"/>
+						</jr:column>
+						<jr:column uuid="a5be65ac-8073-4605-af7b-7aa812e784e5" width="90">
+							<jr:detailCell height="20" rowSpan="1"/>
+						</jr:column>
+						<jr:column uuid="64612062-852d-42f6-b4e0-5366f753a356" width="73">
+							<jr:detailCell height="20" rowSpan="1"/>
+						</jr:column>
+						<jr:column uuid="581f8256-ac51-4784-9036-5a2bd5f98c50" width="90">
+							<jr:detailCell height="20" rowSpan="1"/>
+						</jr:column>
+						<jr:column uuid="f76c1752-d7b9-46e3-a19c-09f93cee40bd" width="73">
+							<jr:detailCell height="20" rowSpan="1"/>
+						</jr:column>
+						<jr:column uuid="6b788d7f-8722-45fd-b179-1e68b34b2bf4" width="73">
+							<jr:detailCell height="20" rowSpan="1">
+								<textField pattern="#,##0.00">
+									<reportElement uuid="8ab1b5d3-18b1-480d-b87c-541a0d583d51" x="0" y="0" width="73" height="20"/>
+									<textElement textAlignment="Right"/>
+									<textFieldExpression><![CDATA[$F{MEMO_USD}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="8b9ea2af-2da6-4a91-8cd0-aa1aea17a5bf" width="73">
+							<jr:detailCell height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="f55569b7-427b-42b7-80b6-b1516ee5eed4" x="0" y="0" width="73" height="20"/>
+									<textElement textAlignment="Center"/>
+									<textFieldExpression><![CDATA[$F{MONEDA}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="grupo4">
+		<groupHeader>
+			<band height="14">
+				<componentElement>
+					<reportElement uuid="0271a7bd-2270-49c8-837b-d4280b6fa598" key="table 3" positionType="Float" x="0" y="0" width="590" height="14" isRemoveLineWhenBlank="true"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="c_ded" uuid="8543be20-445e-4dd1-8653-39926d28a089">
+							<datasetParameter name="noCia">
+								<datasetParameterExpression><![CDATA[$P{noCia}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="noDocu">
+								<datasetParameterExpression><![CDATA[$P{noDocu}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+						<jr:column uuid="f73c9bba-1db7-4597-8b05-60311b0c2c25" width="24">
+							<jr:detailCell height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="585576cc-2884-447a-9084-54c1a4d000e8" x="0" y="0" width="24" height="20"/>
+									<textElement/>
+									<textFieldExpression><![CDATA[$F{DP}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="b1489a84-3678-4233-9499-eed382d095a6" width="73">
+							<jr:detailCell height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="9e335454-c28e-4041-894b-ee22280f249b" x="0" y="0" width="73" height="20"/>
+									<textElement/>
+									<textFieldExpression><![CDATA[$F{NUMERO_DOC}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="a480b324-095e-4250-a904-7ca0bfbb0d6d" width="90">
+							<jr:detailCell height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="e918826a-be1d-4345-88f0-40bec30d0ab8" x="0" y="0" width="90" height="20"/>
+									<textElement/>
+									<textFieldExpression><![CDATA[$F{BANCO}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="ff0c2dbe-d02d-4173-93a7-e136965935c0" width="73">
+							<jr:detailCell height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="64a1f1ef-1cd0-4296-abf7-35653e645279" x="0" y="0" width="73" height="20"/>
+									<textElement/>
+									<textFieldExpression><![CDATA[$F{CUENTA}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="c94ec08c-7d0a-479a-820b-b7bd2dcac2a9" width="90">
+							<jr:detailCell height="20" rowSpan="1"/>
+						</jr:column>
+						<jr:column uuid="a462c840-479a-4b0e-9a36-2f7362e2e210" width="73">
+							<jr:detailCell height="20" rowSpan="1">
+								<textField pattern="dd/MM/yyyy">
+									<reportElement uuid="38e076d3-723f-4775-a8b1-a0fa993b165d" x="0" y="0" width="73" height="20"/>
+									<textElement/>
+									<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="b9d1fdb2-3d56-4f9e-a60f-3b298bd2f192" width="73">
+							<jr:detailCell height="20" rowSpan="1">
+								<textField pattern="#,##0.00">
+									<reportElement uuid="924c0475-59aa-4beb-b4c8-dc6f14d2da48" x="0" y="0" width="73" height="20"/>
+									<textElement textAlignment="Right"/>
+									<textFieldExpression><![CDATA[$F{MONTO}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="080e7a6e-9627-4bcf-aa1f-d8038bd34ae4" width="73">
+							<jr:detailCell height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="d393ed5c-f451-431b-b447-4d8c7be50add" x="0" y="0" width="73" height="20"/>
+									<textElement textAlignment="Center"/>
+									<textFieldExpression><![CDATA[$F{MONEDA}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="grupo5">
+		<groupHeader>
+			<band height="14">
+				<componentElement>
+					<reportElement uuid="0ce281c1-9fe5-4eeb-98ba-d4b23d20e362" key="table 4" positionType="Float" x="0" y="0" width="590" height="14" isRemoveLineWhenBlank="true"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="c_ced" uuid="782b3e22-d798-4fe1-82da-57543c31ae71">
+							<datasetParameter name="noCia">
+								<datasetParameterExpression><![CDATA[$P{noCia}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="noDocu">
+								<datasetParameterExpression><![CDATA[$P{noDocu}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+						<jr:column uuid="5a302b67-4864-4cc6-9bac-5262b1e8971c" width="24">
+							<jr:detailCell height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="7349fac9-d141-4649-a308-92abca4749b2" x="0" y="0" width="24" height="20"/>
+									<textElement/>
+									<textFieldExpression><![CDATA[$F{CE}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="58912dce-0850-4b6e-bc36-68f853c2fdc7" width="73">
+							<jr:detailCell height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="93abc06e-aea6-4609-9c25-a6f471b02c97" x="0" y="0" width="73" height="20"/>
+									<textElement/>
+									<textFieldExpression><![CDATA[$F{NUMERO_DOC}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="2f971ff6-5b8b-4874-9d28-f4ecaeebb603" width="90">
+							<jr:detailCell height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="f51a6db8-ccb8-438a-acb7-3ccf8dfc043a" x="0" y="0" width="90" height="20"/>
+									<textElement/>
+									<textFieldExpression><![CDATA[$F{BANCO}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="32596b77-2abd-492e-8527-278643646e14" width="73">
+							<jr:detailCell height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="07f7bbf6-7125-4584-93b3-ddbe65f331a9" x="0" y="0" width="73" height="20"/>
+									<textElement/>
+									<textFieldExpression><![CDATA[$F{CUENTA}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="91cea41e-4bf6-40e9-9c91-421461a17359" width="90">
+							<jr:detailCell height="20" rowSpan="1"/>
+						</jr:column>
+						<jr:column uuid="519136f3-da09-47b0-a836-6c743712ad13" width="73">
+							<jr:detailCell height="20" rowSpan="1">
+								<textField pattern="dd/MM/yyyy">
+									<reportElement uuid="75b2c0bc-b19f-48ca-ba62-19ce076027be" x="0" y="0" width="73" height="20"/>
+									<textElement/>
+									<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="8d9eba9c-86f3-44d1-88ad-2645539dc97a" width="73">
+							<jr:detailCell height="20" rowSpan="1">
+								<textField pattern="#,##0.00">
+									<reportElement uuid="f044c7a9-1f65-409f-b203-0f058078819a" x="0" y="0" width="73" height="20"/>
+									<textElement textAlignment="Right"/>
+									<textFieldExpression><![CDATA[$F{MONTO}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="9eb58c8e-3cc8-48cf-a4e2-879d075af46e" width="73">
+							<jr:detailCell height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="babb2083-002b-4428-a4b1-54a39997c1b0" x="0" y="0" width="73" height="20"/>
+									<textElement textAlignment="Center"/>
+									<textFieldExpression><![CDATA[$F{MONEDA}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="grupo6">
+		<groupHeader>
+			<band height="14">
+				<componentElement>
+					<reportElement uuid="d74259a7-09ac-441f-aa7e-18066022a0dc" key="table 5" positionType="Float" x="0" y="0" width="590" height="14"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="AllSectionsNoDetail">
+						<datasetRun subDataset="c_pagos" uuid="c661277b-9505-4ba7-a911-6655e03edbc5">
+							<datasetParameter name="noCia">
+								<datasetParameterExpression><![CDATA[$P{noCia}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="noDocu">
+								<datasetParameterExpression><![CDATA[$P{noDocu}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="totalValor">
+								<datasetParameterExpression><![CDATA[$F{VALOR_SEGURO}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+						<jr:columnGroup uuid="12893ad6-389d-4fd0-8682-6028856f59b7" width="588">
+							<jr:columnHeader height="20" rowSpan="1">
+								<staticText>
+									<reportElement uuid="e11f254e-ced5-4d22-ab51-d8f4d348848e" x="0" y="0" width="588" height="20"/>
+									<textElement>
+										<font fontName="Arial" isBold="true" isUnderline="true"/>
+									</textElement>
+									<text><![CDATA[DETALLES DE PAGO]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:column uuid="5de69ee5-a656-45ad-b58c-f34b1b848ac3" width="30">
+								<jr:columnHeader height="20" rowSpan="1">
+									<staticText>
+										<reportElement uuid="f6b11c4a-3e49-4c30-a31f-fcc2b8c979f1" x="0" y="0" width="30" height="20"/>
+										<textElement>
+											<font fontName="Arial" size="9"/>
+										</textElement>
+										<text><![CDATA[DESC]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell height="20" rowSpan="1">
+									<textField>
+										<reportElement uuid="7bbfcdcb-32fd-4daa-82be-d0d8e66c9f64" x="0" y="0" width="30" height="20"/>
+										<textElement/>
+										<textFieldExpression><![CDATA[$F{TIPO_DOC}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column uuid="f4af2206-1467-4990-b41e-702089c5c008" width="48">
+								<jr:columnHeader height="20" rowSpan="1">
+									<staticText>
+										<reportElement uuid="9099a620-b598-4f5b-8709-b7ca155eff50" x="0" y="0" width="48" height="20"/>
+										<textElement>
+											<font fontName="Arial" size="9"/>
+										</textElement>
+										<text><![CDATA[CENTRO]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell height="20" rowSpan="1">
+									<textField>
+										<reportElement uuid="c5d783b7-f60c-4194-b315-3ea97bcff6d1" x="0" y="0" width="48" height="20"/>
+										<textElement/>
+										<textFieldExpression><![CDATA[$F{CENTRO}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column uuid="3b1e5cc1-db19-4c9d-bfad-e6ee6ee7a283" width="80">
+								<jr:columnHeader height="20" rowSpan="1">
+									<staticText>
+										<reportElement uuid="890ccf8c-ac21-4307-a0f2-8cbb27bd686b" x="0" y="0" width="80" height="20"/>
+										<textElement>
+											<font fontName="Arial" size="9"/>
+										</textElement>
+										<text><![CDATA[FACTURA]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell height="20" rowSpan="1">
+									<textField>
+										<reportElement uuid="cbcac41d-6421-4dfb-915f-76efb74c5326" x="0" y="0" width="80" height="20"/>
+										<textElement/>
+										<textFieldExpression><![CDATA[$F{NO_FISICO}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column uuid="c079557d-a0f2-401c-830f-bf6acd1f449a" width="40">
+								<jr:columnHeader height="20" rowSpan="1">
+									<staticText>
+										<reportElement uuid="6b0714b0-d70e-4324-8289-f6c556dfaac5" x="0" y="0" width="40" height="20"/>
+										<textElement>
+											<font fontName="Arial" size="9"/>
+										</textElement>
+										<text><![CDATA[SERIE F]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell height="20" rowSpan="1">
+									<textField>
+										<reportElement uuid="2d1f73bc-ff98-4ee4-8059-45a6564cdb48" x="0" y="0" width="40" height="20"/>
+										<textElement/>
+										<textFieldExpression><![CDATA[$F{SERIE_FISICO}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column uuid="fab29602-3645-43d3-a06b-d57b9957f5ed" width="60">
+								<jr:columnHeader height="20" rowSpan="1">
+									<staticText>
+										<reportElement uuid="420424d6-a72b-4b6c-bc05-56b2b2677e40" x="0" y="0" width="60" height="20"/>
+										<textElement>
+											<font fontName="Arial" size="9"/>
+										</textElement>
+										<text><![CDATA[SECUENCIA]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell height="20" rowSpan="1">
+									<textField>
+										<reportElement uuid="526ef049-4e1d-4f30-b9b5-c05212980349" x="0" y="0" width="60" height="20"/>
+										<textElement/>
+										<textFieldExpression><![CDATA[$F{CANT_PRORROGAS}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column uuid="851dbe33-be0f-423b-8847-8114868416df" width="40">
+								<jr:columnHeader height="20" rowSpan="1">
+									<staticText>
+										<reportElement uuid="518b2ec1-cc46-4e0a-9b4a-44b28bddc36a" x="0" y="0" width="40" height="20"/>
+										<textElement>
+											<font fontName="Arial" size="9"/>
+										</textElement>
+										<text><![CDATA[DOC]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell height="20" rowSpan="1">
+									<textField>
+										<reportElement uuid="bab5f81a-e952-4f47-aab5-265db9153654" x="0" y="0" width="40" height="20"/>
+										<textElement/>
+										<textFieldExpression><![CDATA[$F{NO_DOCU_REFE}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column uuid="49bafd60-901a-448d-bb95-3758c2ff11d3" width="80">
+								<jr:columnHeader height="20" rowSpan="1">
+									<staticText>
+										<reportElement uuid="4866cda9-6672-44a6-911d-884232a2a874" x="0" y="0" width="80" height="20"/>
+										<textElement>
+											<font fontName="Arial" size="9"/>
+										</textElement>
+										<text><![CDATA[VENCIMIENTO]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell height="20" rowSpan="1">
+									<textField pattern="dd/MM/yyyy">
+										<reportElement uuid="ccfa3d5a-8cd1-4676-bc9d-4d909c730dce" x="0" y="0" width="80" height="20"/>
+										<textElement/>
+										<textFieldExpression><![CDATA[$F{FECHA_VENCE}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column uuid="f90900ee-5933-492c-9760-b6d38cc5f415" width="60">
+								<jr:columnHeader height="20" rowSpan="1">
+									<staticText>
+										<reportElement uuid="1ac5c3dd-b3f1-4bfb-8ca9-ec149d0f425a" x="0" y="0" width="60" height="20"/>
+										<textElement textAlignment="Right">
+											<font fontName="Arial" size="9"/>
+										</textElement>
+										<text><![CDATA[ABONO]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell height="20" rowSpan="1">
+									<textField pattern="#,##0.00">
+										<reportElement uuid="f90fef1c-23f3-49eb-8e72-ef018213989a" x="0" y="0" width="60" height="20"/>
+										<textElement textAlignment="Right"/>
+										<textFieldExpression><![CDATA[$F{MONTO_DOC}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column uuid="b28a8e00-2253-484d-a3d4-8ae7c9958b81" width="60">
+								<jr:columnHeader height="20" rowSpan="1">
+									<staticText>
+										<reportElement uuid="22f3fdcc-1ae8-4fbb-8096-6542433ab8cb" x="0" y="0" width="60" height="20"/>
+										<textElement textAlignment="Right">
+											<font fontName="Arial" size="9"/>
+										</textElement>
+										<text><![CDATA[INT/DESC]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell height="20" rowSpan="1">
+									<textField pattern="#,##0.00">
+										<reportElement uuid="76d266e3-4174-44cb-905c-d71c59748d9a" x="0" y="0" width="60" height="20"/>
+										<textElement textAlignment="Right"/>
+										<textFieldExpression><![CDATA[$F{DESCUENTO_INTERES}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column uuid="d03d8708-8446-4958-92d4-4f1583b98d60" width="60">
+								<jr:columnHeader height="20" rowSpan="1">
+									<staticText>
+										<reportElement uuid="c6bf3095-6e97-4240-ab15-21ed4815dbfb" x="0" y="0" width="60" height="20"/>
+										<textElement textAlignment="Right">
+											<font fontName="Arial" size="9"/>
+										</textElement>
+										<text><![CDATA[VALOR]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:columnFooter height="30" rowSpan="1">
+									<textField pattern="#,##0.00">
+										<reportElement uuid="0f13c8ba-d9db-470c-85d7-a03b444e0ccd" x="0" y="0" width="60" height="30"/>
+										<textElement textAlignment="Right"/>
+										<textFieldExpression><![CDATA[$P{totalValor}]]></textFieldExpression>
+									</textField>
+								</jr:columnFooter>
+								<jr:detailCell height="20" rowSpan="1">
+									<textField pattern="#,##0.00">
+										<reportElement uuid="0f13c8ba-d9db-470c-85d7-a03b444e0ccd" x="0" y="0" width="60" height="20"/>
+										<textElement textAlignment="Right"/>
+										<textFieldExpression><![CDATA[$F{TOTAL_PAGO}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column uuid="abafd630-8a88-472e-a82d-5a3e4f44699b" width="30">
+								<jr:columnHeader height="20" rowSpan="1">
+									<staticText>
+										<reportElement uuid="058eba0e-6cdf-4680-b927-3ef7d3928126" x="0" y="0" width="30" height="20"/>
+										<textElement textAlignment="Center">
+											<font fontName="Arial" size="9"/>
+										</textElement>
+										<text><![CDATA[MON]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell height="20" rowSpan="1">
+									<textField>
+										<reportElement uuid="13d65b74-d0d4-4a4b-a199-c35cb47904bc" x="0" y="0" width="30" height="20"/>
+										<textElement textAlignment="Center"/>
+										<textFieldExpression><![CDATA[$F{'USD'}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+						</jr:columnGroup>
+					</jr:table>
+				</componentElement>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="grupo7">
+		<groupHeader>
+			<band height="21">
+				<line>
+					<reportElement uuid="9877d4fa-ef9b-4cd3-9c1b-21145b56a250" positionType="Float" x="0" y="2" width="590" height="1"/>
+				</line>
+				<componentElement>
+					<reportElement uuid="ce6427af-b190-46cd-adcc-1b225c96a9d5" key="table 6" positionType="Float" x="0" y="7" width="590" height="14"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="AllSectionsNoDetail">
+						<datasetRun subDataset="g_centro2" uuid="c70deb12-1469-4e5d-9313-8ccef12e4d65">
+							<datasetParameter name="noCia">
+								<datasetParameterExpression><![CDATA[$P{noCia}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="noDocu">
+								<datasetParameterExpression><![CDATA[$P{noDocu}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+						<jr:columnGroup uuid="73eafd56-34eb-4fe6-9f51-447e2585165f" width="500">
+							<jr:columnHeader height="30" rowSpan="1">
+								<staticText>
+									<reportElement uuid="7271e5f8-82c8-4c24-a905-d36a986109e7" x="0" y="0" width="500" height="30"/>
+									<textElement>
+										<font fontName="Arial" isBold="true" isUnderline="true"/>
+									</textElement>
+									<text><![CDATA[DISTRIBUCION CONTABLE]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:column uuid="918f3274-5996-479b-bc59-491de324988c" width="90">
+								<jr:columnHeader height="20" rowSpan="1">
+									<staticText>
+										<reportElement uuid="37e55cf5-2f44-438f-87af-183cf5faa277" x="0" y="0" width="90" height="20"/>
+										<textElement>
+											<font fontName="Arial" size="9" isBold="true"/>
+										</textElement>
+										<text><![CDATA[CUENTA]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell style="table 6_TD" height="20" rowSpan="1">
+									<textField>
+										<reportElement uuid="967121c3-a9d1-4f14-82f1-d532e109f81c" x="0" y="0" width="90" height="20"/>
+										<textElement/>
+										<textFieldExpression><![CDATA[$F{CUENTA_CON}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column uuid="24ad88dd-6c98-435f-860b-2b8407e7774e" width="150">
+								<jr:columnHeader height="20" rowSpan="1">
+									<staticText>
+										<reportElement uuid="559a811e-2e71-473f-ae08-f30d0b6d73ed" x="0" y="0" width="150" height="20"/>
+										<textElement>
+											<font fontName="Arial" size="9" isBold="true"/>
+										</textElement>
+										<text><![CDATA[NOMBRE]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell style="table 6_TD" height="20" rowSpan="1">
+									<textField>
+										<reportElement uuid="0aa4e316-976b-47cc-8489-8434b6d1fdf5" x="0" y="0" width="150" height="20"/>
+										<textElement/>
+										<textFieldExpression><![CDATA[$F{NOMBRE_CTA}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column uuid="d915439f-37ab-48b9-998a-337de06d2db6" width="90">
+								<jr:columnHeader height="20" rowSpan="1">
+									<staticText>
+										<reportElement uuid="66fda2e9-769f-45a3-8f7d-66b90c62a2e9" x="0" y="0" width="90" height="20"/>
+										<textElement>
+											<font fontName="Arial" size="9" isBold="true"/>
+										</textElement>
+										<text><![CDATA[CENTRO COSTO]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell style="table 6_TD" height="20" rowSpan="1">
+									<textField>
+										<reportElement uuid="32884fc2-dcbe-4d24-b2d9-37aa4b49fcf3" x="0" y="0" width="90" height="20"/>
+										<textElement/>
+										<textFieldExpression><![CDATA[$F{CENTRO}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column uuid="55234004-09fe-412f-88ce-ba28517bd443" width="50">
+								<jr:columnHeader height="20" rowSpan="1">
+									<staticText>
+										<reportElement uuid="7f96b38b-c969-4ed2-bc12-1265c745c130" x="0" y="0" width="50" height="20"/>
+										<textElement>
+											<font fontName="Arial" size="9" isBold="true"/>
+										</textElement>
+										<text><![CDATA[TIPO]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell style="table 6_TD" height="20" rowSpan="1">
+									<textField>
+										<reportElement uuid="332e50ba-22a0-4335-a638-aebe10729cfb" x="0" y="0" width="50" height="20"/>
+										<textElement/>
+										<textFieldExpression><![CDATA[$F{TIPO}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column uuid="e152416d-7e42-4bdf-9e16-d45abd34b36a" width="60">
+								<jr:columnHeader height="20" rowSpan="1">
+									<staticText>
+										<reportElement uuid="68e0d137-9a39-4eac-87b7-0c5560fe3708" x="0" y="0" width="60" height="20"/>
+										<textElement>
+											<font fontName="Arial" size="9" isBold="true"/>
+										</textElement>
+										<text><![CDATA[DEBITO]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell style="table 6_TD" height="20" rowSpan="1">
+									<textField pattern="#,##0.00">
+										<reportElement uuid="332e50ba-22a0-4335-a638-aebe10729cfb" x="0" y="0" width="60" height="20"/>
+										<textElement/>
+										<textFieldExpression><![CDATA[$F{DEBITO}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column uuid="946e3a1f-25d8-4d6d-84fe-fffccd2f4f13" width="60">
+								<jr:columnHeader height="20" rowSpan="1">
+									<staticText>
+										<reportElement uuid="bc51b4f1-9cc4-4768-bd4e-fcce5b7bad34" x="0" y="0" width="60" height="20"/>
+										<textElement>
+											<font fontName="Arial" size="9" isBold="true"/>
+										</textElement>
+										<text><![CDATA[CREDITO]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell height="20" rowSpan="1">
+									<textField pattern="#,##0.00">
+										<reportElement uuid="332e50ba-22a0-4335-a638-aebe10729cfb" x="0" y="0" width="60" height="20"/>
+										<textElement/>
+										<textFieldExpression><![CDATA[$F{CREDITO}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+						</jr:columnGroup>
+					</jr:table>
+				</componentElement>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="grupo8">
+		<groupHeader>
+			<band height="14">
+				<componentElement>
+					<reportElement uuid="f41fff74-cb9c-45d9-8380-d29b75cb9300" key="table 7" positionType="Float" x="0" y="0" width="590" height="14"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="AllSectionsNoDetail">
+						<datasetRun subDataset="c_discon" uuid="dc9c9515-5ab6-4948-bca7-c804b252fade">
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+						<jr:columnGroup uuid="2d285e98-860e-4722-b74a-f65d01281876" width="500">
+							<jr:columnHeader height="30" rowSpan="1">
+								<staticText>
+									<reportElement uuid="55cd375d-a3d8-4a00-997c-2773d1338b29" x="0" y="0" width="500" height="30"/>
+									<textElement>
+										<font fontName="Arial" isBold="true" isUnderline="true"/>
+									</textElement>
+									<text><![CDATA[DISTRIBUCION CONTABLE]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:column uuid="b3566372-06ba-4687-8b8f-5274e185b305" width="90">
+								<jr:columnHeader height="20" rowSpan="1">
+									<staticText>
+										<reportElement uuid="016ddef9-f053-49dd-b4de-f5a3c3ed9f9c" x="0" y="0" width="90" height="20"/>
+										<textElement>
+											<font fontName="Arial" size="9" isBold="true"/>
+										</textElement>
+										<text><![CDATA[CUENTA]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell style="table 7_TD" height="20" rowSpan="1">
+									<textField>
+										<reportElement uuid="a59d67b7-90ad-4339-8dec-0056503a80e7" x="0" y="0" width="90" height="20"/>
+										<textElement/>
+										<textFieldExpression><![CDATA[$F{CUENTA_CON}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column uuid="bce5f983-695d-432c-8f66-a59f1a1d7530" width="150">
+								<jr:columnHeader height="20" rowSpan="1">
+									<staticText>
+										<reportElement uuid="a139a21f-c87e-4e5c-aa7e-6b33917dc96a" x="0" y="0" width="150" height="20"/>
+										<textElement>
+											<font fontName="Arial" size="9" isBold="true"/>
+										</textElement>
+										<text><![CDATA[NOMBRE]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell style="table 7_TD" height="20" rowSpan="1">
+									<textField>
+										<reportElement uuid="2b17a1c3-4955-4f33-932a-6a2bd116b9c8" x="0" y="0" width="150" height="20"/>
+										<textElement/>
+										<textFieldExpression><![CDATA[$F{NOMBRE_CTA}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column uuid="2a976a2b-ac56-4304-87d4-8db11ac96300" width="90">
+								<jr:columnHeader height="20" rowSpan="1">
+									<staticText>
+										<reportElement uuid="ed55d30c-bb15-49e1-9796-3113a4fe2f9e" x="0" y="0" width="90" height="20"/>
+										<textElement>
+											<font fontName="Arial" size="9" isBold="true"/>
+										</textElement>
+										<text><![CDATA[CENTRO COSTO]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell style="table 7_TD" height="20" rowSpan="1">
+									<textField>
+										<reportElement uuid="767ea59f-991b-408f-b8ff-e636dda407ee" x="0" y="0" width="90" height="20"/>
+										<textElement/>
+										<textFieldExpression><![CDATA[$F{CENTRO}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column uuid="a09976e7-2f0a-48d7-b00a-197cd33b3abb" width="50">
+								<jr:columnHeader height="20" rowSpan="1">
+									<staticText>
+										<reportElement uuid="e6d24308-6a75-484b-b7d6-d78522c87e94" x="0" y="0" width="50" height="20"/>
+										<textElement>
+											<font fontName="Arial" size="9" isBold="true"/>
+										</textElement>
+										<text><![CDATA[TIPO]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell style="table 7_TD" height="20" rowSpan="1">
+									<textField>
+										<reportElement uuid="229cfe74-5d18-4628-a27c-a5f9fea288de" x="0" y="0" width="50" height="20"/>
+										<textElement/>
+										<textFieldExpression><![CDATA[$F{TIPO}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column uuid="18546e15-1416-4c3c-9bc1-c8f91778783b" width="60">
+								<jr:columnHeader height="20" rowSpan="1">
+									<staticText>
+										<reportElement uuid="4257ed0d-2f1d-4e10-843f-075a91acd67d" x="0" y="0" width="60" height="20"/>
+										<textElement>
+											<font fontName="Arial" size="9" isBold="true"/>
+										</textElement>
+										<text><![CDATA[DEBITO]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell style="table 7_TD" height="20" rowSpan="1">
+									<textField pattern="#,##0.00">
+										<reportElement uuid="784df836-2fdf-44d4-8062-3ca2ad39b847" x="0" y="0" width="60" height="20"/>
+										<textElement/>
+										<textFieldExpression><![CDATA[$F{DEBITO}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column uuid="55540c7e-cb8b-4163-9123-9b3ed7124eed" width="60">
+								<jr:columnHeader height="20" rowSpan="1">
+									<staticText>
+										<reportElement uuid="0f1b42c8-2d08-4275-8038-b52207d4fe54" x="0" y="0" width="60" height="20"/>
+										<textElement>
+											<font fontName="Arial" size="9" isBold="true"/>
+										</textElement>
+										<text><![CDATA[CREDITO]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell height="20" rowSpan="1">
+									<textField pattern="#,##0.00">
+										<reportElement uuid="784df836-2fdf-44d4-8062-3ca2ad39b847" x="0" y="0" width="60" height="20"/>
+										<textElement/>
+										<textFieldExpression><![CDATA[$F{CREDITO}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+						</jr:columnGroup>
+					</jr:table>
+				</componentElement>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<summary>
+		<band height="97" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="7b378119-9f85-4dd0-99cf-8073a72aa130" x="0" y="0" width="123" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTALES:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6a7e21cc-b92f-46a3-83dd-3a4a59b44ca7" x="0" y="14" width="123" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[INTERES POR MORA:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b28078d5-5b45-4a4e-92fd-de7fc7f29c0a" x="0" y="28" width="123" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ANTICIPOS:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="afe5f5b8-67c1-4b29-953c-533f0071e039" x="0" y="42" width="123" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESCUENTO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="77a7ed12-7f60-4ecc-9838-397924b1bd66" x="0" y="56" width="123" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SALDO NETO RECIBIDO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="088a2fa1-bb13-48e5-a6f4-79cece23a823" x="0" y="70" width="244" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL A ACREDITAR A CUENTAS POR COBRAR:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="2f1e1f00-33b4-4ad2-a906-a99739326c16" x="123" y="0" width="100" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{M_ORIGINAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="d9039bab-14f7-4e01-8021-02f68916a427" x="123" y="14" width="100" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{totalInteres} == null ? BigDecimal.ZERO : $P{totalInteres}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="b030d59d-9c06-4c43-b448-6b71a9dc1694" x="123" y="28" width="100" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ANTICIPO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="4489d007-1102-42ae-ad69-2093bd05ecc2" x="123" y="42" width="100" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{totalDescuento} == null ? BigDecimal.ZERO : $P{totalDescuento}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="cb0bc1b2-f8b1-4177-bfc5-66534ca790de" x="123" y="56" width="100" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL_DIARIO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="6533e91a-6639-46c9-8319-c6ce00bd29a2" x="244" y="70" width="100" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{M_ORIGINAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

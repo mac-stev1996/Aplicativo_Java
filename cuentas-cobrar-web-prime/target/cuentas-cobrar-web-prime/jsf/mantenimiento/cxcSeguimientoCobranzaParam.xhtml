@@ -1,0 +1,282 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+        Mantenimiento para Seguimiento de Cobranzas
+    </ui:define>
+
+	<ui:define name="content">
+		<h:form id="idFormPrincipal">
+			<p:panelGrid columns="2" style="width: 100%" columnClasses="w50, w50">
+				<p:panel id="panelResultados" style="margin-bottom: 10px;">
+					<p:toolbar>
+						<f:facet name="left">
+							<h:outputLabel value="Mantenimiento Resultado Seguimiento"
+								styleClass="font-bold" />
+						</f:facet>
+						<f:facet name="right">
+							<p:commandButton value="Nuevo Resultado" icon="fa fa-plus"
+								actionListener="#{cxcSeguimientoCobranzaParamController.nuevoResultadoGestion}"
+								update=":dlgResultadoGestion"
+								oncomplete="PF('dlgResultadoGestion').show();" />
+						</f:facet>
+					</p:toolbar>
+
+					<p:dataTable id="tblResultadoGestion"
+						value="#{cxcSeguimientoCobranzaParamController.resultadosGestion}"
+						var="item" emptyMessage="No hay registros" rows="5"
+						paginator="true" paginatorPosition="bottom"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+						style="width: 100%;">
+
+						<p:column headerText="Código" styleClass="txtC" width="15%">
+							<h:outputText value="#{item.id.codigo}" />
+						</p:column>
+
+						<p:column headerText="Descripción" width="65%">
+							<h:outputText value="#{item.descripcion}" />
+						</p:column>
+
+						<p:column headerText="Estado" styleClass="txtC" width="10%">
+							<h:outputText
+								value="#{item.estado eq 'A' ? 'Activo' : 'Inactivo'}" />
+						</p:column>
+
+						<p:column headerText="Editar" styleClass="txtC" width="10%">
+							<p:commandLink
+								action="#{cxcSeguimientoCobranzaParamController.editarResultadoGestion(item)}"
+								update=":dlgResultadoGestion"
+								oncomplete="PF('dlgResultadoGestion').show();">
+								<i class="fa fa-pencil edit-icon" />
+							</p:commandLink>
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+
+				<p:panel id="panelGestion" style="margin-bottom: 10px;">
+					<p:toolbar>
+						<f:facet name="left">
+							<h:outputLabel value="Lista de Canales de Gestión"
+								styleClass="font-bold" />
+						</f:facet>
+						<f:facet name="right">
+							<p:commandButton value="Nuevo Canal" icon="fa fa-plus"
+								actionListener="#{cxcSeguimientoCobranzaParamController.nuevoCanalGestion}"
+								update=":dlgCanalGestion"
+								oncomplete="PF('dlgCanalGestion').show();" />
+						</f:facet>
+					</p:toolbar>
+
+					<p:dataTable id="tblCanalesGestion"
+						value="#{cxcSeguimientoCobranzaParamController.canalesGestion}"
+						var="item" emptyMessage="No hay registros" rows="5"
+						paginator="true" paginatorPosition="bottom"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+						style="width: 100%;">
+
+						<p:column headerText="Código" styleClass="txtC" width="15%">
+							<h:outputText value="#{item.id.codigo}" />
+						</p:column>
+
+						<p:column headerText="Descripción" styleClass="txtL" width="65%">
+							<h:outputText value="#{item.descripcion}" />
+						</p:column>
+
+						<p:column headerText="Estado" styleClass="txtC" width="10%">
+							<h:outputText
+								value="#{item.estado eq 'A' ? 'Activo' : 'Inactivo'}" />
+						</p:column>
+
+						<p:column headerText="Editar" styleClass="txtC" width="10%">
+							<p:commandLink
+								action="#{cxcSeguimientoCobranzaParamController.editarCanalGestion(item)}"
+								update=":dlgCanalGestion"
+								oncomplete="PF('dlgCanalGestion').show();">
+								<i class="fa fa-pencil edit-icon" />
+							</p:commandLink>
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+
+				<p:panel id="panelContactado" style="margin-bottom: 10px;">
+					<p:toolbar>
+						<f:facet name="left">
+							<h:outputLabel value="Lista de Contactado A"
+								styleClass="font-bold" />
+						</f:facet>
+						<f:facet name="right">
+							<p:commandButton value="Nuevo Contacto" icon="fa fa-plus"
+								actionListener="#{cxcSeguimientoCobranzaParamController.nuevoCanalContactado}"
+								update=":dlgCanalContactado"
+								oncomplete="PF('dlgCanalContactado').show();" />
+						</f:facet>
+					</p:toolbar>
+					<p:dataTable id="tblCanalesContactado"
+						value="#{cxcSeguimientoCobranzaParamController.canalesContactado}"
+						var="item" emptyMessage="No hay registros" rows="5"
+						paginator="true" paginatorPosition="bottom"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+						style="width: 100%;">
+
+						<p:column headerText="Código" styleClass="txtC" width="15%">
+							<h:outputText value="#{item.id.codigo}" />
+						</p:column>
+
+						<p:column headerText="Descripción" styleClass="txtL" width="65%">
+							<h:outputText value="#{item.descripcion}" />
+						</p:column>
+
+						<p:column headerText="Estado" styleClass="txtC" width="10%">
+							<h:outputText
+								value="#{item.estado eq 'A' ? 'Activo' : 'Inactivo'}" />
+						</p:column>
+
+						<p:column headerText="Editar" styleClass="txtC" width="10%">
+							<p:commandLink
+								action="#{cxcSeguimientoCobranzaParamController.editarCanalContactado(item)}"
+								update=":dlgCanalContactado"
+								oncomplete="PF('dlgCanalContactado').show();">
+								<i class="fa fa-pencil edit-icon" />
+							</p:commandLink>
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+
+				<p:panel
+					style="height: 350px; margin-bottom: 10px; visibility: hidden;"
+					rendered="false">
+				</p:panel>
+			</p:panelGrid>
+		</h:form>
+
+		<!-- Diálogo Canal Gestión -->
+		<p:dialog id="dlgCanalGestion" widgetVar="dlgCanalGestion"
+			header="#{cxcSeguimientoCobranzaParamController.editar ? 'Editar Canal de Gestión' : 'Nuevo Canal de Gestión'}"
+			modal="true" resizable="false" width="400" closeOnEscape="true">
+			<h:form id="frmCanalGestion">
+				<p:panelGrid columns="2">
+					<p:outputLabel for="codigoGestion" value="Código:" />
+					<p:inputText id="codigoGestion"
+						value="#{cxcSeguimientoCobranzaParamController.codigoGenerado}"
+						disabled="true"
+						rendered="#{!cxcSeguimientoCobranzaParamController.editar}" />
+					<p:inputText id="codigoGestionEdit"
+						value="#{cxcSeguimientoCobranzaParamController.canalGestion.id.codigo}"
+						disabled="true"
+						rendered="#{cxcSeguimientoCobranzaParamController.editar}" />
+
+					<p:outputLabel for="descripcionGestion" value="Descripción:" />
+					<p:inputText id="descripcionGestion" maxlength="250" size="30"
+						value="#{cxcSeguimientoCobranzaParamController.canalGestion.descripcion}"
+						required="true" requiredMessage="La descripción es requerida" />
+
+					<p:outputLabel for="estadoGestion" value="Estado:" />
+					<p:selectOneRadio id="estadoGestion"
+						value="#{cxcSeguimientoCobranzaParamController.canalGestion.estado}"
+						columns="2">
+						<f:selectItem itemLabel="Activo" itemValue="A" />
+						<f:selectItem itemLabel="Inactivo" itemValue="I" />
+					</p:selectOneRadio>
+				</p:panelGrid>
+
+				<div class="dialog-footer" style="margin-top: 15px; text-align: center;">
+					<p:commandButton value="Guardar" icon="fa fa-save"
+						action="#{cxcSeguimientoCobranzaParamController.guardarCanalGestion}"
+						update=":idFormPrincipal:tblCanalesGestion"
+						oncomplete="if(!args.validationFailed) PF('dlgCanalGestion').hide();" />
+
+					<p:commandButton value="Cancelar" icon="fa fa-times" type="button"
+						onclick="PF('dlgCanalGestion').hide();" />
+				</div>
+			</h:form>
+		</p:dialog>
+
+		<!-- Diálogo Canal Contactado -->
+		<p:dialog id="dlgCanalContactado" widgetVar="dlgCanalContactado"
+			header="#{cxcSeguimientoCobranzaParamController.editar ? 'Editar Canal Contactado' : 'Nuevo Canal Contactado'}"
+			modal="true" resizable="false" width="400" closeOnEscape="true">
+			<h:form id="frmCanalContactado">
+				<p:panelGrid columns="2">
+					<p:outputLabel for="codigoContactado" value="Código:" />
+					<p:inputText id="codigoContactado"
+						value="#{cxcSeguimientoCobranzaParamController.codigoGeneradoContactado}"
+						disabled="true"
+						rendered="#{!cxcSeguimientoCobranzaParamController.editar}" />
+					<p:inputText id="codigoContactadoEdit"
+						value="#{cxcSeguimientoCobranzaParamController.canalContactado.id.codigo}"
+						disabled="true"
+						rendered="#{cxcSeguimientoCobranzaParamController.editar}" />
+
+					<p:outputLabel for="descripcionContactado" value="Descripción:" />
+					<p:inputText id="descripcionContactado" maxlength="250" size="30"
+						value="#{cxcSeguimientoCobranzaParamController.canalContactado.descripcion}"
+						required="true" requiredMessage="La descripción es requerida" />
+
+					<p:outputLabel for="estadoContactado" value="Estado:" />
+					<p:selectOneRadio id="estadoContactado"
+						value="#{cxcSeguimientoCobranzaParamController.canalContactado.estado}"
+						columns="2">
+						<f:selectItem itemLabel="Activo" itemValue="A" />
+						<f:selectItem itemLabel="Inactivo" itemValue="I" />
+					</p:selectOneRadio>
+				</p:panelGrid>
+	
+				<div class="dialog-footer" style="margin-top: 15px; text-align: center;">
+				<p:commandButton value="Guardar" icon="fa fa-save"
+					action="#{cxcSeguimientoCobranzaParamController.guardarCanalContactado}"
+					update=":idFormPrincipal:tblCanalesContactado"
+					oncomplete="if(!args.validationFailed) PF('dlgCanalContactado').hide();" />
+
+				<p:commandButton value="Cancelar" icon="fa fa-times" type="button"
+					onclick="PF('dlgCanalContactado').hide();" />
+					</div>
+			</h:form>
+		</p:dialog>
+
+		<!-- Diálogo Resultado Gestión -->
+		<p:dialog id="dlgResultadoGestion" widgetVar="dlgResultadoGestion"
+			header="#{cxcSeguimientoCobranzaParamController.editar ? 'Editar Resultado de Gestión' : 'Nuevo Resultado de Gestión'}"
+			modal="true" resizable="false" width="400" closeOnEscape="true">
+			<h:form id="frmResultadoGestion">
+				<p:panelGrid columns="2" columnClasses="w30, w70">
+					<p:outputLabel for="codigoResultado" value="Código:" />
+					<p:inputText id="codigoResultado"
+						value="#{cxcSeguimientoCobranzaParamController.codigoGeneradoResultado}"
+						disabled="true"
+						rendered="#{!cxcSeguimientoCobranzaParamController.editar}" />
+					<p:inputText id="codigoResultadoEdit"
+						value="#{cxcSeguimientoCobranzaParamController.resultadoGestion.id.codigo}"
+						disabled="true"
+						rendered="#{cxcSeguimientoCobranzaParamController.editar}" />
+
+					<p:outputLabel for="descripcionResultado" value="Descripción:" />
+					<p:inputText id="descripcionResultado" maxlength="250" size="30"
+						value="#{cxcSeguimientoCobranzaParamController.resultadoGestion.descripcion}"
+						required="true" requiredMessage="La descripción es requerida" />
+
+					<p:outputLabel for="estadoResultado" value="Estado:" />
+					<p:selectOneRadio id="estadoResultado"
+						value="#{cxcSeguimientoCobranzaParamController.resultadoGestion.estado}"
+						columns="2">
+						<f:selectItem itemLabel="Activo" itemValue="A" />
+						<f:selectItem itemLabel="Inactivo" itemValue="I" />
+					</p:selectOneRadio>
+				</p:panelGrid>
+
+				<div class="dialog-footer" style="margin-top: 15px; text-align: center;">
+				<p:commandButton value="Guardar" icon="fa fa-save"
+					action="#{cxcSeguimientoCobranzaParamController.guardarResultadoGestion}"
+					update=":idFormPrincipal:tblResultadoGestion"
+					oncomplete="if(!args.validationFailed) PF('dlgResultadoGestion').hide();" />
+				<p:commandButton value="Cancelar" icon="fa fa-times" type="button"
+					onclick="PF('dlgResultadoGestion').hide();" />
+					</div>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

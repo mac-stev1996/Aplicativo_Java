@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:head>
+
+	<h:outputScript library="js" name="util.js"></h:outputScript>
+
+	<h:outputStylesheet name="css/layout-lightblue.css"
+		library="serenity-layout" />
+
+	<style type="text/css">
+body {
+	font-size: 14px;
+}
+
+table.companyHeaderGrid.ui-panelgrid>tbody>tr {
+	border-color: white;
+}
+
+body .ui-toolbar {
+	padding: 0px;
+}
+
+body .ui-dialog .ui-dialog-titlebar {
+	background-color: #0288D1;
+}
+</style>
+
+</h:head>
+<h:body>
+	<p:ajaxStatus onstart="PF('statusDialog').show()"
+		onsuccess="PF('statusDialog').hide()"
+		onerror="PF('statusDialog').hide()" />
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+		closable="false" resizable="false" showHeader="false">
+		<h:graphicImage value="/common/imgs/gifs/ajaxloadingbar.gif" />
+	</p:dialog>
+	<h:form id="form">
+		<p:growl id="messages" globalOnly="true" autoUpdate="true"
+			widgetVar="groMessages" showDetail="true" life="3000" />
+		<p:toolbar styleClass="toolbarStyle">
+			<f:facet name="left">
+				<i class="file-chart-line"></i>
+
+				<b><p:outputLabel style="font-size: 15px;" value="SOBREGIROS" /></b>
+			</f:facet>
+
+		</p:toolbar>
+		<p:panel>
+			<center>
+				<h:panelGrid id="idPnlgDatos" style="width: 50%" columns="2"
+					styleClass="companyHeaderGrid">
+					<p:commandLink
+						action="#{cxcSobregirosReportController.limpiarPanelClientes}"
+						update="idDlgClientes" style="font-weight: bold;" value="Cliente: "
+						oncomplete="PF('dlgClientes').show();" />
+					<h:panelGrid columns="1">
+						<p:inputText readonly="true" id="idCedulaCliente"
+							value="#{cxcSobregirosReportController.cliente.cedula}" />
+						<p:inputText readonly="true" id="idNombreCliente"
+							value="#{cxcSobregirosReportController.cliente.nombre}" />
+					</h:panelGrid>
+				</h:panelGrid>
+				<p:spacer height="20"></p:spacer>
+				<h:panelGrid columns="3" border="0"
+					columnClasses="iconCell, iconCell, iconCell" cellpadding="0"
+					cellspacing="0" width="550" style="background-color: #CCCCCC">
+					<h:commandLink target="_blank"
+						action="#{cxcSobregirosReportController.report}">
+						<h:graphicImage value="/common/imgs/reports/excel.png"
+							style="border:none;align:center;" title="Excel" alt="Excel"
+							width="25" height="25" />
+						<f:param name="format" value="excel" />
+					</h:commandLink>
+					<h:commandLink target="_blank"
+						action="#{cxcSobregirosReportController.report}">
+						<h:graphicImage value="/common/imgs/reports/adobe.png"
+							style="border:none" title="Adobe" alt="Adobe" width="25"
+							height="25" />
+						<f:param name="format" value="pdf" />
+					</h:commandLink>
+					<h:commandLink target="_blank"
+						action="#{cxcSobregirosReportController.report}">
+						<h:graphicImage value="/common/imgs/reports/preview.png"
+							style="border:none" title="Preview" alt="Preview" width="25"
+							height="25" />
+						<f:param name="format" value="html" />
+					</h:commandLink>
+					<h:outputText value="Excel" styleClass="normal" />
+					<h:outputText value="Pdf" styleClass="normal" />
+					<h:outputText value="Html" styleClass="normal" />
+				</h:panelGrid>
+			</center>
+		</p:panel>
+
+	</h:form>
+	<p:dialog id="idDlgClientes" modal="true" widgetVar="dlgClientes"
+		position="center,center" closable="false" appendTo="@(body)"
+		responsive="true" width="720" closeOnEscape="true">
+		<f:facet name="header">
+			<h:outputLabel style="color: white; font-size: 14px;"
+				value=" Seleccionar Cliente " />
+		</f:facet>
+		<h:form id="idFormDlgClientes">
+
+			<p:inputText placeholder="CI/RUC"
+				value="#{cxcSobregirosReportController.cedula}" />
+			<p:inputText placeholder="Nombre"
+				value="#{cxcSobregirosReportController.nombres}" />
+			<p:commandButton style="font-size: 12px;" icon="fa fa-search fa-3x"
+				update=":#{p:component('idTblClientes')}"
+				actionListener="#{cxcSobregirosReportController.cargarCientes}" />
+			<br />
+			<br />
+			<p:dataTable emptyMessage="Sin Registros" id="idTblClientes"
+				value="#{cxcSobregirosReportController.listarClientes}"
+				paginator="#{not empty cxcSobregirosReportController.listarClientes}"
+				paginatorPosition="bottom" rowsPerPageTemplate="5" rows="5"
+				paginatorTemplate="{CurrentPageReport} {PageLinks}"
+				selectionMode="single" rowKey="#{item.clientePK}" var="item">
+				<p:ajax event="rowSelect" oncomplete="PF('dlgClientes').hide();"
+					listener="#{cxcSobregirosReportController.seleccionarFilaCliente}"
+					update="form" />
+				<p:column headerText="No. Cliente" styleClass="columAlignCenter">
+					<h:outputLabel value="#{item.clientePK.noCliente}" />
+				</p:column>
+				<p:column headerText="Identificacion">
+					<h:outputLabel value="#{item.cedula}" />
+				</p:column>
+				<p:column headerText="Nombre">
+					<h:outputLabel value="#{item.nombre}" />
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	</p:dialog>
+	<h:inputHidden value="/reportes/cxcSobregiros.jasper"
+		binding="#{cxcSobregirosReportController.reportPath}" />
+</h:body>
+</html>

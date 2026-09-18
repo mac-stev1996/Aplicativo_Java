@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+	</f:facet>
+	<title>Factor de Riesgo</title>
+	<h:outputScript name="js/layout.js" library="serenity-layout" />
+	<h:outputScript name="js/ripple.js" library="serenity-layout" />
+	<style type="text/css">
+.center {
+	margin: auto;
+	width: 50%;
+	padding: 10px;
+}
+</style>
+</h:head>
+<h:body>
+
+
+	<h:form id="form">
+		<p:growl id="messages" globalOnly="true" autoUpdate="true"
+			widgetVar="groMessages" showDetail="true" />
+
+		<p:toolbar>
+			<f:facet name="left">
+				<p:outputLabel value="Factor de Riesgo"></p:outputLabel>
+			</f:facet>
+
+			<f:facet name="right">
+				<p:commandButton value="Nuevo Factor" style="float: right;"
+					icon="fa fa-plus-circle" styleClass="boton" process="@this"
+					partialSubmit="true" oncomplete="PF('dlgNewFactor').show();"
+					update=":frmNewCmlFactorRiesgo"
+					action="#{cmlFactorRiesgoController.nuevoFactorRiesgo}" />
+			</f:facet>
+		</p:toolbar>
+
+
+		<p:panel id="panelTablas">
+
+            <p:dataTable id="tablaDetalle" var="item"
+				value="#{cmlFactorRiesgoController.factorRiesgoLst}"
+				paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+				paginator="true" rows="10" rowsPerPageTemplate="20,30,40"
+				paginatorPosition="bottom" emptyMessage="No existen registros" rowIndexVar="row">
+
+				<p:column width="5%" headerText="N°">
+					<p:commandLink value="#{row+1}" actionListener="#{cmlFactorRiesgoController.editarFactorRiesgo(item)}" update=":frmNewCmlFactorRiesgo"/>
+				</p:column>
+
+				<p:column width="5%"  headerText="Sec.">
+					<h:outputText
+						value="#{item.id.codigo}" />
+				</p:column>
+
+				<p:column headerText="Factor de Riesgo" filterBy="#{item.descripcion}" filterMatchMode="contains">
+					<h:outputText
+						value="#{item.descripcion}" />
+				</p:column>
+				
+				<p:column headerText="Ponderación" >
+					<h:outputText
+						value="#{item.ponderacion}" />
+				</p:column>
+				
+				<p:column headerText="Tipo" filterBy="#{item.tipo.descripion}" filterMatchMode="contains">
+					<h:outputText
+						value="#{item.tipo.descripcion}" />
+				</p:column>
+				
+				<p:column width="5%"  headerText="Estado">
+					<h:outputText
+						value="#{item.estado}" />
+				</p:column>
+
+				<p:column width="6%" headerText="Inactivar">
+					<p:commandButton icon="fa fa-remove" title="Inactivar" update="form"
+						actionListener="#{cmlFactorRiesgoController.inactivarFactorRiesgo(item)}"
+						onclick="if (!confirm('¿Esta seguro que desea inactivar el factor de riesgo?')){return false;}" />
+				</p:column>
+				
+				
+				<p:column width="6%" headerText="Factores Descendientes" rendered="#{cmlFactorRiesgoController.codigoFRPadre == null }">
+					<p:commandButton icon="fa fa-list-alt" title="Factores Descendientes" ajax="false" onclick="form.target='_blank'"
+					actionListener="#{cmlFactorRiesgoController.verFactoresDescendientes(item)}"/>
+				</p:column>
+				
+				
+			</p:dataTable>
+
+		</p:panel>
+	</h:form>
+
+	<p:dialog id="dlgNewFactor"	widgetVar="dlgNewFactor"
+		position="center,center"  responsive="true"  width="60%" height="60%"
+	    resizable="true" modal="true" appendTo="@(body)" closable="true"
+		closeOnEscape="true" header="Factor de Riesgo">
+
+		<h:form id="frmNewCmlFactorRiesgo">
+
+			<h:panelGrid id="detalleClientePG" columns="4" rendered="#{cmlFactorRiesgoController.factorRiesgoSel != null}" >
+			
+				<p:outputLabel style="font-size: 12px; font-weight: bold;"
+					value="Factor Riesgo: " />
+		        <p:inputText value="#{cmlFactorRiesgoController.factorRiesgoSel.descripcion}" />
+		        
+		        <p:outputLabel style="font-size: 12px; font-weight: bold;" value="Ponderación:" />
+				<p:inputText value="#{cmlFactorRiesgoController.factorRiesgoSel.ponderacion}" >
+					<f:convertNumber minFractionDigits="2"  maxFractionDigits="2" />
+				</p:inputText>
+		        
+		        <p:outputLabel style="font-size: 12px; font-weight: bold;" value="Tipo:" />
+		        <p:selectOneMenu id="tipoOp" value="#{cmlFactorRiesgoController.factorRiesgoSel.tipoId}">
+                	<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+                    <f:selectItems value="#{cmlFactorRiesgoController.tipoLst}" 
+                    		var="n"
+                 			itemValue="#{n.id.codigo}"
+                 			itemLabel="#{n.descripcion}"/>
+                </p:selectOneMenu>
+		        
+		        
+		       <p:outputLabel style="float:right;font-weight:bold;"
+				value="Estado" />
+				<p:selectOneMenu style="float:left;"
+					value="#{cmlFactorRiesgoController.factorRiesgoSel.estado}">
+					<f:selectItem itemLabel="Seleccione" itemValue="" />
+					<f:selectItem itemLabel="Activo" itemValue="A" />
+					<f:selectItem itemLabel="Inactivo" itemValue="I" />
+				</p:selectOneMenu>
+				
+				<p:commandButton value="Guardar" icon="fa fa-floppy-o"
+				styleClass="boton" process="@this, frmNewCmlFactorRiesgo"
+				partialSubmit="true" update=":form"
+				action="#{cmlFactorRiesgoController.guardar}" />
+
+				<p:commandButton value="Cerrar" icon="fa fa-close"
+				styleClass="boton" process="@this, frmNewCmlFactorRiesgo"
+				partialSubmit="true" update=":form"
+				onclick="PF('dlgNewFactor').hide();" />
+
+			</h:panelGrid>
+
+		</h:form>
+	</p:dialog>
+
+	<h:outputStylesheet name="css/layout-lightblue.css"
+		library="serenity-layout" />
+
+</h:body>
+</html>

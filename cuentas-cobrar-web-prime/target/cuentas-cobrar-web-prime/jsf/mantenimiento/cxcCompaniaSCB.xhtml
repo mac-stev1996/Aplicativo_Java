@@ -1,0 +1,84 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Mantenimiento de Compañias
+	</ui:define>
+
+	<ui:define name="content">
+		<style>
+.w25 {
+	width: 25%;
+}
+</style>
+		<h:form id="idForm">
+
+			<div class="ui-g dashboard">
+				<div class="ui-g-12 ui-fluid contact-form">
+					<div class="ui-g-12">
+
+						<p:dataTable id="tblCompania" widgetVar="tblCompania"
+							emptyMessage="No existen registros"
+							value="#{cxcCompaniasSCBController.listadoCompanias}"
+							var="compania"
+							selection="#{cxcCompaniasSCBController.facCompaniaSelected}"
+							rowKey="#{compania.noCia}" rowIndexVar="var" editable="true"
+							editMode="cell" styleClass="table table-body" paginator="true"
+							paginatorAlwaysVisible="true" paginatorPosition="bottom"
+							filterDelay="1000" rows="10"
+							currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+							paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+
+							<p:ajax event="cellEdit" partialSubmit="true" process="@this"
+								listener="#{cxcCompaniasSCBController.actualizar(compania)}"
+								update="@this, tblCompania" global="false" />
+
+							<p:column headerText="No Cia" width="15%"
+								filterBy="#{compania.noCia}">
+								<p:outputLabel value="#{compania.noCia}" />
+							</p:column>
+
+							<p:column headerText="Nombre" width="40%">
+								<p:outputLabel value="#{compania.nombre}" />
+							</p:column>
+							<p:column headerText="Codigo Diario" width="20%"
+								filterBy="#{compania.codDiarioCxc}">
+								<p:cellEditor>
+									<f:facet name="output">
+										<p:outputLabel value="#{compania.codDiarioCxc}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText value="#{compania.codDiarioCxc}"></p:inputText>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							<p:column headerText="Seguridad" width="20%">
+								<p:cellEditor>
+									<f:facet name="output">
+										<p:outputLabel value="#{compania.indSeguridad}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:selectOneMenu value="#{compania.indSeguridad}">
+											<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+											<f:selectItem itemLabel="Si" itemValue="S" />
+											<f:selectItem itemLabel="No" itemValue="N" />
+										</p:selectOneMenu>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+
+						</p:dataTable>
+
+					</div>
+				</div>
+			</div>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

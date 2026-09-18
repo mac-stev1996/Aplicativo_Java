@@ -1,0 +1,97 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Reporte / Facturas de Contado
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmButtons">
+			
+					
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+		<style type="text/css">
+			.ui-calendar input {
+				width: auto !important;
+				min-width: auto !important;
+			}
+			
+			input, .ui-selectcheckboxmenu, .ui-selectonemenu {
+				width: 95% !important;
+				min-width: 100% !important;
+			}
+			.gridSinBordes.ui-panelgrid>*>tr, .gridSinBordes.ui-panelgrid .ui-panelgrid-cell
+				{
+				border: none !important;
+				border-right-width: 0px !important;
+				border-left-width: 0px !important;
+				padding-right: 1px !important;
+				padding-left: 1px !important;
+				padding-top: 1px !important;
+				padding-bottom: 1px !important
+			}
+		</style>
+		<h:form id="reportForm" >
+			
+			<div class="ui-g dashboard">
+				<div class="ui-g-12 ui-fluid contact-form">
+	
+					<div class="ui-g-6">
+						<p:fieldset id="fsParametros" legend="Parametros" >
+							<p:panelGrid columns="2" style="width:250px;" styleClass="gridSinBordes"  >
+							
+								
+								<p:outputLabel style="float:left;" value="Fecha Inicio:" />
+								<p:calendar id="calFechaInicial" value="#{cxcReporteFacturasDeContadoController.fechaDesde}" 
+											pattern="dd/MM/yyyy" 
+											size="20" 
+											locale="es">
+									<p:ajax event="dateSelect" partialSubmit="true" process="@this" update=":reportForm:calFechaInicial" global="false"/>
+								</p:calendar>
+								
+								<p:outputLabel style="float:left;" value="Fecha Final:" />
+								<p:calendar id="calFechaFinal" value="#{cxcReporteFacturasDeContadoController.fechaHasta}"
+											pattern="dd/MM/yyyy" 
+											size="20" 
+											locale="es">
+									<p:ajax event="dateSelect" partialSubmit="true" process="@this" update=":reportForm:calFechaFinal" global="false"/>
+								</p:calendar>
+				
+							</p:panelGrid>
+							
+							<p:panelGrid columns="2" style="width:100px;" styleClass="gridSinBordes"  >
+							<p:commandButton id="btnPDF" title="Generar el reporte en PDF" 
+								icon="fa fa-file-pdf-o fa-2x"
+								actionListener="#{cxcReporteFacturasDeContadoController.reporte('pdf')}"
+								styleClass="deep-orange-btn"
+								onclick="form.target='_blank'"
+				                ajax = "false"
+								/>
+				
+							<p:commandButton id="btnExcel" title="Generar el reporte en Excel" 
+								ajax="false"
+								icon="fa fa-file-excel-o fa-2x"
+								styleClass="green-btn" 
+								onclick="form.target='_blank'"
+								actionListener="#{cxcReporteFacturasDeContadoController.reporte('excel')}"
+								process="@this, reportForm"
+								update="#{p:component('frmButtons')}" 
+								/>
+							</p:panelGrid>
+						</p:fieldset>
+					</div>
+				</div>
+			</div>
+
+		</h:form>
+		
+	</ui:define>
+</ui:composition>

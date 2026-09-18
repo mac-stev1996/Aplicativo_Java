@@ -1,0 +1,1725 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RepCreditosEstados" pageWidth="906" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="846" leftMargin="30" rightMargin="30" topMargin="10" bottomMargin="10" uuid="441503f2-1753-4a76-85d2-c8fbb6c6f18b">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="DataTotal" uuid="4e8d0093-75de-4835-8fe9-dacd86ed8409">
+		<parameter name="pNoCia" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="pFechaInicio" class="java.util.Date">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="pFechaFin" class="java.util.Date">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select orden, etiqueta, total, totalminutos, totalsegundos, totalminutosra, totalsegundosra,
+round(total/(max(nullif(total,0)) over ())*100,2) || '%' as porcentaje
+from (
+select 1 orden, 'TOTAL CREDITOS CALIFICADOS' etiqueta, count (*) total,
+(trunc(mod((avg(fin-inicio)) * (60 * 24), 60))) totalminutos,  trunc(mod((avg(fin-inicio)) * (60 * 60 * 24), 60)) totalsegundos,
+(trunc(mod((avg(finra-iniciora)) * (60 * 24), 60))) totalminutosra,  trunc(mod((avg(finra-iniciora)) * (60 * 60 * 24), 60)) totalsegundosra
+from (
+select a.solicitud, nvl(a.fecha_finaliza_revision, (select max(fecha) from cxc_credito_estado e where e.no_cia =a.no_cia and e.solicitud = a.solicitud and e.estado='R')) fin,
+a.fecha_inicia_revision inicio,
+nvl(a.fecha_usuario_revision,(select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='E')) iniciora,
+nvl((select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='A' and a.revisa_comite is null),
+nvl((select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='N' and a.revisa_comite is null),
+nvl((select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='D' and a.revisa_comite is null),
+(select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='R' and a.revisa_comite is null)))) finra
+
+from cxc_credito a, svfcoti c where a.no_cia= $P{pNoCia}
+and trunc(a.FECHA_ENVIADA) >= trunc($P{pFechaInicio})
+and trunc(a.FECHA_ENVIADA) <= trunc($P{pFechaFin})
+and a.numero_cotizacion =c.numero_cotizacion
+and a.no_cia = c.no_cia
+and a.estado in ('A','N','D')
+)
+union --aprobados
+select 2 orden, 'TOTAL CREDITOS APROBADOS' etiqueta, count (*) total,
+(trunc(mod((avg(fin-inicio)) * (60 * 24), 60))) totalminutos,  trunc(mod((avg(fin-inicio)) * (60 * 60 * 24), 60)) totalsegundos,
+(trunc(mod((avg(finra-iniciora)) * (60 * 24), 60))) totalminutosra,  trunc(mod((avg(finra-iniciora)) * (60 * 60 * 24), 60)) totalsegundosra
+from (select a.solicitud, nvl(a.fecha_finaliza_revision, (select max(fecha) from cxc_credito_estado e where  e.no_cia =a.no_cia and e.solicitud = a.solicitud and e.estado='A')) fin,
+a.fecha_inicia_revision inicio,
+nvl(a.fecha_usuario_revision,(select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='E')) iniciora,
+nvl((select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='A' and a.revisa_comite is null),
+(select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='R' and a.revisa_comite is null)) finra
+
+from cxc_credito a, svfcoti c where a.no_cia= $P{pNoCia}
+and trunc(a.FECHA_ENVIADA) >= trunc($P{pFechaInicio})
+and trunc(a.FECHA_ENVIADA) <= trunc($P{pFechaFin})
+and a.numero_cotizacion =c.numero_cotizacion
+and a.no_cia = c.no_cia
+and a.estado = 'A'
+)
+union --negados
+select 3 orden, 'TOTAL CREDITOS NEGADOS' etiqueta, count (*) total,
+(trunc(mod((avg(fin-inicio)) * (60 * 24), 60))) totalminutos,  trunc(mod((avg(fin-inicio)) * (60 * 60 * 24), 60)) totalsegundos,
+(trunc(mod((avg(finra-iniciora)) * (60 * 24), 60))) totalminutosra,  trunc(mod((avg(finra-iniciora)) * (60 * 60 * 24), 60)) totalsegundosra
+from (select a.solicitud, nvl(a.fecha_finaliza_revision, (select max(fecha) from cxc_credito_estado e where  e.no_cia =a.no_cia and e.solicitud = a.solicitud and e.estado='N')) fin,
+a.fecha_inicia_revision inicio,
+nvl(a.fecha_usuario_revision,(select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='E')) iniciora,
+nvl((select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='N' and a.revisa_comite is null),
+(select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='R' and a.revisa_comite is null)) finra
+
+from cxc_credito a, svfcoti c where a.no_cia= $P{pNoCia}
+and trunc(a.FECHA_ENVIADA) >= trunc($P{pFechaInicio})
+and trunc(a.FECHA_ENVIADA) <= trunc($P{pFechaFin})
+and a.numero_cotizacion =c.numero_cotizacion
+and a.no_cia = c.no_cia
+and a.estado = 'N'
+)
+union --devueltos
+select 4 orden, 'TOTAL CREDITOS DEVUELTOS' etiqueta, count (*) total,
+(trunc(mod((avg(fin-inicio)) * (60 * 24), 60))) totalminutos,  trunc(mod((avg(fin-inicio)) * (60 * 60 * 24), 60)) totalsegundos,
+(trunc(mod((avg(finra-iniciora)) * (60 * 24), 60))) totalminutosra,  trunc(mod((avg(finra-iniciora)) * (60 * 60 * 24), 60)) totalsegundosra
+from (select a.solicitud, nvl(a.fecha_finaliza_revision, (select max(fecha) from cxc_credito_estado e where  e.no_cia =a.no_cia and e.solicitud = a.solicitud and e.estado='D')) fin,
+a.fecha_inicia_revision inicio,
+nvl(a.fecha_usuario_revision,(select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='E')) iniciora,
+nvl((select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='D' and a.revisa_comite is null),
+(select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='R' and a.revisa_comite is null)) finra
+
+from cxc_credito a, svfcoti c where a.no_cia= $P{pNoCia}
+and trunc(a.FECHA_ENVIADA) >= trunc($P{pFechaInicio})
+and trunc(a.FECHA_ENVIADA) <= trunc($P{pFechaFin})
+and a.numero_cotizacion =c.numero_cotizacion
+and a.no_cia = c.no_cia
+and a.estado = 'D'
+))x]]>
+		</queryString>
+		<field name="ORDEN" class="java.math.BigDecimal"/>
+		<field name="ETIQUETA" class="java.lang.String"/>
+		<field name="TOTAL" class="java.math.BigDecimal"/>
+		<field name="TOTALMINUTOS" class="java.math.BigDecimal"/>
+		<field name="TOTALSEGUNDOS" class="java.math.BigDecimal"/>
+		<field name="TOTALMINUTOSRA" class="java.math.BigDecimal"/>
+		<field name="TOTALSEGUNDOSRA" class="java.math.BigDecimal"/>
+		<field name="PORCENTAJE" class="java.lang.String"/>
+		<variable name="SUMTOTAL" class="java.math.BigDecimal" calculation="Highest">
+			<variableExpression><![CDATA[$F{TOTAL}]]></variableExpression>
+			<initialValueExpression><![CDATA[new BigDecimal(1)]]></initialValueExpression>
+		</variable>
+		<variable name="tiempoRevTotalCreditos" class="java.lang.String" calculation="Average">
+			<variableExpression><![CDATA[$F{TOTALMINUTOS} +":"+ $F{TOTALSEGUNDOS}]]></variableExpression>
+		</variable>
+		<variable name="tiempoColaTotalCreditos" class="java.lang.String" calculation="Average">
+			<variableExpression><![CDATA[$F{TOTALMINUTOSRA} +":"+ $F{TOTALSEGUNDOSRA}]]></variableExpression>
+		</variable>
+	</subDataset>
+	<subDataset name="DataNuevos" uuid="4e8d0093-75de-4835-8fe9-dacd86ed8409">
+		<parameter name="pNoCia" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="pFechaInicio" class="java.util.Date">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="pFechaFin" class="java.util.Date">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select orden, etiqueta, total, totalMinutos, totalSegundos, totalMinutosRA, totalSegundosRA,
+round(total/(max(nullif(total,0)) over ())*100,2) || '%' as porcentaje
+from (
+select 1 orden, 'TOTAL CREDITOS CALIFICADOS' etiqueta, count (*) total,
+(TRUNC(MOD((AVG(fin-inicio)) * (60 * 24), 60))) totalMinutos,  TRUNC(MOD((AVG(fin-inicio)) * (60 * 60 * 24), 60)) totalSegundos,
+(TRUNC(MOD((AVG(finRA-inicioRA)) * (60 * 24), 60))) totalMinutosRA,  TRUNC(MOD((AVG(finRA-inicioRA)) * (60 * 60 * 24), 60)) totalSegundosRA
+from (
+select a.solicitud, nvl(a.fecha_finaliza_revision, (select max(fecha) from cxc_credito_estado e where e.no_cia =a.no_cia and e.solicitud = a.solicitud and e.estado='R')) fin,
+a.fecha_inicia_revision inicio,
+nvl(a.fecha_usuario_revision,(select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='E' and a.revisa_comite is null)) iniciora,
+nvl((select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='A' and a.revisa_comite is null),
+nvl((select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='N' and a.revisa_comite is null),
+nvl((select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='D' and a.revisa_comite is null),
+(select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='R' and a.revisa_comite is null)))) finra
+
+from cxc_credito a, svfcoti c
+where a.no_cia=$P{pNoCia}
+and trunc(a.FECHA_ENVIADA) >= trunc($P{pFechaInicio})
+and trunc(a.FECHA_ENVIADA) <= trunc($P{pFechaFin})
+and a.numero_cotizacion =c.numero_cotizacion
+and a.no_cia = c.no_cia
+and a.estado in ('A','N','D')
+and c.svlicodi in('70','3'))
+UNION --aprobados
+select 2 orden, 'TOTAL CREDITOS APROBADOS' etiqueta, count (*) total,
+(TRUNC(MOD((AVG(fin-inicio)) * (60 * 24), 60))) totalMinutos,  TRUNC(MOD((AVG(fin-inicio)) * (60 * 60 * 24), 60)) totalSegundos,
+(TRUNC(MOD((AVG(finRA-inicioRA)) * (60 * 24), 60))) totalMinutosRA,  TRUNC(MOD((AVG(finRA-inicioRA)) * (60 * 60 * 24), 60)) totalSegundosRA
+from (select a.solicitud, nvl(a.fecha_finaliza_revision, (select max(fecha) from cxc_credito_estado e where  e.no_cia =a.no_cia and e.solicitud = a.solicitud and e.estado='A')) fin,
+a.fecha_inicia_revision inicio,
+nvl(a.fecha_usuario_revision,(select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='E' and a.revisa_comite is null)) iniciora,
+nvl((select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='A' and a.revisa_comite is null),
+(select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='R' and a.revisa_comite is null)) finra
+
+from cxc_credito a, svfcoti c
+where a.no_cia=$P{pNoCia}
+and trunc(a.FECHA_ENVIADA) >= trunc($P{pFechaInicio})
+and trunc(a.FECHA_ENVIADA) <= trunc($P{pFechaFin})
+and a.numero_cotizacion =c.numero_cotizacion
+and a.no_cia = c.no_cia
+and a.estado = 'A'
+and c.svlicodi in('70','3'))
+UNION --negados
+select 3 orden, 'TOTAL CREDITOS NEGADOS' etiqueta, count (*) total,
+(TRUNC(MOD((AVG(fin-inicio)) * (60 * 24), 60))) totalMinutos,  TRUNC(MOD((AVG(fin-inicio)) * (60 * 60 * 24), 60)) totalSegundos,
+(TRUNC(MOD((AVG(finRA-inicioRA)) * (60 * 24), 60))) totalMinutosRA,  TRUNC(MOD((AVG(finRA-inicioRA)) * (60 * 60 * 24), 60)) totalSegundosRA
+from (select a.solicitud, nvl(a.fecha_finaliza_revision, (select max(fecha) from cxc_credito_estado e where  e.no_cia =a.no_cia and e.solicitud = a.solicitud and e.estado='N')) fin,
+a.fecha_inicia_revision inicio,
+nvl(a.fecha_usuario_revision,(select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='E' and a.revisa_comite is null)) iniciora,
+nvl((select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='N' and a.revisa_comite is null),
+(select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='R' and a.revisa_comite is null)) finra
+
+from cxc_credito a, svfcoti c
+where a.no_cia=$P{pNoCia}
+and trunc(a.FECHA_ENVIADA) >= trunc($P{pFechaInicio})
+and trunc(a.FECHA_ENVIADA) <= trunc($P{pFechaFin})
+and a.numero_cotizacion =c.numero_cotizacion
+and a.no_cia = c.no_cia
+and a.estado = 'N'
+and c.svlicodi in('70','3'))
+UNION --devueltos
+select 4 orden, 'TOTAL CREDITOS DEVUELTOS' etiqueta, count (*) total,
+(TRUNC(MOD((AVG(fin-inicio)) * (60 * 24), 60))) totalMinutos,  TRUNC(MOD((AVG(fin-inicio)) * (60 * 60 * 24), 60)) totalSegundos,
+(TRUNC(MOD((AVG(finRA-inicioRA)) * (60 * 24), 60))) totalMinutosRA,  TRUNC(MOD((AVG(finRA-inicioRA)) * (60 * 60 * 24), 60)) totalSegundosRA
+from (select a.solicitud, nvl(a.fecha_finaliza_revision, (select max(fecha) from cxc_credito_estado e where  e.no_cia =a.no_cia and e.solicitud = a.solicitud and e.estado='D')) fin,
+a.fecha_inicia_revision inicio,
+nvl(a.fecha_usuario_revision,(select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='E' and a.revisa_comite is null)) iniciora,
+nvl((select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='D' and a.revisa_comite is null),
+(select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='R' and a.revisa_comite is null)) finra
+
+from cxc_credito a, svfcoti c
+where a.no_cia= $P{pNoCia}
+and trunc(a.FECHA_ENVIADA) >= trunc($P{pFechaInicio})
+and trunc(a.FECHA_ENVIADA) <= trunc($P{pFechaFin})
+and a.numero_cotizacion =c.numero_cotizacion
+and a.no_cia = c.no_cia
+and a.estado = 'D'
+and c.svlicodi in('70','3'))
+)x]]>
+		</queryString>
+		<field name="ORDEN" class="java.math.BigDecimal"/>
+		<field name="ETIQUETA" class="java.lang.String"/>
+		<field name="TOTAL" class="java.math.BigDecimal"/>
+		<field name="TOTALMINUTOS" class="java.math.BigDecimal"/>
+		<field name="TOTALSEGUNDOS" class="java.math.BigDecimal"/>
+		<field name="TOTALMINUTOSRA" class="java.math.BigDecimal"/>
+		<field name="TOTALSEGUNDOSRA" class="java.math.BigDecimal"/>
+		<field name="PORCENTAJE" class="java.lang.String"/>
+		<variable name="tiempoColaTotalCreditos" class="java.lang.String" calculation="Average">
+			<variableExpression><![CDATA[$F{TOTALMINUTOSRA} +":"+ $F{TOTALSEGUNDOSRA}]]></variableExpression>
+		</variable>
+	</subDataset>
+	<subDataset name="DataSeminuevos" uuid="4e8d0093-75de-4835-8fe9-dacd86ed8409">
+		<parameter name="pNoCia" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="pFechaInicio" class="java.util.Date">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="pFechaFin" class="java.util.Date">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select orden, etiqueta, total, totalMinutos, totalSegundos, totalMinutosRA, totalSegundosRA,
+round(total/(max(nullif(total,0)) over ())*100,2) || '%' as porcentaje
+from (
+select 1 orden, 'TOTAL CREDITOS CALIFICADOS' etiqueta, count (*) total,
+(TRUNC(MOD((AVG(fin-inicio)) * (60 * 24), 60))) totalMinutos,  TRUNC(MOD((AVG(fin-inicio)) * (60 * 60 * 24), 60)) totalSegundos,
+(TRUNC(MOD((AVG(finRA-inicioRA)) * (60 * 24), 60))) totalMinutosRA,  TRUNC(MOD((AVG(finRA-inicioRA)) * (60 * 60 * 24), 60)) totalSegundosRA
+from (
+select a.solicitud, nvl(a.fecha_finaliza_revision, (select max(fecha) from cxc_credito_estado e where e.no_cia =a.no_cia and e.solicitud = a.solicitud and e.estado='R')) fin,
+a.fecha_inicia_revision inicio,
+nvl(a.fecha_usuario_revision,(select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='E' and a.revisa_comite is null)) iniciora,
+nvl((select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='A' and a.revisa_comite is null),
+nvl((select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='N' and a.revisa_comite is null),
+nvl((select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='D' and a.revisa_comite is null),
+(select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='R' and a.revisa_comite is null)))) finra
+from cxc_credito a, svfcoti c where a.no_cia= $P{pNoCia}
+and trunc(a.FECHA_ENVIADA) >= trunc($P{pFechaInicio})
+and trunc(a.FECHA_ENVIADA) <= trunc($P{pFechaFin})
+and a.numero_cotizacion =c.numero_cotizacion
+and a.no_cia = c.no_cia
+and a.estado in ('A','N','D')
+and c.svlicodi in('6')
+)
+UNION --aprobados
+select 2 orden, 'TOTAL CREDITOS APROBADOS' etiqueta, count (*) total,
+(TRUNC(MOD((AVG(fin-inicio)) * (60 * 24), 60))) totalMinutos,  TRUNC(MOD((AVG(fin-inicio)) * (60 * 60 * 24), 60)) totalSegundos,
+(TRUNC(MOD((AVG(finRA-inicioRA)) * (60 * 24), 60))) totalMinutosRA,  TRUNC(MOD((AVG(finRA-inicioRA)) * (60 * 60 * 24), 60)) totalSegundosRA
+from (select a.solicitud, nvl(a.fecha_finaliza_revision, (select max(fecha) from cxc_credito_estado e where  e.no_cia =a.no_cia and e.solicitud = a.solicitud and e.estado='A')) fin,
+a.fecha_inicia_revision inicio,
+nvl(a.fecha_usuario_revision,(select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='E' and a.revisa_comite is null)) iniciora,
+nvl((select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='A' and a.revisa_comite is null),
+(select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='R' and a.revisa_comite is null)) finra
+
+from cxc_credito a, svfcoti c where a.no_cia=$P{pNoCia}
+and trunc(a.FECHA_ENVIADA) >= trunc($P{pFechaInicio})
+and trunc(a.FECHA_ENVIADA) <= trunc($P{pFechaFin})
+and a.numero_cotizacion =c.numero_cotizacion
+and a.no_cia = c.no_cia
+and a.estado = 'A'
+and c.svlicodi in('6')
+)
+UNION --negados
+select 3 orden, 'TOTAL CREDITOS NEGADOS' etiqueta, count (*) total,
+(TRUNC(MOD((AVG(fin-inicio)) * (60 * 24), 60))) totalMinutos,  TRUNC(MOD((AVG(fin-inicio)) * (60 * 60 * 24), 60)) totalSegundos,
+(TRUNC(MOD((AVG(finRA-inicioRA)) * (60 * 24), 60))) totalMinutosRA,  TRUNC(MOD((AVG(finRA-inicioRA)) * (60 * 60 * 24), 60)) totalSegundosRA
+from (select a.solicitud, nvl(a.fecha_finaliza_revision, (select max(fecha) from cxc_credito_estado e where  e.no_cia =a.no_cia and e.solicitud = a.solicitud and e.estado='N')) fin,
+a.fecha_inicia_revision inicio,
+nvl(a.fecha_usuario_revision,(select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='E' and a.revisa_comite is null)) iniciora,
+nvl((select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='N' and a.revisa_comite is null),
+(select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='R' and a.revisa_comite is null)) finra
+from cxc_credito a, svfcoti c where a.no_cia=$P{pNoCia}
+and trunc(a.FECHA_ENVIADA) >= trunc($P{pFechaInicio})
+and trunc(a.FECHA_ENVIADA) <= trunc($P{pFechaFin})
+and a.numero_cotizacion =c.numero_cotizacion
+and a.no_cia = c.no_cia
+and a.estado = 'N'
+and c.svlicodi in('6')
+)
+UNION --devueltos
+select 4 orden, 'TOTAL CREDITOS DEVUELTOS' etiqueta, count (*) total,
+(TRUNC(MOD((AVG(fin-inicio)) * (60 * 24), 60))) totalMinutos,  TRUNC(MOD((AVG(fin-inicio)) * (60 * 60 * 24), 60)) totalSegundos,
+(TRUNC(MOD((AVG(finRA-inicioRA)) * (60 * 24), 60))) totalMinutosRA,  TRUNC(MOD((AVG(finRA-inicioRA)) * (60 * 60 * 24), 60)) totalSegundosRA
+from (select a.solicitud, nvl(a.fecha_finaliza_revision, (select max(fecha) from cxc_credito_estado e where  e.no_cia =a.no_cia and e.solicitud = a.solicitud and e.estado='D')) fin,
+a.fecha_inicia_revision inicio,
+nvl(a.fecha_usuario_revision,(select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='E' and a.revisa_comite is null)) iniciora,
+nvl((select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='D' and a.revisa_comite is null),
+(select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='R' and a.revisa_comite is null)) finra
+from cxc_credito a, svfcoti c where a.no_cia= $P{pNoCia}
+and trunc(a.FECHA_ENVIADA) >= trunc($P{pFechaInicio})
+and trunc(a.FECHA_ENVIADA) <= trunc($P{pFechaFin})
+and a.numero_cotizacion =c.numero_cotizacion
+and a.no_cia = c.no_cia
+and a.estado = 'D'
+and c.svlicodi in('6'))
+)x]]>
+		</queryString>
+		<field name="ORDEN" class="java.math.BigDecimal"/>
+		<field name="ETIQUETA" class="java.lang.String"/>
+		<field name="TOTAL" class="java.math.BigDecimal"/>
+		<field name="TOTALMINUTOS" class="java.math.BigDecimal"/>
+		<field name="TOTALSEGUNDOS" class="java.math.BigDecimal"/>
+		<field name="TOTALMINUTOSRA" class="java.math.BigDecimal"/>
+		<field name="TOTALSEGUNDOSRA" class="java.math.BigDecimal"/>
+		<field name="PORCENTAJE" class="java.lang.String"/>
+		<variable name="tiempoColaTotalCreditos" class="java.lang.String" calculation="Average">
+			<variableExpression><![CDATA[$F{TOTALMINUTOSRA} +":"+ $F{TOTALSEGUNDOSRA}]]></variableExpression>
+		</variable>
+	</subDataset>
+	<subDataset name="DataAgencia" uuid="4e8d0093-75de-4835-8fe9-dacd86ed8409">
+		<parameter name="pNoCia" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="pFechaInicio" class="java.util.Date">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="pFechaFin" class="java.util.Date">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select a.numero, b.nombre,a.agencia,
+(select count(*) from cxc_credito c, svfcoti d where c.no_cia=$P{pNoCia} and c.concesionario=a.agencia
+and trunc(c.fecha_enviada) >= trunc($P{pFechaInicio})
+and trunc(c.fecha_enviada) <= trunc($P{pFechaFin}) and c.estado in ('A')
+and c.numero_cotizacion =d.numero_cotizacion
+and c.no_cia = d.no_cia
+) as aprobados
+,
+(select count(*) from cxc_credito c, svfcoti d where c.no_cia=$P{pNoCia} and c.concesionario=a.agencia
+and trunc(c.fecha_enviada) >= trunc($P{pFechaInicio})
+and trunc(c.fecha_enviada) <= trunc($P{pFechaFin}) and c.estado in ('N')
+and c.numero_cotizacion =d.numero_cotizacion
+and c.no_cia = d.no_cia
+) as negados,
+(select count(*) from cxc_credito c, svfcoti d where c.no_cia=$P{pNoCia} and c.concesionario=a.agencia
+and trunc(c.fecha_enviada) >= trunc($P{pFechaInicio})
+and trunc(c.fecha_enviada) <= trunc($P{pFechaFin}) and c.estado in ('D')
+and c.numero_cotizacion =d.numero_cotizacion
+and c.no_cia = d.no_cia
+) as devueltos
+from
+(select distinct(a.concesionario) agencia, count(a.concesionario) numero
+from cxc_credito a,  svfcoti c where a.no_cia= $P{pNoCia}
+and trunc(a.fecha_enviada) >= trunc($P{pFechaInicio})
+and trunc(a.fecha_enviada) <= trunc($P{pFechaFin})
+and a.numero_cotizacion =c.numero_cotizacion
+and a.no_cia = c.no_cia
+and a.estado in ('A','D','N')
+group by a.concesionario
+order by numero desc
+)  a , agencias b
+where b.No_cia=$P{pNoCia}
+and a.agencia = b.codigo]]>
+		</queryString>
+		<field name="NUMERO" class="java.math.BigDecimal"/>
+		<field name="NOMBRE" class="java.lang.String"/>
+		<field name="AGENCIA" class="java.lang.String"/>
+		<field name="APROBADOS" class="java.math.BigDecimal"/>
+		<field name="NEGADOS" class="java.math.BigDecimal"/>
+		<field name="DEVUELTOS" class="java.math.BigDecimal"/>
+	</subDataset>
+	<subDataset name="DataAgenciaNuevos" uuid="4e8d0093-75de-4835-8fe9-dacd86ed8409">
+		<parameter name="pNoCia" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="pFechaInicio" class="java.util.Date">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="pFechaFin" class="java.util.Date">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select a.numero, b.nombre,a.agencia,
+(select count(*) from cxc_credito c, svfcoti d where c.no_cia=$P{pNoCia} and c.concesionario=a.agencia
+and trunc(c.fecha_enviada) >= trunc($P{pFechaInicio})
+and trunc(c.fecha_enviada) <= trunc($P{pFechaFin}) and c.estado in ('A')
+and c.numero_cotizacion =d.numero_cotizacion
+and c.no_cia = d.no_cia
+and d.svlicodi in(70,3)
+) as aprobados
+,
+(select count(*) from cxc_credito c, svfcoti d where c.no_cia=$P{pNoCia} and c.concesionario=a.agencia
+and trunc(c.fecha_enviada) >= trunc($P{pFechaInicio})
+and trunc(c.fecha_enviada) <= trunc($P{pFechaFin}) and c.estado in ('N')
+and c.numero_cotizacion =d.numero_cotizacion
+and d.svlicodi in(70,3)
+and c.no_cia = d.no_cia
+) as negados,
+(select count(*) from cxc_credito c, svfcoti d where c.no_cia=$P{pNoCia} and c.concesionario=a.agencia
+and trunc(c.fecha_enviada) >= trunc($P{pFechaInicio})
+and trunc(c.fecha_enviada) <= trunc($P{pFechaFin}) and c.estado in ('D')
+and c.numero_cotizacion =d.numero_cotizacion
+and c.no_cia = d.no_cia
+and d.svlicodi in(70,3)
+) as devueltos
+from
+(select distinct(a.concesionario) agencia, count(a.concesionario) numero
+from cxc_credito a,  svfcoti c where a.no_cia= $P{pNoCia}
+and trunc(a.fecha_enviada) >= trunc($P{pFechaInicio})
+and trunc(a.fecha_enviada) <= trunc($P{pFechaFin})
+and a.numero_cotizacion =c.numero_cotizacion
+and a.no_cia = c.no_cia
+and c.svlicodi in(70,3)
+and a.estado in ('A','D','N')
+group by a.concesionario
+order by numero desc
+)  a , agencias b
+where b.No_cia=$P{pNoCia}
+and a.agencia = b.codigo]]>
+		</queryString>
+		<field name="NUMERO" class="java.math.BigDecimal"/>
+		<field name="NOMBRE" class="java.lang.String"/>
+		<field name="AGENCIA" class="java.lang.String"/>
+		<field name="APROBADOS" class="java.math.BigDecimal"/>
+		<field name="NEGADOS" class="java.math.BigDecimal"/>
+		<field name="DEVUELTOS" class="java.math.BigDecimal"/>
+	</subDataset>
+	<subDataset name="DataAgenciaSeminuevos" uuid="4e8d0093-75de-4835-8fe9-dacd86ed8409">
+		<parameter name="pNoCia" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="pFechaInicio" class="java.util.Date">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="pFechaFin" class="java.util.Date">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select a.numero, b.nombre,a.agencia,
+(select count(*) from cxc_credito c, svfcoti d where c.no_cia=$P{pNoCia} and c.concesionario=a.agencia
+and trunc(c.fecha_enviada) >= trunc($P{pFechaInicio})
+and trunc(c.fecha_enviada) <= trunc($P{pFechaFin}) and c.estado in ('A')
+and c.numero_cotizacion =d.numero_cotizacion
+and c.no_cia = d.no_cia
+and d.svlicodi in(6)
+) as aprobados
+,
+(select count(*) from cxc_credito c, svfcoti d where c.no_cia=$P{pNoCia} and c.concesionario=a.agencia
+and trunc(c.fecha_enviada) >= trunc($P{pFechaInicio})
+and trunc(c.fecha_enviada) <= trunc($P{pFechaFin}) and c.estado in ('N')
+and c.numero_cotizacion =d.numero_cotizacion
+and d.svlicodi in(6)
+and c.no_cia = d.no_cia
+) as negados,
+(select count(*) from cxc_credito c, svfcoti d where c.no_cia=$P{pNoCia} and c.concesionario=a.agencia
+and trunc(c.fecha_enviada) >= trunc($P{pFechaInicio})
+and trunc(c.fecha_enviada) <= trunc($P{pFechaFin}) and c.estado in ('D')
+and c.numero_cotizacion =d.numero_cotizacion
+and c.no_cia = d.no_cia
+and d.svlicodi in(6)
+) as devueltos
+from
+(select distinct(a.concesionario) agencia, count(a.concesionario) numero
+from cxc_credito a,  svfcoti c where a.no_cia= $P{pNoCia}
+and trunc(a.fecha_enviada) >= trunc($P{pFechaInicio})
+and trunc(a.fecha_enviada) <= trunc($P{pFechaFin})
+and a.numero_cotizacion =c.numero_cotizacion
+and a.no_cia = c.no_cia
+and c.svlicodi in(6)
+and a.estado in ('A','D','N')
+group by a.concesionario
+order by numero desc
+)  a , agencias b
+where b.No_cia=$P{pNoCia}
+and a.agencia = b.codigo]]>
+		</queryString>
+		<field name="NUMERO" class="java.math.BigDecimal"/>
+		<field name="NOMBRE" class="java.lang.String"/>
+		<field name="AGENCIA" class="java.lang.String"/>
+		<field name="APROBADOS" class="java.math.BigDecimal"/>
+		<field name="NEGADOS" class="java.math.BigDecimal"/>
+		<field name="DEVUELTOS" class="java.math.BigDecimal"/>
+	</subDataset>
+	<subDataset name="DataAgenciaAutosOk" uuid="4e8d0093-75de-4835-8fe9-dacd86ed8409">
+		<parameter name="pNoCia" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="pFechaInicio" class="java.util.Date">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="pFechaFin" class="java.util.Date">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select a.numero, b.nombre,a.agencia,
+(select count(*) from cxc_credito c, svfcoti d where c.no_cia=$P{pNoCia} and c.concesionario=a.agencia
+and trunc(c.fecha_enviada) >= trunc($P{pFechaInicio})
+and trunc(c.fecha_enviada) <= trunc($P{pFechaFin}) and c.estado in ('A')
+and c.numero_cotizacion =d.numero_cotizacion
+and c.no_cia = d.no_cia
+and d.svlicodi in(26)
+) as aprobados
+,
+(select count(*) from cxc_credito c, svfcoti d where c.no_cia=$P{pNoCia} and c.concesionario=a.agencia
+and trunc(c.fecha_enviada) >= trunc($P{pFechaInicio})
+and trunc(c.fecha_enviada) <= trunc($P{pFechaFin}) and c.estado in ('N')
+and c.numero_cotizacion =d.numero_cotizacion
+and d.svlicodi in(26)
+and c.no_cia = d.no_cia
+) as negados,
+(select count(*) from cxc_credito c, svfcoti d where c.no_cia=$P{pNoCia} and c.concesionario=a.agencia
+and trunc(c.fecha_enviada) >= trunc($P{pFechaInicio})
+and trunc(c.fecha_enviada) <= trunc($P{pFechaFin}) and c.estado in ('D')
+and c.numero_cotizacion =d.numero_cotizacion
+and c.no_cia = d.no_cia
+and d.svlicodi in(26)
+) as devueltos
+from
+(select distinct(a.concesionario) agencia, count(a.concesionario) numero
+from cxc_credito a,  svfcoti c where a.no_cia= $P{pNoCia}
+and trunc(a.fecha_enviada) >= trunc($P{pFechaInicio})
+and trunc(a.fecha_enviada) <= trunc($P{pFechaFin})
+and a.numero_cotizacion =c.numero_cotizacion
+and a.no_cia = c.no_cia
+and c.svlicodi in(26)
+and a.estado in ('A','D','N')
+group by a.concesionario
+order by numero desc
+)  a , agencias b
+where b.No_cia=$P{pNoCia}
+and a.agencia = b.codigo]]>
+		</queryString>
+		<field name="NUMERO" class="java.math.BigDecimal"/>
+		<field name="NOMBRE" class="java.lang.String"/>
+		<field name="AGENCIA" class="java.lang.String"/>
+		<field name="APROBADOS" class="java.math.BigDecimal"/>
+		<field name="NEGADOS" class="java.math.BigDecimal"/>
+		<field name="DEVUELTOS" class="java.math.BigDecimal"/>
+	</subDataset>
+	<subDataset name="DataAutosOk" uuid="4e8d0093-75de-4835-8fe9-dacd86ed8409">
+		<parameter name="pNoCia" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="pFechaInicio" class="java.util.Date">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="pFechaFin" class="java.util.Date">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select orden, etiqueta, total, totalMinutos, totalSegundos,totalMinutosRA, totalSegundosRA,
+round(total/(max(nullif(total,0)) over ())*100,2) || '%' as porcentaje
+from (
+select 1 orden, 'TOTAL CREDITOS CALIFICADOS' etiqueta, count (*) total,
+(TRUNC(MOD((AVG(fin-inicio)) * (60 * 24), 60))) totalMinutos,  TRUNC(MOD((AVG(fin-inicio)) * (60 * 60 * 24), 60)) totalSegundos,
+(TRUNC(MOD((AVG(finRA-inicioRA)) * (60 * 24), 60))) totalMinutosRA,  TRUNC(MOD((AVG(finRA-inicioRA)) * (60 * 60 * 24), 60)) totalSegundosRA
+from (
+select a.solicitud, nvl(a.fecha_finaliza_revision, (select max(fecha) from cxc_credito_estado e where e.no_cia =a.no_cia and e.solicitud = a.solicitud and e.estado='R')) fin,
+a.fecha_inicia_revision inicio,
+nvl(a.fecha_usuario_revision,(select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='E' and a.revisa_comite is null)) iniciora,
+nvl((select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='A' and a.revisa_comite is null),
+nvl((select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='N' and a.revisa_comite is null),
+nvl((select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='D' and a.revisa_comite is null),
+(select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='R' and a.revisa_comite is null)))) finra
+from cxc_credito a, svfcoti c where a.no_cia=  $P{pNoCia}
+and trunc(a.FECHA_ENVIADA) >= trunc($P{pFechaInicio})
+and trunc(a.FECHA_ENVIADA) <= trunc($P{pFechaFin})
+and a.numero_cotizacion =c.numero_cotizacion
+and a.no_cia = c.no_cia
+and a.estado in ('A','N','D')
+and c.svlicodi in('26')
+)
+UNION --aprobados
+select 2 orden, 'TOTAL CREDITOS APROBADOS' etiqueta, count (*) total,
+(TRUNC(MOD((AVG(fin-inicio)) * (60 * 24), 60))) totalMinutos,  TRUNC(MOD((AVG(fin-inicio)) * (60 * 60 * 24), 60)) totalSegundos,
+(TRUNC(MOD((AVG(finRA-inicioRA)) * (60 * 24), 60))) totalMinutosRA,  TRUNC(MOD((AVG(finRA-inicioRA)) * (60 * 60 * 24), 60)) totalSegundosRA
+from (select a.solicitud, nvl(a.fecha_finaliza_revision, (select max(fecha) from cxc_credito_estado e where  e.no_cia =a.no_cia and e.solicitud = a.solicitud and e.estado='A')) fin,
+a.fecha_inicia_revision inicio,
+nvl(a.fecha_usuario_revision,(select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='E' and a.revisa_comite is null)) iniciora,
+nvl((select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='A' and a.revisa_comite is null),
+(select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='R' and a.revisa_comite is null)) finra
+
+from cxc_credito a, svfcoti c where a.no_cia=  $P{pNoCia}
+and trunc(a.FECHA_ENVIADA) >= trunc($P{pFechaInicio})
+and trunc(a.FECHA_ENVIADA) <= trunc($P{pFechaFin})
+and a.numero_cotizacion =c.numero_cotizacion
+and a.no_cia = c.no_cia
+and a.estado = 'A'
+and c.svlicodi in('26')
+)
+UNION --negados
+select 3 orden, 'TOTAL CREDITOS NEGADOS' etiqueta, count (*) total,
+(TRUNC(MOD((AVG(fin-inicio)) * (60 * 24), 60))) totalMinutos,  TRUNC(MOD((AVG(fin-inicio)) * (60 * 60 * 24), 60)) totalSegundos,
+(TRUNC(MOD((AVG(finRA-inicioRA)) * (60 * 24), 60))) totalMinutosRA,  TRUNC(MOD((AVG(finRA-inicioRA)) * (60 * 60 * 24), 60)) totalSegundosRA
+from (select a.solicitud, nvl(a.fecha_finaliza_revision, (select max(fecha) from cxc_credito_estado e where  e.no_cia =a.no_cia and e.solicitud = a.solicitud and e.estado='N')) fin,
+a.fecha_inicia_revision inicio,
+nvl(a.fecha_usuario_revision,(select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='E' and a.revisa_comite is null)) iniciora,
+nvl((select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='N' and a.revisa_comite is null),
+(select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='R' and a.revisa_comite is null)) finra
+from cxc_credito a, svfcoti c where a.no_cia=  $P{pNoCia}
+and trunc(a.FECHA_ENVIADA) >= trunc($P{pFechaInicio})
+and trunc(a.FECHA_ENVIADA) <= trunc($P{pFechaFin})
+and a.numero_cotizacion =c.numero_cotizacion
+and a.no_cia = c.no_cia
+and a.estado = 'N'
+and c.svlicodi in('26')
+)
+UNION --devueltos
+select 4 orden, 'TOTAL CREDITOS DEVUELTOS' etiqueta, count (*) total,
+(TRUNC(MOD((AVG(fin-inicio)) * (60 * 24), 60))) totalMinutos,  TRUNC(MOD((AVG(fin-inicio)) * (60 * 60 * 24), 60)) totalSegundos,
+(TRUNC(MOD((AVG(finRA-inicioRA)) * (60 * 24), 60))) totalMinutosRA,  TRUNC(MOD((AVG(finRA-inicioRA)) * (60 * 60 * 24), 60)) totalSegundosRA
+from (select a.solicitud, nvl(a.fecha_finaliza_revision, (select max(fecha) from cxc_credito_estado e where  e.no_cia =a.no_cia and e.solicitud = a.solicitud and e.estado='D')) fin,
+a.fecha_inicia_revision inicio,
+nvl(a.fecha_usuario_revision,(select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='E' and a.revisa_comite is null)) iniciora,
+nvl((select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='D' and a.revisa_comite is null),
+(select max(e.fecha) from cxc_credito_estado e where e.no_cia=a.no_cia and e.solicitud = a.solicitud and e.estado='R' and a.revisa_comite is null)) finra
+from cxc_credito a, svfcoti c where a.no_cia=  $P{pNoCia}
+and trunc(a.FECHA_ENVIADA) >= trunc($P{pFechaInicio})
+and trunc(a.FECHA_ENVIADA) <= trunc($P{pFechaFin})
+and a.numero_cotizacion =c.numero_cotizacion
+and a.no_cia = c.no_cia
+and a.estado = 'D'
+and c.svlicodi in('26'))
+)x]]>
+		</queryString>
+		<field name="ORDEN" class="java.math.BigDecimal"/>
+		<field name="ETIQUETA" class="java.lang.String"/>
+		<field name="TOTAL" class="java.math.BigDecimal"/>
+		<field name="TOTALMINUTOS" class="java.math.BigDecimal"/>
+		<field name="TOTALSEGUNDOS" class="java.math.BigDecimal"/>
+		<field name="TOTALMINUTOSRA" class="java.math.BigDecimal"/>
+		<field name="TOTALSEGUNDOSRA" class="java.math.BigDecimal"/>
+		<field name="PORCENTAJE" class="java.lang.String"/>
+		<variable name="tiempoColaTotalCreditos" class="java.lang.String" calculation="Average">
+			<variableExpression><![CDATA[$F{TOTALMINUTOSRA} +":"+ $F{TOTALSEGUNDOSRA}]]></variableExpression>
+		</variable>
+	</subDataset>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<parameter name="fechaFin" class="java.util.Date"/>
+	<parameter name="fechaIni" class="java.util.Date"/>
+	<parameter name="IMPRIME_CABECERA" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Boolean(true)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="noCia" class="java.lang.String"/>
+	<parameter name="NombreCia" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select 1 from dual]]>
+	</queryString>
+	<field name="1" class="java.math.BigDecimal"/>
+	<group name="datos">
+		<groupExpression><![CDATA[]]></groupExpression>
+	</group>
+	<group name="datosAccesorios">
+		<groupExpression><![CDATA[]]></groupExpression>
+	</group>
+	<group name="datosDinamica">
+		<groupExpression><![CDATA[]]></groupExpression>
+	</group>
+	<group name="datosEstatica">
+		<groupExpression><![CDATA[]]></groupExpression>
+	</group>
+	<group name="datosCostosGenerales">
+		<groupExpression><![CDATA[]]></groupExpression>
+	</group>
+	<group name="datosGenerales">
+		<groupExpression><![CDATA[]]></groupExpression>
+	</group>
+	<group name="datosVehiculo">
+		<groupExpression><![CDATA[]]></groupExpression>
+	</group>
+	<group name="grupo1">
+		<groupHeader>
+			<band height="743">
+				<componentElement>
+					<reportElement uuid="f7e3dd8f-3fe2-4e78-a547-950e35439220" key="tableTotal" mode="Opaque" x="135" y="10" width="500" height="175" backcolor="#FFFFFF"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="DataTotal" uuid="26ef641d-9dad-4bf8-8830-649082df07da">
+							<datasetParameter name="pNoCia">
+								<datasetParameterExpression><![CDATA[$P{noCia}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="pFechaInicio">
+								<datasetParameterExpression><![CDATA[$P{fechaIni}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="pFechaFin">
+								<datasetParameterExpression><![CDATA[$P{fechaFin}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+						<jr:column uuid="387a1d3b-a5db-43ce-8634-390ec38c9635" width="250">
+							<jr:columnHeader height="30" rowSpan="1">
+								<staticText>
+									<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="0" y="0" width="250" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[TOTAL CREDITOS]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table" height="33" rowSpan="1">
+								<textField>
+									<reportElement uuid="151dad7c-4760-4f10-b10c-057eb5a5cfe6" mode="Opaque" x="0" y="0" width="250" height="33" backcolor="#3399FF"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font isBold="true" isItalic="false"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{ETIQUETA}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="541f6aab-078a-4024-b85e-95691c58bf58" width="90">
+							<jr:columnHeader height="30" rowSpan="1">
+								<staticText>
+									<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="0" y="0" width="90" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[N° CREDITOS]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table" height="33" rowSpan="1">
+								<textField>
+									<reportElement uuid="9fe7293a-f2ba-490d-b935-8da5ca2ecf5d" mode="Opaque" x="0" y="0" width="90" height="33"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{TOTAL}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="0d39e989-a40b-4fd7-afdb-6c378dd74386" width="90">
+							<jr:columnHeader height="30" rowSpan="1">
+								<staticText>
+									<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="0" y="0" width="90" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[TIEMPO PROMEDIO REVISION]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table" height="33" rowSpan="1">
+								<textField isBlankWhenNull="true">
+									<reportElement uuid="9fe7293a-f2ba-490d-b935-8da5ca2ecf5d" mode="Opaque" x="0" y="0" width="90" height="33" isRemoveLineWhenBlank="true"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$V{tiempoRevTotalCreditos}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="f4b8c0b1-2375-41e8-a597-e816ea43f869" width="90">
+							<jr:columnHeader height="30" rowSpan="1">
+								<staticText>
+									<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="0" y="0" width="90" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[TIEMPO PROMEDIO EN COLA]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table" height="33" rowSpan="1">
+								<textField isBlankWhenNull="true">
+									<reportElement uuid="9fe7293a-f2ba-490d-b935-8da5ca2ecf5d" mode="Opaque" x="0" y="0" width="90" height="33" isRemoveLineWhenBlank="true"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$V{tiempoColaTotalCreditos}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="7fadbe17-3ec3-475e-96be-5073fdc97885" width="90">
+							<jr:columnHeader height="30" rowSpan="1">
+								<staticText>
+									<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" mode="Opaque" x="0" y="0" width="90" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" isBold="true"/>
+									</textElement>
+									<text><![CDATA[TIEMPO %]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table" height="33" rowSpan="1">
+								<textField isBlankWhenNull="true">
+									<reportElement uuid="9fe7293a-f2ba-490d-b935-8da5ca2ecf5d" mode="Opaque" x="0" y="0" width="90" height="33" isRemoveLineWhenBlank="true"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{PORCENTAJE}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+				<componentElement>
+					<reportElement uuid="f7e3dd8f-3fe2-4e78-a547-950e35439220" key="tableNuevos" x="135" y="195" width="500" height="175">
+						<printWhenExpression><![CDATA[(!$P{noCia}.equals("08"))]]></printWhenExpression>
+					</reportElement>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="DataNuevos" uuid="26ef641d-9dad-4bf8-8830-649082df07da">
+							<datasetParameter name="pNoCia">
+								<datasetParameterExpression><![CDATA[$P{noCia}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="pFechaInicio">
+								<datasetParameterExpression><![CDATA[$P{fechaIni}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="pFechaFin">
+								<datasetParameterExpression><![CDATA[$P{fechaFin}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+						<jr:column uuid="387a1d3b-a5db-43ce-8634-390ec38c9635" width="250">
+							<jr:columnHeader height="30" rowSpan="1">
+								<staticText>
+									<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="0" y="0" width="250" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[TOTAL NUEVOS]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table" height="35" rowSpan="1">
+								<textField>
+									<reportElement uuid="151dad7c-4760-4f10-b10c-057eb5a5cfe6" mode="Opaque" x="0" y="0" width="250" height="35" backcolor="#FF3333"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font isBold="true" isItalic="false"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{ETIQUETA}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="541f6aab-078a-4024-b85e-95691c58bf58" width="90">
+							<jr:columnHeader height="30" rowSpan="1">
+								<staticText>
+									<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="0" y="0" width="90" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[N° CREDITOS]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table" height="35" rowSpan="1">
+								<textField>
+									<reportElement uuid="9fe7293a-f2ba-490d-b935-8da5ca2ecf5d" x="0" y="0" width="90" height="35"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{TOTAL}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="1a366213-2b48-43fd-b33a-c7e5d609d248" width="90">
+							<jr:columnHeader height="30" rowSpan="1">
+								<staticText>
+									<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="0" y="0" width="90" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[TIEMPO PROMEDIO REVISION]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table" height="35" rowSpan="1">
+								<textField isBlankWhenNull="true">
+									<reportElement uuid="9fe7293a-f2ba-490d-b935-8da5ca2ecf5d" x="0" y="0" width="90" height="35" isRemoveLineWhenBlank="true"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{TOTALMINUTOS} + ":"+$F{TOTALSEGUNDOS}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="24c6f248-1de0-4fd6-997d-f84b33b1e54f" width="90">
+							<jr:columnHeader height="30" rowSpan="1">
+								<staticText>
+									<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="0" y="0" width="90" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[TIEMPO PROMEDIO EN COLA]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table" height="35" rowSpan="1">
+								<textField isBlankWhenNull="true">
+									<reportElement uuid="9fe7293a-f2ba-490d-b935-8da5ca2ecf5d" x="0" y="0" width="90" height="35" isRemoveLineWhenBlank="true"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{TOTALMINUTOSRA} + ":"+ $F{TOTALSEGUNDOSRA}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="b5ec24ff-d983-4383-a118-c41f69d43176" width="90">
+							<jr:columnHeader height="30" rowSpan="1">
+								<staticText>
+									<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="0" y="0" width="90" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" isBold="true"/>
+									</textElement>
+									<text><![CDATA[TIEMPO %]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table" height="35" rowSpan="1">
+								<textField isBlankWhenNull="true">
+									<reportElement uuid="9fe7293a-f2ba-490d-b935-8da5ca2ecf5d" x="0" y="0" width="90" height="35" isRemoveLineWhenBlank="true"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{PORCENTAJE}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+				<componentElement>
+					<reportElement uuid="f7e3dd8f-3fe2-4e78-a547-950e35439220" key="tableTotal" x="135" y="380" width="500" height="175">
+						<printWhenExpression><![CDATA[(!$P{noCia}.equals("08"))]]></printWhenExpression>
+					</reportElement>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="DataSeminuevos" uuid="26ef641d-9dad-4bf8-8830-649082df07da">
+							<datasetParameter name="pNoCia">
+								<datasetParameterExpression><![CDATA[$P{noCia}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="pFechaInicio">
+								<datasetParameterExpression><![CDATA[$P{fechaIni}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="pFechaFin">
+								<datasetParameterExpression><![CDATA[$P{fechaFin}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+						<jr:column uuid="387a1d3b-a5db-43ce-8634-390ec38c9635" width="250">
+							<jr:columnHeader height="30" rowSpan="1">
+								<staticText>
+									<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="0" y="0" width="250" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[TOTAL SEMINUEVOS]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table" height="35" rowSpan="1">
+								<textField>
+									<reportElement uuid="151dad7c-4760-4f10-b10c-057eb5a5cfe6" mode="Opaque" x="0" y="0" width="250" height="35" backcolor="#FFFF00"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font isBold="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{ETIQUETA}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="541f6aab-078a-4024-b85e-95691c58bf58" width="90">
+							<jr:columnHeader height="30" rowSpan="1">
+								<staticText>
+									<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="0" y="0" width="90" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[N° CREDITOS]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table" height="35" rowSpan="1">
+								<textField>
+									<reportElement uuid="9fe7293a-f2ba-490d-b935-8da5ca2ecf5d" x="0" y="0" width="90" height="35"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{TOTAL}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="72e78471-66db-4ac2-898e-a227eb440284" width="90">
+							<jr:columnHeader height="30" rowSpan="1">
+								<staticText>
+									<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="0" y="0" width="90" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[TIEMPO PROMEDIO REVISION]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table" height="35" rowSpan="1">
+								<textField isBlankWhenNull="true">
+									<reportElement uuid="9fe7293a-f2ba-490d-b935-8da5ca2ecf5d" x="0" y="0" width="90" height="35" isRemoveLineWhenBlank="true"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{TOTALMINUTOS} + ":" + $F{TOTALSEGUNDOS}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="6d98e838-347d-456a-b2d0-363839dc346a" width="90">
+							<jr:columnHeader height="30" rowSpan="1">
+								<staticText>
+									<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="0" y="0" width="90" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[TIEMPO PROMEDIO EN COLA]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table" height="35" rowSpan="1">
+								<textField isBlankWhenNull="true">
+									<reportElement uuid="9fe7293a-f2ba-490d-b935-8da5ca2ecf5d" x="0" y="0" width="90" height="35" isRemoveLineWhenBlank="true"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{TOTALMINUTOSRA} + ":" + $F{TOTALSEGUNDOSRA}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="9cc246f4-feb4-49f4-97ae-98f60dda82e5" width="90">
+							<jr:columnHeader height="30" rowSpan="1">
+								<staticText>
+									<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="0" y="0" width="90" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[TIEMPO %]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table" height="35" rowSpan="1">
+								<textField isBlankWhenNull="true">
+									<reportElement uuid="9fe7293a-f2ba-490d-b935-8da5ca2ecf5d" x="0" y="0" width="90" height="35" isRemoveLineWhenBlank="true"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{PORCENTAJE}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+				<componentElement>
+					<reportElement uuid="f7e3dd8f-3fe2-4e78-a547-950e35439220" key="tableTotal" x="135" y="565" width="500" height="175">
+						<printWhenExpression><![CDATA[($P{noCia}.equals("01"))]]></printWhenExpression>
+					</reportElement>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="DataAutosOk" uuid="26ef641d-9dad-4bf8-8830-649082df07da">
+							<datasetParameter name="pNoCia">
+								<datasetParameterExpression><![CDATA[$P{noCia}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="pFechaInicio">
+								<datasetParameterExpression><![CDATA[$P{fechaIni}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="pFechaFin">
+								<datasetParameterExpression><![CDATA[$P{fechaFin}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+						<jr:column uuid="387a1d3b-a5db-43ce-8634-390ec38c9635" width="250">
+							<jr:columnHeader height="30" rowSpan="1">
+								<staticText>
+									<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="0" y="0" width="250" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[TOTAL AUTOS OK]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table" height="35" rowSpan="1">
+								<textField>
+									<reportElement uuid="151dad7c-4760-4f10-b10c-057eb5a5cfe6" mode="Opaque" x="0" y="0" width="250" height="35" backcolor="#99FF99"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font isBold="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{ETIQUETA}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="541f6aab-078a-4024-b85e-95691c58bf58" width="90">
+							<jr:columnHeader height="30" rowSpan="1">
+								<staticText>
+									<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="0" y="0" width="90" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[N° CREDITOS]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table" height="35" rowSpan="1">
+								<textField>
+									<reportElement uuid="9fe7293a-f2ba-490d-b935-8da5ca2ecf5d" x="0" y="0" width="90" height="35"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{TOTAL}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="72e78471-66db-4ac2-898e-a227eb440284" width="90">
+							<jr:columnHeader height="30" rowSpan="1">
+								<staticText>
+									<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="0" y="0" width="90" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[TIEMPO PROMEDIO REVISION]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table" height="35" rowSpan="1">
+								<textField isBlankWhenNull="true">
+									<reportElement uuid="9fe7293a-f2ba-490d-b935-8da5ca2ecf5d" x="0" y="0" width="90" height="35" isRemoveLineWhenBlank="true"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{TOTALMINUTOS} +":" + $F{TOTALSEGUNDOS}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="8afee5e3-1732-4a1b-b435-7b2f2f5dd9a5" width="90">
+							<jr:columnHeader height="30" rowSpan="1">
+								<staticText>
+									<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="0" y="0" width="90" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[TIEMPO PROMEDIO EN COLA]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table" height="35" rowSpan="1">
+								<textField isBlankWhenNull="true">
+									<reportElement uuid="9fe7293a-f2ba-490d-b935-8da5ca2ecf5d" x="0" y="0" width="90" height="35" isRemoveLineWhenBlank="true"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{TOTALMINUTOSRA} +":" + $F{TOTALSEGUNDOSRA}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="542281d8-e476-4f33-8c1b-7903829173ab" width="90">
+							<jr:columnHeader height="30" rowSpan="1">
+								<staticText>
+									<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="0" y="0" width="90" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Arial" size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[TIEMPO %]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table" height="35" rowSpan="1">
+								<textField isBlankWhenNull="true">
+									<reportElement uuid="9fe7293a-f2ba-490d-b935-8da5ca2ecf5d" x="0" y="0" width="90" height="35" isRemoveLineWhenBlank="true"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{PORCENTAJE}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="grupo3">
+		<groupHeader>
+			<band height="320">
+				<staticText>
+					<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="135" y="14" width="500" height="14"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[DOCUMENTOS PARA CALIFICACION DE CREDITO]]></text>
+				</staticText>
+				<componentElement>
+					<reportElement uuid="268634d8-f6fa-4bcc-a8ba-379a684a4140" key="table 1" style="table 1" x="135" y="29" width="500" height="263"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="DataAgencia" uuid="e9a05c95-16db-47df-a245-7cd7a395c832">
+							<datasetParameter name="pNoCia">
+								<datasetParameterExpression><![CDATA[$P{noCia}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="pFechaInicio">
+								<datasetParameterExpression><![CDATA[$P{fechaIni}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="pFechaFin">
+								<datasetParameterExpression><![CDATA[$P{fechaFin}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+						<jr:column uuid="f62a68fe-e913-4fa3-8221-f89367c76a71" width="212">
+							<jr:columnHeader style="table 1_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement uuid="6e22c983-2180-4a51-893c-6f6be55d32fc" x="0" y="0" width="212" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font isUnderline="false" isStrikeThrough="false"/>
+									</textElement>
+									<text><![CDATA[AGENCIA]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table 1_TD" height="23" rowSpan="1">
+								<textField>
+									<reportElement uuid="ca4999f8-d6b0-4d3e-b0d3-3970c3c53cc9" x="0" y="0" width="212" height="23"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="c5972eef-db48-4dcd-af9f-f907364854f5" width="90">
+							<jr:columnHeader style="table 1_CH" height="30" rowSpan="1">
+								<textField>
+									<reportElement uuid="c05cbab3-7a8c-4114-8673-490fff501d38" x="0" y="0" width="90" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font isUnderline="false" isStrikeThrough="false"/>
+									</textElement>
+									<textFieldExpression><![CDATA["APROBADOS"]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 1_TD" height="23" rowSpan="1">
+								<textField>
+									<reportElement uuid="23cae4c5-6ad8-431f-a288-e2eed8b53f8a" x="0" y="0" width="90" height="23"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{APROBADOS}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="9d78090f-7b58-40e6-ad7c-a608e7b155e0" width="90">
+							<jr:tableHeader height="1" rowSpan="1"/>
+							<jr:tableFooter height="0" rowSpan="1"/>
+							<jr:columnHeader style="table 1_CH" height="30" rowSpan="1">
+								<textField>
+									<reportElement uuid="c05cbab3-7a8c-4114-8673-490fff501d38" x="0" y="0" width="90" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font isUnderline="false" isStrikeThrough="false"/>
+									</textElement>
+									<textFieldExpression><![CDATA["NEGADOS"]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:columnFooter height="1" rowSpan="1"/>
+							<jr:detailCell style="table 1_TD" height="23" rowSpan="1">
+								<textField>
+									<reportElement uuid="23cae4c5-6ad8-431f-a288-e2eed8b53f8a" x="0" y="0" width="90" height="23"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{NEGADOS}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="c1fe2a04-c0b8-4b1e-87e5-8c3bdc89ba48" width="90">
+							<jr:tableHeader height="1" rowSpan="1"/>
+							<jr:tableFooter height="0" rowSpan="1"/>
+							<jr:columnHeader style="table 1_CH" height="30" rowSpan="1">
+								<textField>
+									<reportElement uuid="c05cbab3-7a8c-4114-8673-490fff501d38" x="0" y="0" width="90" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font isUnderline="false" isStrikeThrough="false"/>
+									</textElement>
+									<textFieldExpression><![CDATA["DEVUELTOS"]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:columnFooter height="1" rowSpan="1"/>
+							<jr:detailCell style="table 1_TD" height="23" rowSpan="1">
+								<textField>
+									<reportElement uuid="23cae4c5-6ad8-431f-a288-e2eed8b53f8a" x="0" y="0" width="90" height="23"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{DEVUELTOS}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="9071e5d9-90b0-47cd-8d97-ed07ad962883" width="78">
+							<jr:tableHeader height="1" rowSpan="1"/>
+							<jr:tableFooter height="0" rowSpan="1"/>
+							<jr:columnHeader style="table 1_CH" height="30" rowSpan="1">
+								<textField>
+									<reportElement uuid="c05cbab3-7a8c-4114-8673-490fff501d38" x="0" y="0" width="78" height="30"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font isUnderline="false" isStrikeThrough="false"/>
+									</textElement>
+									<textFieldExpression><![CDATA["TOTAL"]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:columnFooter height="1" rowSpan="1"/>
+							<jr:detailCell style="table 1_TD" height="23" rowSpan="1">
+								<textField>
+									<reportElement uuid="23cae4c5-6ad8-431f-a288-e2eed8b53f8a" x="0" y="0" width="78" height="23"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{NUMERO}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="grupo4">
+		<groupHeader>
+			<band height="276">
+				<staticText>
+					<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="135" y="24" width="500" height="14">
+						<printWhenExpression><![CDATA[(!$P{noCia}.equals("08"))]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[DOCUMENTOS PARA CALIFICACION DE CREDITO - NUEVOS]]></text>
+				</staticText>
+				<componentElement>
+					<reportElement uuid="268634d8-f6fa-4bcc-a8ba-379a684a4140" key="table 1" style="table 1" x="135" y="38" width="500" height="226">
+						<printWhenExpression><![CDATA[(!$P{noCia}.equals("08"))]]></printWhenExpression>
+					</reportElement>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="DataAgenciaNuevos" uuid="e9a05c95-16db-47df-a245-7cd7a395c832">
+							<datasetParameter name="pNoCia">
+								<datasetParameterExpression><![CDATA[$P{noCia}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="pFechaInicio">
+								<datasetParameterExpression><![CDATA[$P{fechaIni}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="pFechaFin">
+								<datasetParameterExpression><![CDATA[$P{fechaFin}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+						<jr:column uuid="f62a68fe-e913-4fa3-8221-f89367c76a71" width="212">
+							<jr:columnHeader style="table 1_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement uuid="6e22c983-2180-4a51-893c-6f6be55d32fc" mode="Opaque" x="0" y="0" width="212" height="30" backcolor="#FF0033"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[AGENCIA]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table 1_TD" height="21" rowSpan="1">
+								<textField>
+									<reportElement uuid="ca4999f8-d6b0-4d3e-b0d3-3970c3c53cc9" x="0" y="0" width="212" height="21"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="c5972eef-db48-4dcd-af9f-f907364854f5" width="90">
+							<jr:columnHeader style="table 1_CH" height="30" rowSpan="1">
+								<textField>
+									<reportElement uuid="fed4e284-1ea7-466a-bc27-eca7cec101d2" mode="Opaque" x="0" y="0" width="90" height="30" backcolor="#FF0033"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA["APROBADOS"]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 1_TD" height="21" rowSpan="1">
+								<textField>
+									<reportElement uuid="23cae4c5-6ad8-431f-a288-e2eed8b53f8a" x="0" y="0" width="90" height="21"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{APROBADOS}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="79db6eb7-46a1-4341-a9eb-6d473942aa33" width="90">
+							<jr:tableHeader height="0" rowSpan="1"/>
+							<jr:columnHeader style="table 1_CH" height="30" rowSpan="1">
+								<textField>
+									<reportElement uuid="fed4e284-1ea7-466a-bc27-eca7cec101d2" mode="Opaque" x="0" y="0" width="90" height="30" backcolor="#FF0033"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA["NEGADOS"]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 1_TD" height="21" rowSpan="1">
+								<textField>
+									<reportElement uuid="23cae4c5-6ad8-431f-a288-e2eed8b53f8a" x="0" y="0" width="90" height="21"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{NEGADOS}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="6f00d0c7-17ba-4689-8974-9421f771b6d6" width="90">
+							<jr:tableHeader height="0" rowSpan="1"/>
+							<jr:columnHeader style="table 1_CH" height="30" rowSpan="1">
+								<textField>
+									<reportElement uuid="fed4e284-1ea7-466a-bc27-eca7cec101d2" mode="Opaque" x="0" y="0" width="90" height="30" backcolor="#FF0033"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA["DEVUELTOS"]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 1_TD" height="21" rowSpan="1">
+								<textField>
+									<reportElement uuid="23cae4c5-6ad8-431f-a288-e2eed8b53f8a" x="0" y="0" width="90" height="21"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{DEVUELTOS}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="6d578b12-9203-44a9-b95a-3f8de224a757" width="78">
+							<jr:tableHeader height="0" rowSpan="1"/>
+							<jr:columnHeader style="table 1_CH" height="30" rowSpan="1">
+								<textField>
+									<reportElement uuid="fed4e284-1ea7-466a-bc27-eca7cec101d2" mode="Opaque" x="0" y="0" width="78" height="30" backcolor="#FF0033"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA["TOTAL"]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 1_TD" height="21" rowSpan="1">
+								<textField>
+									<reportElement uuid="23cae4c5-6ad8-431f-a288-e2eed8b53f8a" x="0" y="0" width="78" height="21"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{NUMERO}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="grupo5">
+		<groupHeader>
+			<band height="282">
+				<componentElement>
+					<reportElement uuid="268634d8-f6fa-4bcc-a8ba-379a684a4140" key="table 1" style="table 1" x="135" y="42" width="500" height="226">
+						<printWhenExpression><![CDATA[(!$P{noCia}.equals("08"))]]></printWhenExpression>
+					</reportElement>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="DataAgenciaSeminuevos" uuid="e9a05c95-16db-47df-a245-7cd7a395c832">
+							<datasetParameter name="pNoCia">
+								<datasetParameterExpression><![CDATA[$P{noCia}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="pFechaInicio">
+								<datasetParameterExpression><![CDATA[$P{fechaIni}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="pFechaFin">
+								<datasetParameterExpression><![CDATA[$P{fechaFin}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+						<jr:column uuid="f62a68fe-e913-4fa3-8221-f89367c76a71" width="212">
+							<jr:columnHeader style="table 1_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement uuid="6e22c983-2180-4a51-893c-6f6be55d32fc" mode="Opaque" x="0" y="0" width="212" height="30" backcolor="#3366FF"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[AGENCIA]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table 1_TD" height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="ca4999f8-d6b0-4d3e-b0d3-3970c3c53cc9" x="0" y="0" width="212" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="c5972eef-db48-4dcd-af9f-f907364854f5" width="90">
+							<jr:columnHeader style="table 1_CH" height="30" rowSpan="1">
+								<textField>
+									<reportElement uuid="08edbb72-20b3-4ae4-a991-cfa10198b9d4" mode="Opaque" x="0" y="0" width="90" height="30" backcolor="#3366FF"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA["APROBADOS"]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 1_TD" height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="23cae4c5-6ad8-431f-a288-e2eed8b53f8a" x="0" y="0" width="90" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="10"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{APROBADOS}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="87255aa9-4de9-478e-813b-25e5934dde2c" width="90">
+							<jr:tableHeader height="0" rowSpan="1"/>
+							<jr:tableFooter height="0" rowSpan="1"/>
+							<jr:columnHeader style="table 1_CH" height="30" rowSpan="1">
+								<textField>
+									<reportElement uuid="08edbb72-20b3-4ae4-a991-cfa10198b9d4" mode="Opaque" x="0" y="0" width="90" height="30" backcolor="#3366FF"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA["NEGADOS"]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:columnFooter height="0" rowSpan="1"/>
+							<jr:detailCell style="table 1_TD" height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="23cae4c5-6ad8-431f-a288-e2eed8b53f8a" x="0" y="0" width="90" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{NEGADOS}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="9afdc5a4-78f9-4ffb-9a5b-8caeebda5f24" width="90">
+							<jr:tableHeader height="0" rowSpan="1"/>
+							<jr:tableFooter height="0" rowSpan="1"/>
+							<jr:columnHeader style="table 1_CH" height="30" rowSpan="1">
+								<textField>
+									<reportElement uuid="08edbb72-20b3-4ae4-a991-cfa10198b9d4" mode="Opaque" x="0" y="0" width="90" height="30" backcolor="#3366FF"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA["DEVUELTOS"]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:columnFooter height="0" rowSpan="1"/>
+							<jr:detailCell style="table 1_TD" height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="23cae4c5-6ad8-431f-a288-e2eed8b53f8a" x="0" y="0" width="90" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{DEVUELTOS}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="731aed5c-e699-4c8a-8f63-4dd2dffb43fb" width="78">
+							<jr:tableHeader height="0" rowSpan="1"/>
+							<jr:tableFooter height="0" rowSpan="1"/>
+							<jr:columnHeader style="table 1_CH" height="30" rowSpan="1">
+								<textField>
+									<reportElement uuid="08edbb72-20b3-4ae4-a991-cfa10198b9d4" mode="Opaque" x="0" y="0" width="78" height="30" backcolor="#3366FF"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA["TOTAL"]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:columnFooter height="0" rowSpan="1"/>
+							<jr:detailCell style="table 1_TD" height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="23cae4c5-6ad8-431f-a288-e2eed8b53f8a" x="0" y="0" width="78" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{NUMERO}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+				<staticText>
+					<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="135" y="28" width="500" height="14">
+						<printWhenExpression><![CDATA[(!$P{noCia}.equals("08"))]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[DOCUMENTOS PARA CALIFICACION DE CREDITO -SEMINUEVOS]]></text>
+				</staticText>
+			</band>
+			<band height="296">
+				<componentElement>
+					<reportElement uuid="268634d8-f6fa-4bcc-a8ba-379a684a4140" key="table 1" style="table 1" x="135" y="58" width="500" height="226">
+						<printWhenExpression><![CDATA[($P{noCia}.equals("01"))]]></printWhenExpression>
+					</reportElement>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="DataAgenciaAutosOk" uuid="e9a05c95-16db-47df-a245-7cd7a395c832">
+							<datasetParameter name="pNoCia">
+								<datasetParameterExpression><![CDATA[$P{noCia}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="pFechaInicio">
+								<datasetParameterExpression><![CDATA[$P{fechaIni}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="pFechaFin">
+								<datasetParameterExpression><![CDATA[$P{fechaFin}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+						<jr:column uuid="f62a68fe-e913-4fa3-8221-f89367c76a71" width="212">
+							<jr:columnHeader style="table 1_CH" height="30" rowSpan="1">
+								<staticText>
+									<reportElement uuid="6e22c983-2180-4a51-893c-6f6be55d32fc" mode="Opaque" x="0" y="0" width="212" height="30" backcolor="#99FF99"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<text><![CDATA[AGENCIA]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table 1_TD" height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="ca4999f8-d6b0-4d3e-b0d3-3970c3c53cc9" x="0" y="0" width="212" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="c5972eef-db48-4dcd-af9f-f907364854f5" width="90">
+							<jr:columnHeader style="table 1_CH" height="30" rowSpan="1">
+								<textField>
+									<reportElement uuid="08edbb72-20b3-4ae4-a991-cfa10198b9d4" mode="Opaque" x="0" y="0" width="90" height="30" backcolor="#99FF99"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA["APROBADOS"]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 1_TD" height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="23cae4c5-6ad8-431f-a288-e2eed8b53f8a" x="0" y="0" width="90" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="10"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{APROBADOS}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="87255aa9-4de9-478e-813b-25e5934dde2c" width="90">
+							<jr:tableHeader height="0" rowSpan="1"/>
+							<jr:tableFooter height="1" rowSpan="1"/>
+							<jr:columnHeader style="table 1_CH" height="30" rowSpan="1">
+								<textField>
+									<reportElement uuid="08edbb72-20b3-4ae4-a991-cfa10198b9d4" mode="Opaque" x="0" y="0" width="90" height="30" backcolor="#99FF99"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA["NEGADOS"]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:columnFooter height="0" rowSpan="1"/>
+							<jr:detailCell style="table 1_TD" height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="23cae4c5-6ad8-431f-a288-e2eed8b53f8a" x="0" y="0" width="90" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{NEGADOS}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="9afdc5a4-78f9-4ffb-9a5b-8caeebda5f24" width="90">
+							<jr:tableHeader height="0" rowSpan="1"/>
+							<jr:tableFooter height="1" rowSpan="1"/>
+							<jr:columnHeader style="table 1_CH" height="30" rowSpan="1">
+								<textField>
+									<reportElement uuid="08edbb72-20b3-4ae4-a991-cfa10198b9d4" mode="Opaque" x="0" y="0" width="90" height="30" backcolor="#99FF99"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA["DEVUELTOS"]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:columnFooter height="0" rowSpan="1"/>
+							<jr:detailCell style="table 1_TD" height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="23cae4c5-6ad8-431f-a288-e2eed8b53f8a" x="0" y="0" width="90" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{DEVUELTOS}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="731aed5c-e699-4c8a-8f63-4dd2dffb43fb" width="78">
+							<jr:tableHeader height="0" rowSpan="1"/>
+							<jr:tableFooter height="1" rowSpan="1"/>
+							<jr:columnHeader style="table 1_CH" height="30" rowSpan="1">
+								<textField>
+									<reportElement uuid="08edbb72-20b3-4ae4-a991-cfa10198b9d4" mode="Opaque" x="0" y="0" width="78" height="30" backcolor="#99FF99"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA["TOTAL"]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:columnFooter height="0" rowSpan="1"/>
+							<jr:detailCell style="table 1_TD" height="20" rowSpan="1">
+								<textField>
+									<reportElement uuid="23cae4c5-6ad8-431f-a288-e2eed8b53f8a" x="0" y="0" width="78" height="20"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle"/>
+									<textFieldExpression><![CDATA[$F{NUMERO}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+				<staticText>
+					<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="135" y="41" width="500" height="14">
+						<printWhenExpression><![CDATA[(!$P{noCia}.equals("08"))]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[DOCUMENTOS PARA CALIFICACION DE CREDITO -AUTOS OK]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="70" splitType="Stretch">
+			<printWhenExpression><![CDATA[$P{IMPRIME_CABECERA}]]></printWhenExpression>
+			<staticText>
+				<reportElement uuid="8c061986-6f1b-4600-bb9f-8157db5d9367" x="307" y="17" width="252" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RESUMEN TOTALIZADO DE CREDITOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="0" y="40" width="101" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA INICIO:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="4d6705ac-58d3-4d90-ab5e-774a92487bc9" x="748" y="40" width="100" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{fechaFin}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="24a48327-1862-482b-b0e1-909411daf971" x="641" y="40" width="105" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA HASTA:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="cd0134a6-5023-4093-aa19-605cce14b091" x="101" y="40" width="100" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{fechaIni}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="4d6705ac-58d3-4d90-ab5e-774a92487bc9" x="307" y="0" width="252" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{NombreCia}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch">
+			<printWhenExpression><![CDATA[]]></printWhenExpression>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+</jasperReport>

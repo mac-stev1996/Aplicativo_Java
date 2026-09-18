@@ -1,0 +1,452 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>Priorizacion Credito</title>
+	<h:outputStylesheet name="css/layout-lightblue.css"
+		library="serenity-layout" />
+	<style type="text/css">
+body {
+	font-size: 12px;
+}
+
+div.ui-datatable.less-padding tbody tr td {
+	padding: 2px 2px;
+}
+
+.ui-datatable thead th>* {
+	font-size: 12px
+}
+
+.ui-datatable thead th, .ui-datatable tfoot td {
+	vertical-align: center;
+}
+
+.ui-datatable {
+	font-size: 12px;
+}
+
+.foo>tbody>tr>td {
+	vertical-align: center;
+}
+
+.foo td {
+	vertical-align: center;
+}
+</style>
+</h:head>
+<h:body>
+	<p:ajaxStatus onstart="PF('statusDialog').show()"
+		onsuccess="PF('statusDialog').hide()"
+		onerror="PF('statusDialog').hide()" />
+
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+		closable="false" resizable="false" showHeader="false">
+		<h:graphicImage value="/common/imgs/gifs/ajaxloadingbar.gif" />
+	</p:dialog>
+	<p:growl id="idGrowl" globalOnly="true" autoUpdate="true"
+		widgetVar="groMessages" showDetail="true" life="5000" />
+
+	<h:form id="idForm">
+		<p:toolbar>
+			<f:facet name="right">
+
+				<p:commandButton value="Asesor" icon="fa fa-plus"
+					update="idForm, FrmResultAsesor"
+					action="#{cxcCalificacionCreditoController.abrirItemAsesor}"
+					styleClass="green-btn" process="idForm" />
+
+				<p:commandButton value="Agencia" icon="fa fa-plus"
+					update="idForm, , FrmResultAgencia"
+					action="#{cxcCalificacionCreditoController.abrirItemAgencia}"
+					styleClass="green-btn" process="idForm" />
+
+				<p:commandButton value="Buscar" icon="fa fa-search"
+					partialSubmit="true" process="@this" update="idPGTables"
+					actionListener="#{cxcCalificacionCreditoController.listar}" />
+			</f:facet>
+			<f:facet name="left">
+				<p:outputLabel value="Creación de Priorizaciones" />
+			</f:facet>
+		</p:toolbar>
+ 
+		<h:panelGrid id="idPGTables" columns="2" styleClass="foo">
+			<p:dataTable
+				value="#{cxcCalificacionCreditoController.listProductos}" var="item"
+				rowIndexVar="index" paginator="true"
+				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} registros"
+				emptyMessage="No hay registros" paginatorPosition="bottom"
+				styleClass="less-padding">
+				<f:facet name="header">
+		        	PRODUCTOS
+		    	</f:facet>
+
+				<p:column headerText="Producto" style="text-align: center;">
+					<h:outputLabel value="#{item.descripcion}" />
+				</p:column>
+				<p:column headerText="Prioridad" style="text-align: center;">
+					<h:outputLabel value="#{item.texto3}">
+					</h:outputLabel>
+				</p:column>
+				<p:column headerText="Acciones" style="text-align: center;">
+					<p:commandButton title="Editar" icon="ui-icon-pencil"
+						action="#{cxcCalificacionCreditoController.editarProducto(item)}"
+						update="FrmResultProducto" process="@this" partialSubmit="true">
+					</p:commandButton>
+					<p:spacer width="5" height="5"></p:spacer>
+					<p:commandButton title="Eliminar" icon="ui-icon-trash"
+						styleClass="red-btn"
+						action="#{cxcCalificacionCreditoController.eliminarProducto(item)}"
+						update="idForm">
+						<p:confirm header="Confirmación"
+							message="¿Está seguro que desea eliminar el registro?"
+							icon="pi pi-exclamation-triangle" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+
+			<p:dataTable
+				value="#{cxcCalificacionCreditoController.listTiempos}" var="item"
+				rowIndexVar="index" paginator="true"
+				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} registros"
+				emptyMessage="No hay registros" paginatorPosition="bottom"
+				styleClass="less-padding">
+				<f:facet name="header">
+		        	TIEMPOS
+		    	</f:facet>
+
+				<p:column headerText="Detalle" style="text-align: center;">
+					<h:outputLabel value="#{item.descripcion}" />
+				</p:column>
+				<p:column headerText="Tiempo (min)" style="text-align: center;">
+					<h:outputLabel value="#{item.texto1}">
+					</h:outputLabel>
+				</p:column>
+				<p:column headerText="Acciones" style="text-align: center;">
+					<p:commandButton title="Editar" icon="ui-icon-pencil"
+						action="#{cxcCalificacionCreditoController.editarTiempo(item)}"
+						update="FrmResultTiempo" process="@this" partialSubmit="true">
+					</p:commandButton>
+					<p:spacer width="5" height="5"></p:spacer>
+					<p:commandButton title="Eliminar" icon="ui-icon-trash"
+						styleClass="red-btn"
+						action="#{cxcCalificacionCreditoController.eliminarTiempo(item)}"
+						update="idForm">
+						<p:confirm header="Confirmación"
+							message="¿Está seguro que desea eliminar el registro?"
+							icon="pi pi-exclamation-triangle" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+
+			<p:dataTable
+				value="#{cxcCalificacionCreditoController.listAsesoresestrella}"
+				var="item" rows="5" rowIndexVar="index" paginator="true"
+				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} registros"
+				emptyMessage="No hay registros" paginatorPosition="bottom"
+				styleClass="less-padding">
+				<f:facet name="header">
+		        	ASESORES PRO
+		    	</f:facet>
+
+				<p:column headerText="Asesor" style="text-align: center;">
+					<h:outputLabel value="#{item.descripcion}" />
+				</p:column>
+				<p:column headerText="Prioridad" style="text-align: center;">
+					<h:outputLabel value="#{item.texto3}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputLabel>
+				</p:column>
+				<p:column headerText="Acciones" style="text-align: center;">
+					<p:commandButton title="Editar" icon="ui-icon-pencil"
+						action="#{cxcCalificacionCreditoController.editarAsesor(item)}"
+						update="FrmResultAsesor" process="@this" partialSubmit="true">
+					</p:commandButton>
+					<p:spacer width="5" height="5"></p:spacer>
+					<p:commandButton title="Eliminar" icon="ui-icon-trash"
+						styleClass="red-btn"
+						action="#{cxcCalificacionCreditoController.eliminarAsesor(item)}"
+						update="idForm">
+						<p:confirm header="Confirmación"
+							message="¿Está seguro que desea eliminar el registro?"
+							icon="pi pi-exclamation-triangle" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+
+			<p:dataTable
+				value="#{cxcCalificacionCreditoController.listAgenciasEstrella}"
+				var="item" rows="5" rowIndexVar="index" paginator="true"
+				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} registros"
+				emptyMessage="No hay registros" paginatorPosition="bottom"
+				styleClass="less-padding">
+				<f:facet name="header">
+		        AGENCIAS PRO
+		   	 </f:facet>
+				<p:column headerText="Agencia" style="text-align: center;">
+					<p:outputLabel value="#{item.descripcion}" />
+				</p:column>
+				<p:column headerText="Prioridad" style="text-align: center;">
+					<p:outputLabel value="#{item.texto3}" />
+				</p:column>
+				<p:column headerText="Acciones" style="text-align: center;">
+					<p:commandButton title="Editar" icon="ui-icon-pencil"
+						action="#{cxcCalificacionCreditoController.editarAgencia(item)}"
+						update="FrmResultAgencia" process="@this" partialSubmit="true">
+					</p:commandButton>
+
+					<p:spacer width="5" height="5"></p:spacer>
+
+					<p:commandButton title="Eliminar" icon="ui-icon-trash"
+						styleClass="red-btn"
+						action="#{cxcCalificacionCreditoController.eliminarAgencia(item)}"
+						update="idForm">
+						<p:confirm header="Confirmación"
+							message="¿Está seguro que desea eliminar el registro?"
+							icon="pi pi-exclamation-triangle" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+		</h:panelGrid>
+	</h:form>
+
+	<!-- dialogo de nuevo paramDet Asesor -->
+	<p:dialog widgetVar="DlgResultAsesor" id="DlgResultAsesor"
+		header="Registro de Asesor Comercial" resizable="true" modal="true"
+		closable="true" appendTo="@(body)" width="400" height="175"
+		closeOnEscape="true">
+		<h:form id="FrmResultAsesor">
+			<h:panelGrid columns="2">
+				<p:commandLink value="Asesor: "
+					oncomplete="PF('dlgVendedores').show();"
+					update="idFormVendedores:idTableVendedores" />
+				<p:inputText size="30" maxlength="100" id="idNombreVendedor"
+					readonly="true"
+					value="#{cxcCalificacionCreditoController.parametro.descripcion}">
+				</p:inputText>
+
+				<h:outputLabel value="Priorizacion: " />
+				<p:inputText size="30" maxlength="100"
+					value="#{cxcCalificacionCreditoController.parametro.texto3}" />
+
+				<h:outputLabel value="Estado: " />
+				<p:selectOneMenu
+					value="#{cxcCalificacionCreditoController.parametro.estado1}">
+					<f:selectItem itemLabel="Activo" itemValue="A" />
+					<f:selectItem itemLabel="Inactivo" itemValue="I" />
+				</p:selectOneMenu>
+
+			</h:panelGrid>
+			<br />
+			<center>
+				<p:commandButton value="Guardar"
+					action="#{cxcCalificacionCreditoController.guardarAsesor}"
+					update="idForm"></p:commandButton>
+			</center>
+		</h:form>
+	</p:dialog>
+
+
+	<!-- dialogo de nuevo paramDet Tiempo -->
+	<p:dialog widgetVar="DlgResultTiempo" id="DlgResultTiempo"
+		header="Registro de tiempos por revision de solicitud" resizable="true" modal="true"
+		closable="true" appendTo="@(body)" width="400" height="175"
+		closeOnEscape="true">
+		<h:form id="FrmResultTiempo">
+			<h:panelGrid columns="2">
+				<h:outputLabel value="Descripción: " />
+				<p:inputText size="30" maxlength="100" id="descripcionTiempo"
+					value="#{cxcCalificacionCreditoController.parametro.descripcion}">
+				</p:inputText>
+
+				<h:outputLabel value="Tiempo: " />
+				<p:inputText size="30" maxlength="100"
+					value="#{cxcCalificacionCreditoController.parametro.texto1}" />
+
+				<h:outputLabel value="Estado: " />
+				<p:selectOneMenu
+					value="#{cxcCalificacionCreditoController.parametro.estado1}">
+					<f:selectItem itemLabel="Activo" itemValue="A" />
+					<f:selectItem itemLabel="Inactivo" itemValue="I" />
+				</p:selectOneMenu>
+			</h:panelGrid>
+			<br />
+			<center>
+				<p:commandButton value="Guardar"
+					action="#{cxcCalificacionCreditoController.guardarTiempo}"
+					update="idForm"></p:commandButton>
+			</center>
+		</h:form>
+	</p:dialog>
+
+
+	<!-- dialog de paramdet productos -->
+	<p:dialog widgetVar="DlgResultProducto" id="DlgResultProducto"
+		header="Registro de Productos" resizable="true" modal="true"
+		closable="true" appendTo="@(body)" width="490" height="120"
+		closeOnEscape="true">
+		<h:form id="FrmResultProducto">
+			<h:panelGrid columns="2">
+				<h:outputLabel value="Producto:" />
+				<p:selectOneMenu
+					value="#{cxcCalificacionCreditoController.parametro.texto1}">
+					<f:selectItem itemLabel="Seleccionar.." />
+					<f:selectItems
+						value="#{cxcCalificacionCreditoController.productos}"
+						var="producto" itemLabel="#{producto.descripcion}"
+						itemValue="#{producto.texto1}"></f:selectItems>
+				</p:selectOneMenu>
+
+				<h:outputLabel value="Priorizacion: " />
+				<p:inputText size="30" maxlength="100"
+					value="#{cxcCalificacionCreditoController.parametro.texto3}" />
+			</h:panelGrid>
+			<br />
+			<center>
+				<p:commandButton value="Guardar"
+					action="#{cxcCalificacionCreditoController.guardarProducto}"
+					update="idForm"></p:commandButton>
+			</center>
+		</h:form>
+	</p:dialog>
+
+
+	<!-- dialog de asesores -->
+	<p:dialog header="Asesores... " widgetVar="dlgVendedores" modal="true"
+		height="480" width="580">
+		<h:form id="idFormVendedores">
+			<p:panel>
+				<p:panelGrid columns="2">
+					<p:inputText
+						value="#{cxcCalificacionCreditoController.nombreVendedor}"
+						styleClass="inputUpper" placeholder="ASESOR" widgetVar="">
+						<p:ajax event="change"
+							listener="#{cxcCalificacionCreditoController.buscarVendedores}"
+							update=":#{p:component('idTableVendedores')}" />
+					</p:inputText>
+					<p:commandButton title="Consultar Asesor"
+						actionListener="#{cxcCalificacionCreditoController.buscarVendedores}"
+						icon="ui-icon-search" update="idTableVendedores" />
+				</p:panelGrid>
+				<p:spacer height="10" />
+				<p:dataTable id="idTableVendedores" var="item" styleClass="table"
+					value="#{cxcCalificacionCreditoController.vendedores}"
+					scrollable="auto" scrollHeight="250" paginator="true" rows="10"
+					paginatorPosition="bottom"
+					filteredValue="#{cxcCalificacionCreditoController.vendedores}"
+					currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+
+					<f:facet name="header">
+				        Listado de Vendedores
+				    </f:facet>
+					<p:column headerText="Nombre">
+						<p:commandLink value="#{item.svvenomb}"
+							actionListener="#{cxcCalificacionCreditoController.seleccionarVendedor(item)}"
+							oncomplete="PF('dlgVendedores').hide()"
+							update="FrmResultAsesor:idNombreVendedor" />
+					</p:column>
+					<p:column headerText="Código">
+						<h:outputText value="#{item.svfvendPK.svvecodi}" />
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+	</p:dialog>
+
+
+	<!-- dialogo de nuevo paramDet AGENCIAS -->
+	<p:dialog widgetVar="DlgResultAgencia" id="DlgResultAgencia"
+		header="Registro de Agencias" resizable="true" modal="true"
+		closable="true" appendTo="@(body)" width="400" height="175"
+		closeOnEscape="true">
+		<h:form id="FrmResultAgencia">
+			<h:panelGrid columns="2" id="idPanelAgencia">
+				<p:commandLink value="Agencia: "
+					oncomplete="PF('dlgAgencias').show();" update="@this" />
+				<p:inputText size="30" maxlength="100" id="idNombreAgencia"
+					readonly="true"
+					value="#{cxcCalificacionCreditoController.parametro.descripcion}">
+				</p:inputText>
+
+				<h:outputLabel value="Priorizacion: " />
+				<p:inputText size="30" maxlength="100"
+					value="#{cxcCalificacionCreditoController.parametro.texto3}" />
+
+				<h:outputLabel value="Estado: " />
+				<p:selectOneMenu
+					value="#{cxcCalificacionCreditoController.parametro.estado1}">
+					<f:selectItem itemLabel="Activo" itemValue="A" />
+					<f:selectItem itemLabel="Inactivo" itemValue="I" />
+				</p:selectOneMenu>
+			</h:panelGrid>
+
+			<br />
+			<center>
+				<p:commandButton value="Guardar"
+					action="#{cxcCalificacionCreditoController.guardarAgencia}"
+					update="idForm"></p:commandButton>
+			</center>
+		</h:form>
+	</p:dialog>
+
+	<!-- dialogo de Agencias -->
+	<p:dialog header="Agencias... " widgetVar="dlgAgencias" modal="true"
+		height="480" width="580">
+		<h:form id="idFormAgencias">
+			<p:panel>
+				<p:panelGrid columns="2">
+					<p:inputText
+						value="#{cxcCalificacionCreditoController.nombreAgencia}"
+						styleClass="inputUpper" placeholder="AGENCIA" widgetVar="">
+						<p:ajax event="change"
+							listener="#{cxcCalificacionCreditoController.buscarAgencias}"
+							update=":#{p:component('idTableAgencias')}" />
+					</p:inputText>
+					<p:commandButton title="Consultar Agencia"
+						actionListener="#{cxcCalificacionCreditoController.buscarAgencias}"
+						icon="ui-icon-search" update="idTableAgencias" />
+				</p:panelGrid>
+				<p:spacer height="10" />
+				<p:dataTable id="idTableAgencias" var="item"
+					value="#{cxcCalificacionCreditoController.agencias}"
+					scrollable="auto" scrollHeight="250" paginator="true" rows="10"
+					paginatorPosition="bottom"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink} ">
+
+					<f:facet name="header">
+				        Listado de Agencias
+				    </f:facet>
+					<p:column headerText="Nombre">
+						<p:commandLink value="#{item.nombre}"
+							actionListener="#{cxcCalificacionCreditoController.seleccionarAgencia(item)}"
+							oncomplete="PF('dlgAgencias').hide()"
+							update="FrmResultAgencia:idNombreAgencia" />
+					</p:column>
+					<p:column headerText="Código">
+						<h:outputText value="#{item.agenciaPK.codigo}" />
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+	</p:dialog>
+
+
+
+</h:body>
+</html>

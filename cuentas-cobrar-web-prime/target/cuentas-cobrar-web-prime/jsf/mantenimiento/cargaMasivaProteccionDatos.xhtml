@@ -1,0 +1,153 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+	<ui:define name="title">
+		Cuentas por Cobrar - Carga Masiva Protección Datos Personales
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmBotones">
+						
+			<p:commandLink ajax="false" target="_blank"
+				action="#{cargaMasivaProteccionDatosController.descargarPlantillaFormato}">
+				<p:commandButton icon="fa fa-download" value="Descargar Ejemplo" title="Descargar Ejemplo"
+					ajax="false">
+				</p:commandButton>
+			</p:commandLink>
+			
+				
+			<p:commandButton style="float: right;" id="carga"
+						action="#{cargaMasivaProteccionDatosController.abrirCargaExcel}"
+						value="Cargar Excel" process="@this"
+						partialSubmit="true" />
+						
+		</h:form>
+	</ui:define>
+	<ui:define name="content">
+		<style type="text/css">
+body {
+	font-size: 11px;
+}
+
+.ui-g-12 {
+	padding: .2em .5em !important;
+}
+
+.w5 {
+	width: 5%;
+}
+
+.dashboard .contact-form .ui-button {
+	margin-top: 0px;
+}
+
+body .ui-button .ui-button-text {
+	font-size: 11px !important;
+}
+
+.table thead th, .table tbody tr td {
+	font-size: 11px !important;
+	padding: 2px 7px !important;
+}
+</style>
+
+
+		<h:form id="idFormDatos">
+
+			<div class="ui-g dashboard">
+				<div class="ui-g-12 ui-fluid contact-form">
+					<div class="ui-g-12">
+						<p:dataTable id="tblProteccionD" widgetVar="tblProteccionD"
+							emptyMessage="No existen registros"
+							value="#{cargaMasivaProteccionDatosController.proteccionDatosLst}" var="item"
+							rowKey="#{item.id}" rowIndexVar="var" >
+
+							<p:column headerText="Token" width="10%">
+								<p:outputLabel value="#{item.id.idToken}" />
+							</p:column>
+
+							<p:column headerText="Marca" width="10%">
+								<p:outputLabel value="#{item.marca}" />
+							</p:column>
+							
+							<p:column headerText="Cedula" width="5%"
+								filterBy="#{item.cedula}">
+								<p:outputLabel value="#{item.cedula}" />
+							</p:column>
+							
+							<p:column headerText="Nombre" width="10%"
+								filterBy="#{item.nombre}">
+								<p:outputLabel value="#{item.nombre}" />
+							</p:column>
+							
+							<p:column headerText="Apellidos" width="10%"
+								filterBy="#{item.apellidos}">
+								<p:outputLabel value="#{item.apellidos}" />
+							</p:column>
+							
+							<p:column headerText="Telefono" width="5%"
+								filterBy="#{item.telefono}">
+								<p:outputLabel value="#{item.telefono}" />
+							</p:column>
+							
+							<p:column headerText="Email" width="5%"
+								filterBy="#{item.email}">
+								<p:outputLabel value="#{item.email}" />
+							</p:column>
+
+							<p:column headerText="Direccion" width="15%"
+								filterBy="#{item.direccion}">
+								<p:outputLabel value="#{item.direccion}" />
+							</p:column>
+							
+							<p:column headerText="Acepta LODPDP" width="5%"
+								filterBy="#{item.aceptaLopdp}">
+								<p:outputLabel value="#{item.aceptaLopdp}" />
+							</p:column>
+							
+							<p:column headerText="Actualización Datos" width="5%"
+								filterBy="#{item.actualizacionDatos}">
+								<p:outputLabel value="#{item.actualizacionDatos}" />
+							</p:column>
+
+							
+							<p:column headerText="Usuario" width="10%"
+								filterBy="#{item.usuarioAgente}">
+								<p:outputLabel value="#{item.usuarioAgente}" />
+							</p:column>
+							
+							<p:column headerText="Fecha Aceptación" width="10%">
+								<p:outputLabel value="#{item.fecha}">
+		                            <f:convertDateTime pattern="dd/MM/yyyy" />
+		                        </p:outputLabel>
+							</p:column>
+							
+						</p:dataTable>
+					</div>
+				</div>
+			</div>
+		</h:form>
+
+
+		<p:dialog header="Cargar Excel Proteccion Datos" widgetVar="dlgArchivo" modal="true"
+			showEffect="fade" hideEffect="fade" resizable="true" width="600"
+			position="center center" closeOnEscape="true">
+			<h:form id="frmArchivo">
+				<p:fileUpload required="true"
+					fileUploadListener="#{cargaMasivaProteccionDatosController.leerArchivo}"
+					mode="advanced" dragDropSupport="true" process="@this"
+					update="frmBotones" uploadLabel="Cargar Proteccion Datos"
+					cancelLabel="Cancelar" label="Seleccionar Archivo" fileLimit="1"
+					fileLimitMessage="Solo puede subir un archivo">
+				</p:fileUpload>
+			</h:form>
+		</p:dialog>
+
+		
+		
+	</ui:define>
+</ui:composition>

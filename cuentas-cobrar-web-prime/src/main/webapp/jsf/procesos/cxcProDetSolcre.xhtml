@@ -1,0 +1,666 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      > 
+
+<h:head>
+	<h:outputStylesheet name="css/layout-lightblue.css" library="serenity-layout" />
+	<style type="text/css">
+	
+		.gridSinBordes.ui-panelgrid>*>tr,
+		.gridSinBordes.ui-panelgrid .ui-panelgrid-cell {
+		    border: none !important;
+		    border-right-width: 0px !important;
+    		border-left-width: 0px !important;
+    		padding-right: 2px !important;
+    		padding-left: 2px !important;
+    		padding-top: 2px !important;
+    		padding-bottom: 2px !important
+		}
+		
+		body{
+		font-size:12px;
+		}
+		
+		/*calendar - FOCUS*/
+		/*subrayar línea*/
+		input.ui-inputfield.ui-widget.ui-state-default.ui-corner-all.hasDatepicker.ui-state-focus{
+			background-color: #3544BF;
+			color: #FFF;
+		}
+		/*color de background*/
+		button.ui-datepicker-trigger.ui-button.ui-widget.ui-button-icon-only.ui-state-focus > span.ui-button-icon-left.ui-icon.ui-icon-calendar{
+			background-color: #3544BF;
+			color: #FFF;	
+		}
+		
+		/* FOCUS CHECKBOX AGENCIA*/
+		div.ui-selectcheckboxmenu.ui-widget.ui-corner-all.ui-state-focus {
+			background-color: #3544BF;
+			color: #FFF;	
+		}
+		
+		
+		/*inputText - FOCUS*/
+		input.ui-inputfield.ui-inputtext.ui-widget.ui-state-default.ui-corner-all.ui-state-focus {
+			background-color: #3544BF;
+			color: #FFF;
+		}
+		
+		/*SELECT ONE MENU - FOCUS*/
+		div.som.ui-state-default.ui-state-focus label.ui-selectonemenu-label {
+			background-color: #3544BF;
+			color: #FFF;
+		}
+		
+		/*BOTONES - FOCUS*/
+		button.ui-button.ui-widget.ui-state-focus  {
+			background-color: #3544BF;
+			color: #FFF;
+		}
+		
+		/*RADIO-BUTTON FOCUS */
+		div.ui-radiobutton-box.ui-state-default.ui-state-focus > span{
+			background-color: #3544BF;
+			
+		}
+		
+		/*h:inputTextarea - FOCUS*/
+		textarea.ui-inputfield.ui-inputtextarea.ui-widget.ui-state-default.ui-corner-all.ui-state-focus
+		    {
+		    background-color:#42a4f4;
+		    color: #FFF;
+		}
+		
+		/*inputMask - FOCUS*/
+		input.ui-inputfield.ui-inputmask.ui-widget.ui-state-default.ui-corner-all.ui-state-focus{
+			background-color: #3544BF;
+			color: #FFF;
+		}
+		
+		/*CHECKBOS - FOCUS*/
+		.ui-chkbox-box.ui-widget.ui-corner-all.ui-state-default.ui-state-focus > span{
+			background-color: #3544BF;
+		}
+		
+		/* input number disabled */
+		span.ui-inputnumber.ui-widget > input.ui-inputfield.ui-inputtext.ui-widget.ui-state-default.ui-corner-all.ui-state-disabled {
+			opacity: 1;
+			background-color: rgb(235, 235, 228);
+			color: rgb(84, 84, 84);
+		}
+		
+		.ui-inputfield.ui-inputtext.ui-widget.ui-state-default.ui-corner-all.ui-state-disabled{
+			opacity: 1;
+			background-color: rgb(235, 235, 228);
+			color: rgb(84, 84, 84);
+		}
+		
+		input.ui-inputfield.ui-widget.ui-state-default.ui-corner-all.ui-state-disabled{
+			opacity: 1;
+			background-color: rgb(235, 235, 228);
+			color: rgb(84, 84, 84);
+		}
+
+		.aliDere .ui-inputfield{
+			text-align: right;
+		}
+	</style>
+	<script type="text/javascript">
+		function focoAprobacion(){
+			document.getElementById("form:tabView:sorCotizacionEstado:0").focus();
+		}
+	</script>
+</h:head> 
+<body>
+	<h:form id="form">
+		<p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" onerror="PF('statusDialog').hide()" />
+		<p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+		    <h:graphicImage value="/common/imgs/gifs/ajaxloadingbar.gif"/>
+		</p:dialog>	
+		<p:messages id="messages"  showDetail="true" autoUpdate="true" closable="true" showSummary="true"  />
+		<p:growl id="growl" showSummary="true" showDetail="true"  life="3000" autoUpdate="true">
+		</p:growl>
+		<p:panel header="Aprobaci&oacute;n de Cr&eacute;ditos de Cotizaciones">
+		
+			<p:tabView id="tabView"  activeIndex="#{cxcProDetSolcreController.tabActiveIndex}">
+				<p:ajax event="tabChange" listener="#{cxcProDetSolcreController.onTabChange}" update=":form" 
+					partialSubmit="true" 
+					/>
+		        <p:tab title="COTIZACI&Oacute;N" id="tabNoIT" rendered="true">
+		            <p:panelGrid styleClass="gridSinBordes">
+		        		<p:row>
+		        			<p:column colspan="5">
+		        				<p:outputLabel value="Par&aacute;metros de b&uacute;squeda" />
+		        			</p:column>
+		        		</p:row>
+		        		<p:row>
+		        			<p:column>
+		        				<p:outputLabel value="Centro:" />
+		        			</p:column>
+		        			<p:column>
+		        				<p:selectCheckboxMenu label="Agencias"
+									value="#{cxcProDetSolcreController.agenciasArrayStringNoIT}"
+									panelStyle="width:250px" scrollHeight="150">
+									<f:selectItems value="#{cxcProDetSolcreController.agenciasSelectItems}" />
+								</p:selectCheckboxMenu>
+		        			</p:column>
+		        			<p:column>
+		        				<p:outputLabel value="Cotizaci&oacute;n:" />
+		        			</p:column>
+		        			<p:column>
+		        				<p:inputText id="buscadorNumCoti" value="#{cxcProDetSolcreController.buscadorNumCoti}" />
+		        			</p:column>
+		        			<p:column>
+		        				<p:commandButton title="Buscar Cotizaciones" value="Buscar" icon="ui-icon-search" 
+					            	action="#{cxcProDetSolcreController.buscarCotizaciones}" update="dtNoIT" >
+					            </p:commandButton>
+		        			</p:column>
+		        		</p:row>
+		        	</p:panelGrid>
+		        	
+		        	<p:dataTable id="dtNoIT" var="cre" value="#{cxcProDetSolcreController.listCotizaciones}"
+		        		rowIndexVar="index"
+		        		scrollable="true" scrollHeight="215px;">
+				        <p:column headerText="#" style="width:15px;">
+				            <h:outputText value="#{index+1}" />
+				        </p:column>
+				        <p:column headerText="Centro" style="width:35px;padding-left:5px;">
+				            <h:outputText value="#{cre.cotizacionPK.centro}" />
+				        </p:column>
+				        <p:column headerText="Cotizaci&oacute;n" style="width:60px;">
+				            <h:outputText value="#{cre.cotizacionPK.numeroCotizacion}" />
+				        </p:column>
+				        <p:column headerText="Tipo" style="width:135px;">
+				            <h:outputText value="#{cre.tipoFinanciacion} - #{cre.tipoFinanciacionDescripcion}" />
+				        </p:column>
+				        <p:column headerText="Nombre cliente" style="width:200px;">
+				            <h:outputText value="#{cre.nombreDeudor}" />
+				        </p:column>
+				        <p:column headerText="Fecha Solicitud" style="width:80px;">
+				            <h:outputText value="#{cre.fechaSolicitudC}" >
+				            	<f:convertDateTime pattern="yyyy/MM/dd" />
+				            </h:outputText>
+				        </p:column>
+				        <p:column headerText="Aprobado" style="width:60px;">
+				            <h:outputText value="APROBADO" rendered="#{cre.aprobadoCredito eq 'S'}" />
+				            <h:outputText value="NEGADO" rendered="#{cre.aprobadoCredito ne 'S'}" />
+				        </p:column>
+				        <p:column headerText="Cuota de entrada" style="width:70px;text-align:right;">
+				            <h:outputText value="#{cre.cuotaDeEntrada}" >
+				            	<f:convertNumber type="currency"
+	                                 currencySymbol="$"
+	                                 maxIntegerDigits="10"
+	                                 maxFractionDigits="2"/>
+				            </h:outputText>
+				        </p:column>
+				        <p:column headerText="Cuota de alcance" style="width:55px;text-align:right;">
+				            <h:outputText value="#{cre.cuotaDeAlcance}" >
+				            	<f:convertNumber type="currency"
+	                                 currencySymbol="$"
+	                                 maxIntegerDigits="10"
+	                                 maxFractionDigits="2"/>
+				            </h:outputText>
+				        </p:column>
+				        <p:column headerText="F. vencimiento Alcance" style="width:100px;">
+				            <h:outputText value="#{cre.fechaDeAlcance}" >
+				            	<f:convertDateTime pattern="yyyy/MM/dd" />
+				            </h:outputText>
+				        </p:column>
+				        
+						<p:column style="width:32px;text-align: center">
+				             <p:commandButton icon="ui-icon ui-icon-edit"
+				             	title="Seleccionar cr&eacute;dito" partialSubmit="true"
+				             	actionListener="#{cxcProDetSolcreController.seleccionarCredito(cre)}"
+				             	update=":form"
+				             	disabled="#{cre.aprobadoCredito eq 'S'}">
+				                
+				            </p:commandButton>
+				        </p:column>
+				        
+				        <p:column style="width:32px;text-align: center">
+				             <p:commandButton icon="ui-icon ui-icon-document"
+				             	title="Control de Documentos" action="#{cxcProDetSolcreController.irControlDocumentos(cre)}"				             	
+				             	process="@this">
+				            </p:commandButton>
+				        </p:column>
+				        
+				        <p:column style="width:95px;text-align:center;">
+				        	<p:commandButton title="Imprimir Cotizaci&oacute;n"
+								value="Imprimir"
+								action="#{cxcProDetSolcreController.imprimeCotizacion(cre,'N')}"
+								ajax="false"
+								onclick="form.target='_blank';"
+								icon="ui-icon ui-icon-print"
+								/>
+				        </p:column>
+				        
+				    </p:dataTable>
+		        </p:tab>
+		        
+		        <p:tab title="COTIZACI&Oacute;N ITSA" id="tabIT" rendered="false">
+		        	<p:panelGrid styleClass="gridSinBordes">
+		        		<p:row>
+		        			<p:column colspan="5">
+		        				<p:outputLabel value="Par&aacute;metros de b&uacute;squeda" />
+		        			</p:column>
+		        		</p:row>
+		        		<p:row>
+		        			<p:column>
+		        				<p:outputLabel value="Centro:" />
+		        			</p:column>
+		        			<p:column>
+		        				<p:selectCheckboxMenu label="Agencias"
+									value="#{cxcProDetSolcreController.agenciasArrayString}"
+									panelStyle="width:250px" scrollHeight="150">
+									<f:selectItems value="#{cxcProDetSolcreController.agenciasSelectItems}" />
+								</p:selectCheckboxMenu>
+		        			</p:column>
+		        			<p:column>
+		        				<p:outputLabel value="Cotizaci&oacute;n:" />
+		        			</p:column>
+		        			<p:column>
+		        				<p:inputText id="ITBuscadorNumCoti" value="#{cxcProDetSolcreController.itBuscadorNumCoti}" />
+		        			</p:column>
+		        			<p:column>
+		        				<p:commandButton title="Buscar Cotizaciones Importadora Tomebamba" value="Buscar" icon="ui-icon-search" 
+					            	action="#{cxcProDetSolcreController.buscarCotizacionesIT}" update="dtIT fsComentarioIT" >
+					            </p:commandButton>
+		        			</p:column>
+		        		</p:row>
+		        	</p:panelGrid>
+		        	
+		        	<p:dataTable id="dtIT" var="cre" value="#{cxcProDetSolcreController.itlistCotizaciones}"
+		        		scrollable="true" scrollHeight="215px;">
+				        <p:column headerText="Cia" style="width:20px;">
+				            <h:outputText value="#{cre.cotizacionPK.noCia}" />
+				        </p:column>
+				        <p:column headerText="Centro" style="width:35px;padding-left:5px;">
+				            <h:outputText value="#{cre.cotizacionPK.centro}" />
+				        </p:column>
+				        <p:column headerText="Cotizaci&oacute;n" style="width:65px;">
+				            <h:outputText value="#{cre.cotizacionPK.numeroCotizacion}" />
+				        </p:column>
+				        <p:column headerText="Nombre cliente">
+				            <h:outputText value="#{cre.nombreDeudor}" />
+				        </p:column>
+				        <p:column headerText="Fecha Solicitud" style="width:80px;">
+				            <h:outputText value="#{cre.fechaSolicitudC}" >
+				            	<f:convertDateTime pattern="yyyy/MM/dd" />
+				            </h:outputText>
+				        </p:column>
+				        <p:column headerText="Aprobado" style="width:70px;">
+				            <h:outputText value="APROBADO" rendered="#{cre.aprobadoCredito eq 'S'}" />
+				            <h:outputText value="NEGADO" rendered="#{cre.aprobadoCredito ne 'S'}" />
+				        </p:column>
+				        <p:column headerText="Cuota de entrada" style="width:80px;text-align:right;">
+				            <h:outputText value="#{cre.cuotaDeEntrada}" >
+				            	<f:convertNumber type="currency"
+	                                 currencySymbol="$"
+	                                 maxIntegerDigits="10"
+	                                 maxFractionDigits="2"/>
+				            </h:outputText>
+				        </p:column>
+				        <p:column headerText="Cuota de alcance" style="width:60px;text-align:right;">
+				            <h:outputText value="#{cre.cuotaDeAlcance}" >
+				            	<f:convertNumber type="currency"
+	                                 currencySymbol="$"
+	                                 maxIntegerDigits="10"
+	                                 maxFractionDigits="2"/>
+				            </h:outputText>
+				        </p:column>
+				        <p:column headerText="F. vencimiento Alcance" style="width:100px;">
+				            <h:outputText value="#{cre.fechaDeAlcance}" >
+				            	<f:convertDateTime pattern="yyyy/MM/dd" />
+				            </h:outputText>
+				        </p:column>
+				        
+						<p:column style="width:32px;text-align: center">
+				             <p:commandButton update=":#{p:component('fsComentarioIT')}"  icon="ui-icon ui-icon-edit"
+				             	title="Seleccionar cr&eacute;dito" partialSubmit="true"
+				             	actionListener="#{cxcProDetSolcreController.seleccionarCreditoIT(cre)}"
+				             	disabled="#{cre.aprobadoCredito eq 'S'}"
+				             	>
+				                
+				            </p:commandButton>
+				        </p:column>
+				        
+				        <p:column style="width:95px;text-align:center;">
+				        	<p:commandButton title="Imprimir Cotizaci&oacute;n"
+								value="Imprimir"
+								action="#{cxcProDetSolcreController.imprimeCotizacion(cre, 'S')}"
+								ajax="false"
+								onclick="form.target='_blank';"
+								icon="ui-icon ui-icon-print"
+								/>
+				        </p:column>
+				        
+				    </p:dataTable>
+				    
+				    <br/>
+				    <p:fieldset legend="COMENTARIO CXC" style="margin-bottom:20px" id="fsComentarioIT">
+					    <p:inputTextarea id="itaITComentario" rendered="#{cxcProDetSolcreController.itCotizacionSeleccionada!=null}"
+							value="#{cxcProDetSolcreController.itCotizacionSeleccionada.comentarioAprobCXC}"
+							cols="100" rows="5"
+							/>
+						<p:commandButton title="Aprobar Cotizaci&oacute;n Importadora Tomebamba" value="Aprobar" icon="ui-icon ui-icon-check" 
+			            	action="#{cxcProDetSolcreController.aprobarCotizacionIT}" 
+			            	rendered="#{cxcProDetSolcreController.itCotizacionSeleccionada!=null}"
+			            	disabled="#{cxcProDetSolcreController.itCotizacionSeleccionada.aprobadoCredito eq 'S'}"
+			            	update="dtIT fsComentarioIT" >
+			            </p:commandButton>
+				    </p:fieldset>
+				    
+		        	
+		        </p:tab>
+		        <p:tab title="APROBACI&Oacute;N" rendered="#{cxcProDetSolcreController.mostrarTabAprobacion}" id="tabAprobacino">
+		        	<p:panelGrid styleClass="gridSinBordes">
+		        		<p:row>
+			        		<p:column>
+			        			<p:outputLabel value="No. Cotizaci&oacute;n" style="font-weight:bold;" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="#{cxcProDetSolcreController.cotizacionSeleccionada.cotizacionPK.numeroCotizacion}" />
+			        		</p:column>
+		        		</p:row>
+		        		<p:row>
+			        		<p:column>
+			        			<p:outputLabel value="C&eacute;dula Due&ntilde;o" style="font-weight:bold;" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="#{cxcProDetSolcreController.cotizacionSeleccionada.cedulaDueno}" />
+			        		</p:column>
+		        		</p:row>
+		        		<p:row>
+			        		<p:column>
+			        			<p:outputLabel value="C&eacute;dula Garante" style="font-weight:bold;" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="#{cxcProDetSolcreController.cotizacionSeleccionada.cedulaGarante}" />
+			        		</p:column>
+			        		<p:column colspan="9">
+			        			<p:outputLabel value="#{cxcProDetSolcreController.cotizacionSeleccionada.garanteNombres}" />
+			        		</p:column>
+		        		</p:row>
+		        		<p:row>
+			        		<p:column>
+			        			<p:outputLabel value="C&eacute;dula Deudor" style="font-weight:bold;" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="#{cxcProDetSolcreController.cotizacionSeleccionada.cedulaDeudor}" />
+			        		</p:column>
+			        		<p:column colspan="9">
+			        			<p:outputLabel value="#{cxcProDetSolcreController.cotizacionSeleccionada.nombreDeudor}" />
+			        		</p:column>
+		        		</p:row>
+		        		<p:row>
+			        		<p:column>
+			        			<p:outputLabel value="Tipo 	Financia" style="font-weight:bold;" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="#{cxcProDetSolcreController.cotizacionSeleccionada.tipoFinanciacion}" />
+			        		</p:column>
+			        		<p:column colspan="9">
+			        			<p:outputLabel value="#{cxcProDetSolcreController.cotizacionSeleccionada.tipoFinanciacionDescripcion}" />
+			        		</p:column>
+		        		</p:row>
+		        		<p:row>
+			        		<p:column>
+			        			<p:outputLabel value="Subtotal" style="font-weight:bold;" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="#{cxcProDetSolcreController.cotizacionSeleccionada.subtotal}" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="Tasa Financia" style="font-weight:bold;" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="#{cxcProDetSolcreController.cotizacionSeleccionada.tasaFinancia}" />
+			        		</p:column>
+			        	</p:row>
+			        	<p:row>
+			        		<p:column>
+			        			<p:outputLabel value="Descuento" style="font-weight:bold;" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="#{cxcProDetSolcreController.cotizacionSeleccionada.descuento}" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="Cuota De Entrada" style="font-weight:bold;" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="#{cxcProDetSolcreController.cotizacionSeleccionada.cuotaDeEntrada}" />
+			        		</p:column>
+			        	</p:row>
+			        	<p:row>
+			        		<p:column>
+			        			<p:outputLabel value="Neto" style="font-weight:bold;" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="#{cxcProDetSolcreController.cotizacionSeleccionada.neto}" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="Cuota De Alcance" style="font-weight:bold;" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="#{cxcProDetSolcreController.cotizacionSeleccionada.cuotaDeAlcance}" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="#{cxcProDetSolcreController.cotizacionSeleccionada.fechaDeAlcance}" >
+			        				<f:convertDateTime pattern="yyyy/MM/dd" />
+			        			</p:outputLabel>
+			        		</p:column>
+			        	</p:row>
+			        	<p:row>
+			        		<p:column>
+			        			<p:outputLabel value="Iva" style="font-weight:bold;" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="#{cxcProDetSolcreController.cotizacionSeleccionada.iva}" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="Monto Adicional" style="font-weight:bold;" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="#{cxcProDetSolcreController.cotizacionSeleccionada.montoAdicional}" />
+			        		</p:column>
+			        	</p:row>
+			        	<p:row>
+			        		<p:column>
+			        			<p:outputLabel value="Valor Garant&#237;a" style="font-weight:bold;"/>
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="#{cxcProDetSolcreController.cotizacionSeleccionada.valorGarantia}" rendered="#{cxcProDetSolcreController.cotizacionSeleccionada.valorGarantia != null}"/>
+			        			<p:outputLabel value="0.00" rendered="#{cxcProDetSolcreController.cotizacionSeleccionada.valorGarantia == null}"/>
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="Saldo Financiar" style="font-weight:bold;" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="#{cxcProDetSolcreController.cotizacionSeleccionada.saldoFinanciar+cxcProDetSolcreController.cotizacionSeleccionada.cuotaFinalValorActual}" />
+			        		</p:column>
+			        	</p:row>
+			        	<p:row>
+			        		<p:column>
+			        			<p:outputLabel value="Valor Iva Garant&#237;a" style="font-weight:bold;" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="#{cxcProDetSolcreController.cotizacionSeleccionada.valorIvaGarantia}" rendered="#{cxcProDetSolcreController.cotizacionSeleccionada.valorIvaGarantia != null}"/>
+			        			<p:outputLabel value="0.00" rendered="#{cxcProDetSolcreController.cotizacionSeleccionada.valorIvaGarantia == null}"/>
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="Plazo Cr&eacute;dito" style="font-weight:bold;" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="#{cxcProDetSolcreController.cotizacionSeleccionada.plazoCredito}" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="Pagos por a&ntilde;o" style="font-weight:bold;" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="#{cxcProDetSolcreController.cotizacionSeleccionada.pagosPorAno}" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="Periodo"  />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="#{cxcProDetSolcreController.cotizacionSeleccionada.periodo}" />
+			        		</p:column>
+			        	</p:row>
+			        	<p:row>
+			        		<p:column>
+			        			<p:outputLabel value="Otros Cargos" style="font-weight:bold;" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="#{cxcProDetSolcreController.cotizacionSeleccionada.otrosCargos}" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="Cuota Mensual" style="font-weight:bold;" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="#{cxcProDetSolcreController.cotizacionSeleccionada.cuotaMensual}" />
+			        		</p:column>
+			        	</p:row>
+			        	<p:row>
+			        		<p:column>
+			        			<p:outputLabel value="Gastos Inscripci&oacute;n" style="font-weight:bold;" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="#{cxcProDetSolcreController.cotizacionSeleccionada.gastosIncripcion}" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="Cuota Seguro" style="font-weight:bold;" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="#{cxcProDetSolcreController.cotizacionSeleccionada.cuotaSeguro}" />
+			        		</p:column>
+			        	</p:row>
+			        	<p:row>
+			        		<p:column>
+			        			<p:outputLabel value="Intereses" style="font-weight:bold;" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="#{cxcProDetSolcreController.cotizacionSeleccionada.intereses}" />
+			        		</p:column>
+			        		
+			        	</p:row>
+			        	<p:row>
+			        		<p:column>
+			        			<p:outputLabel value="Total General" style="font-weight:bold;" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="#{cxcProDetSolcreController.cotizacionSeleccionada.totalGeneral}" />
+			        		</p:column>
+			        		
+			        	</p:row>
+			        	<p:row>
+			        		<p:column>
+			        			<p:outputLabel value="N&uacute;m. Autorizaci&oacute;n" style="font-weight:bold;" />
+			        		</p:column>
+			        		<p:column>
+			        			<p:outputLabel value="#{cxcProDetSolcreController.cotizacionSeleccionada.noSolicitudCred}" />
+			        		</p:column>
+			        		<p:column >
+			        			<p:selectOneRadio id="sorCotizacionEstado" 
+			        				value="#{cxcProDetSolcreController.cotizacionSeleccionada.aprobadoCredito}" 
+			        				unselectable="true"
+			        				>
+						            <f:selectItem itemLabel="Aprobado" 		itemValue="S" id="sorsiAprobAprobado" />
+						            <f:selectItem itemLabel="No aprobado"	itemValue="N" />
+						            <f:selectItem itemLabel="Baja"			itemValue="B" />
+						        </p:selectOneRadio>
+			        		</p:column>
+			        		
+			        		<p:column colspan="7">
+			        		
+			        			<p:outputLabel for="@next" value="Motivo negación:" />
+						        <p:selectOneMenu id="motivoNegacion" value="#{cxcProDetSolcreController.cotizacionSeleccionada.observacion}" style="width:125px">
+						            <f:selectItem itemLabel="Seleccione" itemValue="" />
+						            <f:selectItem itemLabel="Capacidad de Pago" itemValue="CAPACIDAD_DE_PAGO" />
+						            <f:selectItem itemLabel="Situacion Financiera" itemValue="SITUACION_FINANCIERA" />
+						            <f:selectItem itemLabel="Situacion Legal" itemValue="SITUACION_LEGAL" />
+						            <f:selectItem itemLabel="Otros" itemValue="OTROS" />
+		
+
+						        </p:selectOneMenu>
+			        		
+			        		
+							</p:column>
+			        	</p:row>
+			        	<p:row>
+			        		<p:column>
+			        			<p:outputLabel value="Documentos Adjuntos" style="font-weight:bold;" />
+			        		</p:column>
+			        		<p:column colspan="7">
+			        	
+				 <p:dataTable
+					value="#{cxcProDetSolcreController.listaAdjuntos}"
+					var="adj" id="dtlinksArchivos">
+					<p:column headerText="Archivo">
+						<p:commandLink ajax="false" target="_blank"
+							action="#{cxcProDetSolcreController.verAdjunto(adj)}">
+							<h:outputText value="#{adj}"
+								style="text-decoration: underline; color: blue;"></h:outputText>
+						</p:commandLink>
+
+					</p:column>
+					<p:column headerText="Eliminar" width="40">
+						<p:commandButton icon="fa fa-minus" title="Quitar Archivo"
+							styleClass="red-btn"
+							action="#{cxcProDetSolcreController.quitarArchivo(adj)}"
+							update="form:tabView:dtlinksArchivos">
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			        		</p:column>
+			        		
+			        			<p:column colspan="3">
+			<p:fileUpload
+					fileUploadListener="#{cxcProDetSolcreController.cargarArchivo}"
+					mode="advanced" dragDropSupport="true" auto="true"
+					update="form:tabView:dtlinksArchivos" uploadLabel="Subir Archivo"
+					cancelLabel="Cancelar" label="Agregar" fileLimit="7"
+					fileLimitMessage="Puede subir hasta 7 archivos" onstart="PF('statusDialog').show()"
+							oncomplete="PF('statusDialog').hide()"
+							onerror="PF('statusDialog').hide()">
+				</p:fileUpload> 
+				</p:column>
+			        	</p:row>
+			        	
+			        	
+			        	<p:row>
+			        		<p:column>
+			        			<p:outputLabel value="Comentario" style="font-weight:bold;" />
+			        		</p:column>
+			        		<p:column colspan="10">
+			        			<p:fieldset  style="margin-bottom:20px" id="fsComentario">
+			        				<p:panelGrid columns="2" style="gridSinBordes">
+			        					<p:inputTextarea id="itaComentario" rendered="#{cxcProDetSolcreController.cotizacionSeleccionada!=null}"
+											value="#{cxcProDetSolcreController.cotizacionSeleccionada.comentarioAprob}"
+											cols="100" rows="5"
+											/>
+										<p:panelGrid columns="1" style="gridSinBordes">
+											<p:panelGrid columns="2" style="gridSinBordes">
+												<p:outputLabel value="Enviar SMS?" style="font-weight:bold;" />
+												<p:selectBooleanCheckbox value="#{cxcProDetSolcreController.enviarSms}" />
+											</p:panelGrid>
+											<p:commandButton title="Guardar Cotizaci&oacute;n" value="Guardar" icon="ui-icon ui-icon-save" 
+							            	action="#{cxcProDetSolcreController.aprobarCotizacion}" 
+							            	disabled="#{!cxcProDetSolcreController.activarGuardar}"
+							            	update=":form" >
+							            </p:commandButton>
+										</p:panelGrid>
+			        				</p:panelGrid>
+							    </p:fieldset>
+			        		</p:column>
+			        	</p:row>
+		        	</p:panelGrid>
+		        </p:tab>
+		    </p:tabView>
+		</p:panel>
+	</h:form>
+</body> 
+</html>

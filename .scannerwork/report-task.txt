@@ -1,0 +1,6 @@
+projectKey=mac-stev1996_Aplicativo_Java_c7e97964-ff9c-489f-b145-aa03bc730586
+serverUrl=http://localhost:9002
+serverVersion=26.8.0.126808
+dashboardUrl=http://localhost:9002/dashboard?id=mac-stev1996_Aplicativo_Java_c7e97964-ff9c-489f-b145-aa03bc730586
+ceTaskId=1c4fb063-cac9-4568-9530-1fdfe7ac9266
+ceTaskUrl=http://localhost:9002/api/ce/task?id=1c4fb063-cac9-4568-9530-1fdfe7ac9266

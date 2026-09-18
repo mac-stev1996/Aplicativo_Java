@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cxcDiariosADetallePagos" pageWidth="100" pageHeight="802" columnWidth="100" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="ee1f736a-a296-4017-81a8-abb5f74c04a8">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_NO_CIA" class="java.lang.String"/>
+	<parameter name="P_NO_DOCU" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[Select sum(nvl(interes,0))
+from arccrd
+where no_cia       = $P{P_NO_CIA}
+and  no_docu      = $P{P_NO_DOCU}]]>
+	</queryString>
+	<field name="SUM(NVL(INTERES,0))" class="java.math.BigDecimal"/>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="100" height="15" uuid="38dc9b87-c8f7-4177-855b-b6b5d89d4c91"/>
+				<textElement textAlignment="Right" verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA[$F{SUM(NVL(INTERES,0))}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

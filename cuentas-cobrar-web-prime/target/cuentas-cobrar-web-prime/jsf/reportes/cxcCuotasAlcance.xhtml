@@ -1,0 +1,163 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Reporte Coutas de Alcance
+	</ui:define>
+	<ui:define name="content">
+		<h:form id="form">
+			<p:messages id="messages" showDetail="true" autoUpdate="true"
+				closable="true" showSummary="true" />
+
+			<div align="center">
+				<p:panelGrid id="pgBusquedaGen" style="width: 50%;" columns="1" columnClasses="ui-grid-col-12" >
+					<p:panel>
+						<h:panelGrid columns="2" width="100%" columnClasses="ui-grid-col-4,ui-grid-col-8">
+							
+							<p:outputLabel value="Fecha factura Desde:" />
+							<p:calendar locale="es" navigator="true" 
+								autocomplete="off" placeholder="dd/MM/yyyy" pattern="dd/MM/yyyy"
+								value="#{cxcCuotasAlcanceController.fechaDesde}">
+								<p:ajax event="dateSelect" process="@this" partialSubmit="true" />
+							</p:calendar>
+		
+							<p:outputLabel value="Fecha factura Hasta:" />
+							<p:calendar locale="es" navigator="true" 
+								autocomplete="off" placeholder="dd/MM/yyyy" pattern="dd/MM/yyyy"
+								value="#{cxcCuotasAlcanceController.fechaHasta}">
+								<p:ajax event="dateSelect" process="@this" partialSubmit="true" />
+							</p:calendar>		
+		
+							<p:outputLabel value="Agencia:" />
+							<p:selectOneMenu id="idConce" autoWidth="false"
+								value="#{cxcCuotasAlcanceController.agencia}" 
+								filterMatchMode="contains" filter="true">
+								<f:selectItem itemLabel="Todos" noSelectionOption="true"/>
+								<f:selectItems value="#{cxcCuotasAlcanceController.agencias}"
+									var="ag" itemLabel="#{ag.nombre}"
+									itemValue="#{ag.agenciaPK.codigo}" />
+								<p:ajax event="change" process="@this" partialSubmit="true" />
+							</p:selectOneMenu>
+							
+							<p:commandLink id="clienteCommandLink" value="Cédula:"
+								oncomplete="PF('modalCLientes').show();" update="modalCLientes"
+								action="#{cxcCuotasAlcanceController.ejecutarConsultaClientes}">
+							</p:commandLink>
+							<p:inputText id="cedulaB" value="#{cxcCuotasAlcanceController.cliente.cedula}" maxlength="15">
+								<p:ajax event="change"
+									listener="#{cxcCuotasAlcanceController.consultaCliente}"
+									update="form:pgBusquedaGen"/>
+							</p:inputText>
+							<p:outputLabel value="Nombre:"/>
+							<p:outputLabel value="#{cxcCuotasAlcanceController.cliente.nombre}"/>
+							
+							<p:outputLabel value="Tipo financiamiento:" />
+							<p:selectCheckboxMenu label="Tipo financiamiento" 
+								autoWidth="false" style="width: 100%;"
+								filter="true" filterMatchMode="contains"
+								value="#{cxcCuotasAlcanceController.tiposFinanciamientoB}" >
+								<f:selectItems value="#{cxcCuotasAlcanceController.tipoFinanciamientoList}"
+									var="tf" itemLabel="#{tf.arcctfPK.tipo} - #{tf.entidad}"
+									itemValue="#{tf.arcctfPK.tipo}" />
+								<p:ajax event="change" process="@this" partialSubmit="true" />
+							</p:selectCheckboxMenu>
+							
+							<p:outputLabel value="Chasis:"/>
+							<p:inputText value="#{cxcCuotasAlcanceController.chasis}" maxlength="30">								
+								<p:ajax event="change" process="@this" partialSubmit="true" />
+							</p:inputText>
+							
+							<p:outputLabel value="Reporte:"/>
+							<p:selectOneRadio value="#{cxcCuotasAlcanceController.sinDetalle}">
+					            <f:selectItem itemLabel="Sin Detalle" itemValue="true"/>
+					            <f:selectItem itemLabel="Con Detalle" itemValue="false"/>
+					            <p:ajax event="change" process="@this" partialSubmit="true" />
+					        </p:selectOneRadio>
+							
+						</h:panelGrid>
+					</p:panel>
+
+					
+					<h:panelGrid columns="2" columnClasses="ui-grid-col-6,ui-grid-col-6" width="100%">
+						<h:commandLink target="_blank"
+							action="#{cxcCuotasAlcanceController.report}">
+							<h:graphicImage value="/common/imgs/reports/excel.png"
+								style="border:none;align:center;" title="Excel" alt="Excel"
+								width="25" height="25" />
+							<f:param name="format" value="excel" />
+						</h:commandLink>
+						<h:commandLink target="_blank"
+							action="#{cxcCuotasAlcanceController.report}">
+							<h:graphicImage value="/common/imgs/reports/adobe.png"
+								style="border:none" title="Adobe" alt="Adobe" width="25"
+								height="25" />
+							<f:param name="format" value="pdf" />
+						</h:commandLink>
+	
+						<h:outputText value="Excel" styleClass="normal" />
+						<h:outputText value="Pdf" styleClass="normal" />
+					</h:panelGrid>
+				</p:panelGrid>
+								
+
+			</div>
+
+		</h:form>
+		
+		<p:dialog header="Clientes" widgetVar="modalCLientes" id="modalCLientes" modal="true"
+			showEffect="fade" hideEffect="fade" resizable="true" width="600"
+			height="300" position="center center" closeOnEscape="true" appendTo="@(body)">
+			<h:form id="frmCliente">
+				<p:panelGrid columns="5" layout="grid">
+					<p:outputLabel value="Cedula:" />
+					<p:inputText id="clienteIdCC"
+						value="#{cxcCuotasAlcanceController.cedulaClienteConsulta}"
+						size="10" maxlength="15"/>
+	
+					<p:outputLabel value="Nombre:" />
+					<p:inputText id="idNombreClieC" maxlength="200"
+						value="#{cxcCuotasAlcanceController.nombreClienteConsulta}" />
+	
+					<p:commandButton id="clienteCommandink1" icon="ui-icon-search" update="carTable"
+						action="#{cxcCuotasAlcanceController.ejecutarConsultaClientes}" />
+				</p:panelGrid>	
+	
+				<p:dataTable var="item"				
+					value="#{cxcCuotasAlcanceController.lazyModel}"
+					widgetVar="idTableGeneral" paginator="true" rows="25" lazy="true"
+					rowIndexVar="var" scrollWidth="100%" scrollable="true"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+					rowsPerPageTemplate="25,50" id="carTable"
+					paginatorPosition="bottom" style="width:100%;">
+
+					<p:column headerText="No" width="5%">
+						<p:outputLabel value="#{var + 1}" />
+					</p:column>
+					<p:column headerText="Codigo" width="15%">
+						<p:commandLink id="viClieCommandLink"
+							value="#{item.clientePK.noCliente}"
+							action="#{cxcCuotasAlcanceController.seleccionarCliente(item)}"
+							oncomplete="PF('modalCLientes').hide();"
+							partialSubmit="true"
+							update=":#{p:component('pgBusquedaGen')}"
+							process="@this">							
+						</p:commandLink>
+					</p:column>
+					<p:column headerText="Cedula" width="30%">
+						<p:outputLabel value="#{item.cedula}" />
+					</p:column>
+					<p:column headerText="Nombres/Apellidos " width="50%" styleClass="txtL">
+						<p:outputLabel value="#{item.nombre}" />
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+
+</ui:composition>

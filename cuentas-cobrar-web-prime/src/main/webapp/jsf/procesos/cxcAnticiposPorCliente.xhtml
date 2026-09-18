@@ -1,0 +1,100 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	template="/jsf/templates/bodyTemplate.xhtml">
+	<ui:define name="title">
+		GENERAR SOLICITUD DEVOLUCION DE ANTICIPO   
+</ui:define>
+	<ui:define name="buttons">
+		<h:form id="frmButtons">
+			<p:commandButton icon="fa fa-undo" styleClass="deep-orange-btn"
+				actionListener="#{cxcSolicitudDevAnticipoController.limpiarDatos}"
+				title="Limpiar datos" />
+				<p:commandButton styleClass="deep-blue-btn" id="genDev" value="Gen. Devolucion"
+				actionListener="#{cxcSolicitudDevAnticipoController.limpiarDatos}"
+				title="Gen. Devolucion" />
+		</h:form>
+	</ui:define>
+	<ui:define name="content">
+		<h:form id="idForm">
+			<p:panel>
+				<p:panelGrid id="panelPrincipal" columns="4">
+					<p:commandLink value="Cliente:" style="font-weight: bold;"
+						oncomplete="PF('dlgClientes').show()" update=":frmClientes" />
+					<p:inputText value="#{cxcSolicitudDevAnticipoController.pCedula}"
+						readonly="true" />
+					<p:inputText value="#{cxcSolicitudDevAnticipoController.pNombres}"
+						size="70" readonly="true" />
+					<p:commandButton styleClass="deep-blue-btn" title="Buscar"
+						value="Buscar" icon="fa fa-search" immediate="true"
+						actionListener="#{cxcSolicitudDevAnticipoController.consultarSolicitudesIngresadas}"
+						update=":idForm" />
+				</p:panelGrid>
+			</p:panel>
+			<p:panel style="width : 1450px;">
+				<p:tab>
+					<p:dataTable id="tabDatosPrincipales" title="" scrollable="true"
+						value="#{cxcSolicitudDevAnticipoController.listaSolicitudesIngresadas}"
+						var="ref" styleClass="table" sortBy="#{6}" rowSelectMode="none"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+						paginator="true" rows="20" rowsPerPageTemplate="20,30,40"
+						selectionPageOnly="false" paginatorPosition="bottom"
+						emptyMessage="No Existen Registros">
+						<f:facet name="header">
+				           Solicitudes de Devolucion de Credito Por Agencia
+				        </f:facet>
+						<p:column headerText="Cedula" width="40%" style="text-align:left"
+							filterMatchMode="contains">
+							<h:outputText value="#{ref[1]}" />
+						</p:column>
+					</p:dataTable>
+				</p:tab>
+			</p:panel>
+		</h:form>
+		<!-- dialog de clientes -->
+		<p:dialog header="Clientes..." widgetVar="dlgClientes" modal="true"
+			height="380" width="600" style="position:fixed" showEffect="slide"
+			hideEffect="slide">
+			<h:form id="frmClientes">
+				<p:panel>
+					<p:panelGrid columns="3" styleClass="w100"
+						columnClasses="w40, w40, w10">
+						<p:inputText value="#{cxcSolicitudDevAnticipoController.pCedula}"
+							size="10" title="Cedula" placeholder="CEDULA" style="width: 80%;" />
+						<p:inputText value="#{cxcSolicitudDevAnticipoController.pNombres}"
+							styleClass="inputUpper" placeholder="APELLIDOS"
+							onkeyup="mayus(this)" style="width: 90%;" />
+						<p:commandButton title="Consultar Clientes"
+							actionListener="#{cxcSolicitudDevAnticipoController.searchClientes}"
+							icon="ui-icon-search" update=":#{p:component('idTableClientes')}"
+							partialSubmit="true" />
+					</p:panelGrid>
+					<p:spacer height="10" />
+					<p:dataTable id="idTableClientes" var="item"
+						value="#{cxcSolicitudDevAnticipoController.clienteAnticipoList}"
+						scrollable="auto" scrollHeight="250" paginator="true" rows="8"
+						paginatorPosition="bottom" emptyMessage="No existen datos"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}">
+
+						<f:facet name="header">Listado de Clientes</f:facet>
+
+						<p:column headerText="Cedula" style="width:80px">
+							<p:commandLink value="#{item.cedula}"
+								actionListener="#{cxcSolicitudDevAnticipoController.seleccionarClienteFacturar(item)}"
+								oncomplete="PF('dlgClientes').hide();" update=":idForm" />
+						</p:column>
+						<p:column headerText="Nombre" style="width:250px">
+							<h:outputText value="#{item.nombre}" />
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

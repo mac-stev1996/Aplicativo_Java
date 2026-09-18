@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+	</f:facet>
+	<title>Tipo Factor Riesgo</title>
+	<h:outputScript name="js/layout.js" library="serenity-layout" />
+	<h:outputScript name="js/ripple.js" library="serenity-layout" />
+	<style type="text/css">
+.center {
+	margin: auto;
+	width: 50%;
+	padding: 10px;
+}
+</style>
+</h:head>
+<h:body>
+
+
+	<h:form id="form">
+		<p:growl id="messages" globalOnly="true" autoUpdate="true"
+			widgetVar="groMessages" showDetail="true" />
+
+		<p:toolbar>
+			<f:facet name="left">
+				<p:outputLabel value="Tipo Factor de Riesgo"></p:outputLabel>
+			</f:facet>
+
+			<f:facet name="right">
+				<p:commandButton value="Nuevo Tipo" style="float: right;"
+					icon="fa fa-plus-circle" styleClass="boton" process="@this"
+					partialSubmit="true" oncomplete="PF('dlgNewTipoFactorRiesgo').show();"
+					update=":frmNewCmlTipoFactorRiesgo"
+					action="#{cmlTipoFactorRiesgoController.nuevoTipoFactorRiesgo}" />
+			</f:facet>
+		</p:toolbar>
+
+
+		<p:panel id="panelTablas">
+
+            <p:dataTable id="tablaDetalle" var="item"
+				value="#{cmlTipoFactorRiesgoController.tipoFactorRiesgoLst}"
+				paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+				paginator="true" rows="10" rowsPerPageTemplate="20,30,40"
+				paginatorPosition="bottom" emptyMessage="No existen registros" rowIndexVar="row">
+
+				<p:column width="5%" headerText="N°">
+					<p:commandLink value="#{row+1}" actionListener="#{cmlTipoFactorRiesgoController.editarTipoFactorRiesgo(item)}" update=":frmNewCmlTipoFactorRiesgo"/>
+				</p:column>
+
+				<p:column width="5%"  headerText="Sec.">
+					<h:outputText
+						value="#{item.id.codigo}" />
+				</p:column>
+
+				<p:column headerText="Tipo Factor Riesgo" filterBy="#{item.descripcion}" filterMatchMode="contains">
+					<h:outputText
+						value="#{item.descripcion}" />
+				</p:column>
+				
+				<p:column width="5%"  headerText="Estado">
+					<h:outputText
+						value="#{item.estado}" />
+				</p:column>
+
+				<p:column width="6%" headerText="Inactivar">
+					<p:commandButton icon="fa fa-remove" title="Inactivar" update="form"
+						actionListener="#{cmlTipoFactorRiesgoController.inactivarTipoFactorRiesgo(item)}"
+						onclick="if (!confirm('¿Esta seguro que desea inactivar el tipo?')){return false;}" />
+				</p:column>
+				
+				
+			</p:dataTable>
+
+		</p:panel>
+	</h:form>
+
+	<p:dialog id="dlgNewTipoFactorRiesgo"	widgetVar="dlgNewTipoFactorRiesgo"
+		position="center,center"  responsive="true"  width="60%" height="60%"
+	    resizable="true" modal="true" appendTo="@(body)" closable="true"
+		closeOnEscape="true" header="Tipo Factor Riesgo">
+
+		<h:form id="frmNewCmlTipoFactorRiesgo">
+
+			<h:panelGrid id="detalleClientePG" columns="4">
+			
+				<p:outputLabel style="font-size: 12px; font-weight: bold;"
+					value="Tipo: " />
+		        <p:inputText value="#{cmlTipoFactorRiesgoController.tipoFactorRiesgoSel.descripcion}" />
+		        
+		        <p:outputLabel style="font-size: 12px; font-weight: bold;"
+					value="Tabla Parametro: " />
+		         <p:selectOneMenu style="float:left;" value="#{cmlTipoFactorRiesgoController.tipoFactorRiesgoSel.tablaParametro}" >
+					<f:selectItem itemLabel="CML_ACTIVIDAD_ECONOMICA" itemValue="CML_ACTIVIDAD_ECONOMICA" />
+					<f:selectItem itemLabel="CML_AGENCIA" itemValue="CML_AGENCIA" />
+					<f:selectItem itemLabel="CML_CUMPLIMIENTO_OBLIGACIONES" itemValue="CML_CUMPLIMIENTO_OBLIGACIONES" />
+					<f:selectItem itemLabel="CML_INGRESO_DECLARADO_PJ" itemValue="CML_INGRESO_DECLARADO_PJ" />
+					<f:selectItem itemLabel="CML_INGRESO_DECLARADO_PN" itemValue="CML_INGRESO_DECLARADO_PN" />
+					<f:selectItem itemLabel="CML_LINEA_NEGOCIO" itemValue="CML_LINEA_NEGOCIO" />
+					<f:selectItem itemLabel="CML_LISTAS_PO" itemValue="CML_LISTAS_PO" />
+					<f:selectItem itemLabel="CML_MEDIO_ATENCION" itemValue="CML_MEDIO_ATENCION" />
+					<f:selectItem itemLabel="CML_MEDIO_TRANSACCIONAL" itemValue="CML_MEDIO_TRANSACCIONAL" />
+					<f:selectItem itemLabel="CML_NACIONALIDAD" itemValue="CML_NACIONALIDAD" />
+					<f:selectItem itemLabel="CML_ORIGEN_FONDOS" itemValue="CML_ORIGEN_FONDOS" />
+					<f:selectItem itemLabel="CML_PAIS" itemValue="CML_PAIS" />
+					<f:selectItem itemLabel="CML_PARENTESCO" itemValue="CML_PARENTESCO" />
+					<f:selectItem itemLabel="CML_PEPS" itemValue="CML_PEPS" />
+					<f:selectItem itemLabel="CML_PROVINCIA" itemValue="CML_PROVINCIA" />
+					<f:selectItem itemLabel="CML_REPUTACION_REPRESENTANTE" itemValue="CML_REPUTACION_REPRESENTANTE" />
+					<f:selectItem itemLabel="CML_RANGOS_EDAD" itemValue="CML_RANGOS_EDAD" />
+					<f:selectItem itemLabel="CML_RANGOS_MONTO_TRANSACCION" itemValue="CML_RANGOS_MONTO_TRANSACCION" />
+					<f:selectItem itemLabel="CML_TIPO_CLIENTE" itemValue="CML_TIPO_CLIENTE" />
+					<f:selectItem itemLabel="CML_TITULAR_CUENTA" itemValue="CML_TITULAR_CUENTA" />
+					
+			</p:selectOneMenu>
+		        
+		        <p:outputLabel style="font-size: 12px; font-weight: bold;"
+					value="Campo Valor: " />
+		        <p:selectOneMenu style="float:left;" value="#{cmlTipoFactorRiesgoController.tipoFactorRiesgoSel.campoValor}">
+					<f:selectItem itemLabel="Seleccione" itemValue="" />
+					<f:selectItem itemLabel="ACTIVIDAD" itemValue="ACTIVIDAD" />
+					<f:selectItem itemLabel="AGENCIA" itemValue="AGENCIA" />
+					<f:selectItem itemLabel="ANTIGUEDAD" itemValue="ANTIGUEDAD" />
+					<f:selectItem itemLabel="CANTON" itemValue="CANTON" />
+					<f:selectItem itemLabel="CUMPLIMIENTO_OBLIGACIONES" itemValue="CUMPLIMIENTO_OBLIGACIONES" />
+					<f:selectItem itemLabel="DEPENDIENTES" itemValue="DEPENDIENTES" />
+					<f:selectItem itemLabel="DESTINO_FONDOS_EMPRESA" itemValue="DESTINO_FONDOS_EMPRESA" />
+					<f:selectItem itemLabel="EDAD" itemValue="EDAD" />
+					<f:selectItem itemLabel="ESTADO" itemValue="ESTADO" />
+					<f:selectItem itemLabel="ESTADO_CIVIL" itemValue="ESTADO_CIVIL" />
+					<f:selectItem itemLabel="FORMA_PAGO" itemValue="FORMA_PAGO" />
+					<f:selectItem itemLabel="INGRESOS" itemValue="INGRESOS" />
+					<f:selectItem itemLabel="LINEA_NEGOCIO" itemValue="LINEA_NEGOCIO" />
+					<f:selectItem itemLabel="LUGAR_CONSTITUCION" itemValue="LUGAR_CONSTITUCION" />
+					<f:selectItem itemLabel="MEDIO_ATENCION" itemValue="MEDIO_ATENCION" />
+					<f:selectItem itemLabel="NACIONALIDAD" itemValue="NACIONALIDAD" />
+					<f:selectItem itemLabel="NACIONALIDAD_CONYUGE" itemValue="NACIONALIDAD_CONYUGE" />
+					<f:selectItem itemLabel="NIVEL_ESTUDIO" itemValue="NIVEL_ESTUDIO" />
+					<f:selectItem itemLabel="OBSERVADO" itemValue="OBSERVADO" />
+					<f:selectItem itemLabel="ORIGEN_FONDOS" itemValue="ORIGEN_FONDOS" />
+					<f:selectItem itemLabel="ORIGEN_FONDOS_EMPRESA" itemValue="ORIGEN_FONDOS_EMPRESA" />
+					<f:selectItem itemLabel="PAIS" itemValue="PAIS" />
+					<f:selectItem itemLabel="PARROQUIA" itemValue="PARROQUIA" />
+					<f:selectItem itemLabel="PEP" itemValue="PEP" />
+					<f:selectItem itemLabel="PROPIETARIO_REFERENCIA" itemValue="PROPIETARIO_REFERENCIA" />
+					<f:selectItem itemLabel="PROPIETARIO_TELEFONO" itemValue="PROPIETARIO_TELEFONO" />
+					<f:selectItem itemLabel="PROPIETARIO_VIVIENDA" itemValue="PROPIETARIO_VIVIENDA" />
+					<f:selectItem itemLabel="PROVINCIA" itemValue="PROVINCIA" />
+					<f:selectItem itemLabel="REPUTACION_REPRESENTANTE" itemValue="REPUTACION_REPRESENTANTE" />
+					<f:selectItem itemLabel="SEPARACION_BIENES" itemValue="SEPARACION_BIENES" />
+					<f:selectItem itemLabel="SEXO" itemValue="SEXO" />
+					<f:selectItem itemLabel="SUCURSALES" itemValue="SUCURSALES" />
+					<f:selectItem itemLabel="TIEMPO_RESIDENCIA" itemValue="TIEMPO_RESIDENCIA" />
+					<f:selectItem itemLabel="TIPO_CLIENTE" itemValue="TIPO_CLIENTE" />
+					<f:selectItem itemLabel="TIPO_IDENTIFICACION" itemValue="TIPO_IDENTIFICACION" />
+					<f:selectItem itemLabel="TIPO_LOCAL" itemValue="TIPO_LOCAL" />
+					<f:selectItem itemLabel="TIPO_VIVIENDA" itemValue="TIPO_VIVIENDA" />
+					<f:selectItem itemLabel="TITULAR_CUENTA" itemValue="TITULAR_CUENTA" />
+					<f:selectItem itemLabel="VALOR" itemValue="VALOR" />
+					
+			</p:selectOneMenu>
+		        
+		        
+		        <p:outputLabel style="float:right;font-weight:bold;"
+				value="Estado" />
+				<p:selectOneMenu style="float:left;"
+					value="#{cmlTipoFactorRiesgoController.tipoFactorRiesgoSel.estado}">
+					<f:selectItem itemLabel="Seleccione" itemValue="" />
+					<f:selectItem itemLabel="Activo" itemValue="A" />
+					<f:selectItem itemLabel="Inactivo" itemValue="I" />
+				</p:selectOneMenu>
+			
+			
+				<p:commandButton value="Guardar" icon="fa fa-floppy-o"
+				styleClass="boton" process="@this, frmNewCmlTipoFactorRiesgo"
+				partialSubmit="true" update=":form"
+				action="#{cmlTipoFactorRiesgoController.guardar}" />
+
+				<p:commandButton value="Cerrar" icon="fa fa-close"
+				styleClass="boton" process="@this, frmNewCmlTipoFactorRiesgo"
+				partialSubmit="true" update=":form"
+				onclick="PF('dlgNewTipoFactorRiesgo').hide();" />
+
+			</h:panelGrid>
+
+		</h:form>
+	</p:dialog>
+
+	<h:outputStylesheet name="css/layout-lightblue.css"
+		library="serenity-layout" />
+
+</h:body>
+</html>

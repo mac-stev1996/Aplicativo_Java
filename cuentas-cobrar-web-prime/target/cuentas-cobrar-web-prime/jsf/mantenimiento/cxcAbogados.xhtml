@@ -1,0 +1,145 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Cuentas por Cobrar - Abogados
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmButtons">
+			<p:commandButton title="Nuevo" partialSubmit="true"
+				icon="fa fa-file-o" process="@this"
+				style="margin-top: 0px !important; float:right;"
+				styleClass="green-btn" oncomplete="PF('dlgNuevo').show();"
+				update="@this, :dlgNuevo" />
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+		<style>
+.w25 {
+	width: 25%;
+}
+</style>
+		<script type="text/javascript">
+		function mayus(e) {
+		    e.value = e.value.toUpperCase();
+		}
+	
+	</script>
+		<h:form id="idForm">
+
+			<div class="ui-g dashboard">
+				<div class="ui-g-12 ui-fluid contact-form">
+					<div class="ui-g-12">
+						<p:dataTable id="tblAbogados" widgetVar="tblAbogados"
+							emptyMessage="No existen registros"
+							value="#{cxcAbogadoController.listadoAbogado}" var="abogado"
+							rowKey="#{abogado.id}" rowIndexVar="var" paginator="true"
+							paginatorAlwaysVisible="false" editable="true" editMode="cell"
+							filterDelay="1000" rows="10" paginatorPosition="bottom"
+							selection="#{cxcAbogadoController.cxcAbogadoSelected}"
+							paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+
+
+							<p:ajax event="cellEdit" partialSubmit="true" process="@this"
+								listener="#{cxcAbogadoController.actualizar(abogado)}"
+								update="@this, tblAbogados" global="false" />
+
+
+							<p:column headerText="Codigo" width="10%"
+								filterBy="#{abogado.id.codigo}">
+								<p:outputLabel value="#{abogado.id.codigo}" />
+							</p:column>
+
+							<p:column headerText="Nombre" width="40%"
+								filterBy="#{abogado.nombre}">
+								<p:cellEditor>
+									<f:facet name="output">
+										<p:outputLabel value="#{abogado.nombre}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText value="#{abogado.nombre}"></p:inputText>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+							<p:column headerText="Estudio Juridico" width="40%"
+								filterBy="#{abogado.consultorioJuridico}">
+								<p:cellEditor>
+									<f:facet name="output">
+										<p:outputLabel value="#{abogado.consultorioJuridico}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText value="#{abogado.consultorioJuridico}"></p:inputText>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+
+							<p:column width="5%">
+								<p:commandButton title="Eliminar" partialSubmit="true"
+									icon="fa fa-trash" process="@this"
+									style="margin-top: 0px !important" styleClass="red-btn"
+									actionListener="#{cxcAbogadoController.eliminar(abogado)}"
+									update="tblAbogados">
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+					</div>
+				</div>
+			</div>
+
+		</h:form>
+		<p:dialog widgetVar="dlgNuevo" id="dlgNuevo"
+			header="Nuevo Tipo Cliente" resizable="true" modal="true"
+			closable="true" appendTo="@(body)" width="570" height="400"
+			closeOnEscape="true">
+			<h:form id="idFrmNuevo">
+				<div class="ui-g dashboard">
+					<div class="ui-g-18 ui-fluid contact-form">
+
+						<div class="ui-g-18">
+							<div class="ui-g-3">
+								<p:outputLabel value="Codigo: " style="width:100%" />
+							</div>
+							<div class="ui-g-3">
+								<p:inputText
+									value="#{cxcAbogadoController.cxcAbogadoNuevo.id.codigo}"
+									onkeyup="mayus(this)" maxlength="2" autocomplete="off">
+								</p:inputText>
+							</div>
+							<div class="ui-g-3">
+								<p:outputLabel value="Nombre: " style="width:100%" />
+
+							</div>
+							<div class="ui-g-3">
+								<p:inputText
+									value="#{cxcAbogadoController.cxcAbogadoNuevo.nombre}"
+									style="width:100%" onkeyup="mayus(this)" autocomplete="off"></p:inputText>
+							</div>
+							<div class="ui-g-3">
+								<p:outputLabel value="Estudio Juridico: " style="width:100%" />
+							</div>
+							<div class="ui-g-3">
+								<p:inputText
+									value="#{cxcAbogadoController.cxcAbogadoNuevo.consultorioJuridico}"
+									style="width:100%" onkeyup="mayus(this)" autocomplete="off"></p:inputText>
+							</div>
+						</div>
+					</div>
+				</div>
+				<br />
+				<center>
+					<p:commandButton value="Grabar" partialSubmit="true"
+						process="@this, dlgNuevo" action="#{cxcAbogadoController.grabar}"
+						oncomplete="PF('dlgNuevo').hide();" update=":idForm"></p:commandButton>
+				</center>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+
+</ui:composition>

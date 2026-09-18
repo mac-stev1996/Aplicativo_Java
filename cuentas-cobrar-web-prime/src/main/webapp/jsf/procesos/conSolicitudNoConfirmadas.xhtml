@@ -1,0 +1,470 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Solicitudes Pendientes Confirmación Bancos
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmButtons"></h:form>
+	</ui:define>
+
+	<ui:define name="content">
+		<style type="text/css">
+body {
+	font-size: 11px !important;
+}
+
+body .ui-datatable.ui-datatable-scrollable thead tr th {
+	font-size: 11px !important;
+	padding: 0px 2px;
+}
+
+body .ui-datatable tbody tr td {
+	font-size: 10px !important;
+	padding: 2px 3px;
+}
+
+body .ui-panelgrid .ui-panelgrid-cell {
+	padding: 4px 7px;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+	background-color: #4aaff7 !important;
+}
+
+.ui-dialog .ui-dialog-content {
+	border: 1px solid #d8d8d8 !important;
+}
+</style>
+		<h:form id="idForm" enctype="multipart/form-data">
+			<p:growl id="idGrowl" showDetail="true" life="6000" autoUpdate="true"></p:growl>
+			<p:messages id="messages" showDetail="true" autoUpdate="true"
+				closable="true" />
+
+			<p:panelGrid columns="9" id="pgBusqueda" width="100%" layout="grid">
+				<p:outputLabel for="fechaDesdeB" value="Fecha Doc. desde:" />
+				<p:calendar id="fechaDesdeB" navigator="true"
+					value="#{actualizaSolNoConfirmadasController.conDepositosBusqueda.fechaDesde}"
+					showOn="button" pattern="dd/MM/yyyy" style="width:100% !important">
+				</p:calendar>
+
+				<p:outputLabel for="fechaHastaB" value="Fecha Doc. hasta:" />
+				<p:calendar id="fechaHastaB" navigator="true"
+					value="#{actualizaSolNoConfirmadasController.conDepositosBusqueda.fechaHasta}"
+					showOn="button" pattern="dd/MM/yyyy" style="width:100% !important">
+				</p:calendar>
+
+				<p:outputLabel for="solicitudB" value="No. Solicitud:" />
+				<p:inputNumber id="solicitudB"
+					value="#{actualizaSolNoConfirmadasController.conDepositosBusqueda.id}"
+					decimalPlaces="0" thousandSeparator="" decimalSeparator="" size="8" />
+
+				<p:commandButton value="Buscar" icon="ui-icon-search"
+					process="@this :#{p:component('pgBusqueda')}"
+					action="#{actualizaSolNoConfirmadasController.consultaSolicitudesNoConfirmadas}"
+					update="idDtDepositosResult">
+				</p:commandButton>
+
+				<p:commandButton value="Reporte" id="printReport"
+					styleClass="green-btn" title="Generar Reporte"
+					icon="fa fa-file-excel-o" partialSubmit="true"
+					onclick="PF('idDlgGeneraReporte').show();" />
+
+				<p:commandButton value="Enviar" icon="fa fa-envelope-o"
+					styleClass="deep-orange-btn" process="@this"
+					oncomplete="PF('idDlgEnvioBanco').show();" />
+
+			</p:panelGrid>
+			<p:spacer />
+			<p:panelGrid columns="1" id="idPanelGridDatos" style="width:125%">
+				<p:dataTable id="idDtDepositosResult"
+					value="#{actualizaSolNoConfirmadasController.conDepositosLazyDataModel}"
+					lazy="true" rows="#{actualizaSolNoConfirmadasController.batchSize}"
+					var="item" emptyMessage="No hay registros" paginator="true"
+					paginatorPosition="bottom" rowsPerPageTemplate="25,50,100"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowIndexVar="index" rowKey="#{item.id}" styleClass="table"
+					scrollable="true" scrollWidth="100%" style="width:100%;"
+					editable="true" editMode="cell">
+					<f:facet name="header">
+			            Solicitudes de Confirmación de Depósitos
+			        </f:facet>
+
+					<p:column headerText="No. Sol." width="4%">
+						<h:outputLabel value="#{item.id}" />
+					</p:column>
+
+					<p:column headerText="Fecha Sol." width="5%">
+						<h:outputLabel value="#{item.fechaSolicitud}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputLabel>
+					</p:column>
+
+					<p:column headerText="Tipo Transaccion" width="7%">
+						<h:outputLabel value="#{item.nombreTipoTransaccion}" />
+					</p:column>
+
+					<p:column headerText="Identificacion" width="6%">
+						<h:outputLabel value="#{item.cedula}" />
+					</p:column>
+					<p:column headerText="Nombre" width="9%">
+						<h:outputLabel value="#{item.nombreCliente}" />
+					</p:column>
+					<p:column headerText="Banco" width="8%">
+						<h:outputLabel value="#{item.nombreBanco}" />
+					</p:column>
+					<p:column headerText="Area confirma" width="5%"
+						rendered="#{actualizaSolNoConfirmadasController.compania.noCia eq '01' 
+		     				or actualizaSolNoConfirmadasController.compania.noCia eq '08'
+		     				or actualizaSolNoConfirmadasController.compania.noCia eq '11'}">
+						<h:outputLabel value="#{item.areaConfirma}" />
+					</p:column>
+					<p:column headerText="Agencia" width="6%"
+						rendered="#{actualizaSolNoConfirmadasController.compania.noCia eq '01' 
+		     				or actualizaSolNoConfirmadasController.compania.noCia eq '08'
+		     				or actualizaSolNoConfirmadasController.compania.noCia eq '11'}">
+						<h:outputLabel value="#{item.nombreAgenciaCajero}" />
+					</p:column>
+					<p:column headerText="Fecha Doc." width="5%">
+						<h:outputText value="#{item.fechaDocumento}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="No. Documento" width="6%">
+						<h:outputText value="#{item.numeroDocumento}" />
+					</p:column>
+					<p:column headerText="Valor" width="5%" styleClass="txtR">
+						<h:outputText value="#{item.valorDocumento}">
+							<f:convertNumber pattern="#,##0.00" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Estado" width="5%">
+						<h:outputLabel
+							value="#{item.estado eq 'B'?'PEND CONF BANCOS':'N/A'}" />
+					</p:column>
+					<p:column headerText="Usuario Solicita" width="5%">
+						<h:outputLabel value="#{item.usuario}" />
+					</p:column>
+					<p:column headerText="Fecha Pendiente" width="5%">
+						<h:outputText value="#{item.fechaNoIdentificada}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Doc. Cuenta" width="4%">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{item.docEstadoCuenta}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText value="#{item.docEstadoCuenta}"
+									styleClass="contenidoCelda" label="Documento" />
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+
+					<p:column headerText="Enviar Sol." width="6%">
+						<p:commandButton icon="fa fa-check-circle-o" title="Envio Banco"
+							rendered="#{item.envioBanco eq null or item.envioBanco eq 'N'}"
+							style="width:10px;" styleClass="green-btn"
+							action="#{actualizaSolNoConfirmadasController.enviarSolicitudBanco(item)}"
+							update="idDtDepositosResult :idForm:idGrowl" />
+						<p:commandButton icon="fa fa-check-circle-o"
+							rendered="#{item.envioBanco eq 'S'}" title="Envio Banco"
+							styleClass="green-btn" disabled="true" style="width:10px;" />
+
+						<p:commandButton icon="fa fa-times-circle-o"
+							rendered="#{item.envioBanco eq null or item.envioBanco eq 'S'}"
+							title="No Enviar" style="width:10px;" styleClass="red-btn"
+							action="#{actualizaSolNoConfirmadasController.quitarEnvioBanco(item)}"
+							process="@this" update="idDtDepositosResult :idForm:idGrowl" />
+						<p:commandButton icon="fa fa-times-circle-o" styleClass="red-btn"
+							rendered="#{item.envioBanco eq 'N'}" title="No Enviar"
+							disabled="true" style="width:10px;" />
+					</p:column>
+
+					<p:column headerText="Editar" width="3%">
+						<p:commandButton icon="ui-icon-pencil" id="idBtEditar"
+							title="Editar" rendered="#{item.estado eq 'B'}"
+							action="#{actualizaSolNoConfirmadasController.editar(item)}"
+							update="idDlgEditarValores" />
+					</p:column>
+
+					<p:column headerText="Observacion" width="10%">
+						<h:outputText value="#{item.condicion}" />
+					</p:column>
+				</p:dataTable>
+			</p:panelGrid>
+		</h:form>
+
+		<p:dialog id="idDlgEditarValores" widgetVar="dlgEditarValores"
+			header="Registro Solicitud Pendiente Confirmacion Bancos de la Solicitud No. #{actualizaSolNoConfirmadasController.conDepositos.id}"
+			style="position:fixed" responsive="true" closeOnEscape="false"
+			modal="true" appendTo="@(body)" width="55%" height="400px">
+			<h:form id="frmValoresDeposito">
+				<p:growl id="idGrowlDialog" life="5000" showDetail="true"
+					autoUpdate="true"></p:growl>
+
+				<p:panelGrid columns="2">
+
+					<p:outputLabel value="Area confirma:"
+						rendered="#{actualizaSolNoConfirmadasController.compania.noCia eq '01' 
+							or actualizaSolNoConfirmadasController.compania.noCia eq '08'
+							or actualizaSolNoConfirmadasController.compania.noCia eq '11'}" />
+					<p:selectOneMenu
+						rendered="#{actualizaSolNoConfirmadasController.compania.noCia eq '01' 
+						or actualizaSolNoConfirmadasController.compania.noCia eq '08'
+						or actualizaSolNoConfirmadasController.compania.noCia eq '11'}"
+						value="#{actualizaSolNoConfirmadasController.conDepositos.areaConfirma}"
+						filter="true" filterMatchMode="contains" disabled="true">
+						<f:selectItem itemLabel="Seleccione un Area" itemValue=""
+							noSelectionOption="true" />
+						<f:selectItems
+							value="#{actualizaSolNoConfirmadasController.listAreas}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Banco:" />
+					<p:selectOneMenu autoWidth="false"
+						value="#{actualizaSolNoConfirmadasController.conDepositos.banco}"
+						filter="true" filterMatchMode="contains" disabled="true">
+						<f:selectItem itemLabel="Seleccione un Banco" itemValue=""
+							noSelectionOption="true" />
+						<f:selectItems
+							value="#{actualizaSolNoConfirmadasController.listMaestroCuenta}"
+							var="item" itemLabel="#{item.nomBanco}" itemValue="#{item.banco}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Tipo Transaccion:" />
+					<p:selectOneMenu id="tipoTransaccion" autoWidth="false"
+						value="#{actualizaSolNoConfirmadasController.conDepositos.tipoTransaccion}"
+						panelStyle="width:250px" disabled="true">
+						<f:selectItem itemLabel="Seleccione un Tipo de Transaccion"
+							itemValue="" noSelectionOption="true" />
+						<f:selectItems
+							value="#{actualizaSolNoConfirmadasController.listaTipoTransaccion}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Fecha de Depósito:" />
+					<p:calendar navigator="true" disabled="true"
+						value="#{actualizaSolNoConfirmadasController.conDepositos.fechaDocumento}"
+						pattern="dd-MM-yyyy">
+					</p:calendar>
+
+					<p:outputLabel value="N° Deposito/ Transferencia:" />
+					<p:inputText placeholder="NO IDENTIFICADO"
+						value="#{actualizaSolNoConfirmadasController.conDepositos.numeroDocumento}"
+						style="text-align: right" disabled="true" />
+
+					<p:outputLabel value="Valor:" />
+					<p:inputText
+						value="#{actualizaSolNoConfirmadasController.conDepositos.valorDocumento}"
+						style="text-align: right" disabled="true" />
+
+					<p:outputLabel value="Identificación:" />
+					<p:outputPanel>
+						<p:inputText id="clienteId" size="12" readonly="true"
+							requiredMessage="Debe ingresar al menos un cliente"
+							value="#{actualizaSolNoConfirmadasController.conDepositos.cedula}" />
+					</p:outputPanel>
+
+					<p:outputLabel value="Nombre completo del cliente:" />
+					<p:inputText id="nombreCliente" readonly="true" size="50"
+						value="#{actualizaSolNoConfirmadasController.conDepositos.nombreCliente}" />
+
+					<p:outputLabel value="Agencia:"
+						rendered="#{actualizaSolNoConfirmadasController.compania.noCia eq '01' 
+							or actualizaSolNoConfirmadasController.compania.noCia eq '08'
+							or actualizaSolNoConfirmadasController.compania.noCia eq '11'}" />
+					<p:selectOneMenu autoWidth="false" disabled="true"
+						rendered="#{actualizaSolNoConfirmadasController.compania.noCia eq '01' 
+					    	or actualizaSolNoConfirmadasController.compania.noCia eq '08'
+					    	or actualizaSolNoConfirmadasController.compania.noCia eq '11'}"
+						value="#{actualizaSolNoConfirmadasController.conDepositos.agenciaCajero}"
+						filter="true" filterMatchMode="contains">
+						<f:selectItem itemLabel="Seleccione una agencia" itemValue=""
+							noSelectionOption="true" />
+						<f:selectItems
+							value="#{actualizaSolNoConfirmadasController.agenciasSelectItems}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Observación Confirmación Bancos:"
+						styleClass="normal" for="txaConfirmacion" />
+					<h:panelGroup width="100%">
+						<p:inputTextarea id="txaConfirmacion" onkeyup="mayus(this)"
+							width="100%" maxlength="100" counter="sob"
+							value="#{actualizaSolNoConfirmadasController.conDepositos.observacionNoIdentificada}"
+							counterTemplate="{0} caracteres restantes." />
+						<br />
+						<h:outputText id="sob" />
+					</h:panelGroup>
+
+					<p:commandLink value="Cargar Archivo de respaldo:"
+						oncomplete="PF('dialogArchivo').show();"></p:commandLink>
+					<p:outputLabel
+						value="#{actualizaSolNoConfirmadasController.conDepositos.pathArchivoBanco}" />
+				</p:panelGrid>
+				<p:spacer />
+				<center>
+					<p:commandButton value="Guardar" icon="ui-icon-save"
+						update="idForm" id="idCommad5" widgetVar="varButtonid"
+						validateClient="true"
+						action="#{actualizaSolNoConfirmadasController.actualizar}" />
+				</center>
+
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Cargar Archivo de Respaldo"
+			widgetVar="dialogArchivo" width="600px" hideEffect="fade"
+			height="250px" resizable="true" position="center center" modal="true">
+			<h:form id="frmUploadBancos" enctype="multipart/form-data">
+				<p:fileUpload label="Archivo" update="frmValoresDeposito"
+					oncomplete="PF('dialogArchivo').hide()"
+					fileUploadListener="#{actualizaSolNoConfirmadasController.asignarArchivo}"
+					uploadLabel="Upload">
+				</p:fileUpload>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Clientes" widgetVar="modalCLientes"
+			id="modalCLientes" modal="true" showEffect="fade" hideEffect="fade"
+			resizable="true" width="600" height="300" position="center center"
+			closeOnEscape="true" appendTo="@(body)">
+			<h:form id="frmCliente">
+				<p:panelGrid columns="5" layout="grid">
+					<p:outputLabel value="Cedula:" />
+					<p:inputText id="clienteIdCC"
+						value="#{actualizaSolNoConfirmadasController.cedulaClienteConsulta}"
+						size="10" />
+
+					<p:outputLabel value="Nombre:" />
+					<p:inputText id="idNombreClieC"
+						value="#{actualizaSolNoConfirmadasController.nombreClienteConsulta}" />
+
+					<p:commandButton id="clienteCommandink1" icon="ui-icon-search"
+						update="carTable"
+						action="#{actualizaSolNoConfirmadasController.ejecutarConsultaClientes}" />
+				</p:panelGrid>
+
+				<p:dataTable var="item"
+					value="#{actualizaSolNoConfirmadasController.lazyModel}"
+					widgetVar="idTableGeneral" paginator="true" rows="25" lazy="true"
+					rowIndexVar="var" scrollWidth="100%" scrollable="true"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+					rowsPerPageTemplate="25,50" id="carTable"
+					paginatorPosition="bottom" style="width:100%;">
+
+					<p:column headerText="No" width="5%">
+						<p:outputLabel value="#{var + 1}" />
+					</p:column>
+					<p:column headerText="Codigo" width="15%">
+						<p:commandLink id="viClieCommandLink"
+							value="#{item.clientePK.noCliente}"
+							action="#{actualizaSolNoConfirmadasController.seleccionarCliente(item)}"
+							oncomplete="PF('modalCLientes').hide();" partialSubmit="true"
+							update=":#{p:component('clienteId')}, :#{p:component('nombreCliente')}"
+							process="@this">
+						</p:commandLink>
+					</p:column>
+					<p:column headerText="Cedula" width="30%">
+						<p:outputLabel value="#{item.cedula}" />
+					</p:column>
+					<p:column headerText="Nombres/Apellidos " width="50%"
+						styleClass="txtL">
+						<p:outputLabel value="#{item.nombre}" />
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+		<!-- DIALOGO GENERAR REPORTE BANCOS -->
+		<p:dialog widgetVar="idDlgGeneraReporte" modal="true" resizable="true"
+			width="400" height="150" position="center center"
+			closeOnEscape="true" appendTo="@(body)"
+			header="Generar Reporte de Requerimiento Bancos"
+			message="Para que banco desea enviar el reporte de confirmacion">
+			<h:form id="frmReporte">
+				<p:panelGrid columns="2" layout="grid">
+					<p:outputLabel value="Bancos: " styleClass="bold" />
+					<p:selectOneMenu id="cmbBancos" required="true"
+						value="#{actualizaSolNoConfirmadasController.codBanco}"
+						filter="true" filterMatchMode="contains" autoWidth="false">
+						<f:selectItem itemLabel="Seleccione un Banco" itemValue=""
+							noSelectionOption="true" />
+						<f:selectItems
+							value="#{actualizaSolNoConfirmadasController.listMaestroCuenta}"
+							var="ba" itemLabel="#{ba.nomBanco}" itemValue="#{ba.banco}" />
+					</p:selectOneMenu>
+					<p:commandButton value="Reporte" id="printReport" ajax="false"
+						title="Generar Reporte" icon="fa fa-file-excel-o"
+						partialSubmit="true"
+						action="#{actualizaSolNoConfirmadasController.reporte}"
+						onclick="form.target='_blank'" style="margin-top:0px;width:auto;"
+						styleClass="green-btn" />
+					<p:commandButton value="Cancelar" styleClass="red-btn"
+						onclick="PF('idDlgGeneraReporte').hide();" />
+				</p:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="idDlgEnvioBanco" modal="true"
+			header="Enviar Requerimiento Banco" width="600px" height="200px"
+			message="Para que banco desea enviar el reporte de confirmacion">
+			<h:form id="frmEnvio">
+				<p:panelGrid columns="2">
+					<p:outputLabel value="Bancos: " styleClass="bold" />
+					<p:selectOneMenu id="cmbBancos" required="true"
+						value="#{actualizaSolNoConfirmadasController.codBanco}"
+						filter="true" filterMatchMode="contains" autoWidth="false">
+						<f:selectItem itemLabel="Seleccione un Banco" itemValue=""
+							noSelectionOption="true" />
+						<f:selectItems
+							value="#{actualizaSolNoConfirmadasController.listMaestroCuenta}"
+							var="ba" itemLabel="#{ba.nomBanco}" itemValue="#{ba.banco}" />
+					</p:selectOneMenu>
+					<p:outputLabel value="Correo Banco:" />
+					<p:inputText placeholder="Ingrese correo del contacto"
+						id="txtMailBanco"
+						value="#{actualizaSolNoConfirmadasController.mailBanco}"
+						style="text-align: right" />
+
+					<p:commandLink value="Cargar Requerimiento:"
+						oncomplete="PF('diaArchivoReq').show();" />
+					<p:outputLabel id="nomRequerimiento"
+						value="#{actualizaSolNoConfirmadasController.fileName}" />
+				</p:panelGrid>
+				<p:spacer />
+				<center>
+					<p:commandButton value="Enviar Requerimiento" process="@this"
+						action="#{actualizaSolNoConfirmadasController.enviarRequerimientoBanco}"
+						oncomplete="PF('idDlgEnvioBanco').hide();"
+						update="#{p:component('idDtDepositosResult')} #{p:component('cmbBancos')}
+						#{p:component('txtMailBanco')}  #{p:component('nomRequerimiento')} :idForm:idGrowl" />
+					<p:commandButton value="Cancelar" styleClass="red-btn"
+						onclick="PF('idDlgEnvioBanco').hide();" />
+				</center>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Cargar Archivo de Requerimiento"
+			widgetVar="diaArchivoReq" width="600px" hideEffect="fade"
+			height="250px" resizable="true" position="center center" modal="true">
+
+			<h:form id="frmUploadReq" enctype="multipart/form-data">
+				<p:fileUpload label="Archivo"
+					oncomplete="PF('diaArchivoReq').hide()"
+					fileUploadListener="#{actualizaSolNoConfirmadasController.upload}"
+					update=":#{p:component('nomRequerimiento')}" process="@this"
+					uploadLabel="Upload" />
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

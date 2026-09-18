@@ -1,0 +1,476 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<style type="text/css">
+body {
+	font-size: 10px;
+}
+
+body .ui-toolbar {
+	padding: 5px;
+}
+
+.columAlignCenter {
+	text-align: center;
+}
+
+.columAlignRight {
+	text-align: right;
+}
+</style>
+	<script type="text/javascript">
+		//<![CDATA[
+		function setaFoco(elemento)  {
+    		var keyCode = event.keyCode ? event.keyCode : event.which ? event.which : event.charCode;
+	    	if (keyCode == 13) {
+
+        		var i;
+        		for (i = 0; i < elemento.form.elements.length; i++)
+            		if (elemento == elemento.form.elements[i])
+                		break;
+        		i = (i + 1) % elemento.form.elements.length;
+        		elemento.form.elements[i].focus();
+        		event.preventDefault();
+        		return false;
+    		}
+    		return false;
+		};
+
+		function sinSet()  {
+    		if (keyCode == 13) {
+    	    		return false;
+    		}
+		};
+		//]]>
+
+		</script>
+</h:head>
+<h:body>
+	<p:ajaxStatus onstart="PF('statusDialog').show()"
+		onsuccess="PF('statusDialog').hide()"
+		onerror="PF('statusDialog').hide()" />
+
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+		closable="false" resizable="false" showHeader="false">
+		<h:graphicImage value="/common/imgs/gifs/ajaxloadingbar.gif" />
+	</p:dialog>
+	<p:growl id="idGrowl" globalOnly="true" autoUpdate="true"
+		widgetVar="groMessages" showDetail="true" life="5000" />
+
+	<h:form id="idForm">
+		<p:toolbar id="idtoolBar">
+			<f:facet name="left">
+				<h:outputLabel style="font-size: 15px;"
+					value="CAMBIO ANTICIPO VARIOS CLIENTES" />
+			</f:facet>
+
+			<f:facet name="right">
+				<p:commandButton id="btnProcesar" value="Procesar" icon="fa fa-cog"
+					update="idForm, FrmResult"
+					rendered="#{cxcCambioAnticipoVariosClientesController.activarProceso}"
+					action="#{cxcCambioAnticipoVariosClientesController.procesar}"
+					styleClass="green-btn" process="idForm"></p:commandButton>
+
+				<p:commandButton value="Limpiar" icon="fa fa-refresh"
+					update="idForm"
+					action="#{cxcCambioAnticipoVariosClientesController.limpiar}"></p:commandButton>
+
+			</f:facet>
+
+		</p:toolbar>
+
+		<h:panelGrid columns="4">
+			<f:facet name="header">
+				<h:outputText value="Filtros de B&#250;squeda"></h:outputText>
+			</f:facet>
+
+			<h:panelGrid columns="4" id="pnlFiltros">
+
+				<p:commandLink oncomplete="PF('DlgClientes').show();"
+					value="Por Cliente: " update="FrmClientes" action="#{cxcCambioAnticipoVariosClientesController.limpiarClientes}"/>
+				<h:panelGrid columns="2">
+					<p:inputText
+						value="#{cxcCambioAnticipoVariosClientesController.clienteSeleccionado.clientePK.noCliente}"
+						style="width:60px;" readonly="true"></p:inputText>
+					<p:inputText
+						value="#{cxcCambioAnticipoVariosClientesController.clienteSeleccionado.nombre}"
+						style="width:290px;" readonly="true"></p:inputText>
+				</h:panelGrid>
+
+
+				<p:spacer width="20" height="5"></p:spacer>
+				<p:spacer width="20" height="5"></p:spacer>
+				<p:outputLabel value="Por Linea:"></p:outputLabel>
+				<p:selectOneMenu
+					value="#{cxcCambioAnticipoVariosClientesController.lineaSeleccionada}"
+					id="idCmbLineaN" filter="true">
+					<f:selectItem itemLabel="Seleccione.." />
+					<f:selectItems
+						value="#{cxcCambioAnticipoVariosClientesController.lineasAnticipos}"
+						var="ln"
+						itemLabel="#{ln.lineaNegocioPK.noLinea} : #{ln.descripcion}"
+						itemValue="#{ln.lineaNegocioPK.noLinea}"></f:selectItems>
+				</p:selectOneMenu>
+
+				<p:commandButton value="Buscar" icon="fa fa-search"
+					styleClass="orange-btn"
+					action="#{cxcCambioAnticipoVariosClientesController.buscarAnticipos}"
+					update="idForm:idTblDiarios" process="@this, idCmbLineaN"></p:commandButton>
+			</h:panelGrid>
+		</h:panelGrid>
+		<p:panel header="Anticipos del Cliente">
+			<p:dataTable id="idTblDiarios" emptyMessage="Sin Registros"
+				value="#{cxcCambioAnticipoVariosClientesController.anticiposCliente}"
+				var="item">
+
+				<p:column headerText="No DOCU" styleClass="columAlignCenter"
+					width="100">
+					<p:outputLabel value="#{item.noDocu}"></p:outputLabel>
+				</p:column>
+				<p:column headerText="Origen " styleClass="columAlignCenter"
+					width="100">
+					<p:outputLabel value="#{item.origen}"></p:outputLabel>
+				</p:column>
+				<p:column headerText="Linea Negocio " styleClass="columAlignCenter">
+					<p:outputLabel value="#{item.descripcion}"></p:outputLabel>
+				</p:column>
+
+				<p:column headerText="Fecha" styleClass="columAlignCenter"
+					width="130">
+					<p:outputLabel value="#{item.fecha}">
+						<f:convertDateTime pattern="dd-MM-yyyy" />
+					</p:outputLabel>
+
+				</p:column>
+				<p:column headerText="Centro " styleClass="columAlignCenter">
+					<p:outputLabel value="#{item.desccentro}"></p:outputLabel>
+				</p:column>
+				<p:column headerText="Ingreso " styleClass="columAlignCenter"
+					width="100">
+					<p:outputLabel value="#{item.noFisico}"></p:outputLabel>
+				</p:column>
+				<p:column headerText="Saldo " styleClass="columAlignCenter">
+					<p:outputLabel value="#{item.saldo}"></p:outputLabel>
+				</p:column>
+				<p:column headerText="Utilizar " styleClass="columAlignCenter">
+					<p:inputNumber value="#{item.valorUtilizar}"
+						maxValue="#{item.saldo}" onkeypress="setaFoco(this);" >
+						<p:ajax event="blur"
+							listener="#{cxcCambioAnticipoVariosClientesController.calcularTotal}"
+							update="idForm:PnlResult idForm:idtoolBar"></p:ajax>
+					</p:inputNumber>
+				</p:column>
+
+			</p:dataTable>
+
+			<center>
+				<p:panelGrid columns="3" id="PnlResult">
+					<h:panelGrid columns="2">
+						<p:outputLabel value="Comentario"></p:outputLabel>
+						<p:inputTextarea cols="70" rows="4"
+							value="#{cxcCambioAnticipoVariosClientesController.comentario}" onkeypress="setaFoco(this);"></p:inputTextarea>
+					</h:panelGrid>
+					<h:panelGrid columns="2">
+						<p:outputLabel value="Total Valor a Cambiar:"></p:outputLabel>
+						<p:outputLabel
+							value="#{cxcCambioAnticipoVariosClientesController.montoTotal}"></p:outputLabel>
+					</h:panelGrid>
+					<h:panelGrid columns="3" style="width:500px;">
+						<f:facet name="header">Archivos Adjuntos</f:facet>
+
+						<p:fileUpload
+							fileUploadListener="#{cxcCambioAnticipoVariosClientesController.cargarArchivo}"
+							mode="advanced" update="idForm:dtlinksArchivos"
+							uploadLabel="Subir Archivo" cancelLabel="Cancelar"
+							label="Examinar" fileLimit="3"
+							fileLimitMessage="Puede subir hasta 3 archivos" auto="true"
+							skinSimple="true" style="width:130px;height:50px;border-color: white;">
+						</p:fileUpload>
+						<p:spacer width="5" height="5"></p:spacer>
+						<p:dataTable
+							value="#{cxcCambioAnticipoVariosClientesController.listaAdjuntos}"
+							var="adj" id="dtlinksArchivos" emptyMessage="Sin archivos">
+							<p:column headerText="Archivo">
+								<p:commandLink ajax="false" target="_blank"
+									action="#{cxcCambioAnticipoVariosClientesController.verAdjunto(adj)}">
+									<h:outputText value="#{adj}"
+										style="text-decoration: underline; color: blue;"></h:outputText>
+								</p:commandLink>
+
+							</p:column>
+							<p:column headerText="Eliminar" width="30">
+								<p:commandButton icon="fa fa-minus" title="Quitar Archivo"
+									styleClass="red-btn"
+									action="#{cxcCambioAnticipoVariosClientesController.quitarArchivo(adj)}"
+									update="idForm:PnlResult">
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+					</h:panelGrid>
+				</p:panelGrid>
+			</center>
+		</p:panel>
+		<p:panel header="Clientes a Cambiar">
+			<h:panelGrid columns="1">
+				<p:commandButton value="Agregar Cliente "
+					oncomplete="PF('DlgClientesDest').show();" update="FrmClientesDes"
+					styleClass="green-btn" action="#{cxcCambioAnticipoVariosClientesController.limpiarClientes}"></p:commandButton>
+				<p:spacer width="5" height="5"></p:spacer>
+			</h:panelGrid>
+			<p:dataTable id="dtDocumentosCli"
+				value="#{cxcCambioAnticipoVariosClientesController.clientesAplica}"
+				var="cli" emptyMessage="Sin Clientes seleccionados">
+				<p:column headerText="No Cliente" width="90">
+					<h:outputText value="#{cli.primerElemento.clientePK.noCliente}" />
+				</p:column>
+				<p:column headerText="Nombre">
+					<h:outputText value="#{cli.primerElemento.nombre}" />
+				</p:column>
+				<p:column headerText="Cedula" width="150">
+					<h:outputText value="#{cli.primerElemento.cedula}" />
+				</p:column>
+				<p:column headerText="Monto" width="150">
+					<h:outputText />
+					<p:inputNumber value="#{cli.segundoElemento.primerElemento}" onkeypress="setaFoco(this)">
+						<p:ajax event="blur"
+							listener="#{cxcCambioAnticipoVariosClientesController.calcularTotalClientes}"
+							update="idForm:PnlResultD, idForm:idtoolBar"></p:ajax>
+					</p:inputNumber>
+				</p:column>
+				<p:column headerText="Aplicar CXC">
+					<p:commandButton value="Aplicar CXC"
+						oncomplete="PF('DlgDocumentos').show();"
+						action="#{cxcCambioAnticipoVariosClientesController.consultarDocumentosCliente(cli)}"
+						update="FrmDocumentos"></p:commandButton>
+				</p:column>
+				<p:column headerText="DatosTerceros">
+					<p:commandButton value="Datos Terceros" process="@this"
+						actionListener="#{cxcCambioAnticipoVariosClientesController.prepararDatosTerceros(cli)}"
+						update="idForm:dlgDatosTerceros"
+						oncomplete="PF('dlgDatosTerceros').show()" />
+				</p:column>
+				<p:column headerText="Eliminar" width="80">
+					<p:commandButton title="Eliminar" icon="fa fa-minus-circle"
+					styleClass="red-btn"
+						action="#{cxcCambioAnticipoVariosClientesController.consultarDocumentosCliente(cli)}"
+						update="idForm"></p:commandButton>
+				</p:column>
+
+			</p:dataTable>
+			<center>
+				<p:panelGrid columns="2" id="PnlResultD">
+					<h:panelGrid columns="2">
+						<p:outputLabel value="Comentario"></p:outputLabel>
+						<p:inputTextarea cols="70" 
+							value="#{cxcCambioAnticipoVariosClientesController.comentarioDestino}" onkeypress="setaFoco(this);"></p:inputTextarea>
+					</h:panelGrid>
+					<h:panelGrid columns="2">
+						<p:outputLabel value="Total Valor a Cambiar: "></p:outputLabel>
+						<p:outputLabel
+							value="#{cxcCambioAnticipoVariosClientesController.montoTotalClientes}"></p:outputLabel>
+													<p:outputLabel value="Diferencia: "></p:outputLabel>
+						<p:outputLabel
+							value="#{cxcCambioAnticipoVariosClientesController.diferencia}"></p:outputLabel>
+							
+					</h:panelGrid>
+				</p:panelGrid>
+			</center>
+		</p:panel>
+
+
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+			<p:commandButton value="Yes" type="button"
+				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+			<p:commandButton value="No" type="button"
+				styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+		</p:confirmDialog>
+		
+			<p:dialog widgetVar="dlgDatosTerceros" id="dlgDatosTerceros"
+		header="Datos Terceros" resizable="true" width="600" height="auto"
+		style="max-height: 400px; overflow-y: auto;" closable="false">
+
+		<p:panelGrid columns="2" style="width:100%"
+			columnClasses="label,value">
+
+			<p:outputLabel value="Cedula Terceros:" for="cedulaTercero" />
+			<p:inputText id="cedulaTercero" readonly="true"
+				value="#{cxcCambioAnticipoVariosClientesController.clienteAplicaSeleccionado.primerElemento.cedulaTerceros}"
+				maxlength="13"  style="width:200px; font-size:14px;" />
+
+			<p:outputLabel value="Nombres Terceros:" for="nombresTercero" />
+			<p:inputText id="nombresTercero" readonly="true"
+				value="#{cxcCambioAnticipoVariosClientesController.clienteAplicaSeleccionado.primerElemento.nombreTerceros}"
+				maxlength="100"  style="width:400px; font-size:14px;" />
+
+			<p:outputLabel value="Apellidos Terceros:" for="apellidosTercero" />
+			<p:inputText id="apellidosTercero" readonly="true"
+				value="#{cxcCambioAnticipoVariosClientesController.clienteAplicaSeleccionado.primerElemento.apellidosTerceros}"
+				maxlength="100" style="width:400px; font-size:14px;" />
+
+		</p:panelGrid>
+
+		<f:facet name="footer">
+			<center>
+				<p:commandButton value="Regresar"
+                 process="cedulaTercero nombresTercero apellidosTercero"
+                 update="idForm:dtDocumentosCli"
+                 oncomplete="PF('dlgDatosTerceros').hide()" />
+			</center>
+		</f:facet>
+
+	</p:dialog>
+		
+	</h:form>
+
+	<p:dialog widgetVar="DlgDocumentos" id="DlgDocumentos"
+		header="Documentos a Credito o Financiados" resizable="true"
+		modal="true" appendTo="@(body)" width="82%" height="300" closable="false">
+		<h:form id="FrmDocumentos">
+			<p:dataTable id="dtdocs"
+				value="#{cxcCambioAnticipoVariosClientesController.documentosPantalla}"
+				var="doc" emptyMessage="No existen registros">
+				<p:column headerText="Tipo" width="60" filterBy="#{doc.tipoDoc}">
+					<h:outputText value="#{doc.tipoDoc}" />
+				</p:column>
+				<p:column headerText="Linea" width="60" filterBy="#{doc.lineaNegocio}">
+					<h:outputText value="#{doc.lineaNegocio}" />
+				</p:column>
+				<p:column headerText="Documento" width="90" filterBy="#{doc.noFisico}">
+					<h:outputText value="#{doc.noFisico}" />
+				</p:column>
+				<p:column headerText="Saldo" width="90">
+					<h:outputText value="#{doc.saldo}" />
+				</p:column>
+				<p:column headerText="Fecha" width="90">
+					<p:outputLabel value="#{doc.fechaVence}">
+						<f:convertDateTime pattern="dd-MM-yyyy" />
+					</p:outputLabel>
+				</p:column>
+				
+				<p:column headerText="Abono" width="60">
+					<p:inputNumber value="#{doc.abono}" maxValue="#{doc.saldo}">
+						<p:ajax
+							listener="#{cxcCambioAnticipoVariosClientesController.calcularTotalDocumentos}"
+							update="FrmDocumentos"></p:ajax>
+					</p:inputNumber>
+				</p:column>
+				<p:column headerText="Total Pago" width="90">
+					<h:outputText value="#{doc.totalPago}" />
+				</p:column>
+				<p:column headerText="Letra" width="50">
+					<h:outputText value="#{doc.secuencia}" />
+				</p:column>
+			</p:dataTable>
+			<h:panelGrid columns="3">
+				<p:spacer width="50"></p:spacer>
+				<p:outputLabel value="TOTAL"></p:outputLabel>
+				<p:inputText
+					value="#{cxcCambioAnticipoVariosClientesController.totalDocumentos}"
+					readonly="true"></p:inputText>
+			</h:panelGrid>
+
+			<br> </br>
+			<center>
+				<p:commandButton value="Regresar "
+					oncomplete="PF('DlgDocumentos').hide();" rendered="#{cxcCambioAnticipoVariosClientesController.activarRegresoDocumentos}"></p:commandButton>
+			</center>
+		</h:form>
+	</p:dialog>
+
+	<p:dialog widgetVar="DlgClientesDest" id="DlgClientesDest"
+		header="Seleccione Cliente" resizable="true" modal="true"
+		closable="true" appendTo="@(body)" width="480" height="500">
+		<h:form id="FrmClientesDes">
+			<p:dataTable id="dtClientes"
+				value="#{cxcCambioAnticipoVariosClientesController.clientes}"
+				var="cliente" emptyMessage="No existen registros"
+				selectionMode="single"
+				selection="#{cxcCambioAnticipoVariosClientesController.clienteDestino}"
+				rowKey="#{cliente.clientePK}" paginator="true" rows="10" lazy="true"
+				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+				<p:column headerText="Cedula/Ruc" filterBy="#{cliente.cedula}"
+					width="90">
+					<h:outputText value="#{cliente.cedula}" />
+				</p:column>
+				<p:column headerText="Nombre" filterBy="#{cliente.nombre}"
+					filterMatchMode="startsWith">
+					<h:outputText value="#{cliente.nombre}" />
+				</p:column>
+			</p:dataTable>
+			<br> </br>
+			<center>
+				<p:commandButton value="Seleccionar "
+					action="#{cxcCambioAnticipoVariosClientesController.seleccionarClienteDestino}"
+					update="idForm:dtDocumentosCli"></p:commandButton>
+			</center>
+		</h:form>
+	</p:dialog>
+
+	<p:dialog widgetVar="DlgClientes" id="DlgClientes"
+		header="Seleccione Cliente" resizable="true" modal="true"
+		closable="true" appendTo="@(body)" width="480" height="500">
+		<h:form id="FrmClientes">
+			<p:dataTable id="dtClientes"
+				value="#{cxcCambioAnticipoVariosClientesController.clientes}"
+				var="cliente" emptyMessage="No existen registros"
+				selectionMode="single"
+				selection="#{cxcCambioAnticipoVariosClientesController.clienteSeleccionado}"
+				rowKey="#{cliente.clientePK}" paginator="true" rows="10" lazy="true"
+				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+				<p:column headerText="Cedula/Ruc" filterBy="#{cliente.cedula}"
+					width="90">
+					<h:outputText value="#{cliente.cedula}" />
+				</p:column>
+				<p:column headerText="Nombre" filterBy="#{cliente.nombre}"
+					filterMatchMode="startsWith">
+					<h:outputText value="#{cliente.nombre}" />
+				</p:column>
+			</p:dataTable>
+			<br> </br>
+			<center>
+				<p:commandButton value="Seleccionar "
+					action="#{cxcCambioAnticipoVariosClientesController.seleccionarCliente}"
+					update="idForm:pnlFiltros"></p:commandButton>
+			</center>
+		</h:form>
+	</p:dialog>
+
+	<p:dialog widgetVar="DlgResult" id="DlgResult" header="Proceso Exitoso"
+		resizable="true" modal="true" closable="false" appendTo="@(body)"
+		width="480" height="250">
+		<h:form id="FrmResult">
+			<p:outputLabel
+				value="Se ha procesado el cambio de linea de anticipo exitosamente, como resultado se han generado los siguientes diarios: "></p:outputLabel>
+			<p:dataTable
+				value="#{cxcCambioAnticipoVariosClientesController.diariosResult}"
+				var="diario">
+				<p:column headerText="Numero Diario">
+					<p:outputLabel value="#{diario.serieFisico} - #{diario.noFisico}"></p:outputLabel>
+				</p:column>
+				<p:column headerText="Ver" width="120">
+					<p:commandLink ajax="false" target="_blank"
+						action="#{cxcCambioAnticipoVariosClientesController.imprimirDiario(diario)}">
+						<p:commandButton icon="fa fa-print" title="Ver Diario A"
+							ajax="false">
+						</p:commandButton>
+					</p:commandLink>
+				</p:column>
+			</p:dataTable>
+
+			<br />
+			<center>
+				<p:commandButton value="Cerrar"
+					action="#{cxcCambioAnticipoVariosClientesController.actualizarAnticipos}"
+					update="idForm"></p:commandButton>
+			</center>
+		</h:form>
+	</p:dialog>
+
+	<h:outputStylesheet name="css/layout-lightblue.css"
+		library="serenity-layout" />
+</h:body>
+</html>

@@ -1,0 +1,124 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+<head>
+
+</head>
+<ui:composition>
+
+
+	<p:toolbar>
+		<f:facet name="left">
+
+		</f:facet>
+		<f:facet name="right">
+			<h:panelGrid id="pgComandosTipoCliente" columns="2">
+		
+				<p:commandButton title="Editar" icon="fa fa-pencil"
+					value="Editar" partialSubmit="true"
+					actionListener="#{cmlTipoClienteController.mostrarDialogoTipoClienteEditar}"
+					update=":form:tabViewTablas:pgTipoCliente"
+					styleClass="green-btn" style="margin-top:0px !important;"
+				 />	 
+				 <p:commandButton title="Anadir" icon="fa fa-plus"
+					value="Anadir" partialSubmit="true"
+					actionListener="#{cmlTipoClienteController.mostrarDialogoTipoCliente}"
+					update=":#{p:component('pgTipoCliente')}"
+					styleClass="deep-orange-btn" style="margin-top:0px !important;"
+				 />
+				 </h:panelGrid>
+		</f:facet>
+	</p:toolbar>
+
+	<p:dataTable var="item" id="tblTipoCliente"
+		value="#{cmlTipoClienteController.listaTipoCliente}"
+		selectionMode="single"
+         selection="#{cmlTipoClienteController.cmlTipoClienteSeleccionado}" rowKey="#{item.id.codigo}"
+		 scrollable="true"
+		scrollHeight="345" emptyMessage="No se han encontrado elementos"
+		rowIndexVar="var" styleClass="hover-rows table table-body">
+		<p:column headerText="Código" style="width:35px;padding-left:1px;">
+			<h:outputText value="#{item.id.codigo}" />
+		</p:column>
+		<p:column headerText="Descripción" style="padding-left:1px;">
+			<h:outputText value="#{item.descripcion}" />
+		</p:column>
+		<p:column headerText="Tipo" style="width:35px;padding-left:1px;">
+			<h:outputText value="#{item.tipo}" />
+		</p:column>
+		<p:column headerText="Valor" style="width:35px;padding-left:1px;">
+			<h:outputText value="#{item.valor}" />
+		</p:column>
+		<p:column headerText="Estado" style="width:35px;padding-left:1px;">
+			<h:outputText value="#{item.estado}" />
+		</p:column>
+	</p:dataTable>
+
+	<p:dialog id="dlgTipoCliente" widgetVar="dlgTipoClienteWV"
+		header="Detalle TipoCliente" style="position:fixed" responsive="true"
+		closeOnEscape="true" modal="true" appendTo="@(body)" width="500"
+		height="250">
+
+		<p:toolbar>
+			<f:facet name="left">
+
+			</f:facet>
+			<f:facet name="right">
+				<p:commandButton title="Guardar" icon="fa fa-save"
+					partialSubmit="true"
+					process="@this, :form:tabViewTablas:pgTipoCliente"
+					actionListener="#{cmlTipoClienteController.guardarTipoCliente()}"
+					styleClass="deep-orange-btn" style="margin-top:0px !important;"
+					update=":form:tabViewTablas:tblTipoCliente" />
+
+			</f:facet>
+		</p:toolbar>
+
+		<h:panelGrid id="pgTipoCliente" columns="2"
+			columnClasses="w30 txtR, w70 txtR" width="100%">
+
+			<p:outputLabel style="float:right;font-weight:bold;" value="Código" />
+			<p:inputText style="float:left;" id="somCodigoTipoCliente"
+				value="#{cmlTipoClienteController.codigo}">
+			</p:inputText>
+
+			<p:outputLabel style="float:right;font-weight:bold;" value="Descripción" />
+			<p:inputText style="float:left;" id="somDescripcionTipoCliente"
+				value="#{cmlTipoClienteController.descripcion}">
+			</p:inputText>
+
+
+			<p:outputLabel style="float:right;font-weight:bold;"
+				value="Tipo" />
+			<p:selectOneMenu style="float:left;" id="somTipoTipoCliente" 
+				value="#{cmlTipoClienteController.tipo}">
+				<f:selectItem itemLabel="Seleccione" itemValue=""  />
+				<f:selectItem itemLabel="Persona" itemValue="Persona" />
+				<f:selectItem itemLabel="Empresa" itemValue="Empresa" />
+			</p:selectOneMenu>
+
+			<p:outputLabel style="float:right;font-weight:bold;"
+				value="Valor" />
+			<p:inputText style="float:left;" id="somValorTipoCliente"
+				value="#{cmlTipoClienteController.valor}">
+			</p:inputText>
+
+
+			<p:outputLabel style="float:right;font-weight:bold;"
+				value="Estado" />
+			<p:selectOneMenu style="float:left;" id="somEstadoTipoCliente"
+				value="#{cmlTipoClienteController.estado}">
+				<f:selectItem itemLabel="Seleccione" itemValue="" />
+				<f:selectItem itemLabel="Activo" itemValue="A" />
+				<f:selectItem itemLabel="Inactivo" itemValue="I" />
+			</p:selectOneMenu>
+
+
+		</h:panelGrid>
+		
+	</p:dialog>
+
+</ui:composition>
+</html>

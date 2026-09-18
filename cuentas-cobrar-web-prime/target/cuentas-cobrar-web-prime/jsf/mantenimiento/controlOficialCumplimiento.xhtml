@@ -1,0 +1,154 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Control oficial cumplimiento
+	</ui:define>
+
+	<ui:define name="buttons">
+	
+	</ui:define>
+	<ui:define name="content">
+		<style type="text/css">
+			body {
+				font-size: 11px !important;
+			}
+			
+			body .ui-datatable.ui-datatable-scrollable thead tr th {
+				font-size: 11px !important;
+			}
+			body .ui-datatable tbody tr td {
+				padding: 2px 3px;
+			}
+			.centrado {
+				display: flex;
+    			align-items: center;
+			}
+			.ui-dialog .ui-dialog-titlebar {
+		    	background-color: #4aaff7 !important;
+		    }
+		    .ui-dialog .ui-dialog-content {
+			    border: 1px solid #d8d8d8 !important;
+		    } 
+		</style>
+		<h:form id="frmControlOficialCumplimiento">
+			
+			<p:dataTable id="companiaControlDT" widgetVar="wvDTCompaniaControl"
+				value="#{controlOficialCumplimientoController.companiaList}" 
+				rows="#{controlOficialCumplimientoController.batchSize}" var="item"
+				emptyMessage="No hay registros"	paginator="true"
+				paginatorPosition="bottom" 
+	            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} "
+				rowIndexVar="index" rowKey="#{item.noCia}"				
+				styleClass="table" scrollable="true" scrollWidth="100%" style="width:100%;">
+				<f:facet name="header">
+		            Lista de Compañias
+		        </f:facet>
+				<p:column headerText="No." styleClass="txtC" width="5%">
+					<p:outputLabel value="#{index+1}" />
+				</p:column>
+				<p:column headerText="Cia" styleClass="txtL" width="5%">
+					<p:outputLabel value="#{item.noCia}"/>
+				</p:column>
+				<p:column headerText="Nombre" styleClass="txtL" width="30%">
+					<p:outputLabel value="#{item.nombre}"/>
+				</p:column>
+				<p:column headerText="Cód. Empresa" styleClass="txtL" width="5%">
+					<p:outputLabel value="#{item.codigoEmpresa}" />
+				</p:column>
+				<p:column headerText="Cód. Dinardap" styleClass="txtL" width="5%">
+					<p:outputLabel value="#{item.codigoDinardap}" />
+				</p:column>
+				<p:column headerText="Cód. UAF" styleClass="txtL" width="5%">
+					<p:outputLabel value="#{item.codigoUaf}" />
+				</p:column>
+				<p:column headerText="Monto Min UAF" styleClass="txtR" width="10%">
+					<p:outputLabel value="#{item.montoMinimoUaf}" >
+						<f:convertNumber pattern="#0.00" />
+					</p:outputLabel>
+				</p:column>
+				<p:column headerText="Monto Min Tarjeta" styleClass="txtR" width="10%">
+					<p:outputLabel value="#{item.montoMinTarjeta}" >
+						<f:convertNumber pattern="#0.00" />
+					</p:outputLabel>
+				</p:column>
+				<p:column headerText="Monto Min Efectivo" styleClass="txtR" width="10%">
+					<p:outputLabel value="#{item.montoMinEfectivo}" >
+						<f:convertNumber pattern="#0.00" />
+					</p:outputLabel>
+				</p:column>
+				<p:column headerText="Monto Max Efectivo" styleClass="txtR" width="10%">
+					<p:outputLabel value="#{item.montoMaxPagoEfectivo}" >
+						<f:convertNumber pattern="#0.00" />
+					</p:outputLabel>
+				</p:column>
+				<p:column headerText="Acciones" styleClass="txtC" width="5%">
+					<p:commandLink 
+						action="#{controlOficialCumplimientoController.editar(item)}"
+						update="idDlgCompania">
+						<i class="fa fa-pencil fa-lg" title="Editar"/>
+					</p:commandLink>										
+				</p:column>
+			</p:dataTable>
+		</h:form>
+		
+		<p:dialog id="idDlgCompania" widgetVar="dlgCompania"
+			header="Editar: #{controlOficialCumplimientoController.companiaEditar.noCia} - #{controlOficialCumplimientoController.companiaEditar.nombre}"
+			style="position:fixed" responsive="true" closeOnEscape="false"
+			modal="true" appendTo="@(body)" width="50%">
+			<h:form id="frmEdicion">				
+				<p:panelGrid columns="4" styleClass="companyHeaderGrid" layout="grid"
+					columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+					style="border:0px none; background-color:transparent;">
+					
+					<p:outputLabel for="codEmpresa" value="Cód. Empresa:"/>
+					<p:inputNumber id="codEmpresa" style="width:100% !important"
+						decimalPlaces="0" maxlength="4" maxValue="9999"
+						value="#{controlOficialCumplimientoController.companiaEditar.codigoEmpresa}"/>
+					
+					<p:outputLabel for="codDinardap" value="Cód. Dinardap:"/>
+					<p:inputText id="codDinardap" style="width:100% !important" maxlength="7" 
+						value="#{controlOficialCumplimientoController.companiaEditar.codigoDinardap}"/>
+					
+					<p:outputLabel for="codUAF" value="Cód. UAF:"/>
+					<p:inputText id="codUAF" style="width:100% !important" maxlength="6"
+						value="#{controlOficialCumplimientoController.companiaEditar.codigoUaf}"/>
+					<p:spacer></p:spacer>
+					<p:spacer></p:spacer>
+					
+					<p:outputLabel for="montoMinUAF" value="Monto Min UAF:"/>
+					<p:inputNumber id="montoMinUAF" style="width:100% !important" decimalPlaces="2"
+						value="#{controlOficialCumplimientoController.companiaEditar.montoMinimoUaf}"/>
+					
+					<p:outputLabel for="montoMinTarjeta" value="Monto Min Tarjeta:"/>
+					<p:inputNumber id="montoMinTarjeta" style="width:100% !important" decimalPlaces="2"
+						value="#{controlOficialCumplimientoController.companiaEditar.montoMinTarjeta}"/>
+						
+					<p:outputLabel for="montoMinEfectivo" value="Monto Min Efectivo:"/>
+					<p:inputNumber id="montoMinEfectivo" style="width:100% !important" decimalPlaces="2"
+						value="#{controlOficialCumplimientoController.companiaEditar.montoMinEfectivo}"/>
+					
+					<p:outputLabel for="montoMaxEfectivo" value="Monto Max Efectivo:"/>
+					<p:inputNumber id="montoMaxEfectivo" style="width:100% !important" decimalPlaces="2"
+						value="#{controlOficialCumplimientoController.companiaEditar.montoMaxPagoEfectivo}"/>
+					
+				</p:panelGrid>
+				<p:spacer />
+				<div align="right">
+					<p:commandButton value="Guardar" id="btnGuardar" icon="ui-icon-save"
+						action="#{controlOficialCumplimientoController.guardar()}" process="@form"
+						update=":frmControlOficialCumplimiento:companiaControlDT :frmEdicion">
+					</p:commandButton>
+					<p:commandButton value="Cancelar" id="btnCancelar" process="@this"
+						onclick="PF('dlgCompania').hide();" icon="ui-icon-close">
+					</p:commandButton>
+				</div>
+			</h:form>
+		</p:dialog>		
+	</ui:define>
+</ui:composition>

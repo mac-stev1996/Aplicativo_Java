@@ -1,0 +1,123 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Distribucion Contable por Cuenta
+	</ui:define>
+
+	<ui:define name="buttons">
+
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form id="idFormDistribucionContable">
+			<center>
+				<p>Por favor ingrese los datos solicitados de la consulta y
+					seleccione el formato deseado</p>
+
+				<h:panelGrid title="Parametros de Busqueda de Depósitos" columns="2"
+					id="idPanelGridParametros" style="width::100%">
+
+					<h:outputText for="fechaDesde" value="Fecha Desde:"
+						styleClass="normal" />
+					<p:calendar id="fechaDesde" pattern="dd/MM/yyyy" showOn="button"
+						size="20" locale="es"
+						value="#{cxcDistribucionContableController.fechaDesde}"></p:calendar>
+
+					<h:outputText for="fechaHasta" value="Fecha Hasta:" />
+					<p:calendar id="fechaHasta" pattern="dd/MM/yyyy" showOn="button"
+						size="20" locale="es"
+						value="#{cxcDistribucionContableController.fechaHasta}"></p:calendar>
+
+					<h:outputText value="Agencias:" />
+					<p:selectOneMenu style="width::100%;"
+						value="#{cxcDistribucionContableController.agencia}" filter="true"
+						filterMatchMode="contains">
+						<f:selectItems
+							value="#{cxcDistribucionContableController.agencias}" />
+					</p:selectOneMenu>
+
+					<p:commandLink id="idCuentaDesde" value="Desde Cuenta"
+						update="idDialogPlanCuentasDesde"
+						actionListener="#{cxcDistribucionContableController.cargarPlanCuentaDesde}">
+					</p:commandLink>
+
+					<p:outputPanel autoUpdate="true">
+						<p:inputText id="idCuentaDesdeCod" readonly="true"
+							value="#{cxcDistribucionContableController.cuentaCodigoInicio}" />
+						<p:inputText id="idCuentaDesdeNombre" readonly="true"
+							style="width:200px"
+							value="#{cxcDistribucionContableController.cuentaNombreInicio}" />
+					</p:outputPanel>
+
+					<p:commandLink id="idCuentaHasta" value="Hasta Cuenta"
+						update="idDialogPlanCuentasHasta"
+						actionListener="#{cxcDistribucionContableController.cargarPlanCuentaHasta}">
+					</p:commandLink>
+
+					<p:outputPanel autoUpdate="true">
+						<p:inputText id="idCuentaHastaCod" readonly="true"
+							value="#{cxcDistribucionContableController.cuentaCodigoHasta}" />
+						<p:inputText id="idCuentaHastaNombre" readonly="true"
+							style="width:200px"
+							value="#{cxcDistribucionContableController.cuentaNombreHasta}" />
+					</p:outputPanel>
+
+				</h:panelGrid>
+				<p:spacer height="20"></p:spacer>
+				<h:panelGrid columns="2" border="0"
+					columnClasses="iconCell, iconCell, iconCell" cellpadding="0"
+					cellspacing="0" width="400"
+					style="background-color: #CCCCCC; text-align: center;">
+					<h:commandLink target="_blank"
+						action="#{cxcDistribucionContableController.report}">
+						<h:graphicImage value="/common/imgs/reports/excel.png"
+							style="border:none;align:center;" title="Excel" alt="Excel"
+							width="25" height="25" />
+						<f:param name="format" value="excel" />
+					</h:commandLink>
+					<h:commandLink target="_blank"
+						action="#{cxcDistribucionContableController.report}">
+						<h:graphicImage value="/common/imgs/reports/adobe.png"
+							style="border:none" title="Adobe" alt="Adobe" width="25"
+							height="25" />
+						<f:param name="format" value="pdf" />
+					</h:commandLink>
+					<h:outputText value="Excel" styleClass="normal" />
+					<h:outputText value="Pdf" styleClass="normal" />
+				</h:panelGrid>
+			</center>
+		</h:form>
+
+		<h:inputHidden value="/reportes/cxcDistribucionContableCuenta.jasper"
+			binding="#{cxcDistribucionContableController.reportPath}" />
+
+		<p:dialog id="idDialogPlanCuentasDesde" header="Seleccione Cuenta..."
+			widgetVar="dialogPlanCuentasDesde" style="position:fixed"
+			responsive="true" closeOnEscape="true" modal="true"
+			appendTo="@(body)" width="440" height="420">
+			<h:form id="idFormPlanCuentasDesde">
+				<ui:fragment>
+					<ui:include src="/jsf/common/dialog/dialogPlanCuentas.xhtml"></ui:include>
+				</ui:fragment>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog id="idDialogPlanCuentasHasta" header="Seleccione Cuenta..."
+			widgetVar="dialogPlanCuentasHasta" style="position:fixed"
+			responsive="true" closeOnEscape="true" modal="true"
+			appendTo="@(body)" width="440" height="420">
+			<h:form id="idFormPlanCuentasHasta">
+				<ui:fragment>
+					<ui:include src="/jsf/common/dialog/dialogPlanCuentas.xhtml"></ui:include>
+				</ui:fragment>
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

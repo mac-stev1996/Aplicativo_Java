@@ -1,0 +1,255 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Mantenimiento de Clientes SAS
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmButtons">
+			<p:commandButton title="Nuevo" partialSubmit="true"
+				icon="fa fa-file-o" process="@this"
+				style="margin-top: 0px !important; float:right;"
+				styleClass="green-btn" update="@this, :dlgNuevo"
+				actionListener="#{cxcClienteSasController.nuevo}" />
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+		<style>
+.w25 {
+	width: 25%;
+}
+</style>
+		<script type="text/javascript">
+		function mayus(e) {
+		    e.value = e.value.toUpperCase();
+		}
+	
+	</script>
+		<h:form id="idForm">
+
+			<div class="ui-g dashboard">
+				<div class="ui-g-12 ui-fluid contact-form">
+					<div class="ui-g-12">
+						<p:dataTable id="tblCientesSas" widgetVar="tblCientesSas"
+							emptyMessage="No existen registros"
+							value="#{cxcClienteSasController.listadoClientes}" var="cliente"
+							rowKey="#{cliente.ruc}" rowIndexVar="var" paginator="true"
+							paginatorAlwaysVisible="false" filterDelay="1000" rows="10"
+							paginatorPosition="bottom"
+							paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+							<p:column headerText="Ruc" width="10%" filterBy="#{cliente.ruc}">
+								<p:outputLabel value="#{cliente.ruc}" />
+							</p:column>
+
+							<p:column headerText="Nombre" width="40%"
+								filterBy="#{cliente.nombre}">
+								<p:outputLabel value="#{cliente.nombre}" />
+							</p:column>
+
+							<p:column headerText="Usuario" width="25%"
+								filterBy="#{cliente.usuario}">
+								<p:outputLabel value="#{cliente.usuario}" />
+							</p:column>
+
+							<p:column headerText="Fecha Control" width="25%">
+								<p:outputLabel value="#{cliente.fechaControl}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</p:outputLabel>
+							</p:column>
+
+							<p:column headerText="Adjunto" width="10%">
+								<p:commandLink title="Click descargar adjunto"
+									partialSubmit="true" process="@this" ajax="false"
+									target="_blank"
+									action="#{cxcClienteSasController.descargarArchivo(cliente.rutaImagen)}"
+									rendered="#{cliente.rutaImagen ne null}">
+									<i class="fa fa-cloud-download fa-2x" style="color: green;" />
+								</p:commandLink>
+							</p:column>
+
+							<p:column headerText="Estado" width="10%">
+								<p:outputLabel
+									value="#{cliente.estado eq 'A'?'Activo':'Inactivo'}" />
+							</p:column>
+
+							<p:column width="5%">
+								<p:commandButton title="Editar" partialSubmit="true"
+									icon="fa fa-pencil" process="@this,tblCientesSas"
+									style="margin-top: 0px !important"
+									actionListener="#{cxcClienteSasController.abrirDialogoEditar(cliente)}"
+									update="dlgEditar">
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+					</div>
+				</div>
+			</div>
+		</h:form>
+		<p:dialog widgetVar="dlgNuevo" id="dlgNuevo"
+			header="Nuevo Cliente Sas" resizable="true" modal="true"
+			closable="true" appendTo="@(body)" width="570" height="400"
+			closeOnEscape="true">
+			<h:form id="idFrmNuevo">
+				<div class="ui-g dashboard">
+					<div class="ui-g-18 ui-fluid contact-form">
+						<div class="ui-g-18">
+							<div class="ui-g-12">
+								<div class="ui-g-3">
+									<p:outputLabel value="Ruc : " style="width:100%" />
+
+									<p:inputText
+										value="#{cxcClienteSasController.cxcClienteSasNuevo.ruc}"
+										onkeyup="mayus(this)" maxlength="13">
+										<p:ajax event="change" partialSubmit="true" global="false"
+											update="idFrmNuevo" process="@this"></p:ajax>
+									</p:inputText>
+								</div>
+
+								<div class="ui-g-5">
+
+									<p:outputLabel value="Razon Social : " style="width:100%" />
+
+									<p:inputText
+										value="#{cxcClienteSasController.cxcClienteSasNuevo.nombre}"
+										onkeyup="mayus(this)">
+										<p:ajax event="change" partialSubmit="true" global="false"
+											update="idFrmNuevo" process="@this"></p:ajax>
+									</p:inputText>
+								</div>
+							</div>
+							<div class="ui-g-6">
+
+								<p:outputLabel value="Estado : " style="width:100%" />
+
+								<p:selectOneRadio
+									value="#{cxcClienteSasController.cxcClienteSasNuevo.estado}"
+									columns="2">
+									<f:selectItem itemLabel="Activo" itemValue="A" />
+									<f:selectItem itemLabel="Inactivo" itemValue="I" />
+
+									<p:ajax event="change" process="@this" partialSubmit="true"
+										global="flase"></p:ajax>
+								</p:selectOneRadio>
+							</div>
+						</div>
+						<div class="ui-g-12">
+							<div class="ui-g-6">
+								<h:panelGrid columns="2">
+									<p:commandLink title="Click Subir Adjunto" partialSubmit="true"
+										update=":frmArchivo" oncomplete="PF('dlgArchivo').show();"
+										process="@this"
+										value="#{cxcClienteSasController.cxcClienteSasNuevo.rutaImagen}"
+										id="adj">
+										<i class="fa fa-cloud-upload fa-2x" style="color: #00BCD4;" />
+									</p:commandLink>
+									<p:commandLink title="Eliminar adjunto"
+										action="#{envioFacturaCXPController.eliminarDocumento}"
+										rendered="#{xcClienteSasController.cxcClienteSasNuevo.rutaImagen ne null}"
+										update=":#{p:component('adj')}" id="adjEli">
+										<i class="fa fa-minus-circle fa-2x" style="color: red;" />
+									</p:commandLink>
+								</h:panelGrid>
+							</div>
+						</div>
+					</div>
+				</div>
+				<br />
+				<center>
+					<p:commandButton value="Grabar" partialSubmit="true"
+						process="@this, dlgNuevo"
+						action="#{cxcClienteSasController.guardar}"
+						update=":idForm, :idForm:tblCientesSas"></p:commandButton>
+				</center>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgEditar" id="dlgEditar"
+			header="Editar Tipo Documento" resizable="true" modal="true"
+			closable="true" appendTo="@(body)" width="570" height="400"
+			closeOnEscape="true">
+			<h:form id="idFrmEditar">
+				<div class="ui-g dashboard">
+					<div class="ui-g-18 ui-fluid contact-form">
+						<div class="ui-g-18">
+							<div class="ui-g-12">
+								<div class="ui-g-3">
+									<p:outputLabel value="Ruc: " style="width:100%" />
+									<p:outputLabel
+										value="#{cxcClienteSasController.cxcClienteSasEditado.ruc}"></p:outputLabel>
+								</div>
+								<div class="ui-g-6">
+									<p:outputLabel value="Razon Social: " style="width:100%" />
+									<p:inputText
+										value="#{cxcClienteSasController.cxcClienteSasEditado.nombre}"
+										style="width:100%" onkeyup="mayus(this)"></p:inputText>
+								</div>
+							</div>
+							<div class="ui-g-6">
+								<p:outputLabel value="Estado : " style="width:100%" />
+								<p:selectOneRadio
+									value="#{cxcClienteSasController.cxcClienteSasEditado.estado}"
+									columns="2">
+									<f:selectItem itemLabel="Activo" itemValue="A" />
+									<f:selectItem itemLabel="Inactivo" itemValue="I" />
+
+									<p:ajax event="change" process="@this" partialSubmit="true"
+										global="flase"></p:ajax>
+								</p:selectOneRadio>
+							</div>
+							<div class="ui-g-12">
+								<h:panelGrid columns="2" id="adjunto">
+									<p:commandLink title="Click Subir Adjunto" partialSubmit="true"
+										update=":frmArchivo" oncomplete="PF('dlgArchivo').show();"
+										process="@this"
+										value="#{cxcClienteSasController.cxcClienteSasEditado.rutaImagen}"
+										id="adj">
+										<i class="fa fa-cloud-upload fa-2x" style="color: #00BCD4;" />
+									</p:commandLink>
+									<p:commandLink title="Eliminar adjunto"
+										action="#{cxcClienteSasController.eliminarDocumentoEditado}"
+										rendered="#{cxcClienteSasController.cxcClienteSasEditado.rutaImagen ne null}"
+										update=":idFrmEditar" id="adjEli">
+										<i class="fa fa-minus-circle fa-2x" style="color: red;" />
+									</p:commandLink>
+								</h:panelGrid>
+							</div>
+
+						</div>
+
+					</div>
+				</div>
+
+				<br />
+				<center>
+					<p:commandButton value="Actualizar" partialSubmit="true"
+						process="@this, dlgEditar"
+						action="#{cxcClienteSasController.actualizar}"
+						update=":idForm, :idForm:tblCientesSas"></p:commandButton>
+				</center>
+			</h:form>
+		</p:dialog>
+		<p:dialog header="Adjuntar archivo" widgetVar="dlgArchivo"
+			modal="true" showEffect="fade" hideEffect="fade" resizable="true"
+			width="600" position="center center" closeOnEscape="true">
+			<h:form id="frmArchivo">
+				<p:fileUpload required="true"
+					fileUploadListener="#{cxcClienteSasController.cargarArchivo}"
+					mode="advanced" dragDropSupport="true"
+					update="@this, :idFrmNuevo:adj, :idFrmEditar:adj "
+					uploadLabel="Subir Archivo" cancelLabel="Cancelar"
+					label="Seleccionar Archivo" fileLimit="1"
+					fileLimitMessage="Solo puede subir un archivo">
+				</p:fileUpload>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+
+</ui:composition>

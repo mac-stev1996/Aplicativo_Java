@@ -1,0 +1,113 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	template="/jsf/templates/bodyTemplate.xhtml">
+	<ui:define name="title">
+		APROBACION SOLICITUDES CAJA CHICA
+    </ui:define>
+
+	<ui:define name="content">
+		<h:form id="idForm">
+			<p:panel style="width : 1450px;">
+				<p:tab>
+					<p:dataTable id="tabDatosPrincipales" title="" scrollable="true"
+						value="#{cxcAutorizacionDevSolicitudCajaController.listarAnticipo}"
+						var="ref" styleClass="table" sortBy="#{6}"
+						rowSelectMode="checkbox"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+						paginator="true" rows="20" rowsPerPageTemplate="20,30,40"
+						selectionPageOnly="false" paginatorPosition="bottom"
+						emptyMessage="No Existen Registros">
+						<f:facet name="header">
+				           Autorización Devolución Anticipos
+				        </f:facet>
+						<p:column headerText="Fecha" width="30%" style="text-align:left"
+							filterMatchMode="contains">
+							<h:outputText value="#{ref.fechaProceso}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Agencia" width="50%" style="text-align:left"
+							filterMatchMode="contains">
+							<h:outputText value="#{ref.agencia}">
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Asesor" width="40%" style="text-align:left"
+							filterMatchMode="contains">
+							<h:outputText value="#{ref.usuarioProceso}" />
+						</p:column>
+						<p:column headerText="Cliente" width="30%" style="text-align:left"
+							filterMatchMode="contains">
+							<h:outputText value="#{ref.noCliente}" />
+						</p:column>
+						<p:column headerText="Nombre Cliente" width="80%"
+							style="text-align:left" filterMatchMode="contains">
+							<h:outputText value="#{ref.nombreCliente}" />
+						</p:column>
+						<p:column headerText="No. Solicitud" width="40%"
+							style="text-align:left" filterMatchMode="contains">
+							<h:outputText value="#{ref.noSolicitud}" />
+						</p:column>
+						<p:column headerText="Estado" width="40%" style="text-align:left"
+							styleClass="number" filterMatchMode="contains">
+							<h:outputText value="#{ref.descripEstado}">
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Ver Adjuntos" styleClass="columAlignCenter"
+							width="20%">
+							<p:commandButton icon="fa fa-binoculars" title="Ver Adjuntos"
+								styleClass="orange-btn"
+								action="#{cxcAutorizacionDevSolicitudCajaController.abrirRevisar(ref, true)}"
+								update="PnlAdjuntos" process="@this" partialSubmit="true">
+							</p:commandButton>
+						</p:column>
+						<p:column headerText="Monto" width="40%" style="text-align:center"
+							styleClass="number" filterMatchMode="contains">
+							<h:outputText value="#{ref.valorTotal}">
+								<f:convertNumber type="currency" currencySymbol="$" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Acciones" width="40%"
+							style="text-align:center">
+							<p:commandButton title="Aprobar Solicitud" id="aprobar"
+								icon="fa fa-check-square-o" styleClass="deep-orange-btn"
+								style="align:center" immediate="true"
+								update="tabDatosPrincipales"
+								actionListener="#{cxcAutorizacionDevSolicitudCajaController.actualizarAprobacion(ref,'A')}">
+							</p:commandButton>
+							<p:commandButton title="Negar Solicitud" id="eliminar"
+								icon="fa fa-times" styleClass="deep-orange-btn"
+								style="align:center" immediate="true"
+								update="tabDatosPrincipales"
+								actionListener="#{cxcAutorizacionDevSolicitudCajaController.actualizarAprobacion(ref,'N')}">
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+				</p:tab>
+			</p:panel>
+		</h:form>
+		<p:dialog header="Archivos Adjuntos" widgetVar="DlgAdjuntos"
+			modal="true" showEffect="fade" hideEffect="fade" resizable="true"
+			width="600" height="300" position="center center"
+			closeOnEscape="true">
+			<h:form id="PnlAdjuntos">
+				<p:dataTable
+					value="#{cxcAutorizacionDevSolicitudCajaController.listaAdjuntos}"
+					var="adj" id="dtlinksArchivos">
+					<p:column headerText="Archivo">
+						<p:commandLink ajax="false" target="_blank"
+							action="#{cxcAutorizacionDevSolicitudCajaController.verAdjunto(adj)}">
+							<h:outputText value="#{adj}"
+								style="text-decoration: underline; color: blue;"></h:outputText>
+						</p:commandLink>
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

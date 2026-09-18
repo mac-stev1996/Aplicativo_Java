@@ -1,0 +1,321 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Detalle de documentos CxC
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="idFormButtons">
+			<p:commandButton styleClass="deep-orange-btn" title="Regresar"
+				icon="ui-icon ui-icon-arrow-back" partialSubmit="true"
+				process="@this, :idForm"
+				action="#{consultaDatosFacturaController.regresar}" />
+
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+		<style type="text/css">
+body {
+	font-size: 11px !important;
+}
+
+.dashboard .contact-form .ui-button {
+	margin-top: 0px !important;
+}
+
+body .ui-datatable.ui-datatable-scrollable thead tr th {
+	font-size: 11px !important;
+}
+
+.tblDocumentos tbody tr td {
+	font-size: 10px !important;
+}
+body .ui-fieldset {
+    padding: 8px 7px;
+}
+body .ui-datatable tbody tr td {
+    padding: 6px 5px; 
+}
+</style>
+
+		<h:form id="idForm" title="Detalle factura"
+			onkeypress="return event.keyCode!=13">
+			<p:messages id="messages" showDetail="true" autoUpdate="true"
+				closable="true" showSummary="true" />
+			<p:fieldset id="fsCabFac" legend="Factura:" toggleable="false">
+				<h:panelGrid columns="10" width="100%">
+					<p:outputLabel value="Centro:" styleClass="bold" />
+					<p:inputText
+						value="#{consultaDatosFacturaController.datosFacturaDto.centro}"
+						readonly="true" />
+					<p:outputLabel value="Factura:" styleClass="bold" />
+					<p:inputText
+						value="#{consultaDatosFacturaController.datosFacturaDto.serie}"
+						readonly="true" />
+					<p:inputText
+						value="#{consultaDatosFacturaController.datosFacturaDto.noFisico}"
+						readonly="true" />
+					<p:outputLabel value="Linea:" styleClass="bold" />
+					<p:inputText
+						value="#{consultaDatosFacturaController.datosFacturaDto.serieFisico}"
+						readonly="true" />
+					<p:outputLabel value="Sec:" styleClass="bold" />
+					<p:inputText
+						value="#{consultaDatosFacturaController.datosFacturaDto.cantProrroga}"
+						readonly="true" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="7" width="100%">
+					<p:outputLabel value="Cédula:" styleClass="bold" />
+					<p:inputText
+						value="#{consultaDatosFacturaController.datosFacturaDto.cedula}"
+						readonly="true" style="width:85px" />
+					<p:inputText
+						value="#{consultaDatosFacturaController.datosFacturaDto.nombre}"
+						readonly="true" style="width:300px" />
+					<p:outputLabel value="Cédula dueño:" styleClass="bold" />
+					<p:inputText
+						value="#{consultaDatosFacturaController.datosFacturaDto.cedulaDuenio}"
+						readonly="true" />
+					<p:outputLabel value="Tasa Financiación:" styleClass="bold" />
+					<p:inputText styleClass="number"
+						value="#{consultaDatosFacturaController.datosFacturaDto.tasaFinanciamiento}"
+						readonly="true" />
+				</h:panelGrid>
+				<h:panelGrid columns="6" width="100%">
+					<p:outputLabel value="Total Bruto:" styleClass="bold" />
+					<p:inputText styleClass="number"
+						value="#{consultaDatosFacturaController.datosFacturaDto.totLin}"
+						readonly="true" />
+					<p:outputLabel value="Interes:" styleClass="bold" />
+					<p:inputText styleClass="number"
+						value="#{consultaDatosFacturaController.datosFacturaDto.interes}"
+						readonly="true" />
+					<p:outputLabel value="Tipo cambio:" styleClass="bold" />
+					<p:inputText
+						value="#{consultaDatosFacturaController.datosFacturaDto.tipoCambio}"
+						readonly="true" />
+					<p:outputLabel value="Descuento:" styleClass="bold" />
+					<p:inputText styleClass="number"
+						value="#{consultaDatosFacturaController.datosFacturaDto.descuento}"
+						readonly="true" />
+					<p:outputLabel value="Total General:" styleClass="bold" />
+					<p:inputText styleClass="number"
+						value="#{consultaDatosFacturaController.datosFacturaDto.totalGeneral}"
+						readonly="true" />
+					<p:outputLabel value="Fecha:" styleClass="bold" />
+					<p:inputText
+						value="#{consultaDatosFacturaController.datosFacturaDto.fecha}"
+						readonly="true">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</p:inputText>
+					<p:outputLabel value="Impuesto:" styleClass="bold" />
+					<p:inputText styleClass="number"
+						value="#{consultaDatosFacturaController.datosFacturaDto.impuesto}"
+						readonly="true" />
+					<p:outputLabel value="Saldo a Facturar:" styleClass="bold" />
+					<p:inputText styleClass="number"
+						value="#{consultaDatosFacturaController.datosFacturaDto.saldoAFacturar}"
+						readonly="true" />
+					<p:outputLabel value="Vendedor:" styleClass="bold" />
+					<h:panelGrid columns="2">
+						<p:inputText
+							value="#{consultaDatosFacturaController.datosFacturaDto.noVendedor}"
+							readonly="true" style="width:70px" />
+						<p:inputText
+							value="#{consultaDatosFacturaController.datosFacturaDto.nombreVendedor}"
+							readonly="true" style="width:280px" />
+					</h:panelGrid>
+					<p:outputLabel value="Ingresos:" styleClass="bold" />
+					<p:inputText styleClass="number"
+						value="#{consultaDatosFacturaController.datosFacturaDto.ingresos}"
+						readonly="true" />
+					<p:outputLabel value="Saldo Actual:" styleClass="bold" />
+					<p:inputText styleClass="number"
+						value="#{consultaDatosFacturaController.datosFacturaDto.saldoActual}"
+						readonly="true" />
+					<p:outputLabel value="Ced. Garante:" styleClass="bold" />
+					<h:panelGrid columns="2">
+						<p:inputText style="width:100px"
+							value="#{consultaDatosFacturaController.datosFacturaDto.cedulaGarante}"
+							readonly="true" />
+						<p:inputText
+							value="#{consultaDatosFacturaController.datosFacturaDto.nombreGarante}"
+							readonly="true" style="width:250px" />
+					</h:panelGrid>
+					<p:outputLabel value="Otros cargos:" styleClass="bold" />
+					<p:inputText
+						value="#{consultaDatosFacturaController.datosFacturaDto.otroCargo}"
+						readonly="true" styleClass="number" />
+				</h:panelGrid>
+				
+				<h:panelGrid columns="2" width="100%" columnClasses="ui-grid-col-6,ui-grid-col-6">				
+					<p:fieldset legend="Datos Adicionales:" toggleable="false">
+						<h:panelGrid columns="3" columnClasses="ui-grid-col-1,ui-grid-col-4,ui-grid-col-7" width="100%">
+							<p:outputLabel value="Chasis:" styleClass="bold" />
+							<p:inputText
+								value="#{consultaDatosFacturaController.datosFacturaDto.chasis}"
+								readonly="true" style="width:150px" />
+							<p:inputText
+								value="#{consultaDatosFacturaController.datosFacturaDto.descVehiculo}"
+								readonly="true" style="width:300px" />									
+						</h:panelGrid>
+						<h:panelGrid columns="4" columnClasses="ui-grid-col-1,ui-grid-col-4,ui-grid-col-2,ui-grid-col-5" width="100%">
+							<p:outputLabel value="#NC:" styleClass="bold" />
+							<p:inputText
+								value="#{consultaDatosFacturaController.datosFacturaDto.refer}"
+								readonly="true" />
+							<p:outputLabel value="Stock Veh:" styleClass="bold" />
+							<p:inputText
+								value="#{consultaDatosFacturaController.datosFacturaDto.stock}"
+								readonly="true" />
+						</h:panelGrid>
+						<h:panelGrid columns="2" columnClasses="ui-grid-col-2,ui-grid-col-10" width="100%">
+							<p:outputLabel value="Observaciones:" styleClass="bold" />
+							<p:inputText
+								value="#{consultaDatosFacturaController.datosFacturaDto.observ1}"
+								readonly="true" style="width:100%"/>
+							<p:spacer />
+							<p:inputText
+								value="#{consultaDatosFacturaController.datosFacturaDto.observ2}"
+								readonly="true" style="width:100%"/>
+							<p:outputLabel value="Observación Orden de Salida:" styleClass="bold" />
+							<p:inputText
+								value="#{consultaDatosFacturaController.datosFacturaDto.observ4}"
+								readonly="true" style="width:100%"/>
+						</h:panelGrid>
+						<center>
+							<h:panelGrid columns="4">
+								<p:outputLabel value="TOTAL FINANCIAMIENTO:" styleClass="bold" />
+								<p:inputText style="width:100px;color:blue !important;text-align: right"
+									value="#{consultaDatosFacturaController.totalFinanciamiento}"
+									readonly="true" />
+								<p:outputLabel value="TOTAL INGRESOS:" styleClass="bold" />
+								<p:inputText style="width:100px;color:blue !important;text-align: right"
+									value="#{consultaDatosFacturaController.totalIngresos}"
+									readonly="true" />
+							</h:panelGrid>
+						</center>
+					</p:fieldset>
+				
+					<p:fieldset legend="Datos facturas relacionadas:" toggleable="false">
+						<p:dataTable var="item" id="tblFacRela" widgetVar="tblFacRela" 
+							rowIndexVar="row"
+							value="#{consultaDatosFacturaController.datosFacturaDto.facturaRelacionadaDtos}"
+							emptyMessage="No existen documentos relacionados">
+							<p:column headerText="Linea" width="16%">
+								<p:outputLabel value="#{item.serieFisico} - #{item.serieFisicoDesc}" />
+							</p:column>
+							<p:column headerText="Factura" width="14%">
+								<p:outputLabel value="#{item.serie} - #{item.noFisico}" />
+							</p:column>
+							<p:column headerText="PVP" width="10%" styleClass="txtR">
+								<p:outputLabel value="#{item.totLin}"/>
+							</p:column>
+							<p:column headerText="Desc." width="10%" styleClass="txtR">
+								<p:outputLabel value="#{item.descuento}"/>
+							</p:column>
+							<p:column headerText="Impuesto" width="10%" styleClass="txtR">
+								<p:outputLabel value="#{item.impuesto}"/>
+							</p:column>
+							<p:column headerText="Ingresos" width="10%" styleClass="txtR">
+								<p:outputLabel value="#{item.ingresos}"/>
+							</p:column>
+							<p:column headerText="Total general" width="15%" styleClass="txtR">
+								<p:outputLabel value="#{item.total}"/>
+							</p:column>
+							<p:column headerText="Saldo al facturar" width="15%" styleClass="txtR">
+								<p:outputLabel value="#{item.saldoAFacturar}"/>
+							</p:column>
+						</p:dataTable>
+					</p:fieldset>
+					</h:panelGrid>
+			</p:fieldset>
+			<p:fieldset id="fsDetFac" legend="Documentos:" toggleable="false">
+				<p:dataTable var="item" id="tblDoc" rowIndexVar="row"
+					scrollable="true" scrollHeight="300" styleClass="tblDocumentos"
+					value="#{consultaDatosFacturaController.datosFacturaDto.detalleFacturaDtos}"
+					widgetVar="tblPedido" emptyMessage="No existen Documentos"
+					sortBy="#{1}">
+					<p:column headerText="No Docu refe" style="text-align: center"
+						width="9%">
+						<p:outputLabel value="#{item.noDocuRefe}" style="width:100%;" />
+					</p:column>
+					<p:column headerText="Fecha Vence" width="8%">
+						<p:outputLabel value="#{item.fechaVence}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:outputLabel>
+					</p:column>
+					<p:column headerText="Valor original" width="8%"
+						styleClass="number">
+						<p:outputLabel value="#{item.montoOriginal}" style="width:100%;" />
+					</p:column>
+					<p:column headerText="Clase" width="3%">
+						<p:outputLabel value="#{item.claseDocumento}" />
+					</p:column>
+					<p:column headerText="Saldo" width="8%" styleClass="number">
+						<p:outputLabel value="#{item.saldo}" />
+					</p:column>
+					<p:column headerText="Tipo cuota" width="10%">
+						<p:outputLabel value="#{item.tipoCuota}" />
+					</p:column>
+					<p:column headerText="Pig" width="5%">
+						<p:outputLabel value="#{item.estadoPignoracion}" />
+					</p:column>
+					<p:column headerText="Bco" width="8%">
+						<p:outputLabel value="#{item.banco}" />
+					</p:column>
+					<p:column headerText="List Pig" width="5%">
+						<p:outputLabel value="#{item.listadoPignoracion}" />
+					</p:column>
+
+					<p:column headerText="Doc Original" width="10%">
+						<p:outputLabel value="#{item.noDocuOriginal}" />
+					</p:column>
+					<p:column headerText="Ban" width="8%">
+						<p:outputLabel value="#{item.bancoCheqFuturo}" />
+					</p:column>
+					<p:column headerText="Cuenta" width="10%">
+						<p:outputLabel value="#{item.cuentaCheqFuturo}" />
+					</p:column>
+					<p:column headerText="Monto" width="8%" styleClass="number">
+						<p:outputLabel value="#{item.montoCheqFuturo}" />
+					</p:column>
+					<p:column headerText="T Cta" width="8%">
+						<p:outputLabel value="#{item.tipoCuenta}" />
+					</p:column>
+					<p:column headerText="Cuenta" width="10%">
+						<p:outputLabel value="#{item.cuenta}" />
+					</p:column>
+					<p:column headerText="D" width="5%">
+						<p:outputLabel value="#{item.debitoAutomatico}" />
+					</p:column>
+					<p:summaryRow>
+						<p:column colspan="2" styleClass="number">
+							<p:outputLabel value="Total:" />
+						</p:column>
+						<p:column colspan="1" styleClass="number">
+							<p:outputLabel
+								value="#{consultaDatosFacturaController.totalMontoOriginal}">
+								<f:convertNumber pattern="##,##0.00" />
+							</p:outputLabel>
+						</p:column>
+						<p:column colspan="2" styleClass="number">
+							<p:outputLabel
+								value="#{consultaDatosFacturaController.totalSaldo}">
+								<f:convertNumber pattern="##,##0.00" />
+							</p:outputLabel>
+						</p:column>
+					</p:summaryRow>
+				</p:dataTable>
+			</p:fieldset>
+		</h:form>
+	</ui:define>
+</ui:composition>

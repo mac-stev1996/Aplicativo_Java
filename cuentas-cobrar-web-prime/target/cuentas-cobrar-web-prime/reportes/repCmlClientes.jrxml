@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="repCmlClientes" language="groovy" pageWidth="1400" pageHeight="842" columnWidth="1380" leftMargin="0" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="d6a2d54e-09e4-4a98-a774-918de068a73c">
+	<property name="ireport.zoom" value="1.4641000000000022"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="p_no_cia" class="java.lang.String"/>
+	<parameter name="p_periodo" class="java.lang.String"/>
+	<parameter name="p_anio" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select tipocliente,tipo_identificacion,cedula,nombres,apellidos,nacionalidad_uaf,direccion,domicilio_provincia,domicilio_ciudad,domicilio_parroquia,actividad_economica,ingresos
+from cml_clientes
+where no_cia=$P{p_no_cia}
+and periodo=$P{p_periodo}
+and anio=$P{p_anio}]]>
+	</queryString>
+	<field name="TIPOCLIENTE" class="java.lang.String"/>
+	<field name="TIPO_IDENTIFICACION" class="java.lang.String"/>
+	<field name="CEDULA" class="java.lang.String"/>
+	<field name="NOMBRES" class="java.lang.String"/>
+	<field name="APELLIDOS" class="java.lang.String"/>
+	<field name="NACIONALIDAD_UAF" class="java.lang.String"/>
+	<field name="DIRECCION" class="java.lang.String"/>
+	<field name="DOMICILIO_PROVINCIA" class="java.lang.String"/>
+	<field name="DOMICILIO_CIUDAD" class="java.lang.String"/>
+	<field name="DOMICILIO_PARROQUIA" class="java.lang.String"/>
+	<field name="ACTIVIDAD_ECONOMICA" class="java.lang.String"/>
+	<field name="INGRESOS" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="15" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="55e5efe4-3a8d-4b9b-b3b1-f0b4c85239b1" x="0" y="0" width="96" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COD_TIPO_PERSONA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6af8b89a-abec-4b12-9f30-806ab6ec8b84" x="96" y="0" width="76" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COD_TIPO_ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="69a1c090-ecf2-4092-a5f7-9e49d0cc9e67" x="172" y="0" width="70" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ID_CLIENTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7e0d9acd-b9a7-43d1-86a4-d93db4797fb5" x="242" y="0" width="150" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMBRES_RAZON_SOCIAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="564bc290-3110-4151-8077-18db4746d1a9" x="392" y="0" width="150" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[APELLIDOS_NOMBRE_COMERCIAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="924bc1cf-0542-4c7f-8264-d01059a7a7e2" x="542" y="0" width="105" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COD_PAIS_NACIONALIDAD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9c261f74-dd50-4249-98e3-fb818f3730f6" x="647" y="0" width="224" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DIRECCION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="86a49c45-d646-4062-8709-1a075863c042" x="871" y="0" width="109" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COD_PROVINCIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c716b019-9a4f-4572-b429-a438842edf58" x="980" y="0" width="93" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COD_CANTON]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a4f316e6-1723-4ca2-b98d-78e0dde3bff8" x="1073" y="0" width="112" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COD_PARROQUIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b80f9679-da77-4297-86ca-7b4051c68770" x="1185" y="0" width="118" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COD_ACTIVIDAD_ECONOMICA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="74267786-9798-4d07-ac00-4e0b3e46a081" x="1303" y="0" width="77" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[INGRESO_CLIENTE]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="f04a6c17-58d5-4b9b-98ae-176ca6c33b93" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="96" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TIPOCLIENTE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="745ef8b7-b496-4158-a6a0-159848f9d7b3" positionType="Float" stretchType="RelativeToTallestObject" x="96" y="0" width="76" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TIPO_IDENTIFICACION}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="4ab6c1a0-2329-4587-bc69-c75c41cad938" positionType="Float" stretchType="RelativeToTallestObject" x="172" y="0" width="70" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CEDULA}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="485082f0-1c29-4ef2-bc87-18efa9d40743" positionType="Float" stretchType="RelativeToTallestObject" x="242" y="0" width="150" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRES}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="56a25f38-d527-4faa-85e6-9a85c961b53a" positionType="Float" stretchType="RelativeToTallestObject" x="392" y="0" width="150" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{APELLIDOS}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="a3ce2a0c-a1dc-4b3d-be66-a39ef3d313cd" positionType="Float" stretchType="RelativeToTallestObject" x="542" y="0" width="105" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NACIONALIDAD_UAF}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="a1aa3a97-35c7-4218-9187-d0b04cdb5817" positionType="Float" stretchType="RelativeToTallestObject" x="647" y="0" width="224" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DIRECCION}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="7597545c-6012-4c7d-8cfe-38abaae45982" positionType="Float" stretchType="RelativeToTallestObject" x="871" y="0" width="109" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOMICILIO_PROVINCIA}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="b2e5d6cb-68f0-497f-bd5f-12ba922435a6" positionType="Float" stretchType="RelativeToTallestObject" x="980" y="0" width="93" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOMICILIO_CIUDAD}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="319f57cb-a582-4011-9e16-77e8391167c1" positionType="Float" stretchType="RelativeToTallestObject" x="1073" y="0" width="112" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOMICILIO_PARROQUIA}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="7e7d7d92-b508-46ef-b770-9c690d2b3d7e" positionType="Float" stretchType="RelativeToTallestObject" x="1185" y="0" width="118" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ACTIVIDAD_ECONOMICA}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="c959a532-e7ca-414e-9702-deb6ae6f6347" positionType="Float" stretchType="RelativeToTallestObject" x="1303" y="0" width="77" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INGRESOS}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cxcAnticipos_subreport1" pageWidth="244" pageHeight="802" columnWidth="244" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" uuid="e5386d1f-bf8f-44eb-a92d-9ec96d0a9823">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="pno_cia" class="java.lang.String"/>
+	<parameter name="prefer" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select a.no_cia,a.no_refe,a.monto_doc,c.centrod||'-'||c.no_fisico vfactura,b.fecha from arccrd a, arccmd b,fac_ventas_cab c
+where a.no_cia =$P{pno_cia}
+and a.no_refe = $P{prefer}
+and a.no_cia = b.no_cia
+and a.no_docu = b.no_docu
+and b.no_cia = c.no_cia
+and b.no_fisico = c.no_factu]]>
+	</queryString>
+	<field name="NO_CIA" class="java.lang.String"/>
+	<field name="NO_REFE" class="java.lang.String"/>
+	<field name="MONTO_DOC" class="java.math.BigDecimal"/>
+	<field name="VFACTURA" class="java.lang.String"/>
+	<field name="FECHA" class="java.sql.Timestamp"/>
+	<variable name="monto1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{MONTO_DOC}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField pattern="###0.00;-###0.00" isBlankWhenNull="false">
+				<reportElement uuid="0d3818d0-a25d-4b61-ac9c-86e39c2dedc4" x="0" y="0" width="82" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{MONTO_DOC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement uuid="720fb851-831e-47c1-8f1f-1f2d2ec913d3" x="82" y="0" width="82" height="20"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{VFACTURA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="720fb851-831e-47c1-8f1f-1f2d2ec913d3" x="164" y="0" width="80" height="20"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

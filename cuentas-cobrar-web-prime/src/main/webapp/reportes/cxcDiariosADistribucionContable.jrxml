@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cxcDiariosADistribucionContable" pageWidth="800" pageHeight="802" columnWidth="800" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="ee1f736a-a296-4017-81a8-abb5f74c04a8">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_NO_CIA" class="java.lang.String"/>
+	<parameter name="P_NO_DOCU" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT (a.uniadmin_id) centro,
+  a.ctacon_id cuenta_con,
+  b.nombre nombre_cta,
+  a.tipo,
+  decode(a.tipo,'D',a.monto_dol,0) debito,
+decode(a.tipo,'C',a.monto_dol,0) credito
+FROM arccdc_scb a,
+  con_planctas b
+WHERE a.no_cia  = $P{P_NO_CIA}
+AND a.no_cia    = b.empresa_id
+AND a.ctacon_id = b.ctacon_id
+AND a.no_docu   = $P{P_NO_DOCU}]]>
+	</queryString>
+	<field name="CENTRO" class="java.lang.String"/>
+	<field name="CUENTA_CON" class="java.lang.String"/>
+	<field name="NOMBRE_CTA" class="java.lang.String"/>
+	<field name="TIPO" class="java.lang.String"/>
+	<field name="DEBITO" class="java.math.BigDecimal"/>
+	<field name="CREDITO" class="java.math.BigDecimal"/>
+	<variable name="SUMDEBITO" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{DEBITO}]]></variableExpression>
+	</variable>
+	<variable name="SUMCREDITO" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{CREDITO}]]></variableExpression>
+	</variable>
+	<group name="masterDetallePagos">
+		<groupExpression><![CDATA[]]></groupExpression>
+		<groupHeader>
+			<band height="12">
+				<staticText>
+					<reportElement uuid="74d879ea-ff48-42f4-bc8d-1a05fac3412c" x="0" y="0" width="87" height="12"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CUENTA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="d1b0cada-61be-46ff-acaa-1189e3718e69" x="87" y="0" width="192" height="12"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[NOMBRE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="06c872f7-6dc1-4069-ad5d-d6230e8a5a33" x="279" y="0" width="102" height="12"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CENTRO COSTO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="0b51403c-5226-4603-9b28-f7a042b5f033" x="381" y="0" width="71" height="12"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[DEBITO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="ed099a1b-a53e-49b9-b5de-c86f88311ba8" x="452" y="0" width="84" height="12"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CREDITO]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField>
+				<reportElement uuid="38dc9b87-c8f7-4177-855b-b6b5d89d4c91" x="0" y="0" width="87" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CUENTA_CON}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="78e81b87-5c65-421f-9cd3-c1e565124530" x="87" y="0" width="192" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE_CTA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="a93e8353-d4a7-4353-8610-b851eb8ff08d" x="279" y="0" width="102" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CENTRO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="97b5728d-72b9-4dc9-917c-bbe1a5a6c92f" x="381" y="0" width="71" height="12"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DEBITO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="97b5728d-72b9-4dc9-917c-bbe1a5a6c92f" x="452" y="0" width="84" height="12"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CREDITO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="14">
+			<textField>
+				<reportElement uuid="0a90ae1c-c254-4103-bf44-2f7f27450fe0" x="381" y="0" width="71" height="14"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUMDEBITO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="ad9579d5-b5ca-4981-9e3e-397fa48b9b00" x="452" y="0" width="84" height="14"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUMCREDITO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="06c872f7-6dc1-4069-ad5d-d6230e8a5a33" x="279" y="0" width="102" height="14"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL:]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,39 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+<head>
+<script type="text/javascript">
+	function mayus(e) {
+		e.value = e.value.toUpperCase();
+	}
+</script>
+</head>
+<ui:composition>
+	<h:panelGrid id="idPanelPlanCuentas" columns="1">
+		<p:dataTable id="idTablePlanCuentas" var="item" selectionMode="single"
+			multiViewState="true" rowIndexVar="row" rows="10" filterDelay="600"
+			rowKey="#{item.conPlatasPk}" paginatorPosition="bottom"
+			paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+			paginator="true" lazy="true"
+			value="#{dialogPlanCuentasController.lazyDataModelPlanCuentas}"
+			selection="#{dialogPlanCuentasController.conPlantas}">
+
+			<p:ajax event="rowSelect" process="@this" partialSubmit="true"
+				update="@parent"
+				listener="#{dialogPlanCuentasController.seleccionarCuenta}" />
+
+			<p:column headerText="Cta. Contable"
+				filterBy="#{item.conPlatasPk.ctaconId}"
+				filterStyle="background:#e3e3e3;width:80%" width="40%">
+				<h:outputText value="#{item.conPlatasPk.ctaconId}" />
+			</p:column>
+			<p:column headerText="Nombre" filterBy="#{item.nombre}"
+				filterStyle="background:#e3e3e3;width:80%" width="60%">
+				<h:outputText value="#{item.nombre}" />
+			</p:column>
+		</p:dataTable>
+	</h:panelGrid>
+</ui:composition>
+</html>

@@ -1,0 +1,45 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+<head>
+<script type="text/javascript">
+	function mayus(e) {
+		e.value = e.value.toUpperCase();
+	}
+</script>
+</head>
+<ui:composition>
+	<p:dialog id="idDlgUsuarios" header="Seleccione Usuario" modal="true"
+		widgetVar="dialogUsuariosWV" position="center,center" closable="true"
+		appendTo="@(body)" responsive="true" width="350" closeOnEscape="true">
+		<h:form id="frmUsuarios">
+			<h:panelGrid id="idPanelUsuarios" columns="1">
+				<p:dataTable id="idTableUsuarios" var="item" multiViewState="true"
+					rowIndexVar="row" rows="10" filterDelay="600"
+					rowKey="#{item.usuario}" paginatorPosition="bottom"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+					paginator="true" lazy="true"
+					value="#{dialogUsuariosController.lazyDataModelUsuarios}"
+					selection="#{dialogUsuariosController.usuarioDto}"
+					selectionMode="single">
+
+					<p:ajax event="rowSelect"
+						listener="#{dialogUsuariosController.seleccionarUsuario}"
+						process="@this" partialSubmit="true" update="@parent" />
+
+					<p:column headerText="Usuario" filterBy="#{item.usuario}"
+						filterStyle="background:#e3e3e3;width:80%" width="40%">
+						<h:outputText value="#{item.usuario}" />
+					</p:column>
+					<p:column headerText="Nombre" filterBy="#{item.nombre}"
+						filterStyle="background:#e3e3e3;width:80%" width="60%">
+						<h:outputText value="#{item.nombre}" />
+					</p:column>
+				</p:dataTable>
+			</h:panelGrid>
+		</h:form>
+	</p:dialog>
+</ui:composition>
+</html>

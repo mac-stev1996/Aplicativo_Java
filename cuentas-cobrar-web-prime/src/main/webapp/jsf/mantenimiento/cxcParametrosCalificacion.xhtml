@@ -1,0 +1,187 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Cuentas por Cobrar - Parámetros de Calificación
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmButtons">
+			<p:commandButton title="Guardar" partialSubmit="true"
+				icon="ui-icon ui-icon-save" process="@this, :idForm:tblDetalle"
+				style="margin-top: 0px !important; float:right;"
+				styleClass="green-btn"
+				actionListener="#{cxcParametrosCalificacionController.guardar}"
+				update="@this, :idForm:tblCabecera, :idForm:tblDetalle" />
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+		<style>
+.w25 {
+	width: 25%;
+}
+</style>
+		<h:form id="idForm">
+
+			<div class="ui-g dashboard">
+				<div class="ui-g-12 ui-fluid contact-form">
+
+					<div class="ui-g-4">
+
+						<p:fieldset legend="Cuentas">
+
+							<div class="ui-g-12">
+
+								<div class="ui-g-3">
+									<p:outputLabel value="Código" />
+									<p:inputText id="codigoFiltro"
+										value="#{cxcParametrosCalificacionController.codigo}" />
+								</div>
+								<div class="ui-g-5">
+									<p:outputLabel value="Descripción" />
+									<p:inputText id="descripcionFiltro"
+										value="#{cxcParametrosCalificacionController.descripcion}" />
+								</div>
+								<div class="ui-g-3">
+									<p:commandButton title="Buscar" icon="ui-icon ui-icon-search"
+										style="margin-top:0px !important"
+										process="@this, :idForm:codigoFiltro, :idForm:descripcionFiltro"
+										partialSubmit="true"
+										actionListener="#{cxcParametrosCalificacionController.buscarCabecera}"
+										update="@this, :idForm:tblCabecera, :idForm:tblDetalle" />
+								</div>
+
+							</div>
+							<div class="ui-g-12">
+
+								<p:dataTable id="tblCabecera" widgetVar="tblCabeceraW"
+									emptyMessage="No existen registros"
+									value="#{cxcParametrosCalificacionController.listaCabecera}"
+									var="item"
+									selection="#{cxcParametrosCalificacionController.seleccionado}"
+									selectionMode="single" rowKey="#{item.pk}" rowIndexVar="var"
+									styleClass="table table-body" paginator="true"
+									paginatorAlwaysVisible="true" paginatorPosition="top"
+									filterDelay="1000" rows="10"
+									currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+									paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+
+									<p:ajax event="rowSelect" partialSubmit="true" process="@this"
+										listener="#{cxcParametrosCalificacionController.seleccionarCabecera}"
+										update="@this, :idForm:tblDetalle" global="false" />
+
+									<p:columnGroup type="header">
+										<p:row>
+											<p:column colspan="2">
+												<f:facet name="header">
+													<p:outputLabel value="Seleccione una cuenta"
+														styleClass="red" />
+												</f:facet>
+											</p:column>
+										</p:row>
+									</p:columnGroup>
+
+									<p:column headerText="Código" width="30%">
+										<p:outputLabel value="#{item.pk.codigo}" />
+									</p:column>
+
+									<p:column headerText="Descripción" width="70%">
+										<p:outputLabel value="#{item.descripcion}" />
+									</p:column>
+								</p:dataTable>
+
+							</div>
+
+						</p:fieldset>
+
+					</div>
+
+					<div class="ui-g-8">
+
+						<p:fieldset legend="Parámetros de Calificación">
+
+							<div class="ui-g-12">
+
+								<p:dataTable id="tblDetalle" widgetVar="tblDetalleW"
+									emptyMessage="No existen registros"
+									value="#{cxcParametrosCalificacionController.listaDetalle}"
+									var="item" selectionMode="single" rowKey="#{item.paramDetPK}"
+									rowIndexVar="var" styleClass="table table-body"
+									paginator="true" paginatorAlwaysVisible="true"
+									paginatorPosition="top" filterDelay="1000" rows="10"
+									currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+									paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink} {Botones}">
+
+									<f:facet name="{Botones}">
+										<p:commandButton title="Nuevo" partialSubmit="true"
+											icon="ui-icon ui-icon-create" process="@this"
+											style="margin-top: -4px !important; float:right;"
+											styleClass="green-btn"
+											actionListener="#{cxcParametrosCalificacionController.creaNuevoDetalle}"
+											update="@this, :idForm:tblDetalle" />
+									</f:facet>
+
+									<p:column headerText="Código" width="10%">
+										<p:inputText value="#{item.paramDetPK.codigo}" readonly="true" />
+									</p:column>
+
+									<p:column headerText="Código Det" width="10%">
+										<p:inputText value="#{item.paramDetPK.codigoDet}"
+											maxlength="9" />
+									</p:column>
+
+									<p:column headerText="Descripción" width="30%">
+										<p:inputText value="#{item.descripcion}" maxlength="40" />
+									</p:column>
+
+									<p:column headerText="Calif" width="15%">
+										<p:inputText value="#{item.texto1}" maxlength="20" />
+									</p:column>
+
+									<p:column headerText="Máximo" width="15%">
+										<p:inputText value="#{item.texto2}" maxlength="20" />
+									</p:column>
+
+									<p:column headerText="Mínimo" width="15%">
+										<p:inputText value="#{item.texto3}" maxlength="20" />
+									</p:column>
+
+									<p:column width="5%">
+										<p:commandButton title="Nuevo" partialSubmit="true"
+											icon="ui-icon ui-icon-delete" process="@this"
+											style="margin-top: 0px !important" styleClass="red-btn"
+											actionListener="#{cxcParametrosCalificacionController.eliminarDetalle(item)}"
+											update="@this, :idForm:tblDetalle">
+											<p:confirm header="Confirmación"
+												message="¿Esta seguro que desea eliminar el registro?"
+												icon="pi pi-exclamation-triangle" />
+										</p:commandButton>
+									</p:column>
+
+								</p:dataTable>
+
+							</div>
+
+						</p:fieldset>
+
+					</div>
+				</div>
+			</div>
+
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+			</p:confirmDialog>
+
+		</h:form>
+	</ui:define>
+
+</ui:composition>

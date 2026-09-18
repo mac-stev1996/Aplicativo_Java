@@ -1,0 +1,256 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	template="/jsf/templates/bodyTemplate.xhtml">
+	<ui:define name="title">
+		INGRESO DE DEVOLUCIONES DE ANTICIPOS   
+</ui:define>
+	<ui:define name="buttons">
+		<h:form id="frmButtons">
+			<p:commandButton styleClass="deep-orange-btn" id="regresar"
+				value="Regresar" title="Regresar"
+				actionListener="#{cxcBusquedaAnticipoClienteController.generarnuevaSolicitud}" />
+			<p:commandButton value="Ing. Solicitud" icon="fa fa-plus"
+				actionListener="#{cxcBusquedaAnticipoClienteController.agregarAnticiposSeleccionados}"
+				styleClass="green-btn" process="@this"
+				update=":#{p:component('dlgNuevo')}" />
+		</h:form>
+	</ui:define>
+	<ui:define name="content">
+		<h:form id="idForm">
+			<p:growl id="messages" globalOnly="true" autoUpdate="true"
+				widgetVar="groMessages" showDetail="true" life="5000" />
+			<p:panel>
+				<p:panelGrid id="panelPrincipal" columns="4">
+					<p:outputLabel value="Cliente" />
+					<p:inputText id="codCliente" autocomplete="off" size="10"
+						value="#{cxcBusquedaAnticipoClienteController.nbCliente}"
+						maxlength="10" readonly="true">
+						<p:ajax event="change" partialSubmit="true" process="@this" />
+					</p:inputText>
+					<p:inputText id="iden" autocomplete="off" size="15"
+						value="#{cxcBusquedaAnticipoClienteController.pCedula}"
+						maxlength="10" readonly="true">
+						<p:ajax event="change" partialSubmit="true" process="@this" />
+					</p:inputText>
+					<p:inputText id="nombre" autocomplete="off" size="80"
+						value="#{cxcBusquedaAnticipoClienteController.pNombres}"
+						maxlength="80" readonly="true">
+						<p:ajax event="change" partialSubmit="true" process="@this" />
+					</p:inputText>
+				</p:panelGrid>
+			</p:panel>
+			<p:panel style="width : 1450px;">
+				<p:tab>
+					<p:dataTable id="tabDatosPrincipales" title="" scrollable="true"
+						value="#{cxcBusquedaAnticipoClienteController.listaAnticiposPorCliente}"
+						var="ref" styleClass="table" sortBy="#{6}" disabledSelection="#{ref[8]== 'S'}"
+						rowSelectMode="checkbox" 
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+						paginator="true" rows="20" rowsPerPageTemplate="20,30,40"
+						selectionPageOnly="false" paginatorPosition="bottom"
+						selection="#{cxcBusquedaAnticipoClienteController.listaAnticiposSeleccionados}"
+						rowKey="#{ref[7]}" emptyMessage="No Existen Registros">
+						<p:ajax event="rowSelectCheckbox" partialSubmit="true" update="@this"
+							global="false" process="@this,:idForm:tabDatosPrincipales"
+							listener="#{cxcBusquedaAnticipoClienteController.rowSelectCheckbox}" />
+						<p:ajax event="rowUnselectCheckbox" process="@this" update="@this"
+							listener="#{cxcBusquedaAnticipoClienteController.rowUnselectCheckbox}" />
+						<p:ajax event="toggleSelect" update="@this" process="@this"
+							listener="#{cxcBusquedaAnticipoClienteController.selectAllCheckboxes}" />
+						<f:facet name="header">
+				           Solicitudes de Devolucion de Credito Por Agencia
+				        </f:facet>
+
+						<p:column headerText="Cliente" width="40%" style="text-align:left"
+							filterMatchMode="contains">
+							<h:outputText value="#{ref[0]}" />
+						</p:column>
+						<p:column headerText="No. Docu" width="40%"
+							style="text-align:left" filterMatchMode="contains">
+							<h:outputText value="#{ref[3]}">
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Fecha" width="40%" style="text-align:left"
+							filterMatchMode="contains">
+							<h:outputText value="#{ref[2]}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Linea" width="20%" style="text-align:left"
+							filterMatchMode="contains">
+							<h:outputText value="#{ref[4]}">
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Descripcion" width="60%"
+							style="text-align:left" filterMatchMode="contains">
+							<h:outputText value="#{ref[5]}" />
+						</p:column>
+						<p:column headerText="Bloqueado" width="20%"
+							style="text-align:left" filterMatchMode="contains">
+							<h:outputText value="#{ref[8]=='S' ? 'SI':'NO'}" />
+						</p:column>
+						<p:column headerText="Valor" width="30%" style="text-align:left"
+							filterMatchMode="contains" styleClass="number">
+							<h:outputText value="#{ref[6]}" />
+						</p:column>
+						<p:column headerText="Valor a Tomar" width="30%" style="text-align:left"  styleClass="number" >
+							<p:inputText id="valorTomar" value="#{ref[11]}"
+									size="15"  style=" width : 60px; " disabled="#{ref[8]== 'S'}" >
+									<p:ajax event="change"
+										listener="#{cxcBusquedaAnticipoClienteController.actualizarDatosTrasfer(ref)}"
+										partialSubmit="true" process="@this, tabDatosPrincipales" update=":idForm:tabDatosPrincipales" />
+								</p:inputText>
+					</p:column>
+						<p:column selectionMode="multiple" width="5%" resizable="true"
+							style="text-align:center !important" />
+						<p:summaryRow>
+							<p:column colspan="5" style="text-align:right">
+								<h:outputText style="font-size: 15px; width: 100%"
+									value="Total:" />
+							</p:column>
+							<p:column></p:column>
+							<p:column>
+								<h:outputText id="idOTsumaTotalAnticipos"
+									style="font-size: 15px; width: 100%"
+									value="#{cxcBusquedaAnticipoClienteController.valor}">
+									<f:convertNumber type="currency" currencySymbol="$" />
+								</h:outputText>
+							</p:column>
+								<p:column>
+								<h:outputText id="idOTsumaTotalvalorTomar"
+									style="font-size: 15px; width: 100%"
+									value="#{cxcBusquedaAnticipoClienteController.valorTomar}">
+									<f:convertNumber type="currency" currencySymbol="$" />
+								</h:outputText>
+							</p:column>
+						</p:summaryRow>
+					</p:dataTable>
+				</p:tab>
+			</p:panel>
+		</h:form>
+		<p:dialog widgetVar="dlgNuevo" id="dlgNuevo"
+			header="Ingreso Solicitud Devolucion Anticipo" resizable="true"
+			modal="true" closable="true" appendTo="@(body)" width="80%"
+			height="auto" closeOnEscape="true">
+			<h:form id="idFrmNuevo">
+				<center>
+					<p:panelGrid columns="4">
+						<p:outputLabel value="No. Cliente" />
+						<p:inputText id="iden" autocomplete="off" size="15"
+							value="#{cxcBusquedaAnticipoClienteController.nbCliente}"
+							maxlength="8" 
+							readonly="true">
+							<p:ajax event="change" partialSubmit="true" process="@this"
+								update="#{p:component('tabDatosPrincipales')}" />
+						</p:inputText>
+						<p:outputLabel value="Nombre" />
+						<p:inputText id="nombre" size="50" autocomplete="off"
+							maxlength="50"
+							value="#{cxcBusquedaAnticipoClienteController.pNombres}"
+							readonly="true" onkeyup="mayus(this)">
+						</p:inputText>
+						<p:outputLabel value="Asesor" />
+							<p:selectOneMenu id="somUsuario" filter="true"
+								filterMatchMode="contains"
+								value="#{cxcBusquedaAnticipoClienteController.asesor}">
+								<f:selectItem itemLabel="Seleccione" itemValue="" />
+								<f:selectItems
+									value="#{cxcBusquedaAnticipoClienteController.listaUsuarios}"
+									var="usuario" itemValue="#{usuario.usuario}"
+									itemLabel="#{usuario.usuario} - #{usuario.nombre}" />
+								<p:ajax event="change" partialSubmit="true" process="@this, somUsuario" ></p:ajax>
+							</p:selectOneMenu>
+							
+							<p:outputLabel value="Aplica Caja Chica"  rendered="#{cxcBusquedaAnticipoClienteController.verificacajaChica eq true}"/>
+						<p:selectOneMenu id="cajaChica"
+							value="#{cxcBusquedaAnticipoClienteController.aplicacajaChica}" rendered="#{cxcBusquedaAnticipoClienteController.verificacajaChica eq true}">
+							<f:selectItem itemLabel="Seleccione..." noSelectionOption="true" />
+							<f:selectItem itemValue="S" itemLabel="Si" />
+							<f:selectItem itemValue="N" itemLabel="No" />					
+								<p:ajax event="change" partialSubmit="true" process="@this"
+									update="cajaChica"></p:ajax>
+							</p:selectOneMenu>
+						<p:outputLabel value="Valor Anticipo Total:" />
+						<p:inputText id="valorTotal" size="20" autocomplete="off"
+							maxlength="20"
+							value="#{cxcBusquedaAnticipoClienteController.cabAnticipoDev.valorTotal}"
+							readonly="true">
+						</p:inputText>
+						<p:outputLabel value="Necesita Aprobación:" rendered="false" />
+						<p:selectOneRadio id="aprobacion" rendered="false"
+							value="#{cxcBusquedaAnticipoClienteController.necesitaAprobacion}"
+							columns="3">
+							<f:selectItem itemLabel="Si" itemValue="S" />
+							<f:selectItem itemLabel="No" itemValue="N" />
+							<p:ajax event="change" update="aprobacion" />
+						</p:selectOneRadio>
+						<p:outputLabel value="Motivo Devolucion:"></p:outputLabel>
+						<p:inputTextarea id="motDev" rows="2" cols="50"
+							value="#{cxcBusquedaAnticipoClienteController.cabAnticipoDev.motivoDevolucion}"
+							queryDelay="750" minQueryLength="4">
+							<p:ajax event="itemSelect" update="motDev" />
+						</p:inputTextarea>
+						<p:outputLabel value="Cargar Adjuntos:"></p:outputLabel>
+						<p:column headerText="Subir" width="25">
+							<center>
+								<p:commandLink title="Click Subir Adjuntos" partialSubmit="true"
+									actionListener="#{cxcBusquedaAnticipoClienteController.abriRevisar(cxcBusquedaAnticipoClienteController.nbCliente)}"
+									update="PnlAdjuntos" process="@this">
+									<i class="fa fa-cloud-upload fa-2x" style="color: #00BCD4;"></i>
+								</p:commandLink>
+							</center>
+						</p:column>
+					</p:panelGrid>
+					<br />
+					<p:commandButton value="Grabar" partialSubmit="true"
+						process="@this, idFrmNuevo" update=":idForm:tabDatosPrincipales, :#{p:component('dlgNuevo')}"
+						actionListener="#{cxcBusquedaAnticipoClienteController.verifDatosDevTrasfer}">
+					</p:commandButton>
+				</center>
+			</h:form>
+		</p:dialog>
+		<p:dialog header="Archivos Adjuntos" widgetVar="DlgAdjuntos"
+			modal="true" showEffect="fade" hideEffect="fade" resizable="true"
+			width="600" height="300" position="center center"
+			closeOnEscape="true">
+
+			<h:form id="PnlAdjuntos">
+				<p:fileUpload required="true"
+					fileUploadListener="#{cxcBusquedaAnticipoClienteController.cargarArchivo}"
+					mode="advanced" dragDropSupport="true" multiple="true" allowTypes="/(\.|\/)(jpe?g|png|xlsx|doc|docx|pdf|xls|xlsx)$/"
+					update="PnlAdjuntos, :#{p:component('messages')} :#{p:component('dtlinksArchivos')}"
+					uploadLabel="Subir Archivo" cancelLabel="Cancelar"
+					label="Seleccionar Archivo" invalidSizeMessage="El archivo no puede pesar mas de 5MB"
+					sizeLimit="5000000"  fileLimit="5" 
+					fileLimitMessage="Puede subir hasta 5 archivos"					>
+				</p:fileUpload>
+				<p:spacer height="5" />
+			
+				<p:dataTable
+					value="#{cxcBusquedaAnticipoClienteController.listaAdjuntos}"
+					var="adj" id="dtlinksArchivos">
+					<p:column headerText="Archivo">
+						<p:commandLink ajax="false" target="_blank"
+							action="#{cxcBusquedaAnticipoClienteController.verAdjunto(adj)}">
+							<h:outputText value="#{adj}"
+								style="text-decoration: underline; color: blue;"></h:outputText>
+						</p:commandLink>
+					</p:column>
+					<p:column headerText="Eliminar" width="30">
+						<p:commandButton icon="fa fa-minus" title="Quitar Archivo"
+							styleClass="red-btn"
+							action="#{cxcBusquedaAnticipoClienteController.quitarArchivo(adj)}"
+							update="PnlAdjuntos:dtlinksArchivos">
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

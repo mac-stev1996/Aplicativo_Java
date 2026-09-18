@@ -1,0 +1,74 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		REPORTE DE COBROS DE SEGUROS MENSUAL
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmButtons">
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+		<style>
+.w25 {
+	width: 25%;
+}
+</style>
+		<h:form id="idForm">
+			<p:panel id="basic">
+
+				<center>
+					<h:panelGrid columns="2" style="text-align:center !important;">
+						<p:outputLabel value="Desde:" styleClass="bold" />
+						<h:panelGrid columns="3">
+							<p:calendar placeholder="Desde" locale="es" mask="true"
+								value="#{cxcReporteCobrosSegurosMensualController.fechaDesde}"
+								pattern="dd/MM/yyyy" />
+							<p:outputLabel value="Hasta:" styleClass="bold" />
+							<p:calendar placeholder="Hasta" locale="es" mask="true"
+								value="#{cxcReporteCobrosSegurosMensualController.fechaHasta}"
+								pattern="dd/MM/yyyy" />
+						</h:panelGrid>
+					</h:panelGrid>
+				</center>
+
+				<f:facet name="footer">
+					<center>
+						<br />
+						<h:panelGrid columns="2" border="0" id="btnsCompLink"
+							columnClasses="iconCell, iconCell, iconCell" cellpadding="0"
+							cellspacing="0" width="270"
+							style="text-align:center; background-color: #e6e6e6">
+							<h:commandLink target="_blank"
+								action="#{cxcReporteCobrosSegurosMensualController.generarReporte}">
+								<h:graphicImage value="/common/imgs/reports/excel.png"
+									style="border:none;align:center;" title="Excel" alt="Excel"
+									width="25" height="25" />
+								<f:param name="format" value="excel" />
+							</h:commandLink>
+							<h:commandLink target="_blank"
+								action="#{cxcReporteCobrosSegurosMensualController.generarReporte}">
+								<h:graphicImage value="/common/imgs/reports/adobe.png"
+									style="border:none" title="Adobe" alt="Adobe" width="25"
+									height="25" />
+								<f:param name="format" value="pdf" />
+							</h:commandLink>
+							<h:outputText value="Excel" styleClass="normal" />
+							<h:outputText value="Pdf" styleClass="normal" />
+						</h:panelGrid>
+					</center>
+				</f:facet>
+			</p:panel>
+		</h:form>
+		<h:inputHidden
+			value="#{cxcReporteCobrosSegurosMensualController.reporte}"
+			binding="#{cxcReporteCobrosSegurosMensualController.reportPath}" />
+	</ui:define>
+</ui:composition>

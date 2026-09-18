@@ -1,0 +1,262 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" xmlns:pe="http://primefaces.org/ui">
+
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+	</f:facet>
+	<title>Clase Cliente</title>
+	<h:outputScript name="js/layout.js" library="serenity-layout" />
+	<h:outputScript name="js/ripple.js" library="serenity-layout" />
+	<style type="text/css">
+.center {
+	margin: auto;
+	width: 55%;
+	padding: 10px;
+}
+</style>
+	<script type="text/javascript">
+		function mayus(e) {
+		    e.value = e.value.toUpperCase();
+		}		
+	</script>
+</h:head>
+<h:body>
+	<p:ajaxStatus onstart="PF('statusDialog').show()"
+		onsuccess="PF('statusDialog').hide()" />
+
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+		closable="false" resizable="false" showHeader="false">
+		<p:graphicImage value="/imgs/gifs/ajaxloadingbar.gif" />
+	</p:dialog>
+
+	<h:form id="form">
+
+		<p:toolbar>
+			<f:facet name="right">
+				<p:commandButton value="Nuevo" style="float: right;"
+					icon="ui-icon-document" styleClass="boton"
+					action="#{cxcClaseClienteController.nuevoItem}"
+					oncomplete="PF('dlgClase').show();" update=":formDlgClase" />
+			</f:facet>
+			<f:facet name="left">
+				<p:outputLabel value="Clase cliente" />
+			</f:facet>
+
+		</p:toolbar>
+		<p:growl id="messages" globalOnly="true" autoUpdate="true"
+			widgetVar="groMessages" showDetail="true" />
+		<p:dataTable id="eventsDT" var="ref" lazy="true"
+			value="#{cxcClaseClienteController.lazyDataModelCxcClaseCliente}"
+			rowKey="#{ref.pk}" paginatorAlwaysVisible="false" rowIndexVar="row"
+			filterDelay="600"
+			paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+			paginator="true" rows="#{cxcClaseClienteController.pageSize}"
+			paginatorPosition="bottom" editable="true" editMode="cell"
+			emptyMessage="No Existen Registros">
+
+			<p:column headerText="Negocio"  sortBy="#{ref.cxcClaseClientePK.negocio}" filterBy="#{ref.cxcClaseClientePK.negocio}" 
+				filterMatchMode="contains" >
+				<p:outputLabel value="#{ref.cxcClaseClientePK.negocio}" />
+			</p:column>
+
+			<p:column headerText="Clase"  sortBy="#{ref.cxcClaseClientePK.clase}" filterBy="#{ref.cxcClaseClientePK.clase}" 
+				filterMatchMode="contains" >
+				<p:outputLabel value="#{ref.cxcClaseClientePK.clase}" />
+			</p:column>
+			
+			<p:column headerText="Descripción"  sortBy="#{ref.descripcion}" filterBy="#{ref.descripcion}" 
+				filterMatchMode="contains" >
+				<p:outputLabel value="#{ref.descripcion}" />
+			</p:column>
+			
+			<p:column headerText="Tipo Cliente" sortBy="#{ref.tipoCliente}"
+				filterBy="#{ref.tipoCliente}" filterMatchMode="contains">
+				<p:outputLabel value="#{ref.tipoCliente}" />
+			</p:column>
+			
+			<p:column headerText="Placa Obligatoria" filterBy="#{ref.placaObligatoria}"
+				filterMatchMode="contains">
+					<h:outputText
+							value="#{ref.placaObligatoria eq 'S'?'SI':'NO'}" />
+			</p:column>
+
+			<p:column headerText="Paga Transporte" filterBy="#{ref.pagaTransporte}"
+				filterMatchMode="contains">
+				<h:outputText value="#{ref.pagaTransporte eq 'S'?'SI':'NO'}" />
+			</p:column>
+
+			<p:column headerText="Frecuencia" filterBy="#{ref.frecuencia}"
+				filterMatchMode="contains">
+				<p:outputLabel value="#{ref.frecuencia}" />
+			</p:column>
+			
+			<p:column headerText="Ultimos Meses" filterBy="#{ref.ultimosMeses}"
+				filterMatchMode="contains">
+					<p:outputLabel value="#{ref.ultimosMeses}" />
+			</p:column>
+			
+			<p:column headerText="Meses Anteriores" filterBy="#{ref.anterioresMeses}"
+				filterMatchMode="contains">
+					<p:outputLabel value="#{ref.anterioresMeses}" />
+			</p:column>
+
+			<p:column>
+				<p:commandButton icon="fa fa-edit" title="Editar Registro"
+					actionListener="#{cxcClaseClienteController.seleccionar(ref)}"
+					oncomplete="PF('dlgClase').show();" update=":formDlgClase"  />
+			</p:column>
+
+		</p:dataTable>
+	</h:form>
+	
+	
+	<p:dialog id="dlgClase" widgetVar="dlgClase" resizable="false"
+		modal="true" appendTo="@(body)" closeOnEscape="true"
+		header="Clase Cliente">
+		<h:form id="formDlgClase">
+			<p:panelGrid id="gridCrearClase" columns="2" height="480" width="450">
+				
+				
+				<h:outputText value="Clase: " />
+				<p:column>
+					<p:inputText maxlength="3" required="true" requiredMessage="clase es requerida"
+						onkeyup="mayus(this)"
+						value="#{cxcClaseClienteController.cxcClaseClienteSeleccionado.cxcClaseClientePK.clase}"
+						id="clase" disabled="#{not cxcClaseClienteController.esNuevo}" >
+						<p:ajax event="keyup" update="claseMsg"/>	
+					</p:inputText>
+					<p:message id="claseMsg" for="clase" />
+				</p:column>
+
+
+				<h:outputText value="Negocio: " />
+				<p:column>
+					<p:selectOneMenu  disabled="#{not cxcClaseClienteController.esNuevo}" 
+						value="#{cxcClaseClienteController.cxcClaseClienteSeleccionado.cxcClaseClientePK.negocio}"
+						id="negocio" required="true" requiredMessage="Error Campo Requerido"
+						converterMessage="Error Campo Requerido"
+						validatorMessage="Error Campo Requerido">
+						<p:ajax event="change" update="negociaMsg"/>
+						<f:selectItem itemLabel="Seleccione por favor" itemValue="" />
+						<f:selectItems
+							value="#{cxcClaseClienteController.listadoNegocios}" />
+					</p:selectOneMenu>
+
+					<p:message id="negociaMsg" for="negocio" />
+				</p:column>
+
+				<p:outputLabel value="Descripción: "  />
+				<p:column>
+					<p:inputText maxlength="40" onkeyup="mayus(this)" required="true" requiredMessage="Campo Requerido"
+						value="#{cxcClaseClienteController.cxcClaseClienteSeleccionado.descripcion}"
+						id="descripcion" >
+						<p:ajax event="change" update="descripcionMsg"/>
+						</p:inputText>
+					<p:message id="descripcionMsg" for="descripcion" />
+				</p:column>
+				
+				<p:outputLabel value="usuario: " />
+				<p:column>
+					<p:inputText maxlength="30" required="true" requiredMessage="Campo Requerido"
+						value="#{cxcClaseClienteController.cxcClaseClienteSeleccionado.usuario}"
+						id="usuario" >
+							<p:ajax event="change" update="usuarioMsg"/>
+						</p:inputText>
+					<p:message id="usuarioMsg" for="usuario" />
+				</p:column>
+
+				<p:outputLabel value="Tipo Cliente: " />
+				<p:column>
+					<p:inputText maxlength="20" onkeyup="mayus(this)" required="true" requiredMessage="Campo Requerido"
+						value="#{cxcClaseClienteController.cxcClaseClienteSeleccionado.tipoCliente}"
+						id="tipoCliente" >
+						<p:ajax event="change" update="tipoClienteMsg"/>
+						</p:inputText>
+					<p:message id="tipoClienteMsg" for="tipoCliente" />
+				</p:column>
+				
+				<h:outputText value="Placa Obligatoria: "  />
+				<p:column>
+					<p:selectOneMenu
+						value="#{cxcClaseClienteController.cxcClaseClienteSeleccionado.placaObligatoria}"
+						required="true" requiredMessage="Escoja por favor"
+						style="align-content: flex-start !important" styleClass="algopru"
+						id="placaObligatoria">
+							<p:ajax event="change" update="placaMsg"/>
+							<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+							<f:selectItem itemLabel="Si" itemValue="S" />
+							<f:selectItem itemLabel="No" itemValue="N" />
+						</p:selectOneMenu>
+					<p:message id="placaMsg" for="placaObligatoria" />
+				</p:column>
+				
+				
+				<h:outputText value="Paga Transporte: " />
+				<p:column>
+					<p:selectOneMenu
+						value="#{cxcClaseClienteController.cxcClaseClienteSeleccionado.pagaTransporte}"
+						required="true" requiredMessage="Escoja por favor"
+						style="align-content: flex-start !important" styleClass="algopru"
+						id="pagaTransporte">
+						<p:ajax event="change" update="pagaMsg"/>
+						<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+						<f:selectItem itemLabel="Si" itemValue="S" />
+						<f:selectItem itemLabel="No" itemValue="N" />
+					</p:selectOneMenu>
+					<p:message id="pagaMsg" for="pagaTransporte" />
+				</p:column>
+				
+				<p:outputLabel value="Frecuencia: "  />
+				<p:column>
+					<p:inputText required="true" requiredMessage="Campo Requerido" maxlength="3"
+						value="#{cxcClaseClienteController.cxcClaseClienteSeleccionado.frecuencia}"
+						id="frecuencia" >
+							<p:ajax event="change" update="frecuenciaMsg"/>
+						</p:inputText>
+					<p:message id="frecuenciaMsg" for="frecuencia" />
+				</p:column>
+				
+				<p:outputLabel value="Anteriores Meses: " />
+				<p:column>
+					<p:inputText required="true" requiredMessage="Campo Requerido" maxlength="3"
+						value="#{cxcClaseClienteController.cxcClaseClienteSeleccionado.anterioresMeses}"
+						id="anterioresMeses" >
+							<p:ajax event="change" update="anterioresMsg"/>
+						</p:inputText>
+					<p:message id="anterioresMsg" for="anterioresMeses" />
+				</p:column>
+				
+				<p:outputLabel value="Ultimos Meses: " />
+				<p:column>
+					<p:inputText required="true" requiredMessage="Campo Requerido" maxlength="3"
+						value="#{cxcClaseClienteController.cxcClaseClienteSeleccionado.ultimosMeses}"
+						id="ultimosMeses" >
+							<p:ajax event="change" update="ultimosMsg"/>
+						</p:inputText>
+					<p:message id="ultimosMsg" for="ultimosMeses" />
+				</p:column>
+				
+			</p:panelGrid>
+			<center>
+				<p:commandButton value="Guardar" icon="fa fa-save"
+					actionListener="#{cxcClaseClienteController.grabar}"
+					styleClass="boton"
+					update=":formDlgClase :#{p:component('eventsDT')} "
+					process="@this, formDlgClase" partialSubmit="true" />
+			</center>
+		</h:form>
+	</p:dialog>
+
+
+	<h:outputStylesheet name="css/layout-lightblue.css"
+		library="serenity-layout" />
+</h:body>
+</html>

@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cxcConvenioCreditoComercialEmpresas" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="9b2b76ce-203d-41fd-bd4e-4e6dc8a197df">
+	<property name="ireport.zoom" value="1.9487171000000099"/>
+	<property name="ireport.x" value="29"/>
+	<property name="ireport.y" value="130"/>
+	<parameter name="NO_SOLICITUD" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="NO_CIA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_LOGO" class="java.lang.Object"/>
+	<queryString>
+		<![CDATA[select c.CEDULA, c.NOMBRES,c.EMAIL, c.DOMICILIO_CALLE, a.DESCRIP,
+a.REP_LEG_NOMBRES ||' '||a. REP_LEG_APEP ||' '|| a. REP_LEG_APEM as GERENTE
+from CXC_CREDITO_POSTVENTA c
+left join NOM_COMPANIAS a on a.NO_CIA = c.NO_CIA
+where c.NO_SOLICITUD = $P{NO_SOLICITUD}
+AND c.NO_CIA = $P{NO_CIA}]]>
+	</queryString>
+	<field name="CEDULA" class="java.lang.String"/>
+	<field name="NOMBRES" class="java.lang.String"/>
+	<field name="EMAIL" class="java.lang.String"/>
+	<field name="DOMICILIO_CALLE" class="java.lang.String"/>
+	<field name="DESCRIP" class="java.lang.String"/>
+	<field name="GERENTE" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="802" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="186bf30a-400b-4bb1-8194-abd4374e5fe8" x="0" y="435" width="555" height="24"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[SÉPTIMA.- Si cualquier estipulación o grupo de estipulaciones contenidas en este convenio se considerase inválida, nula o sin efecto por cualquier motivo, este hecho no afectará la validez de las restantes estipulaciones de este instrumento.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="186bf30a-400b-4bb1-8194-abd4374e5fe8" x="0" y="458" width="555" height="33"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[OCTAVA.- Las partes dejan expresa constancia de que en caso de mora en el cumplimiento de las obligaciones por parte de EL CLIENTE, se aplicará la tasa máxima de interés establecida por el Banco Central del Ecuador sin necesidad de requerimiento notarial o judicial de ninguna clase, siendo suficiente, el mero vencimiento del plazo convenido.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="186bf30a-400b-4bb1-8194-abd4374e5fe8" x="0" y="490" width="555" height="22"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[NOVENA.- NOTIFICACIONES Y CITACIONES. - Para efectos de recibir notificaciones, las partes fijan su domicilio en esta ciudad, en los lugares que se detallan a continuación:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="186bf30a-400b-4bb1-8194-abd4374e5fe8" x="0" y="581" width="555" height="22"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[De igual forma y aceptación de lo dispuesto en el Art. 55 numeral 2 del Código Orgánico General de Procesos, las partes fijan sus correos electrónicos para recibir citaciones y/o notificaciones.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="186bf30a-400b-4bb1-8194-abd4374e5fe8" x="0" y="602" width="555" height="33"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[DÉCIMA.- Las partes convienen en que toda controversia que no pueda ser resuelta amigablemente, se la someterá ante los jueces y tribunales del domicilio del demandado. Los comparecientes aceptan en contenido del presente convenio y lo suscriben en tres ejemplares de igual tenor y valor, en la fecha de suscripción de la solicitud de crédito aparejada a este instrumento.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d2ecd98a-6cf9-473a-91e9-9a1c5248b538" x="0" y="0" width="350" height="56"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CONVENIO DE CRÉDITO COMERCIAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8c9e5b50-dfb8-43ad-b7d7-5f4c5d9b22f5" x="0" y="527" width="74" height="13"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[ 2.- EL CLIENTE:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="fb769c60-1511-4c72-84d2-ced6faa799db" x="0" y="539" width="74" height="13"/>
+				<box>
+					<leftPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[ Dirrección:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="730965b2-4753-46fe-beef-900f1e6470e5" x="0" y="551" width="74" height="13"/>
+				<box>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[ Correo:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="388a109c-b5dd-4445-bc2b-aedbad7d45eb" x="73" y="527" width="314" height="13"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRES}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="966984cf-1559-4e0b-a255-b152fab6bded" x="73" y="539" width="314" height="13"/>
+				<box>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOMICILIO_CALLE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="fbca871d-6e23-4e2b-8bf3-cb7a3540dbf5" x="73" y="551" width="314" height="13"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EMAIL}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="8c9e5b50-dfb8-43ad-b7d7-5f4c5d9b22f5" x="282" y="648" width="220" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<text><![CDATA[p. EL CLIENTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8c9e5b50-dfb8-43ad-b7d7-5f4c5d9b22f5" x="62" y="758" width="220" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<text><![CDATA[GERENTE GENERAL]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="388a109c-b5dd-4445-bc2b-aedbad7d45eb" x="282" y="746" width="220" height="25"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRES}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="388a109c-b5dd-4445-bc2b-aedbad7d45eb" x="282" y="770" width="220" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CEDULA}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement uuid="36bb6a0d-3bc7-4ef2-98d4-56dd96d6bf01" mode="Transparent" x="62" y="662" width="441" height="121"/>
+			</rectangle>
+			<line>
+				<reportElement uuid="98e22208-cf4a-454a-95cd-06b64d76cc4c" x="282" y="662" width="1" height="121"/>
+			</line>
+			<image hAlign="Right" vAlign="Middle">
+				<reportElement uuid="6e7438bd-1e29-4e91-a025-305926bec1f2" x="349" y="11" width="206" height="35"/>
+				<imageExpression><![CDATA[$P{P_LOGO}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement uuid="e4353383-ab79-486f-bdd9-6292ddcfb5d4" stretchType="RelativeToTallestObject" x="0" y="55" width="555" height="42"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Comparecen a la celebración del presente instrumento, libre y voluntariamente, por una parte, el señor "+$F{GERENTE}+", por los derechos que representa en calidad de GERENTE GENERAL de "+$F{DESCRIP}+", a quien en adelante y para efectos del presente convenio, se le denominará "+$F{DESCRIP}+"; y por otra parte, la persona natural o jurídica cuyos datos se encuentran en el anverso de este documento, a quien se la denominará EL CLIENTE"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="b22fe7ee-5395-4a91-b3a7-630a46bb07b1" stretchType="RelativeToBandHeight" x="0" y="96" width="555" height="84"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PRIMERA.- La línea de Crédito Mercantil otorgada y autorizada por "+$F{DESCRIP}+" a favor de EL CLIENTE, es la que consta detallada como monto solicitado en la solicitud de crédito, lo que permite a EL CLIENTE adquirir repuestos y lubricantes para vehículos, sin otra formalidad que la emisión de la factura, así como las condiciones de venta incluidas en ellas o en los documentos que "+$F{DESCRIP}+" así establezca. Las facturas, así como las actas de entrega-recepción y demás documentos generados por "+$F{DESCRIP}+", en virtud de la instrumentalización del presente convenio, podrán ser remitido de forma digital al correo electrónico detallado en la cláusula novena. EL CLIENTE acepta de forma expresa recibir las facturas al correo electrónico antes referido, las cuales, una vez finalizado el plazo de crédito, constituirán obligaciones claras, liquidas, exigibles y de plazo vencido, quedando facultada "+$F{DESCRIP}+" para realizar el cobro mediante procedimiento monitorio; para lo cual, se entenderá el presente convenio, como la prueba de la relación preexistente entre los comparecientes y que demuestre la calidad de acreedora que, para tal efecto, mantendrá "+$F{DESCRIP}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="ba5fabb3-2047-48dc-9cbd-01cf99b6afc0" x="0" y="180" width="555" height="60"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["SEGUNDA.- EL CLIENTE acepta expresa e incondicionalmente que los importes de las facturas entregadas por bienes recibidos, actas entrega-recepción y en general cualquier documento que contenga una obligación de pago por los bienes o servicios prestados por "+$F{DESCRIP}+" o de cualquier tipo de gastos adicionales derivados del manejo del crédito, contraída por EL CLIENTE, se deberá realizar el pago dentro del plazo máximo referido en la solicitud de crédito o en las facturas emitidas, en caso de haberse señalado un periodo de pago en dichos documento. EL CLIENTE acepta que las facturas notificadas al correo electrónico detallado en la cláusula décima del presente contrato, así como cualquier otra notificación, se entenderá recibida y en caso de cambio de dirección electrónica, es de responsabilidad de EL CLIENTE notificarla formalmente a "+$F{DESCRIP}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="80b727f9-7068-479b-af6c-d94c3108aeeb" x="0" y="239" width="555" height="68"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["TERCERA.- EL CLIENTE se obliga incondicionalmente a pagar el valor adeudado dentro del tiempo de crédito concedido. Si los valores por pagar están detallados en cuotas dentro de las facturas respectivas, el atraso en uno o más dividendos, dará lugar al vencimiento anticipado de la totalidad del valor facturado, considerando el interés por mora a partir del vencimiento de cada cuota. "+$F{DESCRIP}+" se reserva el derecho de poder realizar los cobros mediante débitos bancarios o directamente en el domicilio de EL CLIENTE y designar a una persona para realizar estas gestiones. "+$F{DESCRIP}+" queda autorizada a cobrar intereses de financiamiento y de mora, así también las costas procesales y honorarios profesionales que se generen por el retardo en el cumplimiento de las obligaciones, retardo por pago tardío, cargos que son aceptados por EL CLIENTE quien desde ya se obliga a pagarlos incondicionalmente."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="06ca7d7b-c9b4-48d1-b2e3-e9e2659c38cc" x="0" y="306" width="555" height="50"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CUARTA.- "+$F{DESCRIP}+" atenderá y despachará los requerimientos solicitados por EL CLIENTE. La entrega podrá solicitarla cualquier persona designada o autorizada por EL CLIENTE, quedando "+$F{DESCRIP}+" facultada para realizar el despacho de lo requerido, siempre y cuando EL CLIENTE no se encuentre vencido en el pago de sus obligaciones anteriores. Este convenio tiene plazo indefinido mientras exista una relación Comercial entre "+$F{DESCRIP}+" y EL CLIENTE. Se deja constancia que "+$F{DESCRIP}+" a su arbitrio podrá darlo por terminado en cualquier momento y sin previo aviso previa a una comunicación con quince días de anticipación."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="ae2fd171-8e6c-4fc4-af00-826a1a8381f0" x="0" y="355" width="555" height="42"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["QUINTA.- La suscripción del presente convenio, supone el expreso consentimiento a las estipulaciones contenidas en el mismo, en caso de modificaciones que se hagan a los términos de los créditos otorgados, el uso de estos por parte del CLIENTE significa su expreso consentimiento y aceptación a dichas modificaciones; en caso de no aceptarlas, EL CLIENTE podrá dar por terminada la relación contractual con "+$F{DESCRIP}+", debiendo cancelar el valor total de lo adeudado a la fecha de la terminación más los recargos que puedan generarse."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="bf4190b9-dc03-49b2-8d82-1155952aec78" x="0" y="396" width="555" height="40"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["SEXTA.- Queda expresamente autorizada "+$F{DESCRIP}+" o su contratista encargada de la revisión, análisis financiero y calificación de créditos, Centro de Servicios Compartidos GBV S.A., para que puedan obtener de cualquier fuente de información, incluida la Central de Riesgos y los burós de información crediticia, referencias e información personal sobre el comportamiento crediticio de EL CLIENTE, así como a emitir y reportar información sobre su comportamiento crediticio."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="6569670b-3ed5-40ea-9988-91512e1eb514" x="62" y="648" width="220" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["p. "+$F{DESCRIP}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="e0137900-0aa0-4c76-897a-160d6b01f0d7" x="62" y="746" width="220" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GERENTE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="44cd4cd4-dc24-4d5b-9ab4-f9709c9fd3e8" x="62" y="770" width="220" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCRIP}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

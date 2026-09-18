@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="repPagareALaOrden" pageWidth="595" pageHeight="841" columnWidth="539" leftMargin="28" rightMargin="28" topMargin="28" bottomMargin="28" uuid="4717ba81-181e-4b26-89c6-e60b706d2e86">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="3.4522712143931047"/>
+	<property name="ireport.x" value="161"/>
+	<property name="ireport.y" value="37"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="USUARIO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["VV"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="MODULO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["MERCADEO"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="NOMBRE_CIA" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["CASABACA S.A."]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IMPRIME_CABECERA" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Boolean(true)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IMPRIME_COLUMN_HEADER" class="java.lang.Boolean" isForPrompting="false"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:/proyectos/vehiculosWeb/WebContent/reportes/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="pNoCia" class="java.lang.String"/>
+	<parameter name="pNoCliente" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+    (select nombre from arcgmc where no_cia = a.no_cia) pNomEmpresa,
+    a.nombre pNombre,
+    a.limite_credi,
+    UPPER(letras(a.limite_credi, 'D')) pNumLetras,
+    a.nombre,
+    a.estado_civil,
+    a.domicilio_provincia,
+    a.domicilio_ciudad,
+    a.cedula,
+    b.descripcion ciudad,
+    b.descripcion || parametros.obt_fecha_completa('', trunc(sysdate)) fecha_de_hoy,
+    substr(parametros.obt_fecha_completa('', trunc(sysdate)), 3, 30) fecha_otorga_pagare,
+    substr(parametros.obt_fecha_completa('',(trunc(sysdate) + 365)), 3, 30) fecha_vence_pagare
+FROM
+    arccmc    a,
+    arcccan   b
+WHERE
+    a.no_cia = $P{pNoCia}
+    AND a.no_cliente = $P{pNoCliente}
+    AND b.pais = '01'
+    AND b.provincia = a.domicilio_provincia
+    AND b.canton = a.domicilio_ciudad]]>
+	</queryString>
+	<field name="PNOMEMPRESA" class="java.lang.String"/>
+	<field name="PNOMBRE" class="java.lang.String"/>
+	<field name="LIMITE_CREDI" class="java.math.BigDecimal"/>
+	<field name="PNUMLETRAS" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="ESTADO_CIVIL" class="java.lang.String"/>
+	<field name="DOMICILIO_PROVINCIA" class="java.lang.String"/>
+	<field name="DOMICILIO_CIUDAD" class="java.lang.String"/>
+	<field name="CEDULA" class="java.lang.String"/>
+	<field name="CIUDAD" class="java.lang.String"/>
+	<field name="FECHA_DE_HOY" class="java.lang.String"/>
+	<field name="FECHA_OTORGA_PAGARE" class="java.lang.String"/>
+	<field name="FECHA_VENCE_PAGARE" class="java.lang.String"/>
+	<variable name="FECHA" class="java.util.Date">
+		<variableExpression><![CDATA[new Date()]]></variableExpression>
+		<initialValueExpression><![CDATA[new Date()]]></initialValueExpression>
+	</variable>
+	<title>
+		<band height="23" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="12fcf81f-1e85-4b2b-a14b-74fd96e6e5cd" key="staticText-1" x="102" y="0" width="335" height="23"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Pagare a la orden]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="691" splitType="Stretch">
+			<textField>
+				<reportElement uuid="f292f510-998b-4dc2-8a04-7c43a9cc4480" x="22" y="79" width="497" height="90"/>
+				<textElement textAlignment="Justified" verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA["Yo(nosotros) el/la señor/a pNombre, incondicional y solidariamente debo(mos) y pagaré(mos) a la orden de pNomEmpresa, en esta ciudad, o en el lugar en que se me (nos) solicite,  en la fecha de vencimiento antes señalada, la suma de pNumLetras   DE  LOS ESTADOS UNIDOS DE AMERICA  de conformidad con la tasa de interés vigente publicada por el Banco Central.  Este valor se pagará en dinero efectivo con recursos lícitos que en ningún caso han sido generados por operaciones ilícitas, especialmente no por aquellas reprimidas por la Ley sobre Sustancias Estupefacientes y Psicotrópicas, eximiendo a pNomEmpresa, de cualquier responsabilidad en la materia."
+.replaceAll("pNombre", $F{NOMBRE})
+.replaceAll("pNomEmpresa", $F{PNOMEMPRESA})
+.replaceAll("pNumLetras", $F{PNUMLETRAS})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="3f3ecf48-ac0f-494d-b545-0c65526a02a5" x="22" y="174" width="497" height="80"/>
+				<textElement textAlignment="Justified" verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA["A partir del vencimiento, total o parcialmente, la cantidad de capital no pagada devengará intereses de mora. La tasa de interés de mora será la que resulte de aplicar un recargo de 1.1 veces sobre la tasa de interés efectiva máxima para el segmento consumo, computado desde el primer día de la mora hasta el día en que se efectúe el pago. El interés de mora se calculará con base en un año de 360 días. Sin perjuicio de ello, en caso de mora, pNomEmpresa , podrá declarar vencida toda la obligación y proceder al cobro de todos los valores efectivamente adeudados al momento de la mora. "
+.replaceAll("pNomEmpresa",$F{PNOMEMPRESA})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="87154f79-be30-4b59-ad7c-b5966af93b37" x="22" y="256" width="497" height="59"/>
+				<textElement textAlignment="Justified" verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA["Para caso de juicio, renuncio (amos) fuero y domicilio y me (nos) someto (emos) expresamente a los jueces competentes de la Ciudad de QUITO. Me (nos) obligo (amos) a pagar las costas y gastos judiciales y/o extrajudiciales que se originasen en el cobro aun antes de sentencia, que sean necesarios para asegurar la legalidad y ejecutoriedad de este Pagaré y para recaudar los valores adeudados, incluyendo honorarios legales así como otras pérdidas y daños causados por el incumplimiento. "]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="a42a4738-c4eb-454d-b864-7ca0ea221b2a" x="22" y="320" width="497" height="20"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="none"/>
+				<text><![CDATA[ Sin protesto. Exímase de presentación para el pago y de avisos por falta de pago. ]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="9c2a34ac-34be-466a-8032-69271beca60b" x="22" y="350" width="144" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{FECHA_DE_HOY}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="e36e36ab-b450-41ea-b3e3-35b430c7363f" x="22" y="370" width="119" height="20"/>
+				<textElement verticalAlignment="Middle" markup="none"/>
+				<text><![CDATA[Por el(los) Deudor(es)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="76952162-c4dd-4b36-b856-ca5fe3c2c50a" x="299" y="456" width="220" height="18">
+					<printWhenExpression><![CDATA[$F{ESTADO_CIVIL}.equals("C")]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Dotted"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[C.C:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="1fffc4d6-023d-4665-a051-c33701703c94" x="23" y="476" width="220" height="18"/>
+				<textElement verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression><![CDATA["C.C:"+$F{CEDULA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="783e9a38-5c51-4157-a559-013f985395af" x="23" y="456" width="220" height="20"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="e3c73c92-84c5-4472-adeb-42b6d5d06ec9" x="142" y="4" width="180" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{FECHA_OTORGA_PAGARE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="c1d008cc-09aa-4663-9633-6c72cde8d652" x="22" y="4" width="120" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha de otorgameinto:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="67517e55-2f39-425b-b8e2-d85cfe866797" x="22" y="24" width="120" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha de vencimiento:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="457ebc84-c7c7-475c-9c2d-61a212552dcd" x="22" y="44" width="119" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Por US $......................:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="f9b5c871-773c-4e16-9bec-93ab4e143cdc" x="141" y="44" width="177" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{LIMITE_CREDI}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="e36e36ab-b450-41ea-b3e3-35b430c7363f" x="23" y="556" width="119" height="20"/>
+				<textElement verticalAlignment="Middle" markup="none"/>
+				<text><![CDATA[Por el(los) Deudor(es)]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="9c2a34ac-34be-466a-8032-69271beca60b" x="23" y="536" width="144" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{FECHA_DE_HOY}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="e36e36ab-b450-41ea-b3e3-35b430c7363f" x="23" y="511" width="101" height="20"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[VISTO BUENO]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="1fffc4d6-023d-4665-a051-c33701703c94" x="23" y="665" width="220" height="18"/>
+				<textElement verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression><![CDATA["C.C:"+$F{CEDULA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="76952162-c4dd-4b36-b856-ca5fe3c2c50a" x="299" y="645" width="220" height="18">
+					<printWhenExpression><![CDATA[$F{ESTADO_CIVIL}.equals("C")]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Dotted"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[C.C:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="783e9a38-5c51-4157-a559-013f985395af" x="23" y="645" width="220" height="20"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="206">
+			<staticText>
+				<reportElement uuid="fee1af1c-91da-43c8-a674-81c4b9c531f9" x="217" y="15" width="100" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AVAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2aa47581-74b7-4612-9b1d-1743c57dce9a" x="22" y="41" width="495" height="54"/>
+				<textElement textAlignment="Justified" verticalAlignment="Top"/>
+				<text><![CDATA[POR AVAL.- Garantizo (amos) las obligaciones constantes del Pagaré a la Orden que precede constituyéndome (nos) solidariamente responsable (s) de ellas, en los mismos términos que anteceden. Renuncio (ciamos) fuero y domicilio y me (nos) someto (temos) a los mismos jueces y trámites mencionados por el suscriptor. Renuncio (ciamos) a todos los beneficios de orden, excusión y división de bienes. ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3c5ca905-677d-460b-927e-c336bf47c10d" x="22" y="101" width="495" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Sin protesto. Exímase de presentación para el pago y de avisos por falta de pago.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1684bf05-ac3b-4d84-92cf-c91ab2429b31" x="22" y="181" width="220" height="25"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Dotted"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[C.C:]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

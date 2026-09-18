@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+	<ui:define name="title">
+		Consulta de Baja de Saldos Menores 
+	</ui:define>
+	<ui:define name="buttons">
+		<h:form id="frmButtons">
+			<p:commandButton title="Regresar" value="Regresar" alt="Nuevo"
+				icon="ui-icon-arrowthick-1-w" id="conReg"
+				action="#{cxcConsultaBajaSaldosPorAnioController.regresar}"
+				styleClass="green-btn" style="text-align:right;" global="false"
+				update="@this,idForm" />
+			<p:commandButton title="Consultar Doc. Baja"
+				value="Consultar Doc. Baja" alt="Nuevo" icon="ui-icon-search"
+				id="conConsul"
+				action="#{cxcConsultaBajaSaldosPorAnioController.cargar}"
+				styleClass="green-btn" style="text-align:right;" global="false"
+				update="@this,idForm" />
+		</h:form>
+	</ui:define>
+	<style type="text/css">
+.value {
+	font-weight: bold;
+}
+</style>
+	<ui:define name="content">
+		<h:form id="idForm">
+			<p:panel id="idCab">
+				<p:panelGrid id="panCab" columns="2">
+					<p:column>
+						<p:outputLabel title="Ingrese Año:" value="Ingrese Año:"
+							style="font-size: 12px; font-weight: bold;"></p:outputLabel>
+					</p:column>
+					<p:column>
+						<p:inputText title="Ingrese Año:"
+							value="#{cxcConsultaBajaSaldosPorAnioController.anio}">
+							<p:keyFilter regEx="/[0-9_]/i" preventPaste="false" />
+							<p:ajax event="change" partialSubmit="true"
+								process="@this, panCab" />
+						</p:inputText>
+					</p:column>
+				</p:panelGrid>
+			</p:panel>
+			<p:panel id="idDet"
+				rendered="#{cxcConsultaBajaSaldosPorAnioController.activaCampo}">
+				<p:dataTable id="tabConsulta" var="item" styleClass="table"
+					value="#{cxcConsultaBajaSaldosPorAnioController.listSaldos}"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+					paginator="true" rows="20" rowsPerPageTemplate="20,30,40"
+					paginatorPosition="bottom" emptyMessage="No Existen Registros">
+
+					<p:ajax event="rowToggle" />
+					<f:facet name="header">
+						<p:outputLabel
+							value="Consulta de Generación de Baja de Saldos por Usuario" />
+					</f:facet>
+					<p:column headerText="Usuario" width="12%"
+						style="text-align:center">
+						<h:outputText value="#{item.usuarioProceso}" />
+					</p:column>
+					<p:column headerText="Fecha Proceso" width="12%"
+						style="text-align:center">
+						<p:outputLabel value="#{item.fechaProceso}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:outputLabel>
+					</p:column>
+					<p:column headerText="Monto:" width="12%"
+						style="text-align:center">
+						<p:outputLabel value="#{item.total}">
+						<f:convertNumber pattern="##,##0.00" />
+						</p:outputLabel>
+					</p:column>
+					<p:column headerText="Tipo Proceso" width="12%"
+						style="text-align:center">
+						<p:outputLabel value="#{item.tipoProceso}">
+						</p:outputLabel>
+					</p:column>
+					<p:column headerText="Reporte" width="12%"
+						style="text-align:center">
+						<p:commandButton partialSubmit="true" update="tabConsulta"
+						    action="#{cxcConsultaBajaSaldosPorAnioController.excel(item)}"
+							icon="fa fa-file-excel-o" styleClass="green-btn" process="@this" />
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,124 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+	<ui:define name="title">
+		Mantenimiento de Analistas 
+	</ui:define>
+	<ui:define name="buttons">
+		<h:form id="frmButtons">
+			<p:commandButton title="Nuevo" partialSubmit="true"
+				icon="fa fa-file-o" process="@this"
+				style="margin-top: 0px !important; float:right;"
+				styleClass="green-btn" update="@this, :dlgNuevo"
+				action="#{cxcManIngresoAnalistaController.agregar}" />
+		</h:form>
+	</ui:define>
+	<ui:define name="content">
+		<style type="text/css">
+.value {
+	font-weight: bold;
+}
+</style>
+		<style type="text/css">
+.ui-row-editor .ui-row-editor-pencil {
+	margin-left: 8px;
+}
+</style>
+		<script type="text/javascript">
+		function mayus(e) {
+		    e.value = e.value.toUpperCase();
+		    
+		}
+	
+</script>
+		<h:form id="idForm">
+			<p:panel id="idDatosPrincipales">
+				<p:dataTable id="idDetalleDatos" var="ana"
+					value="#{cxcManIngresoAnalistaController.listaAnalista}"
+					rowKey="#{ana.cxcAnalistaCreditoPK.codigoAnalista}"
+					filteredValue="#{ana.nombreAnalista}"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+					paginator="true" rows="10" rowsPerPageTemplate="20,30,40"
+					paginatorPosition="bottom" emptyMessage="No Existen Registros">
+					<f:facet name="header">Analistas de Cobranzas</f:facet>
+					<p:column id="codigoA" headerText="Codigo Analista" width="15"
+						style="text-align:center">
+						<h:outputText value="#{ana.cxcAnalistaCreditoPK.codigoAnalista}" />
+					</p:column>
+					<p:column id="nombre" headerText="Nombre" width="40">
+						<h:outputText value="#{ana.nombreAnalista}" />
+					</p:column>
+					<p:column id="usuarioRelacionado" headerText="Usuario Relacionado" width="40">
+						<h:outputText value="#{ana.usuarioRela}" />
+					</p:column>
+					<p:column id="estado" headerText="Estado" width="10"
+						style="text-align:center">
+						<h:outputText value="#{ana.estado eq 'A'?'ACTIVO':'INACTIVO'}" />
+					</p:column>
+					<p:column headerText="Acciones" width="20" style="width:35px">
+						<p:commandButton alt="Editar" id="Editarcarga" icon="fa fa-pencil"
+							update=":#{p:component('dlgNuevo')}"
+							actionListener="#{cxcManIngresoAnalistaController.abrirEditar(ana)}" />
+						<p:commandButton alt="Borrar" id="BorrarMarca"
+							icon="ui-icon-trash" partialSubmit="true"
+							actionListener="#{cxcManIngresoAnalistaController.eliminar(ana)}"
+							update=":idForm:idDetalleDatos">
+
+							<p:confirm header="Confirmación"
+								message="Esta seguro de eliminar analista?"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+		</h:form>
+		<p:dialog widgetVar="dlgNuevo" id="dlgNuevo" header="Crear Analistas"
+			resizable="true" modal="true" closable="true" appendTo="@(body)"
+			width="60%" height="auto" closeOnEscape="true">
+			<h:form id="idFrmNuevo">
+				<center>
+					<p:panelGrid columns="2">
+						<p:outputLabel value="Codigo" />
+						<p:inputText id="codAnalista" autocomplete="off" size="15"
+							value="#{cxcManIngresoAnalistaController.analistaCredito.cxcAnalistaCreditoPK.codigoAnalista}"
+							maxlength="5"
+							readonly="#{cxcManIngresoAnalistaController.origenDialogo eq 'E'}">
+						</p:inputText>
+						<p:outputLabel value="Nombre" />
+						<p:inputText id="nombre" size="80" autocomplete="off"
+							maxlength="200"
+							value="#{cxcManIngresoAnalistaController.analistaCredito.nombreAnalista}">
+						</p:inputText>
+						<p:outputLabel value="Usuario: " />
+						<p:selectOneMenu value="#{cxcManIngresoAnalistaController.analistaCredito.usuarioRela}" filter="true">
+							<f:selectItem itemLabel="Seleccionar.."/> 
+							<f:selectItems value="#{cxcManIngresoAnalistaController.usuarios}" var="usr" itemLabel="#{usr.nombre}" itemValue="#{usr.usuario}"></f:selectItems>
+						</p:selectOneMenu>
+						<p:outputLabel value="Estado" />
+						<p:selectOneMenu
+							value="#{cxcManIngresoAnalistaController.analistaCredito.estado}">
+							<f:selectItem itemLabel="Seleccione..." noSelectionOption="true" />
+							<f:selectItem itemValue="A" itemLabel="ACTIVO" />
+							<f:selectItem itemValue="I" itemLabel="INACTIVO" />
+						</p:selectOneMenu>
+					</p:panelGrid>
+					<p:commandButton value="Grabar" partialSubmit="true"
+						process="@this, idFrmNuevo"
+						action="#{cxcManIngresoAnalistaController.guardar}"
+						update=":idForm:idDetalleDatos">
+					</p:commandButton>
+				</center>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

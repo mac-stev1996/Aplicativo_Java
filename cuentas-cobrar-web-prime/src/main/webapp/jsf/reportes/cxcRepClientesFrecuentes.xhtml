@@ -1,0 +1,91 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Reporte Clientes Frecuentes
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmButtons"></h:form>
+	</ui:define>
+
+	<ui:define name="content">
+		<style type="text/css">
+.ui-calendar input {
+	width: auto !important;
+	min-width: auto !important;
+}
+
+input, .ui-selectcheckboxmenu, .ui-selectonemenu {
+	width: 95% !important;
+	min-width: 100% !important;
+}
+</style>
+		<h:form id="reportForm">
+
+
+			<center>
+				<p:panel id="basic">
+					<br />
+					<p:outputLabel value="Reporte de Clientes frecuentes, Fecha Desde: Un año atrás, Fecha Hasta: Actual" />
+					<br />
+					<br />
+					<h:panelGrid title="Fechas de busqueda"
+						styleClass="normal" columns="2" id="idPanelGridParametros" style="width::100%">
+
+						<h:outputText value="Fecha Desde:" styleClass="normal" />
+						<p:calendar pattern="dd/MM/yyyy" showOn="button" size="27"
+							locale="es" value="#{cxcRepCliFrecuentesController.fechaInicio}">
+						</p:calendar>
+						<h:outputText value="Fecha Hasta:" />
+						<p:calendar pattern="dd/MM/yyyy" showOn="button" size="27"
+							locale="es" value="#{cxcRepCliFrecuentesController.fechaFin}">
+						</p:calendar>
+					</h:panelGrid>
+
+					<f:facet name="footer">
+						<center>
+							<br />
+							<h:panelGrid columns="3" border="0" id="btnsCompLink"
+								columnClasses="iconCell, iconCell, iconCell" cellpadding="0"
+								cellspacing="0" width="550" style="background-color: #e6e6e6">
+								<h:commandLink target="_blank"
+									action="#{cxcRepCliFrecuentesController.report}">
+									<h:graphicImage value="/common/imgs/reports/excel.png"
+										style="border:none" title="Excel" alt="Excel" width="25"
+										height="25" />
+									<f:param name="format" value="excel" />
+								</h:commandLink>
+								<h:commandLink target="_blank"
+									action="#{cxcRepCliFrecuentesController.report}">
+									<h:graphicImage value="/common/imgs/reports/adobe.png"
+										style="border:none" title="Adobe" alt="Adobe" width="25"
+										height="25" />
+									<f:param name="format" value="pdf" />
+								</h:commandLink>
+								<h:commandLink target="_blank"
+									action="#{cxcRepCliFrecuentesController.report}">
+									<h:graphicImage value="/common/imgs/reports/preview.png"
+										style="border:none" title="Preview" alt="Preview" width="25"
+										height="25" />
+									<f:param name="format" value="html" />
+								</h:commandLink>
+								<h:outputText value="Excel" styleClass="normal" />
+								<h:outputText value="Pdf" styleClass="normal" />
+								<h:outputText value="Html" styleClass="normal" />
+							</h:panelGrid>
+						</center>
+					</f:facet>
+				</p:panel>
+			</center>
+
+			<h:inputHidden value="/reportes/cxcRepClientesFrecuentes.jasper"
+				binding="#{cxcRepCliFrecuentesController.reportPath}" />
+		</h:form>
+	</ui:define>
+</ui:composition>

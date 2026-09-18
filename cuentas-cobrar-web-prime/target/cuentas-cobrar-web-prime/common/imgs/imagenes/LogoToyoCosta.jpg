@@ -1,0 +1,379 @@
+
+
+
+
+
+
+
+
+
+
+	<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<title>Solicitudes en Proceso</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	
+	
+	<link class="component" href="/administracion/faces/a4j/s/3_3_3.Finalorg/richfaces/renderkit/html/css/basic_classes.xcss/DATB/eAF7cLj1SOjyGdIAF-MEnA__" rel="stylesheet" type="text/css" /><link class="component" href="/administracion/faces/a4j/s/3_3_3.Finalorg/richfaces/renderkit/html/css/extended_classes.xcss/DATB/eAF7cLj1SOjyGdIAF-MEnA__" media="rich-extended-skinning" rel="stylesheet" type="text/css" /><link class="component" href="/administracion/faces/a4j/s/3_3_3.Finalcss/toolBar.xcss/DATB/eAF7cLj1SOjyGdIAF-MEnA__" rel="stylesheet" type="text/css" /><script src="/administracion/faces/a4j/g/3_3_3.Finalorg.ajax4jsf.javascript.PrototypeScript" type="text/javascript"></script><script src="/administracion/faces/a4j/g/3_3_3.Finalorg.ajax4jsf.javascript.AjaxScript" type="text/javascript"></script><link class="component" href="/administracion/faces/a4j/s/3_3_3.Finalcss/table.xcss/DATB/eAF7cLj1SOjyGdIAF-MEnA__" rel="stylesheet" type="text/css" /><script src="/administracion/faces/a4j/g/3_3_3.Finalorg/richfaces/renderkit/html/scripts/utils.js" type="text/javascript"></script><script src="/administracion/faces/a4j/g/3_3_3.Finalorg/richfaces/renderkit/html/scripts/browser_info.js" type="text/javascript"></script><script src="/administracion/faces/a4j/g/3_3_3.Finalorg/richfaces/renderkit/html/scripts/modalPanel.js" type="text/javascript"></script><script src="/administracion/faces/a4j/g/3_3_3.Finalorg/richfaces/renderkit/html/scripts/modalPanelBorders.js" type="text/javascript"></script><link class="component" href="/administracion/faces/a4j/s/3_3_3.Finalorg/richfaces/renderkit/html/css/modalPanel.xcss/DATB/eAF7cLj1SOjyGdIAF-MEnA__" rel="stylesheet" type="text/css" /><script src="/administracion/faces/a4j/g/3_3_3.Finalorg/ajax4jsf/javascript/scripts/form.js" type="text/javascript"></script><link class="component" href="/administracion/faces/a4j/s/3_3_3.Finalcss/panel.xcss/DATB/eAF7cLj1SOjyGdIAF-MEnA__" rel="stylesheet" type="text/css" /><script src="/administracion/faces/a4j/g/3_3_3.Finalorg/richfaces/renderkit/html/scripts/datascroller.js" type="text/javascript"></script><link class="component" href="/administracion/faces/a4j/s/3_3_3.Finalcss/datascroller.xcss/DATB/eAF7cLj1SOjyGdIAF-MEnA__" rel="stylesheet" type="text/css" /><script type="text/javascript">window.RICH_FACES_EXTENDED_SKINNING_ON=true;</script><script src="/administracion/faces/a4j/g/3_3_3.Finalorg/richfaces/renderkit/html/scripts/skinning.js" type="text/javascript"></script><link class="user" href="/administracion/common/css/global.css" rel="stylesheet" type="text/css" /><script src="/administracion/common/js/util.js" type="text/javascript"></script><style>
+.rich-table {
+	border-collapse: separate;
+	border-top: 1px solid #EEEEEE;
+	border-left: 1px solid #EEEEEE;
+}
+
+td.dr-table-cell {
+	padding-top: 2px;
+	padding-bottom: 2px;
+	padding-left: 2px;
+}
+
+.row1 {
+	background-color: #B4CCDA;
+}
+
+.row2 {
+	background-color: #FFFFFF;
+}
+
+.redCell {
+	background-color: #E35152;
+}
+
+.blueCell {
+	background-color: #B9D3EE;
+}
+
+.bold {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	font-weight: bold;
+	text-align: center;
+	text-align: right;
+}
+</style>
+	</head>
+	<body>
+	<span id="messagePanelARC12"><div id="messageTableARC12"></div></span>
+<form id="j_id_jsp_1045594262_5" name="j_id_jsp_1045594262_5" method="post" action="/administracion/faces/jsp/procesos/requerimientos/enProceso/listProceso.jsp" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="j_id_jsp_1045594262_5" value="j_id_jsp_1045594262_5" />
+<table border="0" cellpadding="0" cellspacing="0" class="rich-toolbar " id="j_id_jsp_1045594262_5:j_id_jsp_1045594262_6" width="100%"><tr valign="middle"><td class="rich-toolbar-item  " style=";">Sistemas</td><td class="rich-toolbar-item  " style=";"><img alt="" class="rich-spacer " height="1" id="j_id_jsp_1045594262_5:j_id_jsp_1045594262_10" src="/administracion/faces/a4j/g/3_3_3.Finalimages/spacer.gif" width="120px" style="border:none" /></td><td class="rich-toolbar-item  " style=";"><img src="/administracion/common/imgs/icons/redColor.PNG" height="10" /></td><td class="rich-toolbar-item  " style=";">Proceso</td><td class="rich-toolbar-item  " style=";"><img src="/administracion/common/imgs/icons/greenColor.PNG" height="10" /></td><td class="rich-toolbar-item  " style=";">Aprobado</td><td style="width:100%"></td><td class="rich-toolbar-item  " style=";">Solicitudes en Proceso</td></tr></table>
+		
+		</br>
+		<div align="center"><table class="rich-table " id="j_id_jsp_1045594262_5:tablSolcitudes" border="0" cellpadding="0" cellspacing="0" width="100%"><colgroup span="13"></colgroup><thead class="rich-table-thead"><tr class="rich-table-subheader headerCell"><th class="rich-table-subheadercell headerCell " scope="col" id="j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_19header"><div id="j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_19header:sortDiv">&nbsp;</div></th><th class="rich-table-subheadercell headerCell " scope="col" id="j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_22header" onclick="A4J.AJAX.Submit('j_id_jsp_1045594262_5',event,{'similarityGroupingId':'j_id_jsp_1045594262_5:tablSolcitudes','parameters':{'fsp':'j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_22','j_id_jsp_1045594262_5:tablSolcitudes':'fsp'} ,'containerId':'j_id_jsp_1045594262_0'} )" style="cursor: pointer;"><div id="j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_22header:sortDiv"><span class="rich-table-sortable-header">Módulo<img src="/administracion/faces/a4j/g/3_3_3.Finalorg.richfaces.renderkit.html.iconimages.DataTableIconSortNone/DATB/eAFjYGD4!!8!AAYAAv4_" alt="" width="15" height="15" class="rich-sort-icon" /></span></div></th><th class="rich-table-subheadercell headerCell " scope="col" id="j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_25header" onclick="A4J.AJAX.Submit('j_id_jsp_1045594262_5',event,{'similarityGroupingId':'j_id_jsp_1045594262_5:tablSolcitudes','parameters':{'fsp':'j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_25','j_id_jsp_1045594262_5:tablSolcitudes':'fsp'} ,'containerId':'j_id_jsp_1045594262_0'} )" style="cursor: pointer;"><div id="j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_25header:sortDiv"><span class="rich-table-sortable-header"># SOL<img src="/administracion/faces/a4j/g/3_3_3.Finalorg.richfaces.renderkit.html.iconimages.DataTableIconSortNone/DATB/eAFjYGD4!!8!AAYAAv4_" alt="" width="15" height="15" class="rich-sort-icon" /></span></div></th><th class="rich-table-subheadercell headerCell " scope="col" id="j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_28header" onclick="A4J.AJAX.Submit('j_id_jsp_1045594262_5',event,{'similarityGroupingId':'j_id_jsp_1045594262_5:tablSolcitudes','parameters':{'fsp':'j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_28','j_id_jsp_1045594262_5:tablSolcitudes':'fsp'} ,'containerId':'j_id_jsp_1045594262_0'} )" style="cursor: pointer;"><div id="j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_28header:sortDiv"><span class="rich-table-sortable-header">Título<img src="/administracion/faces/a4j/g/3_3_3.Finalorg.richfaces.renderkit.html.iconimages.DataTableIconSortNone/DATB/eAFjYGD4!!8!AAYAAv4_" alt="" width="15" height="15" class="rich-sort-icon" /></span></div></th><th class="rich-table-subheadercell headerCell " scope="col" id="j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_31header"><div id="j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_31header:sortDiv">Usuario</div></th><th class="rich-table-subheadercell headerCell " scope="col" id="j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_34header" onclick="A4J.AJAX.Submit('j_id_jsp_1045594262_5',event,{'similarityGroupingId':'j_id_jsp_1045594262_5:tablSolcitudes','parameters':{'fsp':'j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_34','j_id_jsp_1045594262_5:tablSolcitudes':'fsp'} ,'containerId':'j_id_jsp_1045594262_0'} )" style="cursor: pointer;"><div id="j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_34header:sortDiv"><span class="rich-table-sortable-header">F.Solicitud<img src="/administracion/faces/a4j/g/3_3_3.Finalorg.richfaces.renderkit.html.iconimages.DataTableIconSortNone/DATB/eAFjYGD4!!8!AAYAAv4_" alt="" width="15" height="15" class="rich-sort-icon" /></span></div></th><th class="rich-table-subheadercell headerCell " scope="col" id="j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_37header" onclick="A4J.AJAX.Submit('j_id_jsp_1045594262_5',event,{'similarityGroupingId':'j_id_jsp_1045594262_5:tablSolcitudes','parameters':{'fsp':'j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_37','j_id_jsp_1045594262_5:tablSolcitudes':'fsp'} ,'containerId':'j_id_jsp_1045594262_0'} )" style="cursor: pointer;"><div id="j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_37header:sortDiv"><span class="rich-table-sortable-header">F.Inicio<img src="/administracion/faces/a4j/g/3_3_3.Finalorg.richfaces.renderkit.html.iconimages.DataTableIconSortNone/DATB/eAFjYGD4!!8!AAYAAv4_" alt="" width="15" height="15" class="rich-sort-icon" /></span></div></th><th class="rich-table-subheadercell headerCell " scope="col" id="j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_40header" onclick="A4J.AJAX.Submit('j_id_jsp_1045594262_5',event,{'similarityGroupingId':'j_id_jsp_1045594262_5:tablSolcitudes','parameters':{'fsp':'j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_40','j_id_jsp_1045594262_5:tablSolcitudes':'fsp'} ,'containerId':'j_id_jsp_1045594262_0'} )" style="cursor: pointer;"><div id="j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_40header:sortDiv"><span class="rich-table-sortable-header"><span title="Fecha estimada de entrega">F.Entrega</span><img src="/administracion/faces/a4j/g/3_3_3.Finalorg.richfaces.renderkit.html.iconimages.DataTableIconSortNone/DATB/eAFjYGD4!!8!AAYAAv4_" alt="" width="15" height="15" class="rich-sort-icon" /></span></div></th><th class="rich-table-subheadercell headerCell " scope="col" id="j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_43header" onclick="A4J.AJAX.Submit('j_id_jsp_1045594262_5',event,{'similarityGroupingId':'j_id_jsp_1045594262_5:tablSolcitudes','parameters':{'fsp':'j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_43','j_id_jsp_1045594262_5:tablSolcitudes':'fsp'} ,'containerId':'j_id_jsp_1045594262_0'} )" style="cursor: pointer;"><div id="j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_43header:sortDiv"><span class="rich-table-sortable-header"><span title="Dias Retraso">Dias Retraso</span><img src="/administracion/faces/a4j/g/3_3_3.Finalorg.richfaces.renderkit.html.iconimages.DataTableIconSortNone/DATB/eAFjYGD4!!8!AAYAAv4_" alt="" width="15" height="15" class="rich-sort-icon" /></span></div></th><th class="rich-table-subheadercell headerCell " scope="col" id="j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_46header"><div id="j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_46header:sortDiv"><span title="Responsable">Responsable</span></div></th><th class="rich-table-subheadercell headerCell " scope="col" id="j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_49header"><div id="j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_49header:sortDiv"><span title="Prio.Sis.">Prio.Sis.</span></div></th><th class="rich-table-subheadercell headerCell " scope="col" id="j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_52header"><div id="j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_52header:sortDiv"><span title="Tiempo">T(mins)</span></div></th><th class="rich-table-subheadercell headerCell " scope="col" id="j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_55header"><div id="j_id_jsp_1045594262_5:tablSolcitudes:j_id_jsp_1045594262_55header:sortDiv"><span title="Avance">Avance</span></div></th></tr></thead><tbody id="j_id_jsp_1045594262_5:tablSolcitudes:tb"><tr class="rich-table-row rich-table-firstrow row1"><td class="rich-table-cell counterCell" id="j_id_jsp_1045594262_5:tablSolcitudes:0:j_id_jsp_1045594262_19" style="width:20px"><a href="#" id="j_id_jsp_1045594262_5:tablSolcitudes:0:rowNumberOutputText" name="j_id_jsp_1045594262_5:tablSolcitudes:0:rowNumberOutputText" onclick="A4J.AJAX.Submit('j_id_jsp_1045594262_5',event,{'oncomplete':function(request,event,data){Richfaces.showModalPanel('solicitudPanel',{width:700,height:650})},'similarityGroupingId':'j_id_jsp_1045594262_5:tablSolcitudes:0:rowNumberOutputText','parameters':{'j_id_jsp_1045594262_5:tablSolcitudes:0:rowNumberOutputText':'j_id_jsp_1045594262_5:tablSolcitudes:0:rowNumberOutputText'} ,'containerId':'j_id_jsp_1045594262_0'} );return false;">1</a></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:0:j_id_jsp_1045594262_22">
+				
+					
+				
+				<div align="center">
+				<span class="normalSmall">VEH</span>
+				</div>
+			</td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:0:j_id_jsp_1045594262_25"><span class="normalSmall" style="color:red">15858</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:0:j_id_jsp_1045594262_28"><span class="normalSmall" style="color:red">listas de precios y descuentos a concesionarios </span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:0:j_id_jsp_1045594262_31"><span class="normalSmall" style="color:red">DP_MONTENEGRO</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:0:j_id_jsp_1045594262_34"><span class="normalSmall" style="color:red">06-02-2014</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:0:j_id_jsp_1045594262_37"><span class="normalSmall" style="color:red">07-06-2014</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:0:j_id_jsp_1045594262_40"><span class="normalSmall" style="color:red">22-04-2014</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:0:j_id_jsp_1045594262_43"><span class="normalSmall" style="color:red">3</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:0:j_id_jsp_1045594262_46"><span class="normalSmall">VR_GRANJA</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:0:j_id_jsp_1045594262_49"><span class="normalSmall"></span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:0:j_id_jsp_1045594262_52"><span class="normalSmall">1180.0</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:0:j_id_jsp_1045594262_55"><img src="/administracion/common/imgs/icons/80pc.png" style="border:none" title="80%" /></td></tr><tr class="rich-table-row  row2"><td class="rich-table-cell counterCell" id="j_id_jsp_1045594262_5:tablSolcitudes:1:j_id_jsp_1045594262_19" style="width:20px"><a href="#" id="j_id_jsp_1045594262_5:tablSolcitudes:1:rowNumberOutputText" name="j_id_jsp_1045594262_5:tablSolcitudes:1:rowNumberOutputText" onclick="A4J.AJAX.Submit('j_id_jsp_1045594262_5',event,{'oncomplete':function(request,event,data){Richfaces.showModalPanel('solicitudPanel',{width:700,height:650})},'similarityGroupingId':'j_id_jsp_1045594262_5:tablSolcitudes:1:rowNumberOutputText','parameters':{'j_id_jsp_1045594262_5:tablSolcitudes:1:rowNumberOutputText':'j_id_jsp_1045594262_5:tablSolcitudes:1:rowNumberOutputText'} ,'containerId':'j_id_jsp_1045594262_0'} );return false;">2</a></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:1:j_id_jsp_1045594262_22">
+				
+					
+				
+				<div align="center">
+				<span class="normalSmall">SIS</span>
+				</div>
+			</td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:1:j_id_jsp_1045594262_25"><span class="normalSmall" style="color:red">14930</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:1:j_id_jsp_1045594262_28"><span class="normalSmall" style="color:red">Levantamiento de información de Montacargas</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:1:j_id_jsp_1045594262_31"><span class="normalSmall" style="color:red">MV_LOZANO</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:1:j_id_jsp_1045594262_34"><span class="normalSmall" style="color:red">25-09-2013</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:1:j_id_jsp_1045594262_37"><span class="normalSmall" style="color:red">28-09-2013</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:1:j_id_jsp_1045594262_40"><span class="normalSmall" style="color:red">30-05-2014</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:1:j_id_jsp_1045594262_43"><span class="normalSmall" style="color:red">-34</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:1:j_id_jsp_1045594262_46"><span class="normalSmall">VR_GRANJA</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:1:j_id_jsp_1045594262_49"><span class="normalSmall">99</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:1:j_id_jsp_1045594262_52"><span class="normalSmall">120.0</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:1:j_id_jsp_1045594262_55"><img src="/administracion/common/imgs/icons/20pc.png" style="border:none" title="20%" /></td></tr><tr class="rich-table-row row1"><td class="rich-table-cell counterCell" id="j_id_jsp_1045594262_5:tablSolcitudes:2:j_id_jsp_1045594262_19" style="width:20px"><a href="#" id="j_id_jsp_1045594262_5:tablSolcitudes:2:rowNumberOutputText" name="j_id_jsp_1045594262_5:tablSolcitudes:2:rowNumberOutputText" onclick="A4J.AJAX.Submit('j_id_jsp_1045594262_5',event,{'oncomplete':function(request,event,data){Richfaces.showModalPanel('solicitudPanel',{width:700,height:650})},'similarityGroupingId':'j_id_jsp_1045594262_5:tablSolcitudes:2:rowNumberOutputText','parameters':{'j_id_jsp_1045594262_5:tablSolcitudes:2:rowNumberOutputText':'j_id_jsp_1045594262_5:tablSolcitudes:2:rowNumberOutputText'} ,'containerId':'j_id_jsp_1045594262_0'} );return false;">3</a></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:2:j_id_jsp_1045594262_22">
+				
+					
+				
+				<div align="center">
+				<span class="normalSmall">SEMI</span>
+				</div>
+			</td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:2:j_id_jsp_1045594262_25"><span class="normalSmall" style="color:green">16255</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:2:j_id_jsp_1045594262_28"><span class="normalSmall" style="color:green">Quitar restricción de 1 avalúo al día por ejecutivo</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:2:j_id_jsp_1045594262_31"><span class="normalSmall" style="color:green">CLARREA</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:2:j_id_jsp_1045594262_34"><span class="normalSmall" style="color:green">08-04-2014</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:2:j_id_jsp_1045594262_37"><span class="normalSmall" style="color:green">17-11-2014</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:2:j_id_jsp_1045594262_40"><span class="normalSmall" style="color:green">22-04-2014</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:2:j_id_jsp_1045594262_43"><span class="normalSmall" style="color:green">3</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:2:j_id_jsp_1045594262_46"><span class="normalSmall">VR_GRANJA</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:2:j_id_jsp_1045594262_49"><span class="normalSmall"></span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:2:j_id_jsp_1045594262_52"><span class="normalSmall"></span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:2:j_id_jsp_1045594262_55"><img src="/administracion/common/imgs/icons/0pc.png" style="border:none" title="0%" /></td></tr><tr class="rich-table-row  row2"><td class="rich-table-cell counterCell" id="j_id_jsp_1045594262_5:tablSolcitudes:3:j_id_jsp_1045594262_19" style="width:20px"><a href="#" id="j_id_jsp_1045594262_5:tablSolcitudes:3:rowNumberOutputText" name="j_id_jsp_1045594262_5:tablSolcitudes:3:rowNumberOutputText" onclick="A4J.AJAX.Submit('j_id_jsp_1045594262_5',event,{'oncomplete':function(request,event,data){Richfaces.showModalPanel('solicitudPanel',{width:700,height:650})},'similarityGroupingId':'j_id_jsp_1045594262_5:tablSolcitudes:3:rowNumberOutputText','parameters':{'j_id_jsp_1045594262_5:tablSolcitudes:3:rowNumberOutputText':'j_id_jsp_1045594262_5:tablSolcitudes:3:rowNumberOutputText'} ,'containerId':'j_id_jsp_1045594262_0'} );return false;">4</a></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:3:j_id_jsp_1045594262_22">
+				
+					
+				
+				<div align="center">
+				<span class="normalSmall">SEMI</span>
+				</div>
+			</td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:3:j_id_jsp_1045594262_25"><span class="normalSmall" style="color:green">16146</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:3:j_id_jsp_1045594262_28"><span class="normalSmall" style="color:green">Cambio de Logos</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:3:j_id_jsp_1045594262_31"><span class="normalSmall" style="color:green">TOYOCOSTA</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:3:j_id_jsp_1045594262_34"><span class="normalSmall" style="color:green">25-03-2014</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:3:j_id_jsp_1045594262_37"><span class="normalSmall" style="color:green">04-06-2014</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:3:j_id_jsp_1045594262_40"><span class="normalSmall" style="color:green">22-04-2014</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:3:j_id_jsp_1045594262_43"><span class="normalSmall" style="color:green">3</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:3:j_id_jsp_1045594262_46"><span class="normalSmall">VR_GRANJA</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:3:j_id_jsp_1045594262_49"><span class="normalSmall">2</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:3:j_id_jsp_1045594262_52"><span class="normalSmall"></span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:3:j_id_jsp_1045594262_55"><img src="/administracion/common/imgs/icons/0pc.png" style="border:none" title="0%" /></td></tr><tr class="rich-table-row row1"><td class="rich-table-cell counterCell" id="j_id_jsp_1045594262_5:tablSolcitudes:4:j_id_jsp_1045594262_19" style="width:20px"><a href="#" id="j_id_jsp_1045594262_5:tablSolcitudes:4:rowNumberOutputText" name="j_id_jsp_1045594262_5:tablSolcitudes:4:rowNumberOutputText" onclick="A4J.AJAX.Submit('j_id_jsp_1045594262_5',event,{'oncomplete':function(request,event,data){Richfaces.showModalPanel('solicitudPanel',{width:700,height:650})},'similarityGroupingId':'j_id_jsp_1045594262_5:tablSolcitudes:4:rowNumberOutputText','parameters':{'j_id_jsp_1045594262_5:tablSolcitudes:4:rowNumberOutputText':'j_id_jsp_1045594262_5:tablSolcitudes:4:rowNumberOutputText'} ,'containerId':'j_id_jsp_1045594262_0'} );return false;">5</a></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:4:j_id_jsp_1045594262_22">
+				
+					
+				
+				<div align="center">
+				<span class="normalSmall">SEMI</span>
+				</div>
+			</td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:4:j_id_jsp_1045594262_25"><span class="normalSmall" style="color:green">16254</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:4:j_id_jsp_1045594262_28"><span class="normalSmall" style="color:green">Aumentar horas en cita de avaluo tecnico</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:4:j_id_jsp_1045594262_31"><span class="normalSmall" style="color:green">CLARREA</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:4:j_id_jsp_1045594262_34"><span class="normalSmall" style="color:green">07-04-2014</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:4:j_id_jsp_1045594262_37"><span class="normalSmall" style="color:green">17-11-2014</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:4:j_id_jsp_1045594262_40"><span class="normalSmall" style="color:green">22-04-2014</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:4:j_id_jsp_1045594262_43"><span class="normalSmall" style="color:green">3</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:4:j_id_jsp_1045594262_46"><span class="normalSmall">VR_GRANJA</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:4:j_id_jsp_1045594262_49"><span class="normalSmall"></span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:4:j_id_jsp_1045594262_52"><span class="normalSmall"></span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:4:j_id_jsp_1045594262_55"><img src="/administracion/common/imgs/icons/0pc.png" style="border:none" title="0%" /></td></tr><tr class="rich-table-row  row2"><td class="rich-table-cell counterCell" id="j_id_jsp_1045594262_5:tablSolcitudes:5:j_id_jsp_1045594262_19" style="width:20px"><a href="#" id="j_id_jsp_1045594262_5:tablSolcitudes:5:rowNumberOutputText" name="j_id_jsp_1045594262_5:tablSolcitudes:5:rowNumberOutputText" onclick="A4J.AJAX.Submit('j_id_jsp_1045594262_5',event,{'oncomplete':function(request,event,data){Richfaces.showModalPanel('solicitudPanel',{width:700,height:650})},'similarityGroupingId':'j_id_jsp_1045594262_5:tablSolcitudes:5:rowNumberOutputText','parameters':{'j_id_jsp_1045594262_5:tablSolcitudes:5:rowNumberOutputText':'j_id_jsp_1045594262_5:tablSolcitudes:5:rowNumberOutputText'} ,'containerId':'j_id_jsp_1045594262_0'} );return false;">6</a></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:5:j_id_jsp_1045594262_22">
+				
+					
+				
+				<div align="center">
+				<span class="normalSmall">SEMI</span>
+				</div>
+			</td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:5:j_id_jsp_1045594262_25"><span class="normalSmall" style="color:green">16145</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:5:j_id_jsp_1045594262_28"><span class="normalSmall" style="color:green">Solicitud de avalúo</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:5:j_id_jsp_1045594262_31"><span class="normalSmall" style="color:green">TOYOCOSTA</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:5:j_id_jsp_1045594262_34"><span class="normalSmall" style="color:green">25-03-2014</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:5:j_id_jsp_1045594262_37"><span class="normalSmall" style="color:green">02-06-2014</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:5:j_id_jsp_1045594262_40"><span class="normalSmall" style="color:green">29-04-2014</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:5:j_id_jsp_1045594262_43"><span class="normalSmall" style="color:green">-3</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:5:j_id_jsp_1045594262_46"><span class="normalSmall">VR_GRANJA</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:5:j_id_jsp_1045594262_49"><span class="normalSmall">3</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:5:j_id_jsp_1045594262_52"><span class="normalSmall"></span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:5:j_id_jsp_1045594262_55"><img src="/administracion/common/imgs/icons/0pc.png" style="border:none" title="0%" /></td></tr><tr class="rich-table-row row1"><td class="rich-table-cell counterCell" id="j_id_jsp_1045594262_5:tablSolcitudes:6:j_id_jsp_1045594262_19" style="width:20px"><a href="#" id="j_id_jsp_1045594262_5:tablSolcitudes:6:rowNumberOutputText" name="j_id_jsp_1045594262_5:tablSolcitudes:6:rowNumberOutputText" onclick="A4J.AJAX.Submit('j_id_jsp_1045594262_5',event,{'oncomplete':function(request,event,data){Richfaces.showModalPanel('solicitudPanel',{width:700,height:650})},'similarityGroupingId':'j_id_jsp_1045594262_5:tablSolcitudes:6:rowNumberOutputText','parameters':{'j_id_jsp_1045594262_5:tablSolcitudes:6:rowNumberOutputText':'j_id_jsp_1045594262_5:tablSolcitudes:6:rowNumberOutputText'} ,'containerId':'j_id_jsp_1045594262_0'} );return false;">7</a></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:6:j_id_jsp_1045594262_22">
+				
+					
+				
+				<div align="center">
+				<span class="normalSmall">SEMI</span>
+				</div>
+			</td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:6:j_id_jsp_1045594262_25"><span class="normalSmall" style="color:green">16286</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:6:j_id_jsp_1045594262_28"><span class="normalSmall" style="color:green">Tipos de garantías</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:6:j_id_jsp_1045594262_31"><span class="normalSmall" style="color:green">TOYOCOSTA</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:6:j_id_jsp_1045594262_34"><span class="normalSmall" style="color:green">11-04-2014</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:6:j_id_jsp_1045594262_37"><span class="normalSmall" style="color:green">17-11-2014</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:6:j_id_jsp_1045594262_40"><span class="normalSmall" style="color:green">30-04-2014</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:6:j_id_jsp_1045594262_43"><span class="normalSmall" style="color:green">-4</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:6:j_id_jsp_1045594262_46"><span class="normalSmall">VR_GRANJA</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:6:j_id_jsp_1045594262_49"><span class="normalSmall"></span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:6:j_id_jsp_1045594262_52"><span class="normalSmall"></span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:6:j_id_jsp_1045594262_55"><img src="/administracion/common/imgs/icons/0pc.png" style="border:none" title="0%" /></td></tr><tr class="rich-table-row  row2"><td class="rich-table-cell counterCell" id="j_id_jsp_1045594262_5:tablSolcitudes:7:j_id_jsp_1045594262_19" style="width:20px"><a href="#" id="j_id_jsp_1045594262_5:tablSolcitudes:7:rowNumberOutputText" name="j_id_jsp_1045594262_5:tablSolcitudes:7:rowNumberOutputText" onclick="A4J.AJAX.Submit('j_id_jsp_1045594262_5',event,{'oncomplete':function(request,event,data){Richfaces.showModalPanel('solicitudPanel',{width:700,height:650})},'similarityGroupingId':'j_id_jsp_1045594262_5:tablSolcitudes:7:rowNumberOutputText','parameters':{'j_id_jsp_1045594262_5:tablSolcitudes:7:rowNumberOutputText':'j_id_jsp_1045594262_5:tablSolcitudes:7:rowNumberOutputText'} ,'containerId':'j_id_jsp_1045594262_0'} );return false;">8</a></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:7:j_id_jsp_1045594262_22">
+				
+					
+				
+				<div align="center">
+				<span class="normalSmall">SEMI</span>
+				</div>
+			</td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:7:j_id_jsp_1045594262_25"><span class="normalSmall" style="color:green">16287</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:7:j_id_jsp_1045594262_28"><span class="normalSmall" style="color:green">Quitar vigencia de avalúo</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:7:j_id_jsp_1045594262_31"><span class="normalSmall" style="color:green">TOYOCOSTA</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:7:j_id_jsp_1045594262_34"><span class="normalSmall" style="color:green">11-04-2014</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:7:j_id_jsp_1045594262_37"><span class="normalSmall" style="color:green">17-11-2014</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:7:j_id_jsp_1045594262_40"><span class="normalSmall" style="color:green">30-04-2014</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:7:j_id_jsp_1045594262_43"><span class="normalSmall" style="color:green">-4</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:7:j_id_jsp_1045594262_46"><span class="normalSmall">VR_GRANJA</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:7:j_id_jsp_1045594262_49"><span class="normalSmall"></span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:7:j_id_jsp_1045594262_52"><span class="normalSmall"></span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:7:j_id_jsp_1045594262_55"><img src="/administracion/common/imgs/icons/0pc.png" style="border:none" title="0%" /></td></tr><tr class="rich-table-row row1"><td class="rich-table-cell counterCell" id="j_id_jsp_1045594262_5:tablSolcitudes:8:j_id_jsp_1045594262_19" style="width:20px"><a href="#" id="j_id_jsp_1045594262_5:tablSolcitudes:8:rowNumberOutputText" name="j_id_jsp_1045594262_5:tablSolcitudes:8:rowNumberOutputText" onclick="A4J.AJAX.Submit('j_id_jsp_1045594262_5',event,{'oncomplete':function(request,event,data){Richfaces.showModalPanel('solicitudPanel',{width:700,height:650})},'similarityGroupingId':'j_id_jsp_1045594262_5:tablSolcitudes:8:rowNumberOutputText','parameters':{'j_id_jsp_1045594262_5:tablSolcitudes:8:rowNumberOutputText':'j_id_jsp_1045594262_5:tablSolcitudes:8:rowNumberOutputText'} ,'containerId':'j_id_jsp_1045594262_0'} );return false;">9</a></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:8:j_id_jsp_1045594262_22">
+				
+					
+				
+				<div align="center">
+				<span class="normalSmall">SIS</span>
+				</div>
+			</td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:8:j_id_jsp_1045594262_25"><span class="normalSmall" style="color:green">16228</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:8:j_id_jsp_1045594262_28"><span class="normalSmall" style="color:green">Pruebas del WEbservice para verificar las Categorias</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:8:j_id_jsp_1045594262_31"><span class="normalSmall" style="color:green">LG_BOADA</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:8:j_id_jsp_1045594262_34"><span class="normalSmall" style="color:green">03-04-2014</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:8:j_id_jsp_1045594262_37"><span class="normalSmall" style="color:green">05-06-2014</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:8:j_id_jsp_1045594262_40"><span class="normalSmall" style="color:green">30-04-2014</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:8:j_id_jsp_1045594262_43"><span class="normalSmall" style="color:green">-4</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:8:j_id_jsp_1045594262_46"><span class="normalSmall">VR_GRANJA</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:8:j_id_jsp_1045594262_49"><span class="normalSmall">98</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:8:j_id_jsp_1045594262_52"><span class="normalSmall"></span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:8:j_id_jsp_1045594262_55"><img src="/administracion/common/imgs/icons/0pc.png" style="border:none" title="0%" /></td></tr><tr class="rich-table-row  row2"><td class="rich-table-cell counterCell" id="j_id_jsp_1045594262_5:tablSolcitudes:9:j_id_jsp_1045594262_19" style="width:20px"><a href="#" id="j_id_jsp_1045594262_5:tablSolcitudes:9:rowNumberOutputText" name="j_id_jsp_1045594262_5:tablSolcitudes:9:rowNumberOutputText" onclick="A4J.AJAX.Submit('j_id_jsp_1045594262_5',event,{'oncomplete':function(request,event,data){Richfaces.showModalPanel('solicitudPanel',{width:700,height:650})},'similarityGroupingId':'j_id_jsp_1045594262_5:tablSolcitudes:9:rowNumberOutputText','parameters':{'j_id_jsp_1045594262_5:tablSolcitudes:9:rowNumberOutputText':'j_id_jsp_1045594262_5:tablSolcitudes:9:rowNumberOutputText'} ,'containerId':'j_id_jsp_1045594262_0'} );return false;">10</a></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:9:j_id_jsp_1045594262_22">
+				
+					
+				
+				<div align="center">
+				<span class="normalSmall">SIS</span>
+				</div>
+			</td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:9:j_id_jsp_1045594262_25"><span class="normalSmall" style="color:green">15584</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:9:j_id_jsp_1045594262_28"><span class="normalSmall" style="color:green">Prototipo de Actas en el Sistema S3S</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:9:j_id_jsp_1045594262_31"><span class="normalSmall" style="color:green">MV_LOZANO</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:9:j_id_jsp_1045594262_34"><span class="normalSmall" style="color:green">20-12-2013</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:9:j_id_jsp_1045594262_37"><span class="normalSmall" style="color:green">23-12-2013</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:9:j_id_jsp_1045594262_40"><span class="normalSmall" style="color:green">17-11-2014</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:9:j_id_jsp_1045594262_43"><span class="normalSmall" style="color:green">-205</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:9:j_id_jsp_1045594262_46"><span class="normalSmall">VR_GRANJA</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:9:j_id_jsp_1045594262_49"><span class="normalSmall">50</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:9:j_id_jsp_1045594262_52"><span class="normalSmall"></span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:9:j_id_jsp_1045594262_55"><img src="/administracion/common/imgs/icons/0pc.png" style="border:none" title="0%" /></td></tr><tr class="rich-table-row row1"><td class="rich-table-cell counterCell" id="j_id_jsp_1045594262_5:tablSolcitudes:10:j_id_jsp_1045594262_19" style="width:20px"><a href="#" id="j_id_jsp_1045594262_5:tablSolcitudes:10:rowNumberOutputText" name="j_id_jsp_1045594262_5:tablSolcitudes:10:rowNumberOutputText" onclick="A4J.AJAX.Submit('j_id_jsp_1045594262_5',event,{'oncomplete':function(request,event,data){Richfaces.showModalPanel('solicitudPanel',{width:700,height:650})},'similarityGroupingId':'j_id_jsp_1045594262_5:tablSolcitudes:10:rowNumberOutputText','parameters':{'j_id_jsp_1045594262_5:tablSolcitudes:10:rowNumberOutputText':'j_id_jsp_1045594262_5:tablSolcitudes:10:rowNumberOutputText'} ,'containerId':'j_id_jsp_1045594262_0'} );return false;">11</a></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:10:j_id_jsp_1045594262_22">
+				
+					
+				
+				<div align="center">
+				<span class="normalSmall">SEMI</span>
+				</div>
+			</td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:10:j_id_jsp_1045594262_25"><span class="normalSmall" style="color:green">16285</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:10:j_id_jsp_1045594262_28"><span class="normalSmall" style="color:green">Links control legal</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:10:j_id_jsp_1045594262_31"><span class="normalSmall" style="color:green">TOYOCOSTA</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:10:j_id_jsp_1045594262_34"><span class="normalSmall" style="color:green">11-04-2014</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:10:j_id_jsp_1045594262_37"><span class="normalSmall" style="color:green">17-11-2014</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:10:j_id_jsp_1045594262_40"><span class="normalSmall" style="color:green">17-11-2014</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:10:j_id_jsp_1045594262_43"><span class="normalSmall" style="color:green">-205</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:10:j_id_jsp_1045594262_46"><span class="normalSmall">VR_GRANJA</span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:10:j_id_jsp_1045594262_49"><span class="normalSmall"></span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:10:j_id_jsp_1045594262_52"><span class="normalSmall"></span></td><td class="rich-table-cell " id="j_id_jsp_1045594262_5:tablSolcitudes:10:j_id_jsp_1045594262_55"><img src="/administracion/common/imgs/icons/0pc.png" style="border:none" title="0%" /></td></tr></tbody></table></div>
+	<input type="hidden" name="javax.faces.ViewState" id="javax.faces.ViewState" value="-802239021225433071:2924219262871616398" autocomplete="off" />
+</form><div id="solicitudPanel" style="display: none;"><input autocomplete="off" id="solicitudPanelOpenedState" name="solicitudPanelOpenedState" type="hidden" /><div class="rich-modalpanel " id="solicitudPanelContainer" style="position: absolute; display: none; z-index: 100; background-color: inherit;"><div class="rich-mpnl-mask-div-opaque rich-mpnl-mask-div" id="solicitudPanelDiv" style="z-index: -1;"><button class="rich-mpnl-button" id="solicitudPanelFirstHref"></button></div><div class="rich-mpnl-panel"><div class="rich-mp-container" id="solicitudPanelCDiv" style="position: absolute; left: 0px; top: 0px; z-index: 9;"><div class="rich-mpnl-shadow" id="solicitudPanelShadowDiv"></div><div class="rich-mpnl-ovf-hd rich-mpnl-trim rich-mpnl-content" id="solicitudPanelContentDiv"><div class="rich-mpnl-text rich-mpnl-controls "><a id="closePanelMasterLinkFile1" name="closePanelMasterLinkFile1" href="javascript:Richfaces.hideModalPanel('solicitudPanel')"><img id="closeMasterButtonFile1" src="/administracion/common/imgs/icons/cancel.png" style="border:none" /></a></div><table border="0" cellpadding="0" cellspacing="0" class="rich-mp-content-table" id="solicitudPanelContentTable" style="height: 100%; width: 100%;"><tr style="height: 1%;"><td class="rich-mpnl-header-cell"><div class="rich-mpnl-text rich-mpnl-header " id="solicitudPanelHeader" style="white-space: nowrap;">Solicitud</div></td></tr><tr style="height: 99%"><td class="rich-mpnl-body" valign="top"><span id="messagePanelARC1"><div id="messageTableARC1"></div></span><form id="j_id_jsp_1045594262_69" name="j_id_jsp_1045594262_69" method="post" action="/administracion/faces/jsp/procesos/requerimientos/enProceso/listProceso.jsp"><input type="hidden" name="j_id_jsp_1045594262_69:j_id_jsp_1045594262_70" value="/report/SisRequerimientosSistemas.jasper" /><div class="rich-panel " id="j_id_jsp_1045594262_69:j_id_jsp_1045594262_71"><div class="rich-panel-header " id="j_id_jsp_1045594262_69:j_id_jsp_1045594262_71_header">Datos Requerimiento</div><div class="rich-panel-body " id="j_id_jsp_1045594262_69:j_id_jsp_1045594262_71_body"><table>
+<tbody>
+<tr>
+<td><span class="normal">Fecha Proceso:</span></td>
+<td><input id="j_id_jsp_1045594262_69:fechaProceso" type="text" name="j_id_jsp_1045594262_69:fechaProceso" class="normal" /></td>
+<td><span class="normal">Fecha Entrega:</span></td>
+<td><input id="j_id_jsp_1045594262_69:fechaEntrega" type="text" name="j_id_jsp_1045594262_69:fechaEntrega" class="normal" /></td>
+</tr>
+</tbody>
+</table>
+<table>
+<tbody>
+<tr>
+<td><table>
+<tbody>
+<tr>
+<td><span class="normal">Solicitud No:</span></td>
+<td><input id="j_id_jsp_1045594262_69:cia" type="text" name="j_id_jsp_1045594262_69:cia" value="16146" class="normal" size="5" title="Número de Solicitud" readonly="readonly" /></td>
+</tr>
+<tr>
+<td><span class="normal">Usuario</span></td>
+<td><input id="j_id_jsp_1045594262_69:usuarioSol" type="text" name="j_id_jsp_1045594262_69:usuarioSol" value="TOYOCOSTA" class="normal" title="Usuario: VR_GRANJA" readonly="readonly" /></td>
+</tr>
+<tr>
+<td><span class="normal">Módulo</span></td>
+<td><select id="j_id_jsp_1045594262_69:modulo" name="j_id_jsp_1045594262_69:modulo" class="normal" size="1" title="Módulo" disabled="disabled" onchange="A4J.AJAX.Submit('j_id_jsp_1045594262_69',event,{'similarityGroupingId':'j_id_jsp_1045594262_69:modulos','parameters':{'j_id_jsp_1045594262_69:modulos':'j_id_jsp_1045594262_69:modulos'} ,'containerId':'j_id_jsp_1045594262_0'} )">	<option value="CRM"> C. R. M.</option>
+	<option value="ACC">A C C E S O R I O S</option>
+	<option value="ACT">ACTIVOS FIJOS</option>
+	<option value="AUF">AUDITORIA FINANCIERA</option>
+	<option value="AUD">AUDITORIA INFORMATICA</option>
+	<option value="CAJ">CAJAS</option>
+	<option value="CHE">CHEQUES</option>
+	<option value="CMP">COMPRAS</option>
+	<option value="CON">CONTABILIDAD</option>
+	<option value="COR">CONTABILIDAD (*)</option>
+	<option value="PRE">CONTROL PRESUPUESTARIO</option>
+	<option value="CXC">CUENTAS POR COBRAR</option>
+	<option value="CXP">CUENTAS POR PAGAR</option>
+	<option value="EXO">EXONERADOS</option>
+	<option value="DBA">GESTION DE BASE DE DATOS</option>
+	<option value="VER">GESTION DE VERSIONES</option>
+	<option value="HER">HERRAMIENTAS</option>
+	<option value="INM">INMOBILIARIA</option>
+	<option value="INVS">INVENTARIOS SERVICIO</option>
+	<option value="MER">MERCADEO</option>
+	<option value="NOM">NOMINA</option>
+	<option value="PED">PEDIDOS DE IMPORTACION</option>
+	<option value="PEDS">PEDIDOS SUCURSALES</option>
+	<option value="REC">RECURSOS HUMANOS</option>
+	<option value="REN">RENT-A-CAR</option>
+	<option value="REP">REPUESTOS</option>
+	<option value="SER">SERVICIO</option>
+	<option value="SIG">SISTEMA INTEGRADO DE GESTION</option>
+	<option value="SIS">SISTEMAS</option>
+	<option value="VEH">VEHICULOS</option>
+	<option value="SEMI" selected="selected">VEHICULOS SEMINUEVOS</option>
+</select></td>
+</tr>
+<tr>
+<td><span class="normal">Tipo</span></td>
+<td><select id="j_id_jsp_1045594262_69:Tipo" name="j_id_jsp_1045594262_69:Tipo" class="normal" size="1" title="Tipo" disabled="disabled" onchange="A4J.AJAX.Submit('j_id_jsp_1045594262_69',event,{'similarityGroupingId':'j_id_jsp_1045594262_69:tipoSolicitudNuevo','parameters':{'j_id_jsp_1045594262_69:tipoSolicitudNuevo':'j_id_jsp_1045594262_69:tipoSolicitudNuevo'} ,'containerId':'j_id_jsp_1045594262_0'} )">	<option value="">Seleccione Item</option>
+	<option value="E">Equipo</option>
+	<option value="P">Proceso</option>
+	<option value="R" selected="selected">Reporte</option>
+	<option value="B">Base Datos</option>
+	<option value="N">Ninguno</option>
+</select></td>
+</tr>
+<tr>
+<td><span class="normal">Horas Estimadas</span></td>
+<td><input id="j_id_jsp_1045594262_69:horasEstimadasForm" type="text" name="j_id_jsp_1045594262_69:horasEstimadasForm" value="6.0" class="normal" readonly="readonly" /></td>
+</tr>
+</tbody>
+</table>
+</td>
+<td><table>
+<tbody>
+<tr>
+<td><span class="normal">Fecha Solicitud:</span></td>
+<td><input type="text" name="j_id_jsp_1045594262_69:j_id_jsp_1045594262_95" value="Mar 25, 2014" class="normal" title="Fecha Solicitud" readonly="readonly" /></td>
+</tr>
+<tr>
+<td><span class="normal">Pedido</span></td>
+<td><select id="j_id_jsp_1045594262_69:pedido" name="j_id_jsp_1045594262_69:pedido" class="normal" size="1" title="Pedido" disabled="disabled" onchange="A4J.AJAX.Submit('j_id_jsp_1045594262_69',event,{'similarityGroupingId':'j_id_jsp_1045594262_69:pedidos','parameters':{'j_id_jsp_1045594262_69:pedidos':'j_id_jsp_1045594262_69:pedidos'} ,'containerId':'j_id_jsp_1045594262_0'} )">	<option value="">Seleccione Item</option>
+	<option value="M" selected="selected">Modificacion</option>
+	<option value="N">Nuevo</option>
+	<option value="O">Otros</option>
+</select></td>
+</tr>
+<tr>
+<td><span class="normal">Prioridad</span></td>
+<td><select id="j_id_jsp_1045594262_69:prioridad" name="j_id_jsp_1045594262_69:prioridad" class="normal" size="1" title="Prioridad" disabled="disabled" onchange="A4J.AJAX.Submit('j_id_jsp_1045594262_69',event,{'similarityGroupingId':'j_id_jsp_1045594262_69:prioridades','parameters':{'j_id_jsp_1045594262_69:prioridades':'j_id_jsp_1045594262_69:prioridades'} ,'containerId':'j_id_jsp_1045594262_0'} )">	<option value="">Seleccione Item</option>
+	<option value="N">Normal</option>
+	<option value="U">Urgente</option>
+</select></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+<table>
+<tbody>
+<tr>
+<td><span class="normal">Titulo</span></td>
+<td><input type="text" name="j_id_jsp_1045594262_69:j_id_jsp_1045594262_106" value="Cambio de Logos" class="normal" size="55" title="Referencia" readonly="readonly" /></td>
+<td>
+<script type="text/javascript" src="/administracion/faces/javax.faces.resource/jsf.js?ln=javax.faces"></script>
+<a href="#" onclick="mojarra.jsfcljs(document.getElementById('j_id_jsp_1045594262_69'),{'j_id_jsp_1045594262_69:j_id_jsp_1045594262_107':'j_id_jsp_1045594262_69:j_id_jsp_1045594262_107','format':'pdf'},'_blank');return false"><img src="/administracion/common/imgs/icons/print_new.png" alt="Imprimir Solicitud" style="border:none" title="Imprimir Solicitud" /></a></td>
+</tr>
+</tbody>
+</table>
+<table>
+<tbody>
+<tr>
+<td><span class="normal">Archivo adjunto:</span></td>
+<td><a href="#" onclick="mojarra.jsfcljs(document.getElementById('j_id_jsp_1045594262_69'),{'j_id_jsp_1045594262_69:j_id_jsp_1045594262_112':'j_id_jsp_1045594262_69:j_id_jsp_1045594262_112'},'_blank');return false" class="normal">Logo Toyocosta.jpg</a></td>
+</tr>
+</tbody>
+</table>
+<table>
+<tbody>
+<tr>
+<td><span class="normal"></span></td>
+</tr>
+<tr>
+<td><span class="normal">Descripción Detallada</span></td>
+</tr>
+<tr>
+<td><span class="normal"> Cambiar logos y sellos de todos los reportes que muestre el módulo de seminuevos, deberá ir el logo de Casabaca debe ser reemplazado por el Logo de Toyocosta.
+Se adjunta logo de Toyocosta.
+</span></td>
+</tr>
+</tbody>
+</table>
+</div></div><div class="rich-panel " id="j_id_jsp_1045594262_69:j_id_jsp_1045594262_117"><div class="rich-panel-header " id="j_id_jsp_1045594262_69:j_id_jsp_1045594262_117_header">Registro Avances</div><div class="rich-panel-body " id="j_id_jsp_1045594262_69:j_id_jsp_1045594262_117_body"><table>
+<tbody>
+<tr>
+<td><table>
+<tbody>
+<tr>
+<td><span class="normal">Estado:</span></td>
+<td><select id="j_id_jsp_1045594262_69:estadoSolucionForm" name="j_id_jsp_1045594262_69:estadoSolucionForm" class="normal" size="1" style=" width : 97px;">	<option value="">Seleccione</option>
+	<option value="P">EN PROCESO</option>
+	<option value="S">EN ESPERA</option>
+	<option value="G">ENTREGADO</option>
+</select></td>
+<td><span class="normal">Tiempo</span></td>
+<td><input id="j_id_jsp_1045594262_69:avanceTiempoSolucionForm" type="text" name="j_id_jsp_1045594262_69:avanceTiempoSolucionForm" class="normal" style=" width : 51px;" /></td>
+<td><span class="normal">mins.</span></td>
+<td><span class="normal">Porcentaje Avance:</span></td>
+<td><select id="j_id_jsp_1045594262_69:avanceSolucionForm" name="j_id_jsp_1045594262_69:avanceSolucionForm" class="normal" size="1" style=" width : 97px;">	<option value="" selected="selected">Seleccione</option>
+	<option value="0" selected="selected">0</option>
+	<option value="20">20</option>
+	<option value="40">40</option>
+	<option value="60">60</option>
+	<option value="80">80</option>
+	<option value="100">100</option>
+</select></td>
+<td><span class="normal">Facturar:</span></td>
+<td><select id="j_id_jsp_1045594262_69:facturarForm" name="j_id_jsp_1045594262_69:facturarForm" class="normal" size="1" style=" width : 97px;">	<option value="">Seleccione</option>
+	<option value="S">Si</option>
+	<option value="N">No</option>
+</select></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr>
+<td><table>
+<tbody>
+<tr>
+<td><table>
+<tbody>
+<tr>
+<td><span class="normal">Agregar Avance</span></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr>
+<td><table>
+<tbody>
+<tr>
+<td><textarea id="j_id_jsp_1045594262_69:nota" name="j_id_jsp_1045594262_69:nota" class="normal" style="height : 60px; width : 550px;"></textarea></td>
+<td><input class="normal" id="j_id_jsp_1045594262_69:j_id_jsp_1045594262_148" name="j_id_jsp_1045594262_69:j_id_jsp_1045594262_148" onclick="A4J.AJAX.Submit('j_id_jsp_1045594262_69',event,{'similarityGroupingId':'j_id_jsp_1045594262_69:j_id_jsp_1045594262_148','parameters':{'j_id_jsp_1045594262_69:j_id_jsp_1045594262_148':'j_id_jsp_1045594262_69:j_id_jsp_1045594262_148'} ,'containerId':'j_id_jsp_1045594262_0'} );return false;" value="Agregar" type="button" /></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="rich-datascr " id="j_id_jsp_1045594262_69:sc1" style=" " align="left"><table border="0" cellpadding="0" cellspacing="1" class="rich-dtascroller-table " id="j_id_jsp_1045594262_69:sc1_table" style="text-align:left"><tbody><tr><td class="rich-datascr-button-dsbld rich-datascr-button">&#171;&#171;</td><td class="rich-datascr-button-dsbld rich-datascr-button">&#171;</td><td class="rich-datascr-button-dsbld rich-datascr-button"></td><td class="rich-datascr-button-dsbld rich-datascr-button"></td><td class="rich-datascr-button-dsbld rich-datascr-button">&#187;</td><td class="rich-datascr-button-dsbld rich-datascr-button">&#187;&#187;</td></tr></tbody></table><script type="text/javascript">new Richfaces.Datascroller('j_id_jsp_1045594262_69:sc1', function(event){A4J.AJAX.Submit('j_id_jsp_1045594262_69',event,{'ignoreDupResponses':true,'implicitEventsQueue':'j_id_jsp_1045594262_69:sc1','similarityGroupingId':'j_id_jsp_1045594262_69:sc1','parameters':{'j_id_jsp_1045594262_69:sc1':event.memo.page,'ajaxSingle':'j_id_jsp_1045594262_69:sc1'} ,'containerId':'j_id_jsp_1045594262_0'} ); return false;});</script></div><table class="rich-table " id="j_id_jsp_1045594262_69:historyTable" border="0" cellpadding="0" cellspacing="0" width="100%"><colgroup span="6"></colgroup><thead class="rich-table-thead"><tr class="rich-table-subheader headerCell"><th class="rich-table-subheadercell headerCell " scope="col" id="j_id_jsp_1045594262_69:historyTable:j_id_jsp_1045594262_151header"><div id="j_id_jsp_1045594262_69:historyTable:j_id_jsp_1045594262_151header:sortDiv">Fecha</div></th><th class="rich-table-subheadercell headerCell " scope="col" id="j_id_jsp_1045594262_69:historyTable:j_id_jsp_1045594262_154header"><div id="j_id_jsp_1045594262_69:historyTable:j_id_jsp_1045594262_154header:sortDiv">Estado</div></th><th class="rich-table-subheadercell headerCell " scope="col" id="j_id_jsp_1045594262_69:historyTable:j_id_jsp_1045594262_157header"><div id="j_id_jsp_1045594262_69:historyTable:j_id_jsp_1045594262_157header:sortDiv">Comentario</div></th><th class="rich-table-subheadercell headerCell " scope="col" id="j_id_jsp_1045594262_69:historyTable:j_id_jsp_1045594262_160header"><div id="j_id_jsp_1045594262_69:historyTable:j_id_jsp_1045594262_160header:sortDiv">Tiempo(mins)</div></th><th class="rich-table-subheadercell headerCell " scope="col" id="j_id_jsp_1045594262_69:historyTable:j_id_jsp_1045594262_163header"><div id="j_id_jsp_1045594262_69:historyTable:j_id_jsp_1045594262_163header:sortDiv">Avance</div></th><th class="rich-table-subheadercell headerCell " scope="col" id="j_id_jsp_1045594262_69:historyTable:j_id_jsp_1045594262_166header"><div id="j_id_jsp_1045594262_69:historyTable:j_id_jsp_1045594262_166header:sortDiv"></div></th></tr></thead><tbody id="j_id_jsp_1045594262_69:historyTable:tb"></tbody></table>
+						
+						
+						
+							<div align="right">	
+							Total Horas:<span id="j_id_jsp_1045594262_69:txtTotal"></span>
+							</div>
+					</div></div><input type="hidden" autocomplete="off" name="j_id_jsp_1045594262_69" value="j_id_jsp_1045594262_69" /><input type="hidden" autocomplete="off" name="autoScroll" value="" /><input type="hidden" autocomplete="off" name="j_id_jsp_1045594262_69:_link_hidden_" value="" /><input type="hidden" autocomplete="off" name="j_id_jsp_1045594262_69:j_idcl" value="" /><script type="text/javascript">function clear_j_id_jsp_1045594262_69() {
+_clearJSFFormParameters('j_id_jsp_1045594262_69','',['j_id_jsp_1045594262_69:_link_hidden_','j_id_jsp_1045594262_69:j_idcl']);
+}
+function clearFormHiddenParams_j_id_jsp_1045594262_69(){clear_j_id_jsp_1045594262_69();}
+function clearFormHiddenParams_j_id_jsp_1045594262_69(){clear_j_id_jsp_1045594262_69();}
+clear_j_id_jsp_1045594262_69();</script><input type="hidden" name="javax.faces.ViewState" id="javax.faces.ViewState" value="-802239021225433071:2924219262871616398" autocomplete="off" /></form></td></tr></table></div><div class="rich-mpnl-resizer" id="solicitudPanelResizerN" style="width: 40px; height: 4px;"></div><div class="rich-mpnl-resizer" id="solicitudPanelResizerE" style="height: 40px; width: 4px;"></div><div class="rich-mpnl-resizer" id="solicitudPanelResizerS" style="width: 40px; height: 4px;"></div><div class="rich-mpnl-resizer" id="solicitudPanelResizerW" style="height: 40px; width: 4px;"></div><div class="rich-mpnl-resizer" id="solicitudPanelResizerNWU" style="width: 40px; height: 4px;"></div><div class="rich-mpnl-resizer" id="solicitudPanelResizerNEU" style="height: 40px; width: 4px;"></div><div class="rich-mpnl-resizer" id="solicitudPanelResizerNEL" style="width: 40px; height: 4px;"></div><div class="rich-mpnl-resizer" id="solicitudPanelResizerSEU" style="height: 40px; width: 4px;"></div><div class="rich-mpnl-resizer" id="solicitudPanelResizerSEL" style="width: 40px; height: 4px;"></div><div class="rich-mpnl-resizer" id="solicitudPanelResizerSWL" style="height: 40px; width: 4px;"></div><div class="rich-mpnl-resizer" id="solicitudPanelResizerSWU" style="width: 40px; height: 4px;"></div><div class="rich-mpnl-resizer" id="solicitudPanelResizerNWL" style="height: 40px; width: 4px;"></div></div></div><div class="rich-mpnl-mask-div rich-mpnl-mask-div-transparent" id="solicitudPanelCursorDiv" style="z-index: -200;"><button class="rich-mpnl-button" id="solicitudPanelLastHref"></button></div><script type="text/javascript">new ModalPanel('solicitudPanel',
+				{
+					width: -1,
+					height: -1,
+
+					minWidth: -1,
+					minHeight: -1,
+
+					resizeable: true,
+					moveable: true,
+
+					left: "auto",
+					top: "auto",
+
+					zindex: 100,onresize: '',onmove: '',onshow: '',onhide: '',onbeforeshow: '',onbeforehide: '',
+					domElementAttachment: "",				
+					keepVisualState: false,
+					showWhenRendered: false,
+					selectBehavior: "disable",
+
+					autosized: false,
+					overlapEmbedObjects: false});</script></div><script type="text/javascript"></script></div>
+	<!-- MYFACES JAVASCRIPT -->
+
+</body>
+	</html>

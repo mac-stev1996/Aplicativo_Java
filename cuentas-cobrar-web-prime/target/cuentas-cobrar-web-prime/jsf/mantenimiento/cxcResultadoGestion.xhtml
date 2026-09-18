@@ -1,0 +1,149 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Mantenimiento Resultado Seguimiento
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmButtons">
+			<p:commandButton title="Nuevo" partialSubmit="true"
+				icon="fa fa-file-o" process="@this"
+				style="margin-top: 0px !important; float:right;"
+				styleClass="green-btn" update="@this, :dlgNuevo"
+				actionListener="#{cxcResultadoGestionController.abrirNuevo}" />
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+		<style>
+.w25 {
+	width: 25%;
+}
+</style>
+		<script type="text/javascript">
+		function mayus(e) {
+		    e.value = e.value.toUpperCase();
+		}
+	
+	</script>
+		<h:form id="idForm">
+
+			<div class="ui-g dashboard">
+				<div class="ui-g-12 ui-fluid contact-form">
+					<div class="ui-g-12">
+						<p:dataTable id="tblResultadoGestion"
+							widgetVar="tblResultadoGestion"
+							emptyMessage="No existen registros"
+							value="#{cxcResultadoGestionController.listadoResultadoGestion}"
+							var="item" rowKey="#{item.id}" rowIndexVar="var" paginator="true"
+							paginatorAlwaysVisible="false" filterDelay="1000" rows="10"
+							paginatorPosition="bottom" editable="true" editMode="cell"
+							paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+							<p:ajax event="cellEdit"
+								listener="#{cxcResultadoGestionController.editar(item)}"
+								update=":idForm:tblResultadoGestion" />
+							<p:column headerText="Codigo" width="15%"
+								filterBy="#{item.id.codigo}">
+								<p:outputLabel value="#{item.id.codigo}" />
+							</p:column>
+
+							<p:column headerText="Descripcion" width="40%"
+								filterBy="#{item.descripcion}">
+
+								<p:cellEditor>
+									<f:facet name="output">
+										<p:outputLabel value="#{item.descripcion}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText value="#{item.descripcion}" onkeyup="mayus(this)"
+											style="width:100%" />
+									</f:facet>
+								</p:cellEditor>
+
+							</p:column>
+
+							<p:column headerText="Estado" width="10%">
+
+								<p:cellEditor>
+									<f:facet name="output">
+										<p:outputLabel
+											value="#{item.estado eq 'A'?'Activo' :'Inactivo'}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:selectOneMenu value="#{item.estado}" style="width:100%">
+											<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+											<f:selectItem itemLabel="Activo" itemValue="A" />
+											<f:selectItem itemLabel="Inactivo" itemValue="I" />
+
+										</p:selectOneMenu>
+									</f:facet>
+								</p:cellEditor>
+
+							</p:column>
+
+						</p:dataTable>
+					</div>
+				</div>
+			</div>
+		</h:form>
+		<p:dialog widgetVar="dlgNuevo" id="dlgNuevo"
+			header="Nuevo Resultado Gestion" resizable="true" modal="true"
+			closable="true" appendTo="@(body)" width="350" height="250"
+			closeOnEscape="true">
+			<h:form id="idFrmNuevo">
+				<div class="ui-g dashboard">
+					<div class="ui-g-18 ui-fluid contact-form">
+						<div class="ui-g-18">
+							<div class="ui-g-12">
+								<div class="ui-g-9">
+									<p:outputLabel value="Descripcion : " style="width:100%" />
+
+									<p:inputText
+										value="#{cxcResultadoGestionController.cxcResultadoGestionNuevo.descripcion}"
+										onkeyup="mayus(this)" maxlength="13">
+									</p:inputText>
+								</div>
+							</div>
+							<div class="ui-g-12">
+								<div class="ui-g-3">
+
+									<p:outputLabel value="Estado : " style="width:100%" />
+
+									<p:selectOneRadio
+										value="#{cxcResultadoGestionController.cxcResultadoGestionNuevo.estado}"
+										columns="2">
+										<f:selectItem itemLabel="Activo" itemValue="A" />
+										<f:selectItem itemLabel="Inactivo" itemValue="I" />
+
+										<p:ajax event="change" process="@this" partialSubmit="true"
+											global="flase"></p:ajax>
+									</p:selectOneRadio>
+								</div>
+							</div>
+
+
+
+
+						</div>
+					</div>
+				</div>
+				<br />
+				<center>
+					<p:commandButton value="Grabar" partialSubmit="true"
+						process="@this, dlgNuevo"
+						action="#{cxcResultadoGestionController.grabar}" update=":idForm"></p:commandButton>
+				</center>
+			</h:form>
+		</p:dialog>
+
+
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,180 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+        Mantenimiento Tipo Cliente
+    </ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmButtons">
+			<p:commandButton title="Nuevo" value="Nuevo" alt="Nuevo"
+				icon="fa fa-plus-square-o" id="nuevoTipoCli" styleClass="green-btn"
+				style="text-align:right;"
+				action="#{cxcManTipoClienteController.crear}" global="false"
+				update="@this,:dlgNuevo" />
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form id="idForm">
+			<p:messages id="messages" showDetail="true" autoUpdate="true"
+				closable="true" showSummary="true" globalOnly="true" />
+			<p:panel id="idDatosPrincipales" header="Lista de Tipos de Cliente">
+				<p:dataTable id="tiposMan" widgetVar="widgetTiposMan" var="item"
+					value="#{cxcManTipoClienteController.listaTipoCliente}"
+					rowKey="#{item.id.tipoCliente}" paginator="true" rows="10"
+					rowsPerPageTemplate="10,20,30,40"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+					paginatorPosition="bottom" emptyMessage="No existen registros"
+					sortMode="multiple" filterDelay="300">
+
+					<p:column headerText="Tipo Cliente" width="10%">
+						<p:outputLabel value="#{item.id.tipoCliente}" />
+					</p:column>
+					<p:column headerText="Línea Negocio" width="8%">
+						<p:outputLabel value="#{item.nombreLinea}" />
+					</p:column>
+					<p:column headerText="Descripción" width="25%">
+						<p:outputLabel value="#{item.descripcion}" />
+					</p:column>
+					<p:column headerText="Tipo" width="10%">
+						<h:outputText value="CORPORATIVA"  rendered="#{item.tipo eq 'C'}" />
+						<h:outputText value="RENTING" rendered="#{item.tipo eq 'R'}" />
+						<h:outputText value="EMPLEADOS" rendered="#{item.tipo eq 'E'}" />
+						<h:outputText value="#{item.tipo}" rendered="#{item.tipo ne 'C' and item.tipo ne 'R' and item.tipo ne 'E'}" />
+					</p:column>
+					<p:column headerText="F. Inicial" width="10%">
+						<p:outputLabel value="#{item.fechaInicial}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:outputLabel>
+					</p:column>
+					<p:column headerText="F. Final" width="10%">
+						<p:outputLabel value="#{item.fechaFinal}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:outputLabel>
+					</p:column>
+					<p:column headerText="Estado" width="8%">
+						<h:outputText value="ACTIVO" styleClass="badge-activo"
+							rendered="#{item.estado eq 'A'}" />
+						<h:outputText value="INACTIVO" styleClass="badge-inactivo"
+							rendered="#{item.estado eq 'I'}" />
+					</p:column>
+					<p:column headerText="Acciones"
+						style="width:60px; text-align:center;">
+						<p:commandButton alt="Editar" title="Editar" id="editarTipoCli"
+							icon="fa fa-pencil" update=":#{p:component('dlgNuevo')}"
+							actionListener="#{cxcManTipoClienteController.abrirEditar(item)}" />
+						<p:commandButton id="borrarTipoCli" title="Eliminar"
+							icon="ui-icon-trash" partialSubmit="true"
+							actionListener="#{cxcManTipoClienteController.eliminar(item)}"
+							update="idForm">
+							<p:confirm header="Confirmación"
+								message="¿Está seguro de eliminar el Tipo de Cliente?"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+				<p:commandButton value="Sí" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+		</h:form>
+
+		<!-- DIALOGO DE CREAR NUEVOS TIPOS DE CLIENTES-->
+		<p:dialog widgetVar="dlgNuevo" id="dlgNuevo" style="position:fixed"
+			header="Mantenimiento Tipo Cliente" resizable="true"
+			responsive="true" modal="true" appendTo="@(body)" width="auto"
+			height="auto" closeOnEscape="true" draggable="true">
+
+			<h:form id="idFrmNuevo">
+				<p:panelGrid columns="2">
+					<p:outputLabel for="tipoCliente" value="Tipo Cliente" />
+					<p:inputText id="tipoCliente" autocomplete="off" size="15"
+						disabled="#{cxcManTipoClienteController.esEdicion eq 'S'}"
+						value="#{cxcManTipoClienteController.cxcTipoCliente.id.tipoCliente}"
+						style="text-transform:uppercase;" maxlength="10" 						
+						required="true" requiredMessage="Tipo Cliente es requerido"
+						onkeyup="this.value=this.value.toUpperCase();" />
+
+					<p:outputLabel for="noLinea" value="Línea Negocio" />
+					<p:selectOneMenu style="width:175px" id="noLinea" required="true"
+						disabled="#{cxcManTipoClienteController.esEdicion eq 'S'}"
+						value="#{cxcManTipoClienteController.cxcTipoCliente.id.noLinea}">
+						<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+						<f:selectItems
+							value="#{cxcManTipoClienteController.listaLineaNegocio}"
+							var="linea" itemValue="#{linea.lineaNegocioPK.noLinea}" 
+							itemLabel="#{linea.lineaNegocioPK.noLinea} - #{linea.descripcion}"/>
+						<p:ajax event="change" update="@this" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="descripcion" value="Descripción" />
+					<p:inputText id="descripcion" autocomplete="off" size="50"
+						maxlength="200"
+						value="#{cxcManTipoClienteController.cxcTipoCliente.descripcion}"
+						required="true" requiredMessage="Descripción es requerida"
+						style="text-transform:uppercase;"
+						onkeyup="this.value=this.value.toUpperCase();" />
+
+					<p:outputLabel for="tipo" value="Tipo" />
+					<p:selectOneMenu id="tipo"
+						value="#{cxcManTipoClienteController.cxcTipoCliente.tipo}"
+						required="true" requiredMessage="Tipo es requerido">
+						<f:selectItem itemLabel="Seleccione..." noSelectionOption="true" />
+						<f:selectItem itemValue="C" itemLabel="C - Corporativa" />
+						<f:selectItem itemValue="R" itemLabel="R - Renting" />
+						<f:selectItem itemValue="E" itemLabel="E - Empleados" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="fechaInicial" value="Fecha Inicial" />
+					<p:calendar id="fechaInicial" pattern="dd/MM/yyyy"
+						value="#{cxcManTipoClienteController.cxcTipoCliente.fechaInicial}"
+						required="true" requiredMessage="Fecha Inicial es requerida"
+						navigator="true" showButtonBar="true">
+						<p:ajax event="dateSelect"
+							listener="#{cxcManTipoClienteController.onChangeFechaInicial}"
+							update="fechaFinal" partialSubmit="true" />
+					</p:calendar>
+
+					<p:outputLabel for="fechaFinal" value="Fecha Final" />
+					<p:calendar id="fechaFinal" pattern="dd/MM/yyyy"
+						value="#{cxcManTipoClienteController.cxcTipoCliente.fechaFinal}"
+						required="true" requiredMessage="Fecha Final es requerida"
+						navigator="true" showButtonBar="true"
+						mindate="#{cxcManTipoClienteController.fechaMinFinal}" />
+
+					<p:outputLabel for="estado" value="Estado" />
+					<p:selectOneMenu id="estado"
+						value="#{cxcManTipoClienteController.cxcTipoCliente.estado}"
+						required="true" requiredMessage="Estado es requerido">
+						<f:selectItem itemLabel="Seleccione..." noSelectionOption="true" />
+						<f:selectItem itemValue="A" itemLabel="Activo" />
+						<f:selectItem itemValue="I" itemLabel="Inactivo" />
+					</p:selectOneMenu>
+
+				</p:panelGrid>
+
+				<div class="dialog-footer"
+					style="margin-top: 15px; text-align: center;">
+					<p:commandButton value="Guardar" icon="fa fa-save"
+						action="#{cxcManTipoClienteController.guardar}" update=":idForm"
+						oncomplete="if(!args.validationFailed) PF('dlgNuevo').hide();" />
+
+					<p:commandButton value="Cancelar" icon="fa fa-times" type="button"
+						onclick="PF('dlgNuevo').hide();" />
+				</div>
+
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

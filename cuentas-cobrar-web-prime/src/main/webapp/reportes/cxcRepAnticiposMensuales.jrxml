@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cxcRepAnticiposMensuales" pageWidth="2125" pageHeight="802" columnWidth="2121" leftMargin="2" rightMargin="2" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="8bef2b7f-2fa7-478d-9fab-f989d854dbd8">
+	<property name="ireport.zoom" value="2.3579476910000046"/>
+	<property name="ireport.x" value="576"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="NOCIA" class="java.lang.String"/>
+	<parameter name="NOMBREEMPRESA" class="java.lang.String"/>
+	<parameter name="USUARIO" class="java.lang.String"/>
+	<parameter name="IMPRIME_CABECERA" class="java.lang.Boolean"/>
+	<parameter name="ANIO" class="java.lang.Integer"/>
+	<parameter name="MES" class="java.lang.Integer"/>
+	<parameter name="LINEA_NEGOCIO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT DISTINCT
+    b.no_linea,
+    e.descripcion   nomlinea,
+    (select nombre from agencias where no_cia = a.no_cia and codigo = a.centro) as agencia,
+    c.cedula,
+    c.nombre        nombre,
+    a.no_fisico || a.serie_fisico no_fisico,
+    a.fecha,
+    b.monto_doc,
+    nvl(b.monto_utilizado, 0) monto_utilizado,
+    a.saldo,
+    a.fecha_digitacion,
+    nvl(d.moneda_id, '02') moneda_id,
+    nvl(nvl(nvl(d.comentario,(
+        SELECT
+            comentar
+        FROM
+            arcjca
+        WHERE
+            no_cia = d.no_cia
+            AND no_cliente = d.no_cliente
+            AND no_docu = d.no_docu
+    )),(
+        SELECT
+            f2.vehiculo
+        FROM
+            fac_ventas_cab f1,
+            fac_ventas_vehiculos f2
+        WHERE
+            f1.no_cia = f2.no_cia
+            AND f1.no_factu = f2.no_factu
+            AND f1.no_cia = d.no_cia
+            AND f1.centrod = d.centro
+            AND f1.tipo_doc = d.tipo_doc
+            AND f1.no_cliente = d.no_cliente
+            AND f1.linea_negocio = d.no_linea
+            AND f1.no_fisico = d.no_fisico
+            AND ROWNUM = 1
+    )),((
+        SELECT
+            f1.observ1
+        FROM
+            fac_ventas_cab f1
+        WHERE
+            f1.no_cia = d.no_cia
+            AND f1.centrod = d.centro
+            AND f1.tipo_doc = d.tipo_doc
+            AND f1.no_cliente = d.no_cliente
+            AND f1.no_fisico = d.no_fisico
+            AND ROWNUM = 1
+    ))) comentario,
+    CASE
+        WHEN a.fecha_digitacion IS NULL THEN NULL
+        WHEN TRUNC(SYSDATE) - TRUNC(a.fecha_digitacion) <= 30  THEN '1-30 D'
+        WHEN TRUNC(SYSDATE) - TRUNC(a.fecha_digitacion) <= 60  THEN '31-60 D'
+        WHEN TRUNC(SYSDATE) - TRUNC(a.fecha_digitacion) <= 90  THEN '61-90 D'
+        WHEN TRUNC(SYSDATE) - TRUNC(a.fecha_digitacion) <= 120 THEN '91-120 D'
+        WHEN TRUNC(SYSDATE) - TRUNC(a.fecha_digitacion) <= 150 THEN '121-150 D'
+        WHEN TRUNC(SYSDATE) - TRUNC(a.fecha_digitacion) <= 180 THEN '151-180 D'
+        ELSE '+180 D'
+    END AS rango_dias,
+
+    CASE
+        WHEN ABS(NVL(a.saldo, 0)) <= 1    THEN '0-1'
+        WHEN ABS(NVL(a.saldo, 0)) <= 10   THEN '1-10'
+        WHEN ABS(NVL(a.saldo, 0)) <= 50   THEN '11-50'
+        WHEN ABS(NVL(a.saldo, 0)) <= 100  THEN '51-100'
+        WHEN ABS(NVL(a.saldo, 0)) <= 500  THEN '101-500'
+        WHEN ABS(NVL(a.saldo, 0)) <= 1000 THEN '501-1000'
+        WHEN ABS(NVL(a.saldo, 0)) <= 5000 THEN '1001-5000'
+        ELSE '+5000'
+    END AS rango_valor
+FROM
+    cxc_saldos_mensuales     a,
+    cxc_arcjan_mensual       b,
+    cxc_clientes_mensuales   c,
+    arccmd                   d,
+    arcjli                   e
+WHERE
+    a.no_cia = $P{NOCIA}
+    AND nvl(a.anulado, 'N') = 'N'
+    AND nvl(a.saldo, 0) < 0
+    AND a.anio_cierre = $P{ANIO}
+    AND a.mes_cierre = $P{MES}
+    AND a.no_cia = b.no_cia
+    AND a.no_docu = b.no_docu
+    AND a.anio_cierre = b.anio_cierre
+    AND a.mes_cierre = b.mes_cierre
+    and nvl(b.no_linea,'0') =  nvl( $P{LINEA_NEGOCIO} ,nvl(b.no_linea,'0'))
+    AND b.aplica_como = 'AN'
+    AND a.no_cia = c.no_cia
+    AND a.grupo = c.grupo
+    AND a.no_cliente = c.no_cliente
+    AND c.ano_cierre = a.anio_cierre
+    AND c.mes_cierre = a.mes_cierre
+    AND a.no_cia = d.no_cia
+    AND a.no_cliente = d.no_cliente
+    AND a.no_docu = d.no_docu
+    AND b.no_cia = e.no_cia
+    AND b.no_linea = e.no_linea
+UNION
+SELECT DISTINCT
+    b.no_linea,
+    e.descripcion   nomlinea,
+    (select nombre from agencias where no_cia = a.no_cia and codigo = a.centro) as agencia,
+    c.cedula,
+    c.nombre        nombre,
+    a.no_fisico || a.serie_fisico no_fisico,
+    a.fecha,
+    b.monto_doc,
+    nvl(b.monto_utilizado, 0) monto_utilizado,
+    a.saldo,
+    a.fecha_digitacion,
+    nvl(d.moneda_id, '02') moneda_id,
+    nvl(nvl(nvl(d.comentario,(
+        SELECT
+            comentar
+        FROM
+            arcjca
+        WHERE
+            no_cia = d.no_cia
+            AND no_cliente = d.no_cliente
+            AND no_docu = d.no_docu
+    )),(
+        SELECT
+            f2.vehiculo
+        FROM
+            fac_ventas_cab f1,
+	  fac_ventas_vehiculos   f2
+        WHERE
+            f1.no_cia = f2.no_cia
+            AND f1.no_factu = f2.no_factu
+            AND f1.no_cia = d.no_cia
+            AND f1.centrod = d.centro
+            AND f1.tipo_doc = d.tipo_doc
+            AND f1.no_cliente = d.no_cliente
+            AND f1.linea_negocio = d.no_linea
+            AND f1.no_fisico = d.no_fisico
+            AND ROWNUM = 1
+    )),((
+        SELECT
+            f1.observ1
+        FROM
+            fac_ventas_cab f1
+        WHERE
+            f1.no_cia = d.no_cia
+            AND f1.centrod = d.centro
+            AND f1.tipo_doc = d.tipo_doc
+            AND f1.no_cliente = d.no_cliente
+            AND f1.no_fisico = d.no_fisico
+            AND ROWNUM = 1
+    ))) comentario,
+    CASE
+        WHEN a.fecha_digitacion IS NULL THEN NULL
+        WHEN TRUNC(SYSDATE) - TRUNC(a.fecha_digitacion) <= 30  THEN '1-30 D'
+        WHEN TRUNC(SYSDATE) - TRUNC(a.fecha_digitacion) <= 60  THEN '31-60 D'
+        WHEN TRUNC(SYSDATE) - TRUNC(a.fecha_digitacion) <= 90  THEN '61-90 D'
+        WHEN TRUNC(SYSDATE) - TRUNC(a.fecha_digitacion) <= 120 THEN '91-120 D'
+        WHEN TRUNC(SYSDATE) - TRUNC(a.fecha_digitacion) <= 150 THEN '121-150 D'
+        WHEN TRUNC(SYSDATE) - TRUNC(a.fecha_digitacion) <= 180 THEN '151-180 D'
+        ELSE '+180 D'
+    END AS rango_dias,
+
+    CASE
+        WHEN ABS(NVL(a.saldo, 0)) <= 1    THEN '0-1'
+        WHEN ABS(NVL(a.saldo, 0)) <= 10   THEN '1-10'
+        WHEN ABS(NVL(a.saldo, 0)) <= 50   THEN '11-50'
+        WHEN ABS(NVL(a.saldo, 0)) <= 100  THEN '51-100'
+        WHEN ABS(NVL(a.saldo, 0)) <= 500  THEN '101-500'
+        WHEN ABS(NVL(a.saldo, 0)) <= 1000 THEN '501-1000'
+        WHEN ABS(NVL(a.saldo, 0)) <= 5000 THEN '1001-5000'
+        ELSE '+5000'
+    END AS rango_valor
+
+FROM
+    cxc_saldos_mensuales     a,
+    cxc_arccan_mensual       b,
+    cxc_clientes_mensuales   c,
+    arccmd                   d,
+    arcjli                   e
+WHERE
+    a.no_cia = $P{NOCIA}
+    AND nvl(a.anulado, 'N') = 'N'
+    AND nvl(a.saldo, 0) < 0
+    AND a.anio_cierre = $P{ANIO}
+    AND a.mes_cierre = $P{MES}
+    AND a.no_cia = b.no_cia
+    AND a.no_docu = b.no_docu
+    AND a.anio_cierre = b.anio_cierre
+    AND a.mes_cierre = b.mes_cierre
+    and nvl(b.no_linea,'0') = nvl($P{LINEA_NEGOCIO},nvl(b.no_linea,'0'))
+    AND b.aplica_como = 'AN'
+    AND a.no_cia = c.no_cia
+    AND a.grupo = c.grupo
+    AND a.no_cliente = c.no_cliente
+    AND c.ano_cierre = a.anio_cierre
+    AND c.mes_cierre = a.mes_cierre
+    AND a.no_cia = d.no_cia
+    AND a.no_cliente = d.no_cliente
+    AND a.no_docu = d.no_docu
+    AND b.no_cia = e.no_cia
+    AND b.no_linea = e.no_linea
+ORDER BY
+    nombre,
+    no_fisico]]>
+	</queryString>
+	<field name="NO_LINEA" class="java.lang.String"/>
+	<field name="NOMLINEA" class="java.lang.String"/>
+	<field name="AGENCIA" class="java.lang.String"/>
+	<field name="CEDULA" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="NO_FISICO" class="java.lang.String"/>
+	<field name="FECHA" class="java.sql.Timestamp"/>
+	<field name="MONTO_DOC" class="java.math.BigDecimal"/>
+	<field name="MONTO_UTILIZADO" class="java.math.BigDecimal"/>
+	<field name="SALDO" class="java.math.BigDecimal"/>
+	<field name="FECHA_DIGITACION" class="java.sql.Timestamp"/>
+	<field name="MONEDA_ID" class="java.lang.String"/>
+	<field name="COMENTARIO" class="java.lang.String"/>
+	<field name="RANGO_DIAS" class="java.lang.String"/>
+	<field name="RANGO_VALOR" class="java.lang.String"/>
+	<variable name="sumTotales" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="SumTotalIva" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<columnHeader>
+		<band height="15">
+			<staticText>
+				<reportElement uuid="04418fcc-6c54-4f75-a668-4559371c37e2" mode="Opaque" x="0" y="0" width="101" height="15" backcolor="#99CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LINEA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ce0223da-d5e7-4fec-b612-8058ae28b6fa" mode="Opaque" x="101" y="0" width="132" height="15" backcolor="#99CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOM LINEA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="66ab7c4e-66f8-40d6-b619-bf8dad623bdb" mode="Opaque" x="365" y="0" width="150" height="15" backcolor="#99CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CEDULA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bf94d9fe-fff4-46ec-81d8-bf39762fa64f" mode="Opaque" x="515" y="0" width="130" height="15" backcolor="#99CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMBRE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3b6351ca-9ded-4533-bac6-696940fa2a21" mode="Opaque" x="645" y="0" width="83" height="15" backcolor="#99CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NO FISICO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="50c7af05-0c5f-4305-9d2b-75fbfad80712" mode="Opaque" x="728" y="0" width="83" height="15" backcolor="#99CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="50c7af05-0c5f-4305-9d2b-75fbfad80712" mode="Opaque" x="811" y="0" width="83" height="15" backcolor="#99CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MONTO DOC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="50c7af05-0c5f-4305-9d2b-75fbfad80712" mode="Opaque" x="894" y="0" width="83" height="15" backcolor="#99CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MONTO UTILIZADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="50c7af05-0c5f-4305-9d2b-75fbfad80712" mode="Opaque" x="977" y="0" width="83" height="15" backcolor="#99CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SALDO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="50c7af05-0c5f-4305-9d2b-75fbfad80712" mode="Opaque" x="1060" y="0" width="83" height="15" backcolor="#99CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA DIGITACION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="50c7af05-0c5f-4305-9d2b-75fbfad80712" mode="Opaque" x="1143" y="0" width="86" height="15" backcolor="#99CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MONEDA ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="50c7af05-0c5f-4305-9d2b-75fbfad80712" mode="Opaque" x="1229" y="0" width="423" height="15" backcolor="#99CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COMENTARIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="50c7af05-0c5f-4305-9d2b-75fbfad80712" mode="Opaque" x="1652" y="0" width="86" height="15" backcolor="#99CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RANGO DIAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="50c7af05-0c5f-4305-9d2b-75fbfad80712" mode="Opaque" x="1738" y="0" width="106" height="15" backcolor="#99CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RANGO VALOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ce0223da-d5e7-4fec-b612-8058ae28b6fa" mode="Opaque" x="233" y="0" width="132" height="15" backcolor="#99CCFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AGENCIA]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="dec09378-c09e-4d10-b396-9459c88e3798" x="0" y="0" width="101" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NO_LINEA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="134b3bc4-02d4-4238-907c-2e495c41061b" x="365" y="0" width="150" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CEDULA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="99e80241-ca75-454c-b9e1-37d1ad9eb899" x="515" y="0" width="130" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="92cb1fef-dcda-451c-8079-b13ed04712da" x="645" y="0" width="83" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NO_FISICO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="dec09378-c09e-4d10-b396-9459c88e3798" x="101" y="0" width="132" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMLINEA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="14f49802-cd5d-42e3-9e4b-7328bbad5009" x="728" y="0" width="83" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="14f49802-cd5d-42e3-9e4b-7328bbad5009" x="811" y="0" width="83" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MONTO_DOC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="14f49802-cd5d-42e3-9e4b-7328bbad5009" x="894" y="0" width="83" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MONTO_UTILIZADO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="14f49802-cd5d-42e3-9e4b-7328bbad5009" x="977" y="0" width="83" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SALDO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="14f49802-cd5d-42e3-9e4b-7328bbad5009" x="1060" y="0" width="83" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA_DIGITACION}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="14f49802-cd5d-42e3-9e4b-7328bbad5009" x="1143" y="0" width="86" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MONEDA_ID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="14f49802-cd5d-42e3-9e4b-7328bbad5009" x="1229" y="0" width="423" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COMENTARIO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="14f49802-cd5d-42e3-9e4b-7328bbad5009" x="1652" y="0" width="86" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RANGO_DIAS}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="14f49802-cd5d-42e3-9e4b-7328bbad5009" x="1738" y="0" width="106" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RANGO_VALOR}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="dec09378-c09e-4d10-b396-9459c88e3798" x="233" y="0" width="132" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AGENCIA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

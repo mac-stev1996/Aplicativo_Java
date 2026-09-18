@@ -1,0 +1,317 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	template="/jsf/templates/bodyTemplate.xhtml">
+	<ui:define name="title">
+		SOLICITUDES INGRESO DE DEVOLUCIONES DE ANTICIPOS   
+</ui:define>
+	<ui:define name="buttons">
+		<h:form id="frmButtons">
+			<p:commandButton styleClass="deep-blue-btn" id="nuevo" value="Nuevo"
+				icon="fa fa-file-o"
+				actionListener="#{cxcSolicitudDevAnticipoController.generarnuevaSolicitud}"
+				title="Nuevo" />
+			<p:commandButton icon="fa fa-undo" styleClass="deep-orange-btn"
+				id="limpiar"
+				actionListener="#{cxcSolicitudDevAnticipoController.limpiarDatos}"
+				title="Limpiar datos"
+				update=":frmClientes,:idForm:tabDatosPrincipales,:idForm:panelPrincipal" />
+		</h:form>
+	</ui:define>
+	<ui:define name="content">
+		<h:form id="idForm">
+			<p:growl id="messages" globalOnly="true" autoUpdate="true"
+				widgetVar="groMessages" showDetail="true" life="5000" />
+			<p:panel>
+				<p:panelGrid id="panelPrincipal" columns="4">
+					<p:commandLink value="Cliente:" style="font-weight: bold;"
+						oncomplete="PF('dlgClientes').show()" update=":frmClientes" />
+					<p:inputText value="#{cxcSolicitudDevAnticipoController.pCedula}"
+						readonly="true" />
+					<p:inputText value="#{cxcSolicitudDevAnticipoController.pNombres}"
+						size="70" readonly="true" />
+					<p:commandButton styleClass="deep-blue-btn" title="Buscar"
+						value="Buscar" icon="fa fa-search" immediate="true"
+						actionListener="#{cxcSolicitudDevAnticipoController.consultarSolicitudesIngresadas}"
+						update=":idForm" />
+				</p:panelGrid>
+			</p:panel>
+			<p:panel style="width : 1450px;">
+				<p:tab>
+					<p:dataTable id="tabDatosPrincipales" title="" scrollable="true"
+						value="#{cxcSolicitudDevAnticipoController.listaSolicitudesIngresadas}"
+						var="ref" styleClass="table" sortBy="#{6}" rowSelectMode="none"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+						paginator="true" rows="20" rowsPerPageTemplate="20,30,40"
+						selectionPageOnly="false" paginatorPosition="bottom"
+						emptyMessage="No Existen Registros">
+						<f:facet name="header">
+				           Solicitudes de Devolucion de Credito Por Agencia
+				        </f:facet>
+						<p:column headerText="Cliente" width="40%" style="text-align:left"
+							filterMatchMode="contains">
+							<h:outputText value="#{ref[0]}" />
+						</p:column>
+						<p:column headerText="Nro. Solicitud" width="40%"
+							style="text-align:left" filterMatchMode="contains">
+							<h:outputText value="#{ref[1]}" />
+						</p:column>
+						<p:column headerText="Fecha" width="40%" style="text-align:left"
+							filterMatchMode="contains">
+							<h:outputText value="#{ref[7]}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Valor" width="40%" style="text-align:center"
+							filterMatchMode="contains">
+							<h:outputText value="#{ref[3]}" >
+							<f:convertNumber type="currency" currencySymbol="$" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Usuario" width="40%" style="text-align:left"
+							filterMatchMode="contains">
+							<h:outputText value="#{ref[2]}" />
+						</p:column>
+						<p:column headerText="Estado" width="40%" style="text-align:center"
+							filterMatchMode="contains">
+							<h:outputText value="#{ref[9]}" />
+						</p:column>
+						<p:column headerText="Acciones" width="50%"
+							style="text-align:left" filterMatchMode="contains">
+							<p:commandButton styleClass="deep-blue-btn" title="Enviar"
+								icon="fa fa-paper-plane" value="Enviar" immediate="true"
+								rendered="#{ref[9] == 'INGRESADO'}" process="@this, :idForm"
+								actionListener="#{cxcSolicitudDevAnticipoController.cambiarEstadoSolicitud(ref)}"
+								update=":idForm:tabDatosPrincipales" />
+							<p:commandButton styleClass="deep-blue-btn" title="Revisar"
+								value="Revisar" immediate="true" icon="fa fa-pencil-square-o"
+								rendered="#{ref[9] == 'INGRESADO'}"
+								actionListener="#{cxcSolicitudDevAnticipoController.modificarAnticiposSeleccionados(ref)}"
+								update=":#{p:component('dlgNuevo')}" />
+						</p:column>
+					</p:dataTable>
+				</p:tab>
+			</p:panel>
+		</h:form>
+		<!-- dialog de clientes -->
+		<p:dialog header="Clientes..." widgetVar="dlgClientes" modal="true"
+			height="380" width="600" style="position:fixed" showEffect="slide"
+			hideEffect="slide">
+			<h:form id="frmClientes">
+				<p:panel>
+					<p:panelGrid columns="3" styleClass="w100"
+						columnClasses="w40, w40, w10">
+						<p:inputText value="#{cxcSolicitudDevAnticipoController.pCedula}"
+							size="10" title="Cedula" placeholder="CEDULA" style="width: 80%;" />
+						<p:inputText value="#{cxcSolicitudDevAnticipoController.pNombres}"
+							styleClass="inputUpper" placeholder="APELLIDOS"
+							onkeyup="mayus(this)" style="width: 90%;" />
+						<p:commandButton title="Consultar Clientes"
+							actionListener="#{cxcSolicitudDevAnticipoController.searchClientes}"
+							icon="ui-icon-search" update=":#{p:component('idTableClientes')}"
+							partialSubmit="true" />
+					</p:panelGrid>
+					<p:spacer height="10" />
+					<p:dataTable id="idTableClientes" var="item"
+						value="#{cxcSolicitudDevAnticipoController.clienteAnticipoList}"
+						scrollable="auto" scrollHeight="250" paginator="true" rows="8"
+						paginatorPosition="bottom" emptyMessage="No existen datos"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}">
+
+						<f:facet name="header">Listado de Clientes</f:facet>
+
+						<p:column headerText="Cedula" style="width:80px">
+							<p:commandLink value="#{item.cedula}"
+								actionListener="#{cxcSolicitudDevAnticipoController.seleccionarClienteFacturar(item)}"
+								oncomplete="PF('dlgClientes').hide();" update=":idForm" />
+						</p:column>
+						<p:column headerText="Nombre" style="width:250px">
+							<h:outputText value="#{item.nombre}" />
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+			</h:form>
+		</p:dialog>
+		<p:dialog widgetVar="dlgNuevo" id="dlgNuevo"
+			header="Ingreso Solicitud Devolucion Anticipo" resizable="true"
+			modal="true" closable="true" appendTo="@(body)" width="60%"
+			height="auto" closeOnEscape="true">
+			<h:form id="idFrmNuevo">
+				<center>
+					<p:panelGrid columns="4">
+						<p:outputLabel value="No. Solicitud" />
+						<p:inputText id="solicitud" autocomplete="off" size="15"
+							value="#{cxcSolicitudDevAnticipoController.cabAnticipo.id.noSolicitud}"
+							maxlength="8" readonly="true">
+							<p:ajax event="change" partialSubmit="true" process="@this" />
+						</p:inputText>
+						<p:outputLabel value="No. Ciente" />
+						<p:inputText id="iden" autocomplete="off" size="15"
+							value="#{cxcSolicitudDevAnticipoController.cabAnticipo.id.noCliente}"
+							maxlength="8" readonly="true">
+							<p:ajax event="change" partialSubmit="true" process="@this" />
+						</p:inputText>
+						<p:outputLabel value="Nombre" />
+						<p:inputText id="nombre" size="50" autocomplete="off"
+							maxlength="50"
+							value="#{cxcSolicitudDevAnticipoController.pNombres}"
+							readonly="true" onkeyup="mayus(this)">
+							<p:ajax event="change" partialSubmit="true" process="@this" />
+						</p:inputText>
+						<p:outputLabel value="Valor Anticipo Total:" />
+						<p:inputText id="valorTotal" size="20" autocomplete="off"
+							maxlength="20"
+							value="#{cxcSolicitudDevAnticipoController.cabAnticipo.valorTotal}"
+							readonly="true">
+							<p:ajax event="change" partialSubmit="true" process="@this" />
+						</p:inputText>
+						<p:outputLabel value="Motivo Devolucion:"></p:outputLabel>
+						<p:inputTextarea id="motDev" rows="2" cols="50"
+							value="#{cxcSolicitudDevAnticipoController.cabAnticipo.motivoDevolucion}"
+							queryDelay="750" minQueryLength="4" readonly="true">
+							<p:ajax event="change" update="motDev" />
+						</p:inputTextarea>
+						<p:outputLabel value="Adjuntos:"></p:outputLabel>
+						<p:column headerText="Visualizar" width="25">
+							<center>
+								<p:commandLink title="Click Visualizar Adjuntos"
+									partialSubmit="true"
+									actionListener="#{cxcSolicitudDevAnticipoController.abriRevisar()}"
+									update=":#{p:component('DlgVisualizarAdj')}" process="@this">
+									<i class="fa fa-binoculars fa-2x" style="color: #00BCD4;"></i>
+								</p:commandLink>
+							</center>
+						</p:column>
+					</p:panelGrid>
+					<br />
+					<p:commandButton value="Grabar" partialSubmit="true"
+						process="@this, idFrmNuevo" update=":idForm:tabDatosPrincipales"
+						actionListener="#{cxcSolicitudDevAnticipoController.actualizarSolicitud}">
+					</p:commandButton>
+				</center>
+			</h:form>
+		</p:dialog>
+		<p:dialog header="Archivos Adjuntos" widgetVar="dlgArchivo"
+			modal="true" showEffect="fade" hideEffect="fade" resizable="true"
+			width="600" height="300" position="center center"
+			closeOnEscape="true">
+
+			<h:form id="PnlAdjuntos">
+				<p:fileUpload required="true"
+					fileUploadListener="#{cxcSolicitudDevAnticipoController.cargarArchivo}"
+					mode="advanced" dragDropSupport="true" multiple="true" allowTypes="/(\.|\/)(jpe?g|png|xlsx|doc|docx|pdf|xls|xlsx)$/"
+					update="PnlAdjuntos, :#{p:component('messages')} :#{p:component('dtlinksArchivos')}"
+					uploadLabel="Subir Archivo" cancelLabel="Cancelar"
+					label="Seleccionar Archivo" fileLimit="5"
+					fileLimitMessage="Puede subir hasta 5 archivos">
+				</p:fileUpload>
+				<p:spacer height="5" />
+				<p:dataTable
+					value="#{cxcSolicitudDevAnticipoController.listaAdjuntos}"
+					var="adj" id="dtlinksArchivos">
+					<p:column headerText="Archivo">
+						<p:commandLink ajax="false" target="_blank"
+							action="#{cxcSolicitudDevAnticipoController.verAdjunto(adj)}">
+							<h:outputText value="#{adj}"
+								style="text-decoration: underline; color: blue;"></h:outputText>
+						</p:commandLink>
+					</p:column>
+					<p:column headerText="Eliminar" width="30">
+						<p:commandButton icon="fa fa-minus" title="Quitar Archivo"
+							styleClass="red-btn"
+							action="#{cxcSolicitudDevAnticipoController.quitarArchivo(adj)}"
+							update="PnlAdjuntos:dtlinksArchivos">
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+		<p:dialog header="Archivos Adjuntos" widgetVar="DlgVisualizarAdj"
+			id="DlgVisualizarAdj" modal="true" showEffect="fade"
+			hideEffect="fade" resizable="true" width="800" height="300"
+			position="center center" closeOnEscape="true">
+			<h:form id="PnlVisualizarAdj">
+				<p:panelGrid columns="1">
+					<p:column>
+						<p:outputLabel style="color: blue" value="Doc. Adjunto:" />
+						<p:tab>
+							<p:dataTable id="tabAdjuntos" title="" scrollable="true"
+								value="#{cxcSolicitudDevAnticipoController.verificarAdjuntos}"
+								var="ref" styleClass="table" emptyMessage="No Existen Registros">
+								<p:column headerText="feha Creacion" width="10%"
+									style="text-align:rigth" filterMatchMode="contains">
+									<h:outputText value="#{ref.fechaCrea}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</p:column>
+								<p:column headerText="Usuario Creacion" width="15%"
+									style="text-align:rigth" filterMatchMode="contains">
+									<h:outputText value="#{ref.usuarioCrea}" />
+								</p:column>
+								<p:column headerText="Archivo" width="100%"
+									style="text-align:rigth" filterMatchMode="contains">
+									<h:outputText value="#{ref.path}" />
+								</p:column>
+								<p:column headerText="Acciones" width="20%"
+									style="text-align:center" filterMatchMode="contains">
+									<p:commandLink title="Click descargar adjunto"
+										partialSubmit="true" process="@this" ajax="false"
+										target="_blank"
+										action="#{cxcSolicitudDevAnticipoController.descargarArchivo(ref.path)}"
+										rendered="#{ref.path ne null}">
+										<i class="fa fa-cloud-download fa-2x" style="color: green;" />
+									</p:commandLink>
+									<p:commandButton title="Eliminar adjunto"
+										icon="fa fa-times-circle" process="@this" partialSubmit="true"
+										action="#{cxcSolicitudDevAnticipoController.deleteArchivo(ref)}"
+										styleClass="red-btn" rendered="#{ref.path ne null}"
+										update=":PnlVisualizarAdj:tabAdjuntos">
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</p:tab>
+					</p:column>
+					<p:column></p:column>
+					<p:column>
+						<p:fileUpload required="true"
+							fileUploadListener="#{cxcSolicitudDevAnticipoController.cargarArchivo}"
+							mode="advanced" dragDropSupport="true" multiple="true"
+							allowTypes="/(\.|\/)(jpe?g|png|xlsx|doc|docx|pdf|xls|xlsx)$/"
+							update="#{p:component('messages')}, :#{p:component('dtlinksArchivos1')}"
+							uploadLabel="Subir Archivo" cancelLabel="Cancelar"
+							label="Seleccionar Archivo" 
+							invalidSizeMessage="El archivo no puede pesar mas de 5MB"
+							sizeLimit="5000000" fileLimit="5"
+							fileLimitMessage="Puede subir hasta 5 archivos">
+						</p:fileUpload>
+						<p:spacer height="5" />
+						<p:dataTable
+							value="#{cxcSolicitudDevAnticipoController.listaAdjuntos}"
+							var="adj" id="dtlinksArchivos1">
+							<p:column headerText="Archivo">
+								<p:commandLink ajax="false" target="_blank"
+									action="#{cxcSolicitudDevAnticipoController.verAdjunto(adj)}">
+									<h:outputText value="#{adj}"
+										style="text-decoration: underline; color: blue;"></h:outputText>
+								</p:commandLink>
+							</p:column>
+							<p:column headerText="Eliminar" width="30">
+								<p:commandButton icon="fa fa-minus" title="Quitar Archivo"
+									styleClass="red-btn"
+									action="#{cxcSolicitudDevAnticipoController.quitarArchivo(adj)}"
+									update="PnlVisualizarAdj:dtlinksArchivos1">
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+					</p:column>
+				</p:panelGrid>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,276 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+<h:head>
+	<h:outputScript name="js/nanoscroller.js" library="serenity-layout" />
+	<h:outputScript name="js/layout.js" library="serenity-layout" />
+	<h:outputScript name="js/ripple.js" library="serenity-layout" />
+	<title><ui:insert name="title">S3S</ui:insert></title>
+	<ui:insert name="script"></ui:insert>
+	
+	<style type="text/css">
+body, .ui-inputfield {
+	font-size: 12px !important;
+}
+
+body .ui-toolbar {
+	padding: 5px;
+	min-height: 30px !important;
+}
+
+.readonly {
+	background-color: #dcecf5 !important;
+	color: black !important;
+}
+
+input:read-only {
+	background-color: #dcecf5 !important;
+	color: black !important;
+}
+
+input:-moz-read-only {
+	background-color: #dcecf5 !important;
+	color: black !important;
+}
+
+.table thead th {
+	font-size: 10px !important;
+}
+
+.table-body tbody tr td, .table-body tbody tr td button, .table-body tbody tr td input,
+	.table-body tbody tr td .ui-selectonemenu * {
+	font-size: 10px !important;
+}
+
+.table-footer tfoot tr td, .table-footer tfoot tr td button,
+	.table-footer tfoot tr td input {
+	font-size: 10px !important;
+}
+
+.dummy {
+	
+}
+
+.w10 {
+	width: 10%;
+}
+
+.w20 {
+	width: 20%;
+}
+
+.w30 {
+	width: 30%;
+}
+
+.w40 {
+	width: 40%;
+}
+
+.w50 {
+	width: 50%;
+}
+
+.w60 {
+	width: 60%;
+}
+
+.w70 {
+	width: 70%;
+}
+
+.w80 {
+	width: 80%;
+}
+
+.w90 {
+	width: 90%;
+}
+
+.w100 {
+	width: 100%;
+}
+
+.ui-fileupload-buttonbar {
+	background-color: transparent !important;
+}
+
+.txtR {
+	text-align: right;
+}
+
+.txtL {
+	text-align: left;
+}
+
+.txtC {
+	text-align: center;
+}
+
+.number, .number input {
+	text-align: right;
+}
+
+.bold, .bold input {
+	font-weight: bold !important
+}
+
+.red, .red input {
+	color: red !important;
+}
+
+.green, .green input {
+	color: green !important;
+}
+
+.blue, .blue input {
+	color: blue !important;
+}
+
+#toolbar>.ui-toolbar-group-right {
+	display: flex !important;
+}
+
+.center {
+	margin: 0 auto;
+}
+
+.noborder, .noborder>tbody>tr, .noborder>tbody>tr>td {
+	border: 0px !important;
+}
+
+.nopadding, .nopadding>tbody>tr, .nopadding>tbody>tr>td {
+	padding: 0px !important;
+}
+
+div.ui-datatable tr td.bg-n-1, div.ui-datatable tr td.bg-n-1 input, div.ui-datatable tr td.bg-n-1 textarea
+	{
+	background-color: red;
+	color: white;
+	font-weight: bold;
+}
+
+div.ui-datatable tr td.bg-n-2, div.ui-datatable tr td.bg-n-2 input, div.ui-datatable tr td.bg-n-2 textarea
+	{
+	background-color: green;
+	color: white;
+	font-weight: bold;
+}
+
+div.ui-datatable tr td.bg-n-3, div.ui-datatable tr td.bg-n-3 input, div.ui-datatable tr td.bg-n-3 textarea
+	{
+	background-color: blue;
+	color: white;
+	font-weight: bold;
+}
+
+div.ui-datatable tr td.bg-n-4, div.ui-datatable tr td.bg-n-4 input, div.ui-datatable tr td.bg-n-4 textarea
+	{
+	background-color: #78BCFF;
+	color: #404040;
+	font-weight: bold;
+}
+
+div.ui-datatable tr td.bg-n-5, div.ui-datatable tr td.bg-n-5 input, div.ui-datatable tr td.bg-n-5 textarea
+	{
+	background-color: #ffaeae;
+	color: #404040;
+	font-weight: bold;
+}
+
+div.ui-datatable tr td.bg-n-6, div.ui-datatable tr td.bg-n-6 input, div.ui-datatable tr td.bg-n-6 textarea
+	{
+	background-color: #a3e194;
+	color: #5b5b5b;
+	font-weight: bold;
+}
+
+tr.zero-height > th {
+			padding-top: 0px !important;
+			padding-bottom: 0px !important;
+			border: none !important;
+			height: 0px !important;
+		}
+		
+</style>
+
+	<script type="text/javascript">
+		PrimeFaces.locales["es"] = {
+			    closeText: "Cerrar",
+			    prevText: "Anterior",
+			    nextText: "Siguiente",
+			    monthNames: ["Enero","Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+			    monthNamesShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+			    dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+			    dayNamesShort: ["Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab"],
+			    dayNamesMin: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
+			    weekHeader: "Semana",
+			    firstDay: 0,
+			    isRTL: false,
+			    showMonthAfterYear: false,
+			    yearSuffix: "",
+			    timeOnlyTitle: "Solo hora",
+			    timeText: "Tiempo",
+			    hourText: "Hora",
+			    minuteText: "Minuto",
+			    secondText: "Segundo",
+			    currentText: "Fecha actual",
+			    ampm: false,
+			    month: "Mes",
+			    week: "Semana",
+			    day: "Día",
+			    allDayText : "Todo el día"
+			};
+
+		function openDuplicatedTab(url){
+			var win = window.open(url, '_blank');
+			win.focus();
+			close();
+			return false;
+		}
+		
+		function mayus(e) {
+			e.value = e.value.toUpperCase();
+		}
+		
+</script>
+
+</h:head>
+
+<h:body>
+	<h:outputStylesheet name="css/layout-lightblue.css"
+		library="serenity-layout" />
+
+	<ui:insert name="status">
+		<p:ajaxStatus onstart="PF('statusDialog').show()"
+			onsuccess="PF('statusDialog').hide()"
+			onerror="PF('statusDialog').hide()" />
+
+		<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+			closable="false" resizable="false" showHeader="false">
+			<h:graphicImage value="/common/imgs/gifs/ajaxloadingbar.gif" />
+		</p:dialog>
+	</ui:insert>
+
+	<p:growl id="idGrowl" life="5000" showDetail="true" autoUpdate="true"></p:growl>
+
+	<p:toolbar>
+		<f:facet name="left">
+			<h:outputLabel style="font-size: 15px;">
+				<ui:insert name="title">S3S</ui:insert>
+			</h:outputLabel>
+		</f:facet>
+		<f:facet name="right">
+			<ui:insert name="buttons" />
+		</f:facet>
+	</p:toolbar>
+
+	<ui:insert name="content" />
+
+</h:body>
+</html>

@@ -1,0 +1,678 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Historico de documentos
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmBotones">
+			<p:commandButton style="float: right;" icon="fa fa-arrow-left"
+				partialSubmit="true" styleClass="boton"
+				action="#{consultaHistDocumentosController.regresarPantalla}"
+				process="@this" title="Regresar Seg. Cobranzas"
+				update="#{p:component('frmDocHistoricos')}" id="regresar"
+				disabled="#{consultaHistDocumentosController.origen ne 'seguimientoCredito'}" />
+			<p:commandButton icon="fa fa-undo" partialSubmit="true"
+				process="@this, :frmDocHistoricos"
+				actionListener="#{consultaHistDocumentosController.limpiarDatos}"
+				title="limpiar datos consulta"
+				update=":frmDocHistoricos :frmBotones" />
+			<p:commandButton id="btnConsultar" value="Consultar"
+				partialSubmit="true"
+				action="#{consultaHistDocumentosController.consultar}"
+				process="@this, :frmDocHistoricos"
+				update=":#{p:component('dtDocHist')} :frmBotones" />
+			<p:commandButton id="printReport" ajax="false" value="Imprimir"
+				onclick="this.form.target='_blank'" styleClass="green-btn"
+				process="@this, :frmDocHistoricos"
+				disabled="#{empty consultaHistDocumentosController.documentosHistoricos}"
+				actionListener="#{consultaHistDocumentosController.generarReporte}" />
+			<p:commandButton value="Det. Factura" styleClass="blue-grey-btn"
+				partialSubmit="true" process="@this, :frmDocHistoricos"
+				disabled="#{consultaHistDocumentosController.documentoSeleccionado.tipo ne 'D'}"
+				action="#{consultaHistDocumentosController.verDetalleFac}" />
+			<p:commandButton value="Hist. Pagos" styleClass="blue-grey-btn"
+				partialSubmit="true" process="@this, :frmDocHistoricos"
+				action="#{consultaHistDocumentosController.verHistorialPagos}" />
+			<p:commandButton value="Visualizar Fact." styleClass="blue-grey-btn"
+				process="@this, :frmDocHistoricos"
+				action="#{consultaHistDocumentosController.visualizarFactura}"
+				disabled="#{consultaHistDocumentosController.documentoSeleccionado eq null or consultaHistDocumentosController.documentoSeleccionado.cantProrroga eq null}" />
+			<p:commandButton value="Pagos anticip." styleClass="blue-grey-btn"
+				partialSubmit="true" process="@this, :frmDocHistoricos"
+				action="#{consultaHistDocumentosController.verPagosAnticipados}" />
+			<p:commandButton value="Datos Cli." partialSubmit="true"
+				process="@this, :frmDocHistoricos"
+				action="#{consultaHistDocumentosController.verPantallaCliente}"
+				disabled="#{consultaHistDocumentosController.origen eq 'seguimientoCredito'}" />
+			<p:commandButton value="Doc. Refinanciamiento" partialSubmit="true"
+				process="@this, :frmDocHistoricos" styleClass="blue-grey-btn"
+				action="#{consultaHistDocumentosController.validarGenDocRefinanciamiento}" />
+			<p:commandButton id="printCert" ajax="false" style="display:none;"
+				immediate="true" onclick="this.form.target='_blank'"
+				actionListener="#{consultaHistDocumentosController.generarRepCertificado}" />
+			<p:commandButton id="printAnt" ajax="false" style="display:none;"
+				immediate="true" onclick="this.form.target='_blank'"
+				actionListener="#{consultaHistDocumentosController.generarRepAnt}" />
+			<p:commandButton id="printRefin" ajax="false" style="display:none;"
+				immediate="true" onclick="this.form.target='_blank'"
+				actionListener="#{consultaHistDocumentosController.generarRepRefinanciamiento}" />
+			<p:commandButton id="printMandatoUsado" ajax="false"
+				style="display:none;" immediate="true"
+				onclick="this.form.target='_blank'"
+				actionListener="#{consultaHistDocumentosController.generarPdfMandatoUsado}" />
+			<p:commandButton styleClass="orange-btn" icon="fa fa-arrow-left"
+				partialSubmit="true" 
+				rendered="#{consultaHistDocumentosController.placaVehPagosMemo!=null and consultaHistDocumentosController.placaVehPagosMemo ne '' }"
+				action="#{consultaHistDocumentosController.regresarPantallaMemoDiario()}"
+				process="@this" title="Regresar Generación Diarios (pagos-memo)"
+				id="regresarDiariosMemo"
+				/>
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+		<style type="text/css">
+form#frmBotones button {
+	padding: 0 6px !important;
+	margin-right: 5px !important;
+	font-size: 11px !important;
+	line-height: 22px !important;
+	margin-right: 5px !important;
+}
+
+body {
+	font-size: 11px !important;
+}
+
+input:read-only {
+	background-color: #dcecf5;
+}
+
+body .ui-datatable.ui-datatable-scrollable thead tr th {
+	font-size: 11px !important;
+}
+
+.tblHistorico tbody tr td {
+	font-size: 10px !important;
+	padding: 4px 7px !important;
+}
+
+.ui-inputnumber input {
+	text-align: right;
+	width: 100%;
+}
+.fila-mpp {
+    background-color: #FFE0B2 !important;
+}
+body .ui-datatable thead th {
+    padding: 6px 5px;
+}
+</style>
+		<script type="text/javascript">
+			function showStatus() {
+				PF('statusDialog').show();
+			}
+
+			function hideStatus() {
+				PF('statusDialog').hide();
+			}
+		</script>
+		<h:form id="frmDocHistoricos">
+			<p:outputPanel autoUpdate="true">
+				<div class="ui-g dashboard">
+					<div class="ui-g-12 ui-fluid contact-form">
+						<div class="ui-g-6">
+							<h:panelGrid columns="4">
+								<p:commandLink title="Seleccionar cliente"
+									action="#{consultaHistDocumentosController.cargarClientes}"
+									value="Cliente:" style="font-weight:bold;"
+									update=":frmClientes" />
+								<p:inputText
+									value="#{consultaHistDocumentosController.cliente.clientePK.noCliente}"
+									readonly="true" style="width:60px" />
+								<p:inputText
+									value="#{consultaHistDocumentosController.cliente.cedula}"
+									readonly="true" style="width:100px" />
+								<p:inputText
+									value="#{consultaHistDocumentosController.cliente.nombre}"
+									readonly="true" style="width:300px" />
+							</h:panelGrid>
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Linea Negocio:" styleClass="bold" />
+								<p:selectOneMenu id="somLineaNeg" filter="true"
+									filterMatchMode="contains"
+									value="#{consultaHistDocumentosController.noLineaNeg}">
+									<f:selectItem itemLabel="Todos" itemValue="%" />
+									<f:selectItems
+										value="#{consultaHistDocumentosController.lineasNegocio}"
+										var="lineaNeg" itemValue="#{lineaNeg.lineaNegocioPK.noLinea}"
+										itemLabel="#{lineaNeg.lineaNegocioPK.noLinea} - #{lineaNeg.descripcion}" />
+								</p:selectOneMenu>
+								<p:outputLabel value="Tipo Doc:" styleClass="bold" />
+								<p:selectOneMenu id="somTiposDoc" filter="true"
+									filterMatchMode="contains"
+									value="#{consultaHistDocumentosController.tipoDoc}">
+									<f:selectItem itemLabel="Todos" itemValue="%" />
+									<f:selectItems
+										value="#{consultaHistDocumentosController.tiposDocumento}"
+										var="tipos" itemValue="#{tipos[0]}"
+										itemLabel="#{tipos[0]} - #{tipos[1]}" />
+								</p:selectOneMenu>
+								<p:outputLabel value="Anulados:" styleClass="bold" />
+								<p:selectOneMenu id="somAnulados"
+									value="#{consultaHistDocumentosController.tipoAnulado}">
+									<f:selectItem itemLabel="Todos" itemValue="%" />
+									<f:selectItem itemLabel="Anulados" itemValue="S" />
+									<f:selectItem itemLabel="No Anulados" itemValue="N" />
+								</p:selectOneMenu>
+								<p:outputLabel value="Documentos:" styleClass="bold" />
+								<p:selectOneMenu id="somDocumentos"
+									value="#{consultaHistDocumentosController.tipoDocumento}">
+									<f:selectItem itemLabel="Con Saldos" itemValue="2" />
+									<f:selectItem itemLabel="Todos" itemValue="1" />
+								</p:selectOneMenu>
+								<p:outputLabel value="Desde:" styleClass="bold" />
+								<h:panelGrid columns="3">
+									<p:calendar placeholder="Desde" locale="es" mask="true"
+										navigator="true" autocomplete="off"
+										value="#{consultaHistDocumentosController.fechaInicio}"
+										pattern="dd/MM/yyyy" />
+									<p:outputLabel value="Hasta:" styleClass="bold" />
+									<p:calendar placeholder="Hasta" locale="es" mask="true"
+										navigator="true" autocomplete="off"
+										value="#{consultaHistDocumentosController.fechaFin}"
+										pattern="dd/MM/yyyy" />
+								</h:panelGrid>
+								<p:outputLabel value="Incluye Alistamiento:" styleClass="bold" />
+								<p:selectOneMenu id="incluyeAlistamiento"
+									value="#{consultaHistDocumentosController.incluyeAlistamiento}">
+									<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+									<f:selectItem itemLabel="Si" itemValue="true" />
+									<f:selectItem itemLabel="No" itemValue="false" />
+								</p:selectOneMenu>
+							</h:panelGrid>
+							<h:panelGrid columns="2">
+								<p:outputLabel style="color: red !important; font-size: 14px" styleClass="bold"
+									value="#{consultaHistDocumentosController.smsCheqFuturos}" />
+								<p:outputLabel style="color: red !important; font-size: 14px"  styleClass="bold"
+									value="#{consultaHistDocumentosController.smsCheqProtestados}" />
+							</h:panelGrid>
+						</div>
+						<div class="ui-g-6">
+							<h:panelGrid columns="3"
+								style="background-color: #00aae4 !important;">
+
+								<p:outputLabel value="Debito:" styleClass="bold" />
+								<p:inputText
+									value="#{consultaHistDocumentosController.totalDebitoLocal}"
+									readonly="true" style="width:120px;text-align:right" />
+								<p:inputText
+									value="#{consultaHistDocumentosController.totalDebitoInt}"
+									readonly="true" style="width:120px;text-align:right" />
+
+								<p:outputLabel value="Credito:" styleClass="bold" />
+								<p:inputText
+									value="#{consultaHistDocumentosController.totalCreditoLocal}"
+									readonly="true" style="width:120px;text-align:right" />
+								<p:inputText
+									value="#{consultaHistDocumentosController.totalCreditoInt}"
+									readonly="true" style="width:120px;text-align:right" />
+
+								<p:outputLabel value="Total:" styleClass="bold" />
+								<p:inputText
+									value="#{consultaHistDocumentosController.totalLocal}"
+									readonly="true" style="width:120px;text-align:right" />
+								<p:inputText
+									value="#{consultaHistDocumentosController.totalInt}"
+									readonly="true" style="width:120px;text-align:right" />
+
+							</h:panelGrid>
+							<h:panelGrid columns="1"
+								style="background-color: yellow !important;">
+								<h:panelGrid columns="2">
+									<p:outputLabel value="Comentario:" styleClass="bold" />
+									<p:inputTextarea
+										value="#{consultaHistDocumentosController.documentoSeleccionado.comentario}"
+										rows="3" cols="70" readonly="true" />
+								</h:panelGrid>
+								<h:panelGrid columns="7">
+									<p:outputLabel value="Anticipo:" styleClass="bold" />
+									<p:inputText
+										value="#{consultaHistDocumentosController.documentoSeleccionado.lineaAnticipos}"
+										style="width:20px" readonly="true" />
+									<p:inputText
+										value="#{consultaHistDocumentosController.documentoSeleccionado.desLineaAnticipos}"
+										style="width:180px" readonly="true" />
+									<p:outputLabel value="Original:" styleClass="bold" />
+									<p:inputText
+										value="#{consultaHistDocumentosController.documentoSeleccionado.montoDoc}"
+										style="width:80px;text-align:right" readonly="true" />
+									<p:outputLabel value="Utilizado:" styleClass="bold" />
+									<p:inputText
+										value="#{consultaHistDocumentosController.documentoSeleccionado.montoUtilizado}"
+										style="width:80px;text-align:right" readonly="true" />
+								</h:panelGrid>
+							</h:panelGrid>
+						</div>
+					</div>
+				</div>
+			</p:outputPanel>
+			<p:fieldset id="fsDocHis" legend="Historico de documentos"
+				toggleable="false">
+				<p:dataTable id="dtDocHist" widgetVar="dtDocHist"
+					styleClass="tblHistorico"
+					value="#{consultaHistDocumentosController.documentosHistoricos}"
+					var="item" emptyMessage="No hay documentos" scrollable="true"
+					scrollHeight="200" rowKey="#{item.id}" rowIndexVar="row"
+					selection="#{consultaHistDocumentosController.documentoSeleccionado}"
+					selectionMode="single"
+					rowStyleClass="#{item.manPrepagado eq 'S' ? 'fila-mpp' : ''}">
+					<p:ajax event="rowSelect" update=":frmBotones"
+						listener="#{consultaHistDocumentosController.onRowSelect}" />
+					<p:column headerText="Agen" width="3%">
+						<p:outputLabel value="#{item.agencia}" />
+					</p:column>
+					<p:column headerText="Documento" width="8%">
+						<p:outputLabel value="#{item.noFisico}" />
+					</p:column>
+
+					<p:column headerText="Linea" width="3%">
+						<p:outputLabel value="#{item.serieFisico}" />
+					</p:column>
+					
+					<p:column headerText="Linea Negocio Real" width="3%" >
+						<p:outputLabel value="#{item.lineaNegocioReal}" title="Linea Negocio Real"/>
+					</p:column>
+
+					<p:column headerText="Sec." width="3%">
+						<p:outputLabel value="#{item.cantProrroga}" />
+					</p:column>
+					<p:column headerText="Tipo D." width="3%">
+						<p:outputLabel value="#{item.tipoDoc}" />
+					</p:column>
+					<p:column headerText="Saldo" width="10%">
+						<p:outputLabel value="#{item.saldo}" style="float:right" />
+					</p:column>
+					<p:column headerText="Fecha" width="8%">
+						<p:outputLabel value="#{item.fecha}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:outputLabel>
+					</p:column>
+					<p:column headerText="Monto Orig." width="10%">
+						<p:outputLabel value="#{item.montoOriginal}" style="float:right" />
+					</p:column>
+					<p:column headerText="D/C" width="4%">
+						<p:outputLabel value="#{item.tipo}" />
+					</p:column>
+					<p:column headerText="Cont" width="4%">
+						<p:outputLabel value="#{item.contado}" />
+					</p:column>
+					<p:column headerText="Anul." width="4%">
+						<p:outputLabel value="#{item.anulado}" />
+					</p:column>
+					<p:column headerText="Inc" width="4%">
+						<p:outputLabel value="#{item.incobrable}" />
+					</p:column>
+					<p:column headerText="Ped./Conc" width="8%">
+						<p:outputLabel value="#{item.noPedido}" />
+					</p:column>
+					<p:column headerText="Negocio" width="12%" 
+						style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+						<p:outputLabel value="#{item.descNegocio}" title="#{item.descNegocio}"/>
+					</p:column>
+					<p:column headerText="Aprob." width="5%" style="text-align:center">
+						<p:commandLink styleClass="bold" value="Aprob."
+							actionListener="#{consultaHistDocumentosController.cargarDatosAprobacion(item)}"
+							rendered="#{item.cantProrroga eq '1' }"
+							update=":#{p:component('idDialogDatosAprob')} :#{p:component('dtDocHist')} :frmBotones" />
+					</p:column>
+					<p:column headerText="Cerf." width="3%" style="text-align:center">
+						<p:commandLink disabled="#{item.lineaFacturacion eq null}"
+							actionListener="#{consultaHistDocumentosController.validarGenRep(item,'printCert')}"
+							update=":#{p:component('dtDocHist')} :frmBotones">
+							<h:graphicImage value="/common/imgs/icons/print.png" width="16"
+								height="16" />
+						</p:commandLink>
+					</p:column>
+					<p:column headerText="ANT" width="3%" style="text-align:center">
+						<p:commandLink disabled="#{item.lineaFacturacion eq null}"
+							actionListener="#{consultaHistDocumentosController.validarGenRep(item,'printAnt')}"
+							update=":#{p:component('dtDocHist')} :frmBotones">
+							<h:graphicImage value="/common/imgs/icons/print.png" width="16"
+								height="16" />
+						</p:commandLink>
+					</p:column>
+					<p:column headerText="R.M." width="3%" style="text-align:center">
+						<p:commandLink process="@this" partialSubmit="true"
+							disabled="#{item.lineaFacturacion eq null}"
+							action="#{consultaHistDocumentosController.abrirDialogDatAdicional(item)}"
+							update=":#{p:component('dtDocHist')} :frmBotones :frmDatAdicional">
+							<h:graphicImage value="/common/imgs/icons/print.png" width="16"
+								height="16" />
+						</p:commandLink>
+					</p:column>
+					<p:column headerText="Desbl." width="6%" style="text-align:center"
+						rendered="#{consultaHistDocumentosController.aplicaDesbloqueo}">
+						<p:commandLink styleClass="bold" value="Desbl."
+							title="Desbloquear Anticipo" rendered="#{item.muestraDesbAnt}"
+							actionListener="#{consultaHistDocumentosController.abrirDialogDesbAnt(item)}"
+							update=":#{p:component('idDialogDesbAnt')} :#{p:component('dtDocHist')} :frmBotones" />
+						<p:commandButton title="Respaldo Desbloqueo"
+							update=":#{p:component('idDialogDesbAnt')} :#{p:component('dtDocHist')} :frmBotones"
+							style="width:5px;height:20px"
+							rendered="#{item.pathArcDesbAnticipo ne null}"
+							actionListener="#{consultaHistDocumentosController.descargarDoc(item)}"
+							ajax="false" onclick="this.form.target='_blank'"
+							icon="fa fa-download" />
+					</p:column>
+					<p:column headerText="Bloqueo Anticipo" width="6%" style="text-align:center"
+						rendered="#{consultaHistDocumentosController.aplicaDesbloqueo}">
+						<p:commandLink styleClass="bold" value="Bloqueo"
+							title="Bloquear Anticipo" rendered="#{item.muestraBloqueoAnt}"
+							actionListener="#{consultaHistDocumentosController.abrirDialogBloquearAnt(item)}"
+							update=":#{p:component('idDialogBloqueoAnt')} :#{p:component('dtDocHist')} :frmBotones" />
+					</p:column>
+					<p:column headerText="R.C." width="3%" style="text-align:center" >
+						<p:commandLink process="@this" partialSubmit="true" title="Click descargar adjunto"
+							rendered="#{item.pathComprobante ne null}" ajax="false" target="_blank"
+							action="#{consultaHistDocumentosController.descargarArchivo(item.pathComprobante)}">
+							<h:graphicImage value="/common/imgs/icons/print.png" width="16"
+								height="16" />
+						</p:commandLink>
+					</p:column>
+					<p:column headerText="Mpp" width="2%" style="text-align:center">
+						<p:outputLabel value="#{item.manPrepagado eq 'S'?'SI':'NO'}" />
+					</p:column>
+				</p:dataTable>
+			</p:fieldset>
+		</h:form>
+		<p:dialog id="idDialogDatosAprob" widgetVar="dialogDatosAprob"
+			header="Datos aprobación" style="position:fixed" responsive="true"
+			closeOnEscape="true" modal="true" showEffect="slide"
+			hideEffect="slide" appendTo="@(body)" height="400px" width="70%">
+			<h:form id="frmDatosAprob" onkeypress="return event.keyCode!=13">
+				<h:panelGrid id="idDatosAprob" columns="3" columnClasses="w20,w20,w60">
+					<p:outputLabel styleClass="bold" value="Cedula dueño:" />
+					<p:inputText readonly="true"
+						value="#{consultaHistDocumentosController.cotizacion.cedulaDueno}" />
+					<h:panelGrid columns="3" style="border-spacing:0" columnClasses="w50,w20,w30">
+						<p:outputLabel styleClass="bold"
+							value="#{consultaHistDocumentosController.cotizacion.nombreDuenio}" />
+						<p:outputLabel styleClass="bold" value="Factura:"
+							style="color:red !important" />
+						<p:inputText readonly="true" styleClass="bold"
+							style="color:red !important;text-align:right"
+							value="#{consultaHistDocumentosController.documentoSeleccionado.noFisico}" />
+					</h:panelGrid>
+
+
+					<p:outputLabel styleClass="bold" value="Cedula garante:" />
+					<p:inputText readonly="true"
+						value="#{consultaHistDocumentosController.cotizacion.cedulaGarante}" />
+					<p:outputLabel styleClass="bold"
+						value="#{consultaHistDocumentosController.cotizacion.garanteNombres}" />
+					<p:outputLabel styleClass="bold" value="Cedula deudor:" />
+					<p:inputText readonly="true"
+						value="#{consultaHistDocumentosController.cotizacion.cedulaDeudor}" />
+					<p:outputLabel styleClass="bold"
+						value="#{consultaHistDocumentosController.cotizacion.nombreDeudor}" />
+				</h:panelGrid>
+				<h:panelGrid columns="4" columnClasses="w20,w30,w20,w30">
+					<p:outputLabel styleClass="bold" value="Subtotal:" />
+					<p:inputText readonly="true" style="text-align:right"
+						value="#{consultaHistDocumentosController.cotizacion.subtotal}" />
+					<p:outputLabel styleClass="bold" value="Tasa Financia:" />
+					<p:inputText readonly="true" style="text-align:right"
+						value="#{consultaHistDocumentosController.cotizacion.tasaFinancia}" />
+					<p:outputLabel styleClass="bold" value="Descuento:" />
+					<p:inputText readonly="true" style="text-align:right"
+						value="#{consultaHistDocumentosController.cotizacion.descuento}" />
+					<p:outputLabel styleClass="bold" value="Cuota de Entrada:" />
+					<p:inputText readonly="true" style="text-align:right"
+						value="#{consultaHistDocumentosController.cotizacion.cuotaDeEntrada}" />
+					<p:outputLabel styleClass="bold" value="Neto:" />
+					<p:inputText readonly="true" style="text-align:right"
+						value="#{consultaHistDocumentosController.cotizacion.neto}" />
+					<p:outputLabel styleClass="bold" value="Cuota de Alcance:" />
+					<h:panelGrid columns="2" style="border-spacing:0">
+						<p:inputText readonly="true" style="text-align:right"
+							value="#{consultaHistDocumentosController.cotizacion.cuotaDeAlcance}" />
+						<p:inputText readonly="true" size="10"
+							value="#{consultaHistDocumentosController.cotizacion.fechaDeAlcance}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:inputText>
+					</h:panelGrid>
+					<p:outputLabel styleClass="bold" value="Iva:" />
+					<p:inputText readonly="true" style="text-align:right"
+						value="#{consultaHistDocumentosController.cotizacion.iva}" />
+					<p:outputLabel styleClass="bold" value="Monto Adicional:" />
+					<p:inputText readonly="true" style="text-align:right"
+						value="#{consultaHistDocumentosController.cotizacion.montoAdicional}" />
+
+					<p:outputLabel styleClass="bold" value="Otros Cargos:" />
+					<p:inputText readonly="true" style="text-align:right"
+						value="#{consultaHistDocumentosController.cotizacion.otrosCargos}" />
+					<p:outputLabel styleClass="bold" value="Saldo Financiar:" />
+					<p:inputText readonly="true" style="text-align:right"
+						value="#{consultaHistDocumentosController.cotizacion.saldoFinanciar}" />
+
+
+					<p:outputLabel styleClass="bold" value="Gastos Inscripción:" />
+					<p:inputText readonly="true" style="text-align:right"
+						value="#{consultaHistDocumentosController.cotizacion.gastosIncripcion}" />
+					<p:outputLabel styleClass="bold" value="Plazo Crédito:" />
+					<h:panelGrid columns="5" style="border-spacing:0">
+						<p:inputText readonly="true" style="text-align:right;width:20px"
+							value="#{consultaHistDocumentosController.cotizacion.plazoCredito}" />
+						<p:outputLabel styleClass="bold" value="Pagos por año:" />
+						<p:inputText readonly="true" style="text-align:right;width:20px"
+							value="#{consultaHistDocumentosController.cotizacion.pagosPorAno}" />
+						<p:outputLabel styleClass="bold" value="Periodo:" />
+						<p:inputText readonly="true" style="text-align:right;width:20px"
+							value="#{consultaHistDocumentosController.cotizacion.periodo}" />
+					</h:panelGrid>
+					<p:outputLabel styleClass="bold" value="Intereses:" />
+					<p:inputText readonly="true" style="text-align:right"
+						value="#{consultaHistDocumentosController.cotizacion.intereses}" />
+					<p:outputLabel styleClass="bold" value="Cuota Mensual:" />
+					<p:inputText readonly="true" style="text-align:right"
+						value="#{consultaHistDocumentosController.cotizacion.cuotaMensual}" />
+
+					<p:outputLabel styleClass="bold" value="Total General:" />
+					<p:inputText readonly="true" style="text-align:right"
+						value="#{consultaHistDocumentosController.cotizacion.totalGeneral}" />
+					<p:outputLabel styleClass="bold" value="Cuota Seguro:" />
+					<p:inputText readonly="true" style="text-align:right"
+						value="#{consultaHistDocumentosController.cotizacion.cuotaSeguro}" />
+					<p:outputLabel styleClass="bold" value="Num. Autorización:" />
+					<p:inputText readonly="true" style="text-align:right"
+						value="#{consultaHistDocumentosController.cotizacion.noSolicitudCred}" />
+					<p:outputLabel styleClass="bold" value="Aprobación Credito:" />
+					<h:panelGrid columns="2" style="border-spacing:0">
+						<p:inputText readonly="true" style="text-align:right;width:40px"
+							value="#{consultaHistDocumentosController.cotizacion.aprobadoCredito}" />
+						<p:outputLabel styleClass="bold" value="S=SI, N=NO, B=BAJA" />
+					</h:panelGrid>
+				</h:panelGrid>
+				<h:panelGrid columns="2" columnClasses="w20,w80">
+					<p:outputLabel styleClass="bold" value="Mant. Prepagado:" /> 
+					<h:panelGrid columns="5" style="border-spacing:0" columnClasses="w20,w20,w20,w20,w20">
+						<p:inputText readonly="true" style="text-align:right;"
+							value="#{consultaHistDocumentosController.cotizacion.valorMantPrepagados}" />
+						<p:outputLabel styleClass="bold" value="Couta:" />
+						<p:inputText readonly="true" style="text-align:right;width:70px"
+							value="#{consultaHistDocumentosController.valorCoutaMantPrepagados}" />
+						<p:outputLabel styleClass="bold" value="Aplica Interes:" />
+						<p:inputText readonly="true" style="width:25px"
+							value="#{consultaHistDocumentosController.aplicaInteresMantPrepagados?'SI':'NO'}" />
+					</h:panelGrid>
+					<p:outputLabel value="Comentario:" styleClass="bold" />
+					<p:inputTextarea
+						value="#{consultaHistDocumentosController.cotizacion.comentarioAprobacion}"
+						rows="3" cols="70" readonly="true" />
+
+					<p:outputLabel value="Comentario cuota de Alcance:"
+						styleClass="bold" />
+					<p:inputTextarea
+						value="#{consultaHistDocumentosController.cotizacion.observacionCredito}"
+						rows="3" cols="70" readonly="true" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog id="idDialogDatAdicional" widgetVar="dialogDatAdicional"
+			style="position:fixed;" responsive="true" closable="false"
+			resizable="false" modal="true" appendTo="@(body)" width="300"
+			height="auto">
+			<h:form id="frmDatAdicional">
+				<h2 style="text-align: center; color: red">DATOS ADICIONALES</h2>
+				<h:panelGrid id="pnlDatAdicional" columns="2">
+					<p:outputLabel value="No. Inscripción:" styleClass="bold" />
+					<p:inputText style="width:120px"
+						value="#{consultaHistDocumentosController.noInscripcion}" />
+					<p:outputLabel value="Tomo:" styleClass="bold" />
+					<p:inputText value="#{consultaHistDocumentosController.tomo}"
+						style="width:60px" />
+					<p:outputLabel value="Año:" styleClass="bold" />
+					<p:inputText value="#{consultaHistDocumentosController.anio}"
+						maxlength="4" style="width:60px">
+						<p:keyFilter mask="num" />
+					</p:inputText>
+					<p:outputLabel value="Fecha:" styleClass="bold" />
+					<p:calendar value="#{consultaHistDocumentosController.fecha}"
+						locale="es" pattern="dd/MM/yyyy" mask="true" />
+				</h:panelGrid>
+				<p:spacer height="10" />
+				<center>
+					<p:commandButton id="printRm" ajax="false" value="Generar"
+						partialSubmit="true"
+						onclick="PF('dialogDatAdicional').hide();this.form.target='_blank'"
+						process="@this, frmDatAdicional"
+						actionListener="#{consultaHistDocumentosController.generarRepRm}" />
+					<p:spacer width="10" />
+					<p:commandButton value="Cancelar"
+						oncomplete="PF('dialogDatAdicional').hide()" />
+				</center>
+			</h:form>
+		</p:dialog>
+		<p:dialog id="idDialogDesbAnt" widgetVar="dialogDesbAnt"
+			style="position:fixed;" responsive="true" closable="false"
+			resizable="false" modal="true" appendTo="@(body)" height="auto">
+			<h:form id="frmDesbAnt" enctype="multipart/form-data">
+				<p:messages id="messages" showDetail="true" autoUpdate="true"
+					closable="true" showSummary="true" />
+				<h3 style="text-align: center; color: red">DATOS DESBLOQUEAR
+					ANTICIPOS</h3>
+				<h:panelGrid id="pnlDesbAnt" columns="4">
+					<p:outputLabel value="Prenda:" styleClass="bold" />
+					<p:selectOneMenu id="somPrenda"
+						value="#{consultaHistDocumentosController.prenda}">
+						<f:selectItem itemLabel="Seleccione" itemValue="" />
+						<f:selectItem itemLabel="Si" itemValue="S" />
+						<f:selectItem itemLabel="No" itemValue="N" />
+					</p:selectOneMenu>
+					<p:outputLabel value="Seguro:" styleClass="bold" />
+					<p:selectOneMenu id="somSeguro"
+						value="#{consultaHistDocumentosController.seguro}">
+						<f:selectItem itemLabel="Seleccione" itemValue="" />
+						<f:selectItem itemLabel="Si" itemValue="S" />
+						<f:selectItem itemLabel="No" itemValue="N" />
+					</p:selectOneMenu>
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:outputLabel value="Observación:" styleClass="bold" />
+					<p:inputTextarea id="txtComentario"
+						value="#{consultaHistDocumentosController.observacionDesbloqueo}"
+						rows="2" cols="70" maxlength="200" />
+				</h:panelGrid>
+				<p:outputPanel autoUpdate="true">
+					<h:panelGrid columns="4">
+						<p:commandLink title="Seleccionar usuario"
+							action="#{consultaHistDocumentosController.cargarUsuariosSistema}"
+							value="Usuario:" style="font-weight:bold;" update=":frmUsuarios" />
+						<p:inputText
+							value="#{consultaHistDocumentosController.usuarioDto.usuario}"
+							readonly="true" style="width:100px" />
+						<p:inputText
+							value="#{consultaHistDocumentosController.usuarioDto.nombre}"
+							readonly="true" style="width:150px" />
+						<p:inputText
+							value="#{consultaHistDocumentosController.usuarioDto.email}"
+							readonly="true" style="width:200px" />
+					</h:panelGrid>
+				</p:outputPanel>
+				<p:spacer height="5" />
+				<p:fileUpload mode="simple" dragDropSupport="false"
+					value="#{consultaHistDocumentosController.file}"
+					sizeLimit="20000000" skinSimple="true" fileLimit="20"
+					allowTypes="/(\.|\/)(pdf|jpe|jpeg|jpg|png|wav)$/"
+					label="Cargar Doc.">
+				</p:fileUpload>
+				<p:spacer height="10" />
+				<center>
+					<p:commandButton value="Desbloquear" ajax="false"
+						action="#{consultaHistDocumentosController.desbloquearAnticipos}"
+						partialSubmit="true" process="@this frmDesbAnt"
+						update=":#{p:component('dtDocHist')}"
+						onclick="PrimeFaces.monitorDownload(showStatus, hideStatus)" />
+					<p:spacer width="10" />
+					<p:commandButton value="Cancelar"
+						oncomplete="PF('dialogDesbAnt').hide()" />
+				</center>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog id="idDialogBloqueoAnt" widgetVar="dialogBloqueoAnt"
+			style="position:fixed;" responsive="true" closable="false"
+			resizable="false" modal="true" appendTo="@(body)" height="auto">
+			<h:form id="frmBloqueoAnt" enctype="multipart/form-data">
+				<p:messages id="messages" showDetail="true" autoUpdate="true"
+					closable="true" showSummary="true" />
+				<h3 style="text-align: center; color: red">DATOS PARA BLOQUEAR
+					ANTICIPOS CLIENTE</h3>
+				<h:panelGrid columns="2">
+					<p:outputLabel value="Observación:" styleClass="bold" />
+					<p:inputTextarea id="txtComentario"
+						value="#{consultaHistDocumentosController.observacionBloqueo}"
+						rows="2" cols="70" maxlength="200" />
+				</h:panelGrid>
+				<p:outputPanel autoUpdate="true">
+					<h:panelGrid columns="4">
+						<p:commandLink title="Seleccionar usuario"
+							action="#{consultaHistDocumentosController.cargarUsuariosSistema}"
+							value="Usuario:" style="font-weight:bold;" update=":frmUsuarios" />
+						<p:inputText
+							value="#{consultaHistDocumentosController.usuarioDto.usuario}"
+							readonly="true" style="width:100px" />
+						<p:inputText
+							value="#{consultaHistDocumentosController.usuarioDto.nombre}"
+							readonly="true" style="width:150px" />
+						<p:inputText
+							value="#{consultaHistDocumentosController.usuarioDto.email}"
+							readonly="true" style="width:200px" />
+					</h:panelGrid>
+				</p:outputPanel>
+				<p:spacer height="10" />
+				<center>
+					<p:commandButton value="Bloquear" ajax="false"
+						action="#{consultaHistDocumentosController.bloquearAnticipos}"
+						partialSubmit="true" process="@this frmBloqueoAnt"
+						update=":#{p:component('dtDocHist')}"
+						onclick="PrimeFaces.monitorDownload(showStatus, hideStatus)" />
+					<p:spacer width="10" />
+					<p:commandButton value="Cancelar"
+						oncomplete="PF('dialogBloqueoAnt').hide()" />
+				</center>
+			</h:form>
+		</p:dialog>
+
+		<ui:include src="/jsf/common/dialog/dialogClientes.xhtml" />
+		<ui:include src="/jsf/common/dialog/dialogUsuarios.xhtml" />
+	</ui:define>
+</ui:composition>

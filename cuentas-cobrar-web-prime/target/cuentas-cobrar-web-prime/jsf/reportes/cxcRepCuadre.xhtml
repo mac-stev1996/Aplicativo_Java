@@ -1,0 +1,193 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		REPORTES DE CUADRE
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmButtons">
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+		<style>
+.w25 {
+	width: 25%;
+}
+</style>
+		<h:form id="idForm">
+			<p:panel id="basic">
+				<div class="ui-g dashboard">
+					<div class="ui-g-12 ui-fluid contact-form">
+						<div class="ui-g-4">
+							<p:fieldset id="fsReportes" legend="Reportes" toggleable="false">
+								<p:outputLabel value="Negocios nuevos" styleClass="bold" />
+								<p:selectOneRadio id="tipoNegNuevos" layout="grid" columns="1"
+									value="#{cxcReportesCuadreController.tipoRepCuadre}">
+									<f:selectItems
+										value="#{cxcReportesCuadreController.tiposNegNuevos}"
+										var="tipo" itemValue="#{tipo}" itemLabel="#{tipo.descripcion}" />
+									<p:ajax event="change"
+										listener="#{cxcReportesCuadreController.limpiarDatos}"
+										process="@this"
+										update="@this :#{p:component('lblClase')} :#{p:component('somClase')} :#{p:component('tipoCanNC')} :#{p:component('tipoDetCobros')}" />
+								</p:selectOneRadio>
+								<br />
+								<p:outputLabel value="Cancelaciones con N/C" styleClass="bold" />
+								<p:selectOneRadio id="tipoCanNC" layout="grid" columns="1"
+									value="#{cxcReportesCuadreController.tipoRepCuadre}">
+									<f:selectItems
+										value="#{cxcReportesCuadreController.tiposCancelacionesNC}"
+										var="tipo" itemValue="#{tipo}" itemLabel="#{tipo.descripcion}" />
+									<p:ajax event="change"
+										listener="#{cxcReportesCuadreController.limpiarDatos}"
+										process="@this"
+										update="@this :#{p:component('lblClase')} :#{p:component('somClase')} :#{p:component('tipoNegNuevos')} :#{p:component('tipoDetCobros')}" />
+								</p:selectOneRadio>
+								<br />
+								<p:outputLabel value="Detalle de cobros" styleClass="bold" />
+								<p:selectOneRadio id="tipoDetCobros" layout="grid" columns="1"
+									value="#{cxcReportesCuadreController.tipoRepCuadre}">
+									<f:selectItems
+										value="#{cxcReportesCuadreController.tiposDetalleCobros}"
+										var="tipo" itemValue="#{tipo}" itemLabel="#{tipo.descripcion}" />
+									<p:ajax event="change"
+										listener="#{cxcReportesCuadreController.limpiarDatos}"
+										process="@this"
+										update="@this :#{p:component('lblClase')} :#{p:component('somClase')} :#{p:component('tipoNegNuevos')} :#{p:component('tipoCanNC')}" />
+								</p:selectOneRadio>
+							</p:fieldset>
+						</div>
+						<div class="ui-g-8">
+							<p:outputPanel id="pnlParametros" autoUpdate="true">
+								<p:fieldset id="fsParam" legend="Parámetros" toggleable="false">
+									<h:panelGrid columns="2">
+										<p:outputLabel value="Resumen por linea:" styleClass="bold"
+											rendered="#{cxcReportesCuadreController.tipoRepCuadreSeleccionado.codigo eq 1}" />
+										<p:selectBooleanCheckbox
+											rendered="#{cxcReportesCuadreController.tipoRepCuadreSeleccionado.codigo eq 1}"
+											value="#{cxcReportesCuadreController.resumenFact}">
+											<p:ajax event="change" process="@this"
+												update="somLineaNeg, scbmLineasNeg" />
+										</p:selectBooleanCheckbox>
+										<p:outputLabel value="Linea Negocio:" styleClass="bold"
+											rendered="#{cxcReportesCuadreController.tipoRepCuadreSeleccionado.codigo !=3 and cxcReportesCuadreController.tipoRepCuadreSeleccionado.codigo !=4}" />
+										<p:selectOneMenu id="somLineaNeg" filter="true"
+											filterMatchMode="contains"
+											value="#{cxcReportesCuadreController.noLineaNeg}"
+											rendered="#{cxcReportesCuadreController.tipoRepCuadreSeleccionado.codigo !=3 and cxcReportesCuadreController.tipoRepCuadreSeleccionado.codigo !=4 and !cxcReportesCuadreController.resumenFact}">
+											<f:selectItem itemLabel="Todos" itemValue="" />
+											<f:selectItems
+												value="#{cxcReportesCuadreController.lineasNegocio}"
+												var="lineaNeg"
+												itemValue="#{lineaNeg.lineaNegocioPK.noLinea}"
+												itemLabel="#{lineaNeg.lineaNegocioPK.noLinea} - #{lineaNeg.descripcion}" />
+										</p:selectOneMenu>
+										<p:selectCheckboxMenu id="scbmLineasNeg" label="Lineas"
+											rendered="#{cxcReportesCuadreController.resumenFact and cxcReportesCuadreController.tipoRepCuadreSeleccionado.codigo eq 1}"
+											value="#{cxcReportesCuadreController.lineasResumen}">
+											<f:selectItems
+												value="#{cxcReportesCuadreController.lineasNegocio}"
+												var="lineaNeg"
+												itemValue="#{lineaNeg.lineaNegocioPK.noLinea}"
+												itemLabel="#{lineaNeg.descripcion}" />
+										</p:selectCheckboxMenu>
+										<p:spacer
+											rendered="#{cxcReportesCuadreController.tipoRepCuadreSeleccionado.codigo eq 1}" />
+										<p:selectOneMenu
+											rendered="#{cxcReportesCuadreController.tipoRepCuadreSeleccionado.codigo eq 1}"
+											value="#{cxcReportesCuadreController.filtroRelacion}">
+											<f:selectItem itemLabel="Sin empresas relacionadas"
+												itemValue="1" />
+											<f:selectItem itemLabel="Por clase de cliente" itemValue="2" />
+										</p:selectOneMenu>
+										<p:outputLabel id="lblClase" value="Clase cliente:"
+											styleClass="bold"
+											rendered="#{cxcReportesCuadreController.tipoRepCuadreSeleccionado.codigo eq 1 or cxcReportesCuadreController.tipoRepCuadreSeleccionado.codigo eq 7}" />
+										<p:selectOneMenu id="somClase" filter="true"
+											filterMatchMode="contains"
+											rendered="#{cxcReportesCuadreController.tipoRepCuadreSeleccionado.codigo eq 1 or cxcReportesCuadreController.tipoRepCuadreSeleccionado.codigo eq 7}"
+											value="#{cxcReportesCuadreController.claseCliente}">
+											<f:selectItem itemLabel="Todos" itemValue="" />
+											<f:selectItems
+												value="#{cxcReportesCuadreController.clasesClientes}"
+												var="claseCli"
+												itemValue="#{claseCli.cxcClaseClientePK.clase}"
+												itemLabel="#{claseCli.cxcClaseClientePK.clase} - #{claseCli.descripcion}" />
+										</p:selectOneMenu>
+										<h:outputText value="Centro:" styleClass="bold"
+											rendered="#{cxcReportesCuadreController.tipoRepCuadreSeleccionado.codigo eq 9 or cxcReportesCuadreController.tipoRepCuadreSeleccionado.codigo eq 8}" />
+										<p:selectOneMenu id="centro" filter="true"
+											filterMatchMode="contains"
+											rendered="#{cxcReportesCuadreController.tipoRepCuadreSeleccionado.codigo eq 9 or cxcReportesCuadreController.tipoRepCuadreSeleccionado.codigo eq 8}"
+											value="#{cxcReportesCuadreController.tipoPago}">
+											<f:selectItem itemLabel="Todos" itemValue="" />
+											<f:selectItems value="#{cxcReportesCuadreController.centros}"
+												var="centros" itemValue="#{centros[0]}"
+												itemLabel="#{centros[0]} - #{centros[1]}" />
+										</p:selectOneMenu>
+										<h:outputText value="Venta Banco:" styleClass="bold"
+											rendered="#{cxcReportesCuadreController.tipoRepCuadreSeleccionado.codigo eq 8}" />
+										<p:selectOneMenu id="banco" filter="true"
+											filterMatchMode="contains"
+											rendered="#{cxcReportesCuadreController.tipoRepCuadreSeleccionado.codigo eq 8}"
+											value="#{cxcReportesCuadreController.ventaBanco}">
+											<f:selectItem itemLabel="Todos" itemValue="" />
+											<f:selectItem itemLabel="Venta Taxis" itemValue="VT" />
+											<f:selectItem itemLabel="Venta Tomebamaba" itemValue="TO" />
+										</p:selectOneMenu>
+										<p:outputLabel value="Desde:" styleClass="bold" />
+										<h:panelGrid columns="3">
+											<p:calendar placeholder="Desde" locale="es" mask="true"
+												value="#{cxcReportesCuadreController.fechaDesde}"
+												pattern="dd/MM/yyyy" />
+											<p:outputLabel value="Hasta:" styleClass="bold" />
+											<p:calendar placeholder="Hasta" locale="es" mask="true"
+												value="#{cxcReportesCuadreController.fechaHasta}"
+												pattern="dd/MM/yyyy" />
+										</h:panelGrid>
+									</h:panelGrid>
+								</p:fieldset>
+							</p:outputPanel>
+						</div>
+					</div>
+				</div>
+				<f:facet name="footer">
+					<center>
+						<br />
+						<h:panelGrid columns="2" border="0" id="btnsCompLink"
+							columnClasses="iconCell, iconCell, iconCell" cellpadding="0"
+							cellspacing="0" width="270"
+							style="text-align:center; background-color: #e6e6e6">
+							<h:commandLink target="_blank"
+								action="#{cxcReportesCuadreController.generarReporte}">
+								<h:graphicImage value="/common/imgs/reports/excel.png"
+									style="border:none;align:center;" title="Excel" alt="Excel"
+									width="25" height="25" />
+								<f:param name="format" value="excel" />
+							</h:commandLink>
+							<h:commandLink target="_blank"
+								action="#{cxcReportesCuadreController.generarReporte}">
+								<h:graphicImage value="/common/imgs/reports/adobe.png"
+									style="border:none" title="Adobe" alt="Adobe" width="25"
+									height="25" />
+								<f:param name="format" value="pdf" />
+							</h:commandLink>
+							<h:outputText value="Excel" styleClass="normal" />
+							<h:outputText value="Pdf" styleClass="normal" />
+						</h:panelGrid>
+					</center>
+				</f:facet>
+			</p:panel>
+		</h:form>
+		<h:inputHidden
+			value="#{cxcReportesCuadreController.tipoRepCuadreSeleccionado.reporte}"
+			binding="#{cxcReportesCuadreController.reportPath}" />
+	</ui:define>
+</ui:composition>

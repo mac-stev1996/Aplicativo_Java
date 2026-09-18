@@ -1,0 +1,178 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+	<ui:define name="title">
+		Carga Vendedor Directo para Clientes
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmBotones">
+	
+			<p:commandButton style="float: right;" id="ClienteCmd"
+						action="#{cargaMasivaVendedorDirectoClienteController.abrirCliente}"
+						update="frmCliente"
+						value="Actualizar Cliente" process="@this"
+						partialSubmit="true" />
+						
+	
+			<p:commandButton style="float: right;" id="carga"
+						oncomplete="PF('dlgArchivo').show();"
+						value="Cargar Excel" process="@this"
+						partialSubmit="true" />
+						
+		</h:form>
+	</ui:define>
+	<ui:define name="content">
+		<style type="text/css">
+body {
+	font-size: 11px;
+}
+
+.ui-g-12 {
+	padding: .2em .5em !important;
+}
+
+.w5 {
+	width: 5%;
+}
+
+.dashboard .contact-form .ui-button {
+	margin-top: 0px;
+}
+
+body .ui-button .ui-button-text {
+	font-size: 11px !important;
+}
+
+.table thead th, .table tbody tr td {
+	font-size: 11px !important;
+	padding: 2px 7px !important;
+}
+</style>
+
+		<h:form id="idFormDatos">
+			<p:messages id="messages" showDetail="true" autoUpdate="true"
+				closable="true" showSummary="true" />
+			<div class="ui-g dashboard">
+				<div class="ui-g-12 ui-fluid contact-form">
+					<div class="ui-g-12">
+						<p:dataTable id="tblProteccionD" widgetVar="tblProteccionD"
+							emptyMessage="No existen registros"
+							value="#{cargaMasivaVendedorDirectoClienteController.clienteLst}" var="item"
+							rowKey="#{item.id}" rowIndexVar="var" >
+
+							<p:column headerText="No. Cliente" width="15%" filterBy="#{item.clientePK.noCliente}" filterMatchMode="contains">
+								<p:outputLabel value="#{item.clientePK.noCliente}" />
+							</p:column>
+
+							<p:column headerText="Nombre Cliente" width="35%" 
+								filterBy="#{item.nombre}" filterMatchMode="contains">
+								<p:outputLabel value="#{item.nombre}" />
+							</p:column>
+							
+							<p:column headerText="Vendedor Directo" width="15%"
+								filterBy="#{item.vendedorDirecto}" filterMatchMode="contains">
+								<p:outputLabel value="#{item.vendedorDirecto}" />
+							</p:column>
+							
+							<p:column headerText="Nombre Vendedor" width="35%"
+								filterBy="#{item.nombreRelacion}" filterMatchMode="contains">
+								<p:outputLabel value="#{item.nombreRelacion}" />
+							</p:column>
+							
+						</p:dataTable>
+					</div>
+				</div>
+			</div>
+		</h:form>
+
+
+		<p:dialog header="Cargar Excel Vendedores Directos" widgetVar="dlgArchivo" modal="true"
+			showEffect="fade" hideEffect="fade" resizable="true" width="600"
+			position="center center" closeOnEscape="true">
+			<h:form id="frmArchivo">
+				<p:fileUpload required="true"
+					fileUploadListener="#{cargaMasivaVendedorDirectoClienteController.leerArchivo}"
+					mode="advanced" dragDropSupport="true" process="@this"
+					update="frmBotones" uploadLabel="Cargar Vendedores Directos"
+					cancelLabel="Cancelar" label="Seleccionar Archivo" fileLimit="1"
+					fileLimitMessage="Solo puede subir un archivo">
+				</p:fileUpload>
+			</h:form>
+		</p:dialog>
+
+
+		<p:dialog header="Actualización cliente" widgetVar="dlgCliente" modal="true"
+			showEffect="fade" hideEffect="fade" resizable="true" width="600"
+			position="center center" closeOnEscape="true">
+			<h:form id="frmCliente">
+				<h:panelGrid columns="5" id="busquedaClientePG">
+					
+					<p:outputLabel value="No cliente : " style="width:100%" />
+	
+					<p:inputText id="noClienteInput"
+						value="#{cargaMasivaVendedorDirectoClienteController.noClienteFiltro}"
+						immediate="true" maxlength="10"/>
+						
+					<p:outputLabel value="Cedula/Ruc : " style="width:100%" />
+	
+					<p:inputText id="cedulaInput"
+						value="#{cargaMasivaVendedorDirectoClienteController.cedulaFiltro}"
+						immediate="true" maxlength="13" />
+						
+					<p:commandButton style="float: right;" id="bucarCliente"
+						partialSubmit="true"
+						process="@this, busquedaClientePG"
+						action="#{cargaMasivaVendedorDirectoClienteController.buscarCliente}"
+						update="detalleClientePG"
+						value="Buscar Cliente"  />
+				</h:panelGrid>
+				
+				<h:panelGrid columns="2" id="detalleClientePG">
+				
+					<p:outputLabel value="Nombre: "  />
+	
+					<p:inputText readonly="true"
+						value="#{cargaMasivaVendedorDirectoClienteController.clienteSeleccionado.nombre}"
+						immediate="true" />
+
+					<p:outputLabel value="Vendedor: " />
+					
+					<p:selectOneMenu id="vendedorSel"
+						value="#{cargaMasivaVendedorDirectoClienteController.clienteSeleccionado.vendedorDirecto}"
+						filterMatchMode="contains" filter="true">
+						<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+						<f:selectItems
+							value="#{cargaMasivaVendedorDirectoClienteController.vendedoresLst}"
+							var="ven" itemLabel="#{ven.nombre}"
+							itemValue="#{ven.pk.codigo}"/>
+					</p:selectOneMenu>
+					
+					<p:outputLabel value="Zona: " />
+					
+					<p:selectOneMenu id="zonaSel"
+						value="#{cargaMasivaVendedorDirectoClienteController.clienteSeleccionado.zona}"
+						filterMatchMode="contains" filter="true">
+						<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+						<f:selectItems
+							value="#{cargaMasivaVendedorDirectoClienteController.zonasLst}"
+							var="ven"/>
+					</p:selectOneMenu>
+						
+					<p:commandButton style="float: center;" id="GuardarCliente"
+							action="#{cargaMasivaVendedorDirectoClienteController.guardarCliente}"
+							value="Guardar Cliente" process="@this,detalleClientePG"
+							partialSubmit="true" />
+						
+				</h:panelGrid>
+				
+			</h:form>
+		</p:dialog>
+		
+		
+	</ui:define>
+</ui:composition>

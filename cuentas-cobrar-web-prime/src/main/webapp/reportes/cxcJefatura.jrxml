@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cxcJefatura" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="566f2ad3-167b-49ff-adde-38a3d6ac391f">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="207"/>
+	<parameter name="p_no_cia" class="java.lang.String"/>
+	<parameter name="p_agencia" class="java.lang.String"/>
+	<parameter name="p_no_fisico" class="java.lang.String"/>
+	<parameter name="p_serie_fisico" class="java.lang.String"/>
+	<parameter name="p_cant_prorrogas" class="java.lang.Integer"/>
+	<parameter name="p_no_cliente" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select b.cedula, substr(b.nombre,1,50)  nombre,
+           decode(b.gracia,1,'Señor',2,'Señora',3,'Señorita',4,'Señores',5,'Señores',null,'Señores') gracia,
+           a.chasis,TO_CHAR(a.fecha, 'DD/MM/YYYY') fecha,a.centrod||'-'||a.no_fisico factura,
+           c.svmrcodi marca,  c.svinafabr modelo, c.svinmotor motor, c.svinafabr anio_fabri,
+           nvl((select  d.svcodescri from svfmascol d where d.no_cia = a.no_cia  and d.svmamaster = c.svmamaster
+    	     and d.svcotipo = 'E'  and d.svcocodi = c.svincoex),'***') color_master,
+           nvl((select  e.svcodescri from svfcolor e  where e.no_cia = c.no_cia and e.svcotipo = 'E' and  e.svcocodi=c.svincoex),'***') color_semi,
+          p.texto1 reponsable, p.texto2 cargo,
+          (select  count(*) from arccmd
+  where no_cia = a.no_cia  and centro = a.centrod  and no_fisico = a.no_fisico  and serie_fisico =  a.serie_fisico and cant_prorrogas = a.cant_prorrogas ) letras,
+(select nombre from arcgmc where no_cia=a.no_cia) nombre_compania,
+(select no_fisico||serie_fisico
+ from arccmd
+where no_cia =a.no_cia
+and no_docu = (select max(no_docu) from arccrd
+                where no_cia =a.no_cia
+                and no_refe = (select max(no_docu) from arccmd
+                                where no_cia  =a.no_cia
+                                and no_fisico = a.no_fisico
+                                and serie_fisico =a.serie_fisico
+                                and centro = a.centrod
+                                and no_cliente = a.no_cliente
+                                and cant_prorrogas = a.cant_prorrogas))) ingreso1,
+    nvl((select max(nota_ingreso) from svfant	where no_cia = a.no_cia	and no_factu_refe = a.no_factu),'***') ingreso2,
+(select TO_CHAR(fecha, 'DD/MM/YYYY')
+ from arccmd
+where no_cia =a.no_cia
+and no_docu = (select max(no_docu) from arccrd
+                where no_cia =a.no_cia
+                and no_refe = (select max(no_docu) from arccmd
+                                where no_cia  =a.no_cia
+                                and no_fisico = a.no_fisico
+                                and serie_fisico =a.serie_fisico
+                                and centro = a.centrod
+                                and no_cliente = a.no_cliente
+                                and cant_prorrogas = a.cant_prorrogas))) fecha_ingreso
+from fac_ventas_cab a, arccmc b, svfinven c, param_det p
+where a.no_cia = $P{p_no_cia}
+and a.centrod = $P{p_agencia}
+and a.no_fisico =$P{p_no_fisico}
+and a.serie_fisico = $P{p_serie_fisico}
+and a.cant_prorrogas = $P{p_cant_prorrogas}
+and a.no_cliente=$P{p_no_cliente}
+and a.no_cia = b.no_cia
+and a.no_cliente = b.no_cliente
+and a.no_cia=c.no_cia(+)
+and a.chasis=c.svincodi(+)
+and a.no_cia=p.no_cia(+)
+and p.codigo(+) = 'FDCXC'
+and p.codigo_det(+) = '01']]>
+	</queryString>
+	<field name="CEDULA" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="GRACIA" class="java.lang.String"/>
+	<field name="CHASIS" class="java.lang.String"/>
+	<field name="FECHA" class="java.lang.String"/>
+	<field name="FACTURA" class="java.lang.String"/>
+	<field name="MARCA" class="java.lang.String"/>
+	<field name="MODELO" class="java.math.BigDecimal"/>
+	<field name="MOTOR" class="java.lang.String"/>
+	<field name="ANIO_FABRI" class="java.math.BigDecimal"/>
+	<field name="COLOR_MASTER" class="java.lang.String"/>
+	<field name="COLOR_SEMI" class="java.lang.String"/>
+	<field name="REPONSABLE" class="java.lang.String"/>
+	<field name="CARGO" class="java.lang.String"/>
+	<field name="LETRAS" class="java.math.BigDecimal"/>
+	<field name="NOMBRE_COMPANIA" class="java.lang.String"/>
+	<field name="INGRESO1" class="java.lang.String"/>
+	<field name="INGRESO2" class="java.lang.String"/>
+	<field name="FECHA_INGRESO" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<textField pattern="">
+				<reportElement uuid="2eca62a6-5e8c-40f5-9337-f2c19763a174" x="0" y="10" width="40" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Quito, "]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd MMMMM yyyy">
+				<reportElement uuid="504c7356-7659-4896-b250-d4ef13a88a50" x="40" y="10" width="220" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="573" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="a5d5a40e-ab29-4cea-b5e8-324976eef684" x="166" y="275" width="237" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ANIO_FABRI}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="6a054682-e629-4114-bcb9-0a418b49e6cf" x="106" y="235" width="60" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CHASIS:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="27c598b9-4f6e-4c24-818c-e90d96aa8557" x="106" y="175" width="60" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MARCA:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="3f35e36d-2f6d-4747-9c1e-b588d6808ac4" x="166" y="195" width="237" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MODELO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="5c258d5c-85b6-4b48-a195-6cb6328406fa" x="0" y="532" width="270" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CARGO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="5415eb3c-e33e-4d3e-8a95-c769f5f73e80" x="0" y="84" width="166" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11" isBold="false"/>
+				</textElement>
+				<text><![CDATA[De nuestras consideración;]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5158323d-3d77-4f86-9003-511692a96845" x="0" y="438" width="100" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<text><![CDATA[Atentamente,]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ed7ab602-e16d-4d06-8c2d-46e09c904e49" x="106" y="275" width="60" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AÑO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="377c183f-bf37-4129-b957-36a0a1274935" x="106" y="255" width="60" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COLOR]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="bf229b1f-b1a5-45d5-9d70-5c5a30dfca42" x="166" y="215" width="237" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MOTOR}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="eb3621a8-d009-4174-ab39-bc3fad2fc2a6" x="166" y="175" width="237" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MARCA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="8cd77b9f-68f0-4b32-8b75-a7e3cdc4b676" x="0" y="512" width="270" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{REPONSABLE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="345d5e44-e9ba-4583-b77b-5c5f642280aa" x="106" y="195" width="60" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MODELO:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="370f407c-6756-4ee5-bf13-cb8292f803a6" x="0" y="129" width="555" height="36"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Por medio de la presente, certificamos que el "+$F{GRACIA}+" "+$F{NOMBRE}+" con Cédula de Identidad  No. "+$F{CEDULA}+" adquirio en nuestra compañia un vehículo de las siguientes características:"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="cb3ca2bc-211e-44e1-85a2-4b9efb9b05f9" x="166" y="255" width="237" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[!"6".equals($P{p_serie_fisico})? $F{COLOR_MASTER}:$F{COLOR_SEMI}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="a32704e1-a354-4a54-bf10-50fa83d6a3a1" x="106" y="215" width="60" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MOTOR:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="a5357833-aadf-4065-975c-054ed70c334a" x="0" y="302" width="555" height="61"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["El vehículo detallado anteriormente, fue vendido segun factura."+$F{FACTURA}+" correspondiente al "+$F{FECHA}+"; mediante crédito otorgado  por  "+$F{NOMBRE_COMPANIA}+" a "+$F{LETRAS}+" dividendo(s), el mismo que se encuentra cancelado en su totalidad según comprobante de ingreso a Caja No."+($F{INGRESO1}!=null?$F{INGRESO1}:$F{INGRESO2})+($F{FECHA_INGRESO}!=null?" del "+$F{FECHA_INGRESO}:"")+"."]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="f8e9cd0c-5fbd-4b67-999a-b52bd1a6fa83" x="166" y="235" width="237" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CHASIS}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="f1204edc-f0c4-46a6-a628-e02149ea738e" x="-1" y="552" width="356" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE_COMPANIA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="9c1bf82a-77cf-41c6-983c-c3fe151e1f6a" x="-1" y="371" width="556" height="34"/>
+				<textElement/>
+				<textFieldExpression><![CDATA["Cabe  indicar que sobre el vehículo indicado anteriormente, NO CONSTA REGISTRADA NINGUNA RESERVA DE DOMINIO ni PRENDA INDUSTRIAL a favor de "+$F{NOMBRE_COMPANIA}+"."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="822576b0-fef9-47b9-8e27-4df407b001a0" x="0" y="0" width="100" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<text><![CDATA[Señores]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c1f38424-b142-4b26-a942-d41e60cf0413" x="0" y="20" width="254" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<text><![CDATA[AGENCIA NACIONAL DE TRANSITO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5133dfeb-927c-4f32-ac32-eb9c80c774a6" x="0" y="40" width="100" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<text><![CDATA[Ciudad]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

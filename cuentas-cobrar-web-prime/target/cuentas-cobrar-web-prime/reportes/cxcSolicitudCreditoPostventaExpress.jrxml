@@ -1,0 +1,893 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cxcSolicitudCreditoPostventaExpress" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="21f20300-1699-4519-998b-dc19b98c6512">
+	<property name="ireport.zoom" value="2.1961500000000007"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="1115"/>
+	<parameter name="NO_CIA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="NO_SOLICITUD" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RUTA_LOGO" class="java.lang.String"/>
+	<parameter name="MODULO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["MERCADEO"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT c.NO_SOLICITUD, c.CEDULA, c.CENTRO, ag.NOMBRE as NOM_AGENCIA, c.ANTIGUEDAD_TRA, c.BANCO, b.descripcion as NOM_BANCO,
+c.CARGO, c.CIUDAD_TRA, c.DOMICILIO_CALLE, c.DOMICILIO_REFERECIA, c.EGRESO, c.EMAIL, c.ciudad_cliente,
+c.ESTADO, c.ESTADO_CIVIL, e.descripcion as NOM_ECIVIL, c.FECHA, c.FECHA_EST_APROBADO, c.FECHA_EST_ENVIADO,
+c.FECHA_EST_INGRESADO, c.FECHA_EST_REVISADO, c.GARANTE_CIUDAD, c.GARANTE_NOMBRES, c.GARANTE_PARENTESCO,
+c.GARANTE_TELEFONO, c.GIRO_NEGOCIO, c.INGRESO, c.LUGAR_TRABAJO, c.MONTO_DISPONIBLE, c.NO_CIA, a.DESCRI as NOM_CIA, NO_CUENTA, c.NOMBRES, c.OBSERVACION_EST_APROBADO, c.OBSERVACION_EST_REVISADO, c.TELEFONO, c.TELEFONO_CEL,
+c.TELEFONO_TRA, c.TIPO_CUENTA, tc.descripcion as NOM_TCUENTA, c.TIPO_VIVIENDA,  v.descripcion as NOM_TVIVIENDA, c.USUARIO, u.NOMBRE AS NOM_USUARIO, c.USUARIO_APRUEBA, c.USUARIO_ENVIA, c.USUARIO_REVISA
+from CXC_CREDITO_POSTVENTA c
+left join ARAFMC a on a.NO_CIA = c.NO_CIA
+left join PARAM_DET e on (e.CODIGO_DET  = c.ESTADO_CIVIL AND e.CODIGO = 'ESTC' AND  e.NO_CIA = $P{NO_CIA})
+left join PARAM_DET v on (v.CODIGO_DET  = c.TIPO_VIVIENDA AND v.CODIGO = 'CLIVIE' AND v.NO_CIA = $P{NO_CIA})
+left join PARAM_DET tc on (tc.CODIGO_DET  = c.TIPO_CUENTA AND tc. CODIGO = 'EMTCTA' AND tc.NO_CIA = $P{NO_CIA})
+left join CHE_BANCO_CTATRANSFERENCIA b on (b.CODIGO_BANCO = c.BANCO AND b.ESTADO = 'A' AND b.NO_CIA = $P{NO_CIA})
+left join AGENCIAS ag on (ag.CODIGO = c.CENTRO AND ag.no_cia= $P{NO_CIA})
+left join USUARIOS_SIS u on u.USUARIO = c.USUARIO
+WHERE c.NO_CIA = $P{NO_CIA} AND c.NO_SOLICITUD = $P{NO_SOLICITUD}]]>
+	</queryString>
+	<field name="NO_SOLICITUD" class="java.math.BigDecimal"/>
+	<field name="CEDULA" class="java.lang.String"/>
+	<field name="CENTRO" class="java.lang.String"/>
+	<field name="NOM_AGENCIA" class="java.lang.String"/>
+	<field name="ANTIGUEDAD_TRA" class="java.math.BigDecimal"/>
+	<field name="BANCO" class="java.lang.String"/>
+	<field name="NOM_BANCO" class="java.lang.String"/>
+	<field name="CARGO" class="java.lang.String"/>
+	<field name="CIUDAD_TRA" class="java.lang.String"/>
+	<field name="DOMICILIO_CALLE" class="java.lang.String"/>
+	<field name="DOMICILIO_REFERECIA" class="java.lang.String"/>
+	<field name="EGRESO" class="java.math.BigDecimal"/>
+	<field name="EMAIL" class="java.lang.String"/>
+	<field name="CIUDAD_CLIENTE" class="java.lang.String"/>
+	<field name="ESTADO" class="java.lang.String"/>
+	<field name="ESTADO_CIVIL" class="java.lang.String"/>
+	<field name="NOM_ECIVIL" class="java.lang.String"/>
+	<field name="FECHA" class="java.sql.Timestamp"/>
+	<field name="FECHA_EST_APROBADO" class="java.sql.Timestamp"/>
+	<field name="FECHA_EST_ENVIADO" class="java.sql.Timestamp"/>
+	<field name="FECHA_EST_INGRESADO" class="java.sql.Timestamp"/>
+	<field name="FECHA_EST_REVISADO" class="java.sql.Timestamp"/>
+	<field name="GARANTE_CIUDAD" class="java.lang.String"/>
+	<field name="GARANTE_NOMBRES" class="java.lang.String"/>
+	<field name="GARANTE_PARENTESCO" class="java.lang.String"/>
+	<field name="GARANTE_TELEFONO" class="java.lang.String"/>
+	<field name="GIRO_NEGOCIO" class="java.lang.String"/>
+	<field name="INGRESO" class="java.math.BigDecimal"/>
+	<field name="LUGAR_TRABAJO" class="java.lang.String"/>
+	<field name="MONTO_DISPONIBLE" class="java.math.BigDecimal"/>
+	<field name="NO_CIA" class="java.lang.String"/>
+	<field name="NOM_CIA" class="java.lang.String"/>
+	<field name="NO_CUENTA" class="java.lang.String"/>
+	<field name="NOMBRES" class="java.lang.String"/>
+	<field name="OBSERVACION_EST_APROBADO" class="java.lang.String"/>
+	<field name="OBSERVACION_EST_REVISADO" class="java.lang.String"/>
+	<field name="TELEFONO" class="java.lang.String"/>
+	<field name="TELEFONO_CEL" class="java.lang.String"/>
+	<field name="TELEFONO_TRA" class="java.lang.String"/>
+	<field name="TIPO_CUENTA" class="java.lang.String"/>
+	<field name="NOM_TCUENTA" class="java.lang.String"/>
+	<field name="TIPO_VIVIENDA" class="java.lang.String"/>
+	<field name="NOM_TVIVIENDA" class="java.lang.String"/>
+	<field name="USUARIO" class="java.lang.String"/>
+	<field name="NOM_USUARIO" class="java.lang.String"/>
+	<field name="USUARIO_APRUEBA" class="java.lang.String"/>
+	<field name="USUARIO_ENVIA" class="java.lang.String"/>
+	<field name="USUARIO_REVISA" class="java.lang.String"/>
+	<variable name="vAutorizacion1" class="java.lang.String">
+		<variableExpression><![CDATA["DECLARO (AMOS) QUE LOS DATOS QUE ANTECEDEN  SON CIERTOS Y CORRECTOS. AUTORIZO (AMOS) EXPRESA E IRREVOCABLEMENTE A "+ $F{NOM_CIA} +" PARA QUE OBTENGA CUANTAS VECES SEAN NECESARIAS DE CUALQUIER FUENTE DE INFORMACION INCLUIDOS LOS BUROS DE CREDITO, DINARDAP (MI) NUESTRA INFORMACION DE RIESGOS CREDITICIOS, DE IGUAL FORMA QUEDA EXPRESAMENTE AUTORIZADO PARA QUE PUEDA TRANSFERIR O ENTREGAR DICHA INFORMACION A LOS BUROS DE CREDITO, DINARDAP Y/O CENTRAL DE RIESGOS SI FUERA PERTINENTE. "]]></variableExpression>
+		<initialValueExpression><![CDATA[$V{vAutorizacion1}]]></initialValueExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="49" splitType="Stretch">
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="275375c3-9e27-4e3b-bd7c-ba8bb97f6632" key="textField-1" x="10" y="10" width="121" height="36"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOM_CIA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="b0c55f5c-fee9-4f2c-ad2f-f5c316fea82c" key="staticText-1" x="131" y="10" width="274" height="36"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[SOLICITUD SIMPLIFICADA DE CREDITO POSTVENTA]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="8ce2bd59-febc-485c-bb20-b2575298e393" key="textField-3" x="467" y="33" width="79" height="13"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{USUARIO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy h.mm a" isBlankWhenNull="false">
+				<reportElement uuid="749106c1-499d-4805-ad84-9fea1f743030" key="textField-4" x="467" y="22" width="79" height="12"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="1834b41f-d53e-486c-bd3c-a41546ade119" key="textField-5" x="467" y="10" width="23" height="12"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="32e3cd17-d8ed-4afb-b3e5-47720e19f05f" key="staticText-3" x="490" y="10" width="33" height="12"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[DE:]]></text>
+			</staticText>
+			<textField evaluationTime="Report" isBlankWhenNull="false">
+				<reportElement uuid="0ad6d2b0-980c-414b-97e2-5a345d52eef0" key="textField-6" x="523" y="10" width="23" height="12"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="2bf54043-5659-45dc-a39d-1aa6b870c855" key="staticText-4" x="405" y="10" width="62" height="12"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[PAGINA:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2bf54043-5659-45dc-a39d-1aa6b870c855" key="staticText-4" x="405" y="22" width="62" height="12"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Fecha Reporte:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2bf54043-5659-45dc-a39d-1aa6b870c855" key="staticText-4" x="405" y="33" width="62" height="13"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Usua. Gen. Repor:]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="24" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="b0c55f5c-fee9-4f2c-ad2f-f5c316fea82c" key="staticText-1" x="95" y="1" width="351" height="20"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[SOLICITUD DE CREDITO POSTVENTA EXPRESS]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="15" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="bcdd2e83-80f1-4037-9e38-9df3807d4494" key="staticText-17" mode="Opaque" x="10" y="0" width="533" height="14" forecolor="#333333" backcolor="#66CCFF"/>
+				<box>
+					<pen lineWidth="1.5" lineStyle="Solid"/>
+					<topPen lineWidth="1.5" lineStyle="Solid"/>
+					<leftPen lineWidth="1.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.5" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[INFORMACION CLIENTE]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="500" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="883a766a-ae98-4bd0-89de-a052bf78f656" key="staticText-19" x="10" y="3" width="170" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[EJECUTIVO DE VENTAS: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d00effb2-c9b7-4731-bee3-93d3184cbb9a" key="staticText-20" x="180" y="3" width="168" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[AGENCIA: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="aa26789f-0af1-472d-a3ac-4b54d4658ba1" key="staticText-21" x="347" y="3" width="197" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[FECHA DE SOLICITUD: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="06317c6e-527b-4ea7-bd16-bc28e5be2bf5" key="staticText-22" x="10" y="31" width="337" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[NOMBRE O RAZON SOCIAL: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d37153c5-bc5c-4a2d-b270-c91cd51af995" key="staticText-23" x="347" y="31" width="197" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[CEDULA O RUC: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="982d9888-852d-4dfd-af8a-602da4250943" key="staticText-24" x="347" y="59" width="197" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[BARRIO Y REFERENCIA : ]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="b74fa313-053e-411e-8ac9-4dd2e21deba5" key="textField-12" x="10" y="14" width="170" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOM_USUARIO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="932b2d87-baec-4f4f-a023-2fec1fba923c" key="staticText-43" x="10" y="59" width="337" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[DIRECCION DOMICILIO: ]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="b74fa313-053e-411e-8ac9-4dd2e21deba5" key="textField-12" x="180" y="14" width="168" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOM_AGENCIA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd MMMMM yyyy" isBlankWhenNull="true">
+				<reportElement uuid="b74fa313-053e-411e-8ac9-4dd2e21deba5" key="textField-12" x="347" y="14" width="197" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="b74fa313-053e-411e-8ac9-4dd2e21deba5" key="textField-12" x="10" y="42" width="337" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRES}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="b74fa313-053e-411e-8ac9-4dd2e21deba5" key="textField-12" x="347" y="42" width="197" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CEDULA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="b74fa313-053e-411e-8ac9-4dd2e21deba5" key="textField-12" x="10" y="70" width="337" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOMICILIO_CALLE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="b74fa313-053e-411e-8ac9-4dd2e21deba5" key="textField-12" x="347" y="70" width="197" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOMICILIO_REFERECIA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="932b2d87-baec-4f4f-a023-2fec1fba923c" key="staticText-43" x="10" y="115" width="170" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[BANCO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="932b2d87-baec-4f4f-a023-2fec1fba923c" key="staticText-43" x="347" y="115" width="197" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[TIPO CUENTA:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="932b2d87-baec-4f4f-a023-2fec1fba923c" key="staticText-43" x="180" y="115" width="167" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Nro. CUENTA:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="b74fa313-053e-411e-8ac9-4dd2e21deba5" key="textField-12" x="10" y="126" width="170" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOM_BANCO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="b74fa313-053e-411e-8ac9-4dd2e21deba5" key="textField-12" x="180" y="126" width="167" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NO_CUENTA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="b74fa313-053e-411e-8ac9-4dd2e21deba5" key="textField-12" x="347" y="126" width="197" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOM_TCUENTA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="932b2d87-baec-4f4f-a023-2fec1fba923c" key="staticText-43" x="10" y="172" width="534" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[CORREO ELECTRONICO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="932b2d87-baec-4f4f-a023-2fec1fba923c" key="staticText-43" x="180" y="143" width="167" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[TLF. CONVENCIONAL:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="932b2d87-baec-4f4f-a023-2fec1fba923c" key="staticText-43" x="347" y="143" width="197" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[TLF. CELULAR:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="b74fa313-053e-411e-8ac9-4dd2e21deba5" key="textField-12" x="10" y="154" width="170" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOM_ECIVIL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="b74fa313-053e-411e-8ac9-4dd2e21deba5" key="textField-12" x="180" y="154" width="167" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TELEFONO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="b74fa313-053e-411e-8ac9-4dd2e21deba5" key="textField-12" x="347" y="154" width="197" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TELEFONO_CEL}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="932b2d87-baec-4f4f-a023-2fec1fba923c" key="staticText-43" x="347" y="87" width="197" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[TIPO VIVIENDA:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="932b2d87-baec-4f4f-a023-2fec1fba923c" key="staticText-43" x="10" y="143" width="170" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[ESTADO CIVIL:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="b74fa313-053e-411e-8ac9-4dd2e21deba5" key="textField-12" x="10" y="183" width="534" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EMAIL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="b74fa313-053e-411e-8ac9-4dd2e21deba5" key="textField-12" x="347" y="98" width="197" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOM_TVIVIENDA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="932b2d87-baec-4f4f-a023-2fec1fba923c" key="staticText-43" x="10" y="222" width="337" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[NOMBRE REFERENCIA PERSONAL:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="932b2d87-baec-4f4f-a023-2fec1fba923c" key="staticText-43" x="347" y="222" width="197" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[CIUDAD:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="b74fa313-053e-411e-8ac9-4dd2e21deba5" key="textField-12" x="10" y="233" width="337" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GARANTE_NOMBRES}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="b74fa313-053e-411e-8ac9-4dd2e21deba5" key="textField-12" x="348" y="233" width="196" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GARANTE_CIUDAD}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="932b2d87-baec-4f4f-a023-2fec1fba923c" key="staticText-43" x="10" y="250" width="337" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[PARENTESCO / FAMILIAR:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="932b2d87-baec-4f4f-a023-2fec1fba923c" key="staticText-43" x="348" y="250" width="196" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[TLF. REFERENCIA:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="b74fa313-053e-411e-8ac9-4dd2e21deba5" key="textField-12" x="10" y="261" width="337" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GARANTE_PARENTESCO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="b74fa313-053e-411e-8ac9-4dd2e21deba5" key="textField-12" x="348" y="261" width="196" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GARANTE_TELEFONO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="932b2d87-baec-4f4f-a023-2fec1fba923c" key="staticText-43" x="10" y="301" width="338" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[NOMBRE LUGAR DE TRABAJO:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="b74fa313-053e-411e-8ac9-4dd2e21deba5" key="textField-12" x="10" y="312" width="338" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LUGAR_TRABAJO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="932b2d87-baec-4f4f-a023-2fec1fba923c" key="staticText-43" x="348" y="301" width="196" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[CIUDAD:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="b74fa313-053e-411e-8ac9-4dd2e21deba5" key="textField-12" x="348" y="312" width="196" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CIUDAD_TRA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="932b2d87-baec-4f4f-a023-2fec1fba923c" key="staticText-43" x="10" y="329" width="338" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[GIRO DEL NEGOCIO:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="b74fa313-053e-411e-8ac9-4dd2e21deba5" key="textField-12" x="10" y="340" width="338" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GIRO_NEGOCIO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="932b2d87-baec-4f4f-a023-2fec1fba923c" key="staticText-43" x="348" y="329" width="196" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[CARGO:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="b74fa313-053e-411e-8ac9-4dd2e21deba5" key="textField-12" x="348" y="340" width="196" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CARGO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="932b2d87-baec-4f4f-a023-2fec1fba923c" key="staticText-43" x="10" y="357" width="338" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[TLF. TRABAJO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="932b2d87-baec-4f4f-a023-2fec1fba923c" key="staticText-43" x="348" y="357" width="196" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[ANTIGUEDAD:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="b74fa313-053e-411e-8ac9-4dd2e21deba5" key="textField-12" x="10" y="368" width="338" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TELEFONO_TRA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0" isBlankWhenNull="true">
+				<reportElement uuid="b74fa313-053e-411e-8ac9-4dd2e21deba5" key="textField-12" x="348" y="368" width="196" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ANTIGUEDAD_TRA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="932b2d87-baec-4f4f-a023-2fec1fba923c" key="staticText-43" x="10" y="385" width="170" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[INGRESOS MENSUALES:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="b74fa313-053e-411e-8ac9-4dd2e21deba5" key="textField-12" x="10" y="396" width="170" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INGRESO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="932b2d87-baec-4f4f-a023-2fec1fba923c" key="staticText-43" x="180" y="385" width="168" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[EGRESOS MENSUALES:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="b74fa313-053e-411e-8ac9-4dd2e21deba5" key="textField-12" x="180" y="396" width="168" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EGRESO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="932b2d87-baec-4f4f-a023-2fec1fba923c" key="staticText-43" x="348" y="385" width="196" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[DISPONIBLE:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="b74fa313-053e-411e-8ac9-4dd2e21deba5" key="textField-12" x="348" y="396" width="196" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MONTO_DISPONIBLE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="932b2d87-baec-4f4f-a023-2fec1fba923c" key="staticText-43" x="10" y="87" width="337" height="11"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[CIUDAD DE DOMICILIO: ]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="b74fa313-053e-411e-8ac9-4dd2e21deba5" key="textField-12" x="10" y="98" width="337" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CIUDAD_CLIENTE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="bcdd2e83-80f1-4037-9e38-9df3807d4494" key="staticText-17" mode="Opaque" x="10" y="285" width="533" height="14" forecolor="#333333" backcolor="#66CCFF"/>
+				<box>
+					<pen lineWidth="1.5" lineStyle="Solid"/>
+					<topPen lineWidth="1.5" lineStyle="Solid"/>
+					<leftPen lineWidth="1.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.5" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[INFORMACION LUGAR DE TRABAJO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bcdd2e83-80f1-4037-9e38-9df3807d4494" key="staticText-17" mode="Opaque" x="10" y="206" width="533" height="14" forecolor="#333333" backcolor="#66CCFF"/>
+				<box>
+					<pen lineWidth="1.5" lineStyle="Solid"/>
+					<topPen lineWidth="1.5" lineStyle="Solid"/>
+					<leftPen lineWidth="1.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.5" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[INFORMACION REFERENCIA PERSONAL]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="b74fa313-053e-411e-8ac9-4dd2e21deba5" key="textField-12" x="10" y="422" width="534" height="70"/>
+				<textElement textAlignment="Justified" verticalAlignment="Top">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vAutorizacion1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="932b2d87-baec-4f4f-a023-2fec1fba923c" key="staticText-43" x="10" y="4" width="170" height="11"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[FIRMA DEL CLIENTE]]></text>
+			</staticText>
+		</band>
+	</columnFooter>
+</jasperReport>

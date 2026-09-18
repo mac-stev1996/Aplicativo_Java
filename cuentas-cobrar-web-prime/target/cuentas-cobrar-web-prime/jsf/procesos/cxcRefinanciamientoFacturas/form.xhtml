@@ -1,0 +1,190 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Cuentas por Cobrar - Refinanciamiento de Facturas
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="fmrButtons">
+			<p:commandButton styleClass="green-btn" partialSubmit="true"
+				process="@this :idForm" icon="ui-icon ui-icon-save"
+				actionListener="#{cxcRefinanciamientoFacturasController.guardar}"
+				update="@this :idForm" />
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+		<style type="text/css">
+input {
+	width: 95%;
+}
+
+.visualDescuento input {
+	background-color: rgb(132, 184, 106) !important;
+}
+
+.visualCampos input {
+	background-color: white !important;
+}
+
+.visualMora input {
+	background-color: rgb(224, 123, 123) !important;
+	color: white !important;
+}
+</style>
+
+		<h:form id="idForm">
+
+			<p:tabView id="pestanas" cache="false"
+				activeIndex="#{cxcRefinanciamientoFacturasController.tabActiveIndex}"
+				rendered="#{cxcRefinanciamientoFacturasController.activaPantalla}">
+
+				<p:ajax event="tabChange" partialSubmit="true"
+					process="@this, :idForm:pestanas"
+					listener="#{cxcRefinanciamientoFacturasController.changeTab}"
+					update="@this, :idForm:pestanas :fmrButtons" />
+
+				<p:tab id="tabCabecera" title="CABECERA">
+					<ui:include src="cabecera.xhtml" />
+				</p:tab>
+
+				<p:tab id="tabRefinanciacion" title="REFINANCIACION"
+					rendered="#{cxcRefinanciamientoFacturasController.activaDetalle or cxcRefinanciamientoFacturasController.readonly}">
+					<ui:include src="refinanciacion.xhtml" />
+				</p:tab>
+
+			</p:tabView>
+
+			<p:dialog id="dlgFacturas" header="Seleccione una factura..."
+				widgetVar="dlgFacturasW" modal="true" height="400" width="500"
+				showEffect="clip" hideEffect="blind">
+
+				<p:dataTable id="tblFacturas" var="f" widgetVar="tblFacturasW"
+					value="#{cxcRefinanciamientoFacturasController.listaFacturas}"
+					emptyMessage="No se han encontrado facturas" rows="10"
+					paginator="true" paginatorPosition="bottom"
+					currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+
+					<f:facet name="header">
+						<p:inputText id="filtroNoFisico"
+							value="#{cxcRefinanciamientoFacturasController.filtroNoFisico}"
+							placeholder="Buscar">
+							<p:ajax event="change" partialSubmit="true" process="@this"
+								listener="#{cxcRefinanciamientoFacturasController.cargarFacturas}"
+								update="@this, #{p:component('tblFacturas')}" />
+						</p:inputText>
+					</f:facet>
+
+					<p:column headerText="No Físico" width="40%">
+						<p:commandLink value="#{f[0]}" process="@this"
+							partialSubmit="true"
+							actionListener="#{cxcRefinanciamientoFacturasController.selectNoFisico(f)}"
+							oncomplete="PF('dlgFacturasW').hide()"
+							update=":idForm:pestanas:fsCia :idForm:pestanas:fsCliente :idForm:pestanas:fsDocumentos :idForm:pestanas:fsTotales" />
+					</p:column>
+
+					<p:column headerText="Serie Físico" width="30%">
+						<h:outputText value="#{f[1]}" />
+					</p:column>
+
+					<p:column headerText="Cant Prorrogas" width="30%">
+						<h:outputText value="#{f[2]}" />
+					</p:column>
+
+				</p:dataTable>
+
+			</p:dialog>
+
+			<p:dialog id="dlgClientes" header="Seleccione un cliente..."
+				widgetVar="dlgClientesW" modal="true" height="400" width="600"
+				showEffect="clip" hideEffect="blind">
+
+				<p:dataTable id="tblClientes" var="f" widgetVar="tblClientesW"
+					value="#{cxcRefinanciamientoFacturasController.listaClientes}"
+					emptyMessage="No se han encontrado clientes" rows="10"
+					paginator="true" paginatorPosition="bottom"
+					currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+
+					<f:facet name="header">
+						<p:inputText id="filtroCliente"
+							value="#{cxcRefinanciamientoFacturasController.filtroCliente}"
+							placeholder="Buscar">
+							<p:ajax event="change" partialSubmit="true" process="@this"
+								listener="#{cxcRefinanciamientoFacturasController.cargarClientes}"
+								update="@this, #{p:component('tblClientes')}" />
+						</p:inputText>
+					</f:facet>
+
+					<p:column headerText="No Cliente" width="20%">
+						<p:commandLink value="#{f.clientePK.noCliente}" process="@this"
+							partialSubmit="true"
+							actionListener="#{cxcRefinanciamientoFacturasController.selectCliente(f)}"
+							oncomplete="PF('dlgClientesW').hide()"
+							update=":idForm:pestanas:fsRefinanciacion" />
+					</p:column>
+
+					<p:column headerText="Cédula" width="30%">
+						<h:outputText value="#{f.cedula}" />
+					</p:column>
+
+					<p:column headerText="Nombre" width="50%">
+						<h:outputText value="#{f.nombre}" />
+					</p:column>
+
+				</p:dataTable>
+
+			</p:dialog>
+
+			<p:dialog id="dlgGarantes" header="Seleccione un garante..."
+				widgetVar="dlgGarantesW" modal="true" height="400" width="600"
+				showEffect="clip" hideEffect="blind">
+
+				<p:dataTable id="tblGarantes" var="f" widgetVar="tblGarantesW"
+					value="#{cxcRefinanciamientoFacturasController.listaClientes}"
+					emptyMessage="No se han encontrado garantes" rows="10"
+					paginator="true" paginatorPosition="bottom"
+					currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+
+					<f:facet name="header">
+						<p:inputText id="filtroGarante"
+							value="#{cxcRefinanciamientoFacturasController.filtroCliente}"
+							placeholder="Buscar">
+							<p:ajax event="change" partialSubmit="true" process="@this"
+								listener="#{cxcRefinanciamientoFacturasController.cargarClientes}"
+								update="@this, #{p:component('tblGarantes')}" />
+						</p:inputText>
+					</f:facet>
+
+					<p:column headerText="No Cliente" width="20%">
+						<p:commandLink value="#{f.clientePK.noCliente}" process="@this"
+							partialSubmit="true"
+							actionListener="#{cxcRefinanciamientoFacturasController.selectGarante(f)}"
+							oncomplete="PF('dlgGarantesW').hide()"
+							update=":idForm:pestanas:fsRefinanciacion" />
+					</p:column>
+
+					<p:column headerText="Cédula" width="30%">
+						<h:outputText value="#{f.cedula}" />
+					</p:column>
+
+					<p:column headerText="Nombre" width="50%">
+						<h:outputText value="#{f.nombre}" />
+					</p:column>
+
+				</p:dataTable>
+
+			</p:dialog>
+
+		</h:form>
+	</ui:define>
+
+</ui:composition>

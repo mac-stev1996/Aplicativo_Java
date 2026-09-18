@@ -1,0 +1,52 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+<head>
+</head>
+<ui:composition>
+		<h:panelGrid title="Datos la comision" columns="2">
+		<h:outputText value="Tarjeta:" />
+		<p:selectOneMenu id="idTarjetas"
+			style="width: 150px; font-weight:bold;"
+			value="#{comisionesTarjetaCreditoController.comisionTarjeta.noCliente}"
+			filter="true" filterMatchMode="contains">
+			<f:selectItem itemLabel="SELECCIONE" itemValue="" />
+			<f:selectItems value="#{comisionesTarjetaCreditoController.clientes}"
+				var="itemTarj" itemLabel="#{itemTarj.nombre}"
+				itemValue="#{itemTarj.clientePK.noCliente}" />
+		</p:selectOneMenu>
+		<h:outputText value="Banco:" />
+		<p:selectOneMenu id="idBancos" style="width: 150px; font-weight:bold;"
+			value="#{comisionesTarjetaCreditoController.comisionTarjeta.id.banco}"
+			filter="true" filterMatchMode="contains">
+			<f:selectItem itemLabel="SELECCIONE" itemValue="" />
+			<f:selectItems value="#{comisionesTarjetaCreditoController.bancos}"
+				var="item" itemLabel="#{item.descrip}" itemValue="#{item.banco}" />
+		</p:selectOneMenu>
+		<h:outputText value="CUENTA:" for="cuenta" />
+			<p:inputText id="cuenta" autocomplete="off"
+				value="#{comisionesTarjetaCreditoController.comisionTarjeta.cuenta}" />
+			<h:outputText value="DOCUMENTO:" for="documento" />
+			<p:inputText id="documento" autocomplete="off"
+				value="#{comisionesTarjetaCreditoController.comisionTarjeta.id.documento}" />
+			<h:outputText value="FECHA:" styleClass="normal" />
+			<p:calendar pattern="dd/MM/yyyy" autocomplete="off"
+				value="#{comisionesTarjetaCreditoController.comisionTarjeta.fecha}" />
+			<h:outputText value="VALOR:" styleClass="normal" />
+			<p:inputNumber id="inputValor" autocomplete="off"
+				value="#{comisionesTarjetaCreditoController.comisionTarjeta.valor}">
+				<p:ajax update="inputValor" />
+			</p:inputNumber>
+		</h:panelGrid>
+		<h:panelGrid id="idBotones" columns="1"
+			style="text-align:center;width:100%">
+			<p:commandButton value="Guardar"
+				action="#{comisionesTarjetaCreditoController.guardarComision}"
+				partialSubmit="true"
+				process="@form"
+				oncomplete="PF('dialogComision').hide();" update=":form:dtComisiones" />
+		</h:panelGrid>
+</ui:composition>
+</html>

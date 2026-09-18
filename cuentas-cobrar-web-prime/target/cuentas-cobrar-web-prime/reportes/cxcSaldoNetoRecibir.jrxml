@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cxcDiariosADetallePagos" pageWidth="1200" pageHeight="802" columnWidth="1200" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="ee1f736a-a296-4017-81a8-abb5f74c04a8">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="426"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_NO_CIA" class="java.lang.String"/>
+	<parameter name="P_NO_DOCU" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT b.tipo_doc,
+  b.centro,
+  b.no_fisico,
+  b.serie_fisico,
+  b.cant_prorrogas,
+  b.no_docu_refe,
+  b.fecha_vence,
+  a.monto_doc,
+  a.descuento,
+  a.interes,
+  a.total_pago,
+  ' $us'
+FROM arccrd a,
+  arccmd b
+WHERE a.no_cia = $P{P_NO_CIA}
+AND a.no_docu  = $P{P_NO_DOCU}
+AND a.no_cia   = b.no_cia
+AND a.no_refe  = b.no_docu]]>
+	</queryString>
+	<field name="TIPO_DOC" class="java.lang.String"/>
+	<field name="CENTRO" class="java.lang.String"/>
+	<field name="NO_FISICO" class="java.lang.String"/>
+	<field name="SERIE_FISICO" class="java.lang.String"/>
+	<field name="CANT_PRORROGAS" class="java.math.BigDecimal"/>
+	<field name="NO_DOCU_REFE" class="java.lang.String"/>
+	<field name="FECHA_VENCE" class="java.sql.Timestamp"/>
+	<field name="MONTO_DOC" class="java.math.BigDecimal"/>
+	<field name="DESCUENTO" class="java.math.BigDecimal"/>
+	<field name="INTERES" class="java.math.BigDecimal"/>
+	<field name="TOTAL_PAGO" class="java.math.BigDecimal"/>
+	<field name="&apos;$US&apos;" class="java.lang.String"/>
+	<group name="masterDetallePagos">
+		<groupExpression><![CDATA[]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<staticText>
+					<reportElement x="0" y="0" width="100" height="15" uuid="74d879ea-ff48-42f4-bc8d-1a05fac3412c"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[DESCRIPCION]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="100" y="0" width="100" height="15" uuid="d1b0cada-61be-46ff-acaa-1189e3718e69"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[CENTRO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="200" y="0" width="100" height="15" uuid="06c872f7-6dc1-4069-ad5d-d6230e8a5a33"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[FACTURA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="300" y="0" width="100" height="15" uuid="a5f27ed4-8c84-42d6-aac6-de4167d4876f"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[SERIE FISICO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="400" y="0" width="100" height="15" uuid="0b51403c-5226-4603-9b28-f7a042b5f033"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[SECUENCIA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="500" y="0" width="100" height="15" uuid="ed099a1b-a53e-49b9-b5de-c86f88311ba8"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[DOCUMENTO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="600" y="0" width="100" height="15" uuid="86b4d2c6-6e5e-49c2-a0f2-8c065f133abb"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[VENCIMIENTO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="700" y="0" width="100" height="15" uuid="9fdc829f-d202-4b02-936e-dc750654eb34"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[ABONO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="800" y="0" width="200" height="15" uuid="30d47ca9-847b-4c91-a95b-43f784164086"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[DESCUENTO / INTERES]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="1000" y="0" width="100" height="15" uuid="08798f18-2ba9-47a0-9766-69c393453f79"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[VALOR]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="1100" y="0" width="100" height="15" uuid="2dc53fb9-7ce7-4cc8-b5ab-92e9932ddd78"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[MONEDA]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="100" height="15" uuid="38dc9b87-c8f7-4177-855b-b6b5d89d4c91"/>
+				<textFieldExpression><![CDATA[$F{TIPO_DOC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="0" width="100" height="15" uuid="78e81b87-5c65-421f-9cd3-c1e565124530"/>
+				<textFieldExpression><![CDATA[$F{CENTRO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="200" y="0" width="100" height="15" uuid="a93e8353-d4a7-4353-8610-b851eb8ff08d"/>
+				<textFieldExpression><![CDATA[$F{NO_FISICO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="300" y="0" width="100" height="15" uuid="97b5728d-72b9-4dc9-917c-bbe1a5a6c92f"/>
+				<textFieldExpression><![CDATA[$F{SERIE_FISICO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="400" y="0" width="100" height="15" uuid="a116b992-493b-4920-8fa6-53b310738e50"/>
+				<textFieldExpression><![CDATA[$F{CANT_PRORROGAS}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="500" y="0" width="100" height="15" uuid="38e3635d-19eb-48ab-8258-bc67c5876de0"/>
+				<textFieldExpression><![CDATA[$F{NO_DOCU_REFE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="600" y="0" width="100" height="15" uuid="e9e75e3b-d617-4f57-813b-13667d40b9f9"/>
+				<textFieldExpression><![CDATA[$F{FECHA_VENCE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="700" y="0" width="100" height="15" uuid="07bbb87c-d264-4ec0-99cc-44f27d8424d8"/>
+				<textFieldExpression><![CDATA[$F{MONTO_DOC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="800" y="0" width="200" height="15" uuid="56515fb0-3de3-4fdc-bbe4-9909c986bd9c"/>
+				<textFieldExpression><![CDATA[$F{DESCUENTO}.doubleValue()>0D?$F{DESCUENTO}.doubleValue()*-1:$F{INTERES}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1000" y="0" width="100" height="15" uuid="13207a55-7872-4d33-8c79-e5a4241275ac"/>
+				<textFieldExpression><![CDATA[$F{TOTAL_PAGO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1100" y="0" width="100" height="15" uuid="8e1ace29-d808-4bcd-be73-08ed84b6a227"/>
+				<textFieldExpression><![CDATA[$F{'$US'}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

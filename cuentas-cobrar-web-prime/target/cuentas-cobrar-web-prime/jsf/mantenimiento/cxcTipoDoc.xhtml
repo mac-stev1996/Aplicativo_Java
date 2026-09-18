@@ -1,0 +1,355 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Cuentas por Cobrar - Mantenimiento de Tipos Documento
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmButtons">
+			<p:commandButton title="Nuevo" partialSubmit="true"
+				icon="fa fa-file-o" process="@this"
+				style="margin-top: 0px !important; float:right;"
+				styleClass="green-btn" oncomplete="PF('dlgNuevo').show();"
+				update="@this, :dlgNuevo"
+				actionListener="#{cxcTiposDocController.cargarValoresNuevo}" />
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+		<style>
+.w25 {
+	width: 25%;
+}
+</style>
+		<script type="text/javascript">
+		function mayus(e) {
+		    e.value = e.value.toUpperCase();
+		}
+	
+	</script>
+		<h:form id="idForm">
+
+			<div class="ui-g dashboard">
+				<div class="ui-g-12 ui-fluid contact-form">
+					<div class="ui-g-12">
+						<p:dataTable id="tblArcctd" widgetVar="tblArcctd"
+							emptyMessage="No existen registros"
+							value="#{cxcTiposDocController.listadoArcctd}" var="arcctd"
+							rowKey="#{arcctd.pk}" rowIndexVar="var" paginator="true"
+							paginatorAlwaysVisible="false" filterDelay="1000" rows="10"
+							paginatorPosition="bottom" sortOrder="#{arcctd.pk.tipo}"
+							sortField="desc"
+							paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+							<p:column headerText="Tipo Documento" width="10%"
+								filterBy="#{arcctd.pk.tipo}">
+								<p:outputLabel value="#{arcctd.pk.tipo}" />
+							</p:column>
+
+							<p:column headerText="Descripción" width="40%"
+								filterBy="#{arcctd.descripcion}">
+								<p:outputLabel value="#{arcctd.descripcion}" />
+							</p:column>
+
+							<p:column headerText="Formulario" width="20%">
+								<p:outputLabel value="#{arcctd.formulario}" />
+							</p:column>
+							<p:column headerText="Tipo Mov" width="15%">
+								<p:outputLabel
+									value="#{arcctd.tipoMov eq 'D'?'Debito':'Credito'}" />
+							</p:column>
+
+							<p:column headerText="Registro Manual" width="10%">
+								<p:outputLabel value="#{arcctd.afectaSaldo eq 'S'?'Si':'No'}" />
+							</p:column>
+
+							<p:column headerText="Afecta Libro" width="10%">
+								<p:outputLabel value="#{arcctd.afectaLibro eq 'S'?'Si':'No'}" />
+							</p:column>
+
+							<p:column width="5%">
+								<p:commandButton title="Editar" partialSubmit="true"
+									icon="fa fa-pencil" process="@this,tblArcctd"
+									style="margin-top: 0px !important"
+									actionListener="#{cxcTiposDocController.abrirEditar(arcctd)}"
+									oncomplete="PF('dlgEditar').show();" update="dlgEditar">
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+					</div>
+				</div>
+			</div>
+		</h:form>
+		<p:dialog widgetVar="dlgNuevo" id="dlgNuevo"
+			header="Nuevo Tipo Documento" resizable="true" modal="true"
+			closable="true" appendTo="@(body)" width="570" height="400"
+			closeOnEscape="true">
+			<h:form id="idFrmNuevo">
+				<div class="ui-g dashboard">
+					<div class="ui-g-18 ui-fluid contact-form">
+						<div class="ui-g-18">
+							<div class="ui-g-12">
+								<div class="ui-g-3">
+									<p:outputLabel value="Tipo Documento " style="width:100%" />
+
+								</div>
+								<div class="ui-g-3">
+									<p:inputText
+										value="#{cxcTiposDocController.arcctdNuevo.pk.tipo}"
+										onkeyup="mayus(this)">
+
+
+									</p:inputText>
+								</div>
+
+								<div class="ui-g-6">
+									<p:inputText
+										value="#{cxcTiposDocController.arcctdNuevo.descripcion}"
+										style="width:100%" onkeyup="mayus(this)"></p:inputText>
+								</div>
+
+								<div class="ui-g-3">
+
+									<p:outputLabel value="Tipo Movimiento*" style="width:100%" />
+
+									<p:selectOneRadio
+										value="#{cxcTiposDocController.arcctdNuevo.tipoMov}">
+										<f:selectItem itemLabel="Debito" itemValue="D" />
+										<f:selectItem itemLabel="Credito" itemValue="C" />
+
+									</p:selectOneRadio>
+								</div>
+							</div>
+							<div class="ui-g-6">
+
+								<p:outputLabel value="Utilidado Como:" style="width:100%" />
+
+								<p:selectOneRadio
+									value="#{cxcTiposDocController.arcctdNuevo.valorRadio}"
+									columns="2">
+									<f:selectItem itemLabel="Factura Del Sistema de Facturacion"
+										itemValue="FA" />
+									<f:selectItem itemLabel="Unificar Clientes" itemValue="UC" />
+									<f:selectItem itemLabel="Ajuste" itemValue="AJ" />
+									<f:selectItem itemLabel="Cheques Devueltos" itemValue="CD" />
+									<f:selectItem itemLabel="Mov. General" itemValue="GR" />
+									<f:selectItem itemLabel="Refinanciacion/Desagio" itemValue="RD" />
+
+									<p:ajax event="change"
+										listener="#{cxcTiposDocController.asignarValores}"
+										process="@this" update="manual"></p:ajax>
+								</p:selectOneRadio>
+							</div>
+						</div>
+
+						<div class="ui-g-12">
+
+							<div class="ui-g-3">
+								<p:outputLabel value="Registro Manual" style="width:100%" />
+								<p:selectOneMenu
+									value="#{cxcTiposDocController.arcctdNuevo.afectaSaldo}"
+									id="manual">
+									<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+									<f:selectItem itemLabel="Si" itemValue="S" />
+									<f:selectItem itemLabel="No" itemValue="N" />
+
+								</p:selectOneMenu>
+							</div>
+
+							<div class="ui-g-6">
+								<p:outputLabel value="Formulario:" style="width:100%" />
+								<p:selectOneMenu
+									value="#{cxcTiposDocController.arcctdNuevo.formulario}">
+									<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+									<f:selectItems
+										value="#{cxcTiposDocController.listadoControlFormu}"
+										var="formu"
+										itemLabel="#{formu.controlFormuPK.formulario} / #{formu.descripcion}"
+										itemValue="#{formu.controlFormuPK.formulario}"></f:selectItems>
+								</p:selectOneMenu>
+							</div>
+						</div>
+						<div class="ui-g-12">
+							<div class="ui-g-3">
+								<p:outputLabel value="Insertar En:" style="width:100%" />
+								<p:selectOneMenu
+									value="#{cxcTiposDocController.arcctdNuevo.afectaLibro}">
+									<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+									<f:selectItem itemLabel="Afecta libro" itemValue="S" />
+									<f:selectItem itemLabel="Ninguno" itemValue="N" />
+
+								</p:selectOneMenu>
+							</div>
+
+							<div class="ui-g-6">
+
+								<p:commandLink value="Cta ContraPartida"
+									actionListener="#{cxcTiposDocController.abrirPlanCuentas('N')}"
+									update="dlgCuentas">
+								</p:commandLink>
+								<p:outputPanel autoUpdate="true">
+									<p:outputLabel
+										value="#{cxcTiposDocController.arcctdNuevo.ctaContrapartidaScb} - "
+										style="width:100%" />
+									<p:outputLabel
+										value="#{cxcTiposDocController.arcctdNuevo.nombreCuenta}"
+										style="width:100%" />
+								</p:outputPanel>
+							</div>
+						</div>
+					</div>
+
+				</div>
+				<br />
+				<center>
+					<p:commandButton value="Grabar" partialSubmit="true"
+						process="@this, dlgNuevo" action="#{cxcTiposDocController.grabar}"
+						oncomplete="PF('dlgNuevo').hide();" update=":idForm"></p:commandButton>
+				</center>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgEditar" id="dlgEditar"
+			header="Editar Tipo Documento" resizable="true" modal="true"
+			closable="true" appendTo="@(body)" width="570" height="400"
+			closeOnEscape="true">
+			<h:form id="idFrmEditar">
+				<div class="ui-g dashboard">
+					<div class="ui-g-18 ui-fluid contact-form">
+						<div class="ui-g-18">
+							<div class="ui-g-12">
+								<div class="ui-g-3">
+									<p:outputLabel value="Tipo Documento " style="width:100%" />
+
+								</div>
+								<div class="ui-g-3">
+									<p:outputLabel
+										value="#{cxcTiposDocController.arcctdSelected.pk.tipo}"></p:outputLabel>
+								</div>
+
+								<div class="ui-g-6">
+									<p:inputText
+										value="#{cxcTiposDocController.arcctdSelected.descripcion}"
+										style="width:100%" onkeyup="mayus(this)"></p:inputText>
+								</div>
+
+								<div class="ui-g-3">
+
+									<p:outputLabel value="Tipo Movimiento*" style="width:100%" />
+
+									<p:selectOneRadio
+										value="#{cxcTiposDocController.arcctdSelected.tipoMov}"
+										unselectable="true" disabled="true">
+										<f:selectItem itemLabel="Debito" itemValue="D" />
+										<f:selectItem itemLabel="Credito" itemValue="C" />
+
+									</p:selectOneRadio>
+								</div>
+							</div>
+							<div class="ui-g-6">
+
+								<p:outputLabel value="Utilidado Como:" style="width:100%" />
+
+								<p:selectOneRadio id="Util"
+									value="#{cxcTiposDocController.arcctdSelected.valorRadio}"
+									unselectable="true" disabled="true" columns="2">
+									<f:selectItem itemLabel="Factura Del Sistema de Facturacion"
+										itemValue="FA" />
+									<f:selectItem itemLabel="Unificar Clientes" itemValue="UC" />
+									<f:selectItem itemLabel="Ajuste" itemValue="AJ" />
+									<f:selectItem itemLabel="Cheques Devueltos" itemValue="CD" />
+									<f:selectItem itemLabel="Mov. General" itemValue="GR" />
+									<f:selectItem itemLabel="Refinanciacion/Desagio" itemValue="RD" />
+
+
+
+								</p:selectOneRadio>
+							</div>
+						</div>
+
+
+						<div class="ui-g-12">
+							<div class="ui-g-3">
+								<p:outputLabel value="Registro Manual" style="width:100%" />
+								<p:selectOneMenu
+									value="#{cxcTiposDocController.arcctdSelected.afectaSaldo}">
+									<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+									<f:selectItem itemLabel="Si" itemValue="S" />
+									<f:selectItem itemLabel="No" itemValue="N" />
+
+								</p:selectOneMenu>
+							</div>
+							<div class="ui-g-6">
+								<p:outputLabel value="Formulario:" style="width:100%" />
+								<p:selectOneMenu
+									value="#{cxcTiposDocController.arcctdSelected.formulario}">
+									<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+									<f:selectItems
+										value="#{cxcTiposDocController.listadoControlFormu}"
+										var="formu"
+										itemLabel="#{formu.controlFormuPK.formulario} / #{formu.descripcion}"
+										itemValue="#{formu.controlFormuPK.formulario}"></f:selectItems>
+								</p:selectOneMenu>
+							</div>
+
+						</div>
+						<div class="ui-g-12">
+
+							<div class="ui-g-3">
+								<p:outputLabel value="Insertar En:" style="width:100%" />
+								<p:selectOneMenu
+									value="#{cxcTiposDocController.arcctdSelected.afectaLibro}">
+									<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+									<f:selectItem itemLabel="Afecta libro" itemValue="S" />
+									<f:selectItem itemLabel="Ninguno" itemValue="N" />
+
+								</p:selectOneMenu>
+							</div>
+							<div class="ui-g-3">
+								<p:commandLink value="Cta ContraPartida"
+									actionListener="#{cxcTiposDocController.abrirPlanCuentas('E')}"
+									update="dlgCuentas">
+								</p:commandLink>
+								<p:outputPanel autoUpdate="true">
+									<p:outputLabel
+										value="#{cxcTiposDocController.arcctdSelected.ctaContrapartidaScb}"
+										style="width:100%" />
+									<p:outputLabel
+										value="#{cxcTiposDocController.arcctdSelected.nombreCuenta}"
+										style="width:100%" />
+								</p:outputPanel>
+							</div>
+						</div>
+
+
+					</div>
+
+				</div>
+				<br />
+				<center>
+					<p:commandButton value="Actualizar" partialSubmit="true"
+						process="@this, dlgEditar"
+						action="#{cxcTiposDocController.actualizar}"
+						oncomplete="PF('dlgEditar').hide();" update=":idForm"></p:commandButton>
+				</center>
+			</h:form>
+		</p:dialog>
+		<p:dialog widgetVar="dlgCuentas" id="dlgCuentas"
+			header="Seleccione una Cuenta" resizable="true" modal="true"
+			closable="true" appendTo="@(body)" width="520" height="420"
+			closeOnEscape="true">
+			<h:form id="idFrmCuenta">
+				<ui:fragment>
+					<ui:include src="../common/dialog/dialogPlanCuentas.xhtml" />
+				</ui:fragment>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+
+</ui:composition>

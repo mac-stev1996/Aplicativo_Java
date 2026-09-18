@@ -1,0 +1,223 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+	<ui:define name="title">
+		Carga CxC Renting
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmBotones">
+
+			<p:commandButton style="float: right;" id="buscarCargasP"
+						action="#{cxcRentingCargaController.abrirBusqueda}"
+						value="Buscar Cargas" process="@this"
+						partialSubmit="true" />
+
+				
+			<p:commandButton style="float: right;" id="carga"
+						action="#{cxcRentingCargaController.abrirCargaExcel}"
+						value="Cargar Excel" process="@this"
+						partialSubmit="true" />
+						
+		</h:form>
+	</ui:define>
+	<ui:define name="content">
+		<style type="text/css">
+body {
+	font-size: 11px;
+}
+
+.ui-g-12 {
+	padding: .2em .5em !important;
+}
+
+.w5 {
+	width: 5%;
+}
+
+.dashboard .contact-form .ui-button {
+	margin-top: 0px;
+}
+
+body .ui-button .ui-button-text {
+	font-size: 11px !important;
+}
+
+.table thead th, .table tbody tr td {
+	font-size: 11px !important;
+	padding: 2px 7px !important;
+}
+</style>
+
+
+		<h:form id="idFormDatos">
+
+			<div class="ui-g dashboard">
+				<div class="ui-g-12 ui-fluid contact-form">
+					<div class="ui-g-12">
+						<p:dataTable id="tblDetalleD" widgetVar="tblDetalleD"
+							emptyMessage="No existen registros"
+							value="#{cxcRentingCargaController.detalleLst}" var="item"
+							rowKey="#{item.id}" rowIndexVar="var" >
+
+							<p:column headerText="Sec" width="10%">
+								<p:outputLabel value="#{item.id.cxcRentingCargaId}" />
+							</p:column>
+
+							<p:column headerText="Empresa" width="10%">
+								<p:outputLabel value="#{item.codigoEmpresa}" />
+							</p:column>
+							
+							<p:column headerText="Nombre Empresa" width="25%"
+								filterBy="#{item.nombreEmpresa}">
+								<p:outputLabel value="#{item.nombreEmpresa}" />
+							</p:column>
+							
+							<p:column headerText="Agencia" width="10%"
+								filterBy="#{item.codigoAgencia}">
+								<p:outputLabel value="#{item.codigoAgencia}" />
+							</p:column>
+							
+							<p:column headerText="Nombre Agencia" width="10%"
+								filterBy="#{item.nombreAgencia}">
+								<p:outputLabel value="#{item.nombreAgencia}" />
+							</p:column>
+							
+							<p:column headerText="Linea" width="5%"
+								filterBy="#{item.lineaNegocioAsignado}">
+								<p:outputLabel value="#{item.lineaNegocioAsignado}" />
+							</p:column>
+							
+							<p:column headerText="Fecha Cierre" width="10%">
+								<p:outputLabel value="#{item.fechaCierre}" />
+							</p:column>
+
+							<p:column headerText="Relacionado" width="15%"
+								filterBy="#{item.relacionado}">
+								<p:outputLabel value="#{item.relacionado}" />
+							</p:column>
+							
+							<p:column headerText="Total Documentos" width="5%" style="text-align:right" >
+								<p:outputLabel value="#{item.totalDocumentos}"  >
+								    <f:convertNumber pattern="#"/>
+								</p:outputLabel>
+							</p:column>
+							
+							<p:column headerText="Saldo Total Cxc" width="15%" style="text-align:right">
+								<p:outputLabel value="#{item.saldoTotalCxc}"  >
+								    <f:convertNumber pattern="#.00"/>
+								  </p:outputLabel>
+							</p:column>
+
+							<p:column headerText="Año Cierre" width="10%" style="text-align:right"
+								filterBy="#{item.anioCierre}">
+								<p:outputLabel value="#{item.anioCierre}"  >
+								    <f:convertNumber pattern="#"/>
+								  </p:outputLabel>
+							</p:column>
+
+							<p:column headerText="Mes Cierre" width="10%"  style="text-align:right"
+								filterBy="#{item.mesCierre}">
+								<p:outputLabel value="#{item.mesCierre}" >
+								    <f:convertNumber pattern="#"/>
+								</p:outputLabel>
+							</p:column>
+							
+							
+							
+						</p:dataTable>
+					</div>
+				</div>
+			</div>
+		</h:form>
+
+
+		<p:dialog header="Cargar Excel" widgetVar="dlgArchivo" modal="true"
+			showEffect="fade" hideEffect="fade" resizable="true" width="600"
+			position="center center" closeOnEscape="true">
+			<h:form id="frmArchivo">
+				<p:fileUpload required="true"
+					fileUploadListener="#{cxcRentingCargaController.leerArchivo}"
+					mode="advanced" dragDropSupport="true" process="@this"
+					update="frmBotones" uploadLabel="Cargar Datos"
+					cancelLabel="Cancelar" label="Seleccionar Archivo" fileLimit="1"
+					fileLimitMessage="Solo puede subir un archivo">
+				</p:fileUpload>
+			</h:form>
+		</p:dialog>
+		
+		
+		<p:dialog header="Buscar Carga Renting" widgetVar="dlgBuscarCarga"
+			id="dlgBuscarCarga" modal="true" showEffect="slide" hideEffect="slide"
+			style="position:fixed" resizable="true" width="95%" height="auto"
+			closeOnEscape="true">
+				<h:form id="frmBuscarCarga">
+				
+				<h:panelGrid columns="6">
+					<f:facet name="header">
+						<h:outputText value="Filtros de B&#250;squeda"></h:outputText>
+					</f:facet>
+					<h:outputText value="Desde: " style="font-weight: bold;"></h:outputText>
+					<p:calendar title="Fecha Desde"
+							value="#{cxcRentingCargaController.fechaDesde}"
+							autocomplete="off" locale="es"></p:calendar>
+					
+					<h:outputText value="Hasta: " style="font-weight: bold;"></h:outputText>
+					<p:calendar title="Fecha Hasta"
+							value="#{cxcRentingCargaController.fechaHasta}"
+							autocomplete="off" locale="es"></p:calendar>
+					
+					<p:spacer width="20" height="5"></p:spacer>
+					
+					
+					
+					<p:commandButton value="Buscar" icon="fa fa-search"
+						styleClass="orange-btn"
+						action="#{cxcRentingCargaController.buscarCargas}"
+						update="frmBuscarCarga:dtBuscarCarga"></p:commandButton>
+				</h:panelGrid>
+				
+				
+				<p:dataTable id="dtBuscarCarga" var="item"
+					value="#{cxcRentingCargaController.cxcRentingCargaLst}"
+					rowKey="#{item.id}" emptyMessage="No existe cargas de renting"
+					paginator="true" filterDelay="1000" rows="5"
+					paginatorPosition="bottom"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+					
+					<p:column headerText="Id" width="18%">
+						<p:outputLabel value="#{item.id.cxcRentingCargaId}" />
+					</p:column>
+					<p:column headerText="Estado" width="9%">
+						<p:outputLabel value="#{item.estado}" />
+					</p:column>
+					<p:column width="7%" headerText="Fecha Carga">
+						<p:outputLabel value="#{item.fechaCarga}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:outputLabel>
+					</p:column>
+					<p:column headerText="Usuario Carga" width="9%">
+						<p:outputLabel value="#{item.usuarioCarga}" />
+					</p:column>
+					
+					<p:column headerText="Seleccionar" width="5%" style="text-align:center">
+						<p:commandLink partialSubmit="true"
+							process="@this" ajax="false" value="Seleccionar"
+							action="#{cxcRentingCargaController.seleccionarCarga(item.id)}"
+							update="idFormDatos:tblDetalleD"
+							oncomplete="PF('dlgBuscarCarga').hide();">
+						</p:commandLink>
+					</p:column>
+	
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+		
+		
+	</ui:define>
+</ui:composition>

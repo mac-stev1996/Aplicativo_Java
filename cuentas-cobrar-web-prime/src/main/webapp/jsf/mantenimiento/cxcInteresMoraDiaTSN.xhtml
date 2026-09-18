@@ -1,0 +1,169 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Interes por Mora por Días TSN
+	</ui:define>
+
+
+	<ui:define name="content">
+		<style>
+.w25 {
+	width: 25%;
+}
+</style>
+		<h:form id="idForm">
+			<p:toolbar>
+				<f:facet name="left">
+
+				</f:facet>
+				<f:facet name="right">
+					<p:commandButton title="Nuevo" icon="fa fa-file-o"
+						update="dlgNuevo" oncomplete="PF('dlgNuevo').show();" />
+				</f:facet>
+			</p:toolbar>
+
+			<div class="ui-g-12 ui-fluid contact-form">
+				<p:panelGrid columns="3" styleClass="showcase-text-align-center">
+					<p:outputLabel value="Tipo de Financiamiento" />
+					<p:column>
+						<p:selectOneMenu id="tipoFinanciamiento"
+							value="#{cxcInteresMoraDiaTsnController.tipoFinanciamiento}" filter="true"
+							filterMatchMode="contains" required="true">
+							<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+							<f:selectItems
+								value="#{cxcInteresMoraDiaTsnController.tipoFinanciamientoList}"
+								var="item" itemValue="#{item.arcctfPK.tipo}"
+								itemLabel="#{item.arcctfPK.tipo} / #{item.entidad}" />
+						</p:selectOneMenu>
+					</p:column>
+					<p:commandButton title="Buscar por Tipo de Financiamiento"
+						icon="ui-icon-search"
+						actionListener="#{cxcInteresMoraDiaTsnController.buscar()}"
+						update="idForm" styleClass="secondary-btn">
+					</p:commandButton>
+				</p:panelGrid>
+
+				<div class="ui-g dashboard">
+					<div class="ui-g-12 ui-fluid contact-form">
+						<div class="ui-g-12">
+							<p:dataTable id="tblInteres" widgetVar="tblInteres"
+								emptyMessage="No existen registros"
+								value="#{cxcInteresMoraDiaTsnController.listadoTsn}" var="item"
+								selection="#{cxcInteresMoraDiaTsnController.cxcInteresMoraDiaTsnSeleted}"
+								rowKey="#{item.pk}" rowIndexVar="var" editable="true"
+								editMode="cell" styleClass="table table-body" paginator="true"
+								paginatorAlwaysVisible="true" paginatorPosition="top"
+								filterDelay="1000" rows="10"
+								currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+								paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+
+								<p:ajax event="cellEdit" partialSubmit="true" process="@this"
+									listener="#{cxcInteresMoraDiaTsnController.editar(item)}"
+									update="@this, tblInteres" global="false" />
+
+								<p:column headerText="Días Inicio" width="20%"
+									filterBy="#{item.pk.diasInicio}">
+									<p:outputLabel value="#{item.pk.diasInicio}" />
+								</p:column>
+
+								<p:column headerText="Días Fin" width="20%"
+									filterBy="#{item.pk.diasFin}">
+									<p:outputLabel value="#{item.pk.diasFin}" />
+								</p:column>
+								<p:column headerText="Porcentaje" width="20%"
+									filterBy="#{item.porcentaje}">
+									<p:cellEditor>
+										<f:facet name="output">
+											<p:outputLabel value="#{item.porcentaje}" />
+										</f:facet>
+										<f:facet name="input">
+											<p:inputNumber value="#{item.porcentaje}" decimalPlaces="2"
+												decimalSeparator="." />
+										</f:facet>
+									</p:cellEditor>
+								</p:column>
+								<p:column width="5%">
+									<p:commandButton title="Eliminar" partialSubmit="true"
+										icon="ui-icon ui-icon-delete" process="@this,tblInteres"
+										style="margin-top: 0px !important" styleClass="red-btn"
+										actionListener="#{cxcInteresMoraDiaTsnController.eliminar(item)}"
+										update="idForm">
+										<p:confirm header="Confirmación"
+											message="¿Esta seguro que desea eliminar el registro?"
+											icon="pi pi-exclamation-triangle" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</div>
+					</div>
+				</div>
+			</div>
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="pi pi-check"
+					update="tblArccTasa" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+			</p:confirmDialog>
+		</h:form>
+		<p:dialog widgetVar="dlgNuevo" id="dlgNuevo"
+			header="Nuevo Interes por Mora por Días" resizable="true"
+			modal="true" closable="true" appendTo="@(body)" width="750"
+			height="200" closeOnEscape="true">
+			<h:form id="FrmResult">
+
+				<p:panelGrid columns="2">
+					<p:outputLabel value="tipo de Financiamiento *" style="width:50%"  />
+					<p:column>
+						<p:selectOneMenu id="idTipoFinanciamiento"
+							value="#{cxcInteresMoraDiaTsnController.cxcInteresMoraDiaTsnNuevo.pk.tipo}"
+							filter="true" filterMatchMode="contains" >
+							<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+							<f:selectItems
+								value="#{cxcInteresMoraDiaTsnController.tipoFinanciamientoList}"
+								var="item" itemValue="#{item.arcctfPK.tipo}"
+								itemLabel="#{item.entidad}" />
+								<p:ajax event="change" process="@this"
+									partialSubmit="true" />
+						</p:selectOneMenu>
+					</p:column>
+
+					<p:outputLabel value="Días Inicio *" style="width:100%" />
+					<p:inputNumber id="idDiasInicio"
+						value="#{cxcInteresMoraDiaTsnController.cxcInteresMoraDiaTsnNuevo.pk.diasInicio}"
+						style="width:100%" decimalPlaces="0" decimalSeparator="" >
+						<p:ajax event="change" process="@this"
+							partialSubmit="true" />
+					</p:inputNumber>
+					<p:outputLabel value="Días Fin *" style="width:100%" />
+					<p:inputNumber id="idDiasFin"
+						value="#{cxcInteresMoraDiaTsnController.cxcInteresMoraDiaTsnNuevo.pk.diasFin}"
+						style="width:100%" decimalPlaces="0" decimalSeparator="">
+						<p:ajax event="change"
+							listener="#{cxcInteresMoraDiaTsnController.validarFechas()}"
+							update="idTipoFinanciamiento,idPorcentaje" />
+						</p:inputNumber>
+
+					<p:outputLabel value="Porcentaje *" style="width:100%" />
+					<p:inputNumber id="idPorcentaje"
+						value="#{cxcInteresMoraDiaTsnController.cxcInteresMoraDiaTsnNuevo.porcentaje}"
+						decimalPlaces="2" decimalSeparator="." style="width:100%" />
+				</p:panelGrid>
+				<br />
+				<center>
+					<p:commandButton value="Guardar" partialSubmit="true"
+						process="@this, dlgNuevo"
+						action="#{cxcInteresMoraDiaTsnController.grabar}"
+						oncomplete="PF('dlgNuevo').hide();" update="idForm"></p:commandButton>
+				</center>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+
+</ui:composition>

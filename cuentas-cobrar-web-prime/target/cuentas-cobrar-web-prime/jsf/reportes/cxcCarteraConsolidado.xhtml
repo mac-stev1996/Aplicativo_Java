@@ -1,0 +1,60 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Reporte de Cartera Consolidado
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmButtons"></h:form>
+	</ui:define>
+
+	<ui:define name="content">
+		<style type="text/css">
+</style>
+		<h:form id="idForm">
+			<center>
+				<p:panel id="basic">
+					<br />
+					<p:outputLabel
+						value="Por favor ingrese los datos solicitados para la generación del reporte" />
+					<br />
+					<br />
+					<br />
+					<h:panelGrid title="Parámetros de búsqueda" styleClass="normal"
+						columns="2" id="pnlFiltros" style="width::100%">
+						<p:outputLabel value="Año:" styleClass="bold" />
+						<p:inputText value="#{cxcCarteraConsolidadoController.anio}"
+							maxlength="4" size="8" autocomplete="off">
+							<p:keyFilter mask="num" />
+						</p:inputText>
+
+						<p:outputLabel value="Mes:" styleClass="bold" />
+						<p:selectOneMenu style="width: 150px;" autoWidth="false"
+							value="#{cxcCarteraConsolidadoController.mes}">
+							<f:selectItems value="#{cxcCarteraConsolidadoController.meses}" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+					<br> </br>
+					<h:panelGrid columns="1" border="0"
+						columnClasses="iconCell, iconCell, iconCell" cellpadding="0"
+						cellspacing="0"
+						style="background-color: #CCCCCC;text-align:center;">
+						<p:commandButton id="printo" ajax="false" value="Generar Reporte"
+							onclick="this.form.target='_blank'" styleClass="green-btn"
+							actionListener="#{cxcCarteraConsolidadoController.generarReporte}"
+							icon="fa fa-file-excel-o" />
+					</h:panelGrid>
+				</p:panel>
+			</center>
+		</h:form>
+		<h:inputHidden value="/reportes/reporteCarteraGeneral.jasper"
+			binding="#{cxcCarteraConsolidadoController.reportPath}" />
+
+	</ui:define>
+</ui:composition>

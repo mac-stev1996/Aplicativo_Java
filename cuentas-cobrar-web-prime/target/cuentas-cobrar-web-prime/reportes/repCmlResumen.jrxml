@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="repCmlResumen" language="groovy" pageWidth="1600" pageHeight="842" columnWidth="1580" leftMargin="0" rightMargin="20" topMargin="20" bottomMargin="20" uuid="fbd4abee-cb62-411a-9380-76cb9239c533">
+	<property name="ireport.zoom" value="1.3310000000000037"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="p_no_cia" class="java.lang.String"/>
+	<parameter name="p_periodo" class="java.lang.String"/>
+	<parameter name="p_anio" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select (select b.codigo_uaf from arcgmc b where b.no_cia = $P{p_no_cia}) cod_registro,LPAD(periodo,2,'0') periodo_reporte,to_char(fecha,'yyyyMMdd') fecha_reporte,usuario cod_usuario,
+tot_reg_clientes,tot_reg_operaciones,tot_reg_transacciones,total_operaciones,total_debitos,total_creditos,total_efectivo,
+total_cheque,total_tc total_tarjeta_credito,tot_tvalores_bienes total_tvalores_bienes,tot_valor_total total_valor_total
+from cml_resumen
+where no_cia=$P{p_no_cia}
+and periodo=$P{p_periodo}
+and anio=$P{p_anio}]]>
+	</queryString>
+	<field name="COD_REGISTRO" class="java.lang.String"/>
+	<field name="PERIODO_REPORTE" class="java.lang.String"/>
+	<field name="FECHA_REPORTE" class="java.lang.String"/>
+	<field name="COD_USUARIO" class="java.lang.String"/>
+	<field name="TOT_REG_CLIENTES" class="java.math.BigDecimal"/>
+	<field name="TOT_REG_OPERACIONES" class="java.math.BigDecimal"/>
+	<field name="TOT_REG_TRANSACCIONES" class="java.math.BigDecimal"/>
+	<field name="TOTAL_OPERACIONES" class="java.math.BigDecimal"/>
+	<field name="TOTAL_DEBITOS" class="java.math.BigDecimal"/>
+	<field name="TOTAL_CREDITOS" class="java.math.BigDecimal"/>
+	<field name="TOTAL_EFECTIVO" class="java.math.BigDecimal"/>
+	<field name="TOTAL_CHEQUE" class="java.math.BigDecimal"/>
+	<field name="TOTAL_TARJETA_CREDITO" class="java.math.BigDecimal"/>
+	<field name="TOTAL_TVALORES_BIENES" class="java.math.BigDecimal"/>
+	<field name="TOTAL_VALOR_TOTAL" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="15" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="bf153986-c083-43f8-adef-a3889d8860fb" stretchType="RelativeToTallestObject" x="0" y="0" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COD_REGISTRO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a2d8d16d-8832-440e-a47d-a90e147df2a3" stretchType="RelativeToTallestObject" x="100" y="0" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PERIODO_REPORTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6fdc9f36-9811-41c5-9611-5526ef746471" stretchType="RelativeToTallestObject" x="200" y="0" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA_REPORTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6609ea15-577b-4be0-8c5a-56de7a18bbb1" stretchType="RelativeToTallestObject" x="300" y="0" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COD_USUARIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3397d224-506d-4c1a-a2ac-d2729347fcdf" stretchType="RelativeToTallestObject" x="400" y="0" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL_REG_CLIENTES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="62aa44e7-6c20-430a-966a-5035bff211b8" stretchType="RelativeToTallestObject" x="500" y="0" width="116" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL_REG_OPERACIONES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3fb9b8ae-62d2-4ffd-aa28-a5e62b95bd60" stretchType="RelativeToTallestObject" x="616" y="0" width="126" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL_REG_TRANSACCIONES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6625610a-6ba9-4359-b48c-2fde7ec79f76" stretchType="RelativeToTallestObject" x="742" y="0" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL_OPERACIONES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4d21f812-1024-4831-99e7-524ca35b37c0" stretchType="RelativeToTallestObject" x="842" y="0" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL_DEBITOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8ccad0c5-46c2-4882-ad58-a51d0d85de44" stretchType="RelativeToTallestObject" x="942" y="0" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL_CREDITOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b10db519-f385-44d2-af1f-861e5e9d2578" stretchType="RelativeToTallestObject" x="1042" y="0" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL_EFECTIVO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="23aeb669-4244-4cb0-8468-4d1f027099ed" stretchType="RelativeToTallestObject" x="1142" y="0" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL_CHEQUE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2e0d41c5-ee76-4e1c-adb4-29478e55bc25" stretchType="RelativeToTallestObject" x="1242" y="0" width="108" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL_TARJETA_CREDITO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8924fd94-dfbe-49ae-ba0f-1fa8f9c28dc5" stretchType="RelativeToTallestObject" x="1350" y="0" width="128" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL_TVALORES_BIENES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="43b4be0e-7512-44b1-b3b9-66f718ad8bd8" stretchType="RelativeToTallestObject" x="1478" y="0" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL_VALOR_TOTAL]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="3476ac2b-b097-47bd-ba9e-b3288f39b98b" x="0" y="0" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COD_REGISTRO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="9d5c42c1-acd0-4197-b017-d2efcf8c42ee" x="100" y="0" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PERIODO_REPORTE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="yyyyMMdd" isBlankWhenNull="true">
+				<reportElement uuid="bc7262a4-0c51-4033-aa43-ecf2a30e916e" x="200" y="0" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA_REPORTE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="9e84eab0-5545-48ee-befb-1bf419dbe4ce" x="300" y="0" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COD_USUARIO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="55c9c9c6-5432-44e6-8800-f4cc7a6fc2f5" x="400" y="0" width="100" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOT_REG_CLIENTES}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="adbe6742-71a1-455d-91d3-5372289621b5" x="500" y="0" width="116" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOT_REG_OPERACIONES}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="b4465720-3141-4a48-b713-257ce27aeb59" x="616" y="0" width="126" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOT_REG_TRANSACCIONES}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c8fc59aa-090a-4e2a-a882-e9e210eb7f2f" x="742" y="0" width="100" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL_OPERACIONES}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="85fc7fe0-8e30-4714-b668-3b0dca2885a1" x="842" y="0" width="100" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL_DEBITOS}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="d360d23e-00dc-4de0-804c-f53768016e6f" x="942" y="0" width="100" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL_CREDITOS}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="62da22b6-acd7-4101-9e14-0086e6a04f62" x="1042" y="0" width="100" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL_EFECTIVO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="98d8a4ab-4315-4818-a82f-5946eeba9013" x="1142" y="0" width="100" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL_CHEQUE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="f6988fe2-bbd1-4574-beb8-4fab6824740a" x="1242" y="0" width="108" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL_TARJETA_CREDITO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="f4efb022-e3c0-4be2-a74b-39f174b8dfa8" x="1350" y="0" width="128" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL_TVALORES_BIENES}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c940796d-7a3e-4fa1-8299-dd27e8bc6a62" x="1478" y="0" width="100" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL_VALOR_TOTAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,107 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+<head>
+
+</head>
+<ui:composition>
+
+
+	<p:toolbar>
+		<f:facet name="left">
+
+		</f:facet>
+		<f:facet name="right">
+			<h:panelGrid id="pgComandosAgencia" columns="2">
+		
+				<p:commandButton title="Editar" icon="fa fa-pencil"
+					value="Editar" partialSubmit="true"
+					actionListener="#{cmlAgenciaController.mostrarDialogoAgenciaEditar}"
+					update=":form:tabViewTablas:pgAgencia"
+					styleClass="green-btn" style="margin-top:0px !important;"
+				 />	 
+				 </h:panelGrid>
+		</f:facet>
+	</p:toolbar>
+
+	<p:dataTable var="item" id="tblAgencia"
+		value="#{cmlAgenciaController.listaAgencia}"
+		selectionMode="single"
+         selection="#{cmlAgenciaController.cmlAgenciaSeleccionado}" rowKey="#{item.id.codigo}"
+		 scrollable="true"
+		scrollHeight="345" emptyMessage="No se han encontrado elementos"
+		rowIndexVar="var" styleClass="hover-rows table table-body">
+		<p:column headerText="Código" style="width:35px;padding-left:1px;">
+			<h:outputText value="#{item.id.codigo}" />
+		</p:column>
+		<p:column headerText="Descripción" style="padding-left:1px;">
+			<h:outputText value="#{item.descripcion}" />
+		</p:column>
+		<p:column headerText="Valor" style="width:35px;padding-left:1px;">
+			<h:outputText value="#{item.valor}" />
+		</p:column>
+		<p:column headerText="Estado" style="width:35px;padding-left:1px;">
+			<h:outputText value="#{item.estado}" />
+		</p:column>
+	</p:dataTable>
+
+	<p:dialog id="dlgAgencia" widgetVar="dlgAgenciaWV"
+		header="Detalle Agencia" style="position:fixed" responsive="true"
+		closeOnEscape="true" modal="true" appendTo="@(body)" width="500"
+		height="250">
+
+		<p:toolbar>
+			<f:facet name="left">
+
+			</f:facet>
+			<f:facet name="right">
+				<p:commandButton title="Guardar" icon="fa fa-save"
+					partialSubmit="true"
+					process="@this, :form:tabViewTablas:pgAgencia"
+					actionListener="#{cmlAgenciaController.guardarAgencia()}"
+					styleClass="deep-orange-btn" style="margin-top:0px !important;"
+					update=":form:tabViewTablas:tblAgencia" />
+
+			</f:facet>
+		</p:toolbar>
+
+		<h:panelGrid id="pgAgencia" columns="2"
+			columnClasses="w30 txtR, w70 txtR" width="100%">
+
+			<p:outputLabel style="float:right;font-weight:bold;" value="Código" />
+			<p:outputLabel style="float:left;" id="somCodigoAgencia"
+				value="#{cmlAgenciaController.codigo}">
+			</p:outputLabel>
+
+			<p:outputLabel style="float:right;font-weight:bold;" value="Descripción" />
+			<p:outputLabel style="float:left;" id="somDescripcionAgencia"
+				value="#{cmlAgenciaController.descripcion}">
+			</p:outputLabel>
+
+
+			<p:outputLabel style="float:right;font-weight:bold;"
+				value="Valor" />
+				
+			<p:inputText style="float:left;" id="somValorAgencia"
+				value="#{cmlAgenciaController.valor}">
+			</p:inputText>
+
+
+			<p:outputLabel style="float:right;font-weight:bold;"
+				value="Estado" />
+			<p:selectOneMenu style="float:left;" id="somEstadoAgencia"
+				value="#{cmlAgenciaController.estado}">
+				<f:selectItem itemLabel="Seleccione" itemValue="" />
+				<f:selectItem itemLabel="Activo" itemValue="A" />
+				<f:selectItem itemLabel="Inactivo" itemValue="I" />
+			</p:selectOneMenu>
+
+
+		</h:panelGrid>
+		
+	</p:dialog>
+
+</ui:composition>
+</html>

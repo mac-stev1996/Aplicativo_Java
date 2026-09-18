@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cxcRegistroMercantil" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="182c1d55-c764-404a-b66f-c24833ab4f28">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="231"/>
+	<parameter name="p_no_cia" class="java.lang.String"/>
+	<parameter name="p_agencia" class="java.lang.String"/>
+	<parameter name="p_no_fisico" class="java.lang.String"/>
+	<parameter name="p_serie_fisico" class="java.lang.String"/>
+	<parameter name="p_cant_prorrogas" class="java.lang.Integer"/>
+	<parameter name="p_no_cliente" class="java.lang.String"/>
+	<parameter name="p_no_inscripcion" class="java.lang.String"/>
+	<parameter name="p_tomo" class="java.lang.String"/>
+	<parameter name="p_anio" class="java.lang.String"/>
+	<parameter name="p_fecha" class="java.util.Date"/>
+	<queryString>
+		<![CDATA[select b.cedula, substr(b.nombre,1,50)  nombre,
+           decode(b.gracia,1,'Señor',2,'Señora',3,'Señorita',4,'Señores',5,'Señores',null,'Señores') gracia,
+           a.chasis,TO_CHAR(a.fecha, 'DD/MM/YYYY') fecha,a.centrod||'-'||a.no_fisico factura,
+           c.svmrcodi marca,  c.svinafabr modelo, c.svinmotor motor, c.svinafabr anio_fabri,
+           nvl((select  d.svcodescri from svfmascol d where d.no_cia = a.no_cia  and d.svmamaster = c.svmamaster
+    	     and d.svcotipo = 'E'  and d.svcocodi = c.svincoex),'***') color_master,
+           nvl((select  e.svcodescri from svfcolor e  where e.no_cia = c.no_cia and e.svcotipo = 'E' and  e.svcocodi=c.svincoex),'***') color_semi,
+          p.texto1 reponsable, p.texto2 cargo,
+          (select  count(*) from arccmd
+  where no_cia = a.no_cia  and centro = a.centrod  and no_fisico = a.no_fisico  and serie_fisico =  a.serie_fisico and cant_prorrogas = a.cant_prorrogas ) letras,
+(select nombre from arcgmc where no_cia=a.no_cia) nombre_compania,
+(select no_fisico||serie_fisico
+ from arccmd
+where no_cia =a.no_cia
+and no_docu = (select max(no_docu) from arccrd
+                where no_cia =a.no_cia
+                and no_refe = (select max(no_docu) from arccmd
+                                where no_cia  =a.no_cia
+                                and no_fisico = a.no_fisico
+                                and serie_fisico =a.serie_fisico
+                                and centro = a.centrod
+                                and no_cliente = a.no_cliente
+                                and cant_prorrogas = a.cant_prorrogas))) ingreso1,
+    nvl((select max(nota_ingreso) from svfant	where no_cia = a.no_cia	and no_factu_refe = a.no_factu),'***') ingreso2
+from fac_ventas_cab a, arccmc b, svfinven c, param_det p
+where a.no_cia = $P{p_no_cia}
+and a.centrod = $P{p_agencia}
+and a.no_fisico =$P{p_no_fisico}
+and a.serie_fisico = $P{p_serie_fisico}
+and a.cant_prorrogas = $P{p_cant_prorrogas}
+and a.no_cliente=$P{p_no_cliente}
+and a.no_cia = b.no_cia
+and a.no_cliente = b.no_cliente
+and a.no_cia=c.no_cia(+)
+and a.chasis=c.svincodi(+)
+and a.no_cia=p.no_cia(+)
+and p.codigo(+) = 'FDCXC'
+and p.codigo_det(+) = '01']]>
+	</queryString>
+	<field name="CEDULA" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="GRACIA" class="java.lang.String"/>
+	<field name="CHASIS" class="java.lang.String"/>
+	<field name="FECHA" class="java.lang.String"/>
+	<field name="FACTURA" class="java.lang.String"/>
+	<field name="MARCA" class="java.lang.String"/>
+	<field name="MODELO" class="java.math.BigDecimal"/>
+	<field name="MOTOR" class="java.lang.String"/>
+	<field name="ANIO_FABRI" class="java.math.BigDecimal"/>
+	<field name="COLOR_MASTER" class="java.lang.String"/>
+	<field name="COLOR_SEMI" class="java.lang.String"/>
+	<field name="REPONSABLE" class="java.lang.String"/>
+	<field name="CARGO" class="java.lang.String"/>
+	<field name="LETRAS" class="java.math.BigDecimal"/>
+	<field name="NOMBRE_COMPANIA" class="java.lang.String"/>
+	<field name="INGRESO1" class="java.lang.String"/>
+	<field name="INGRESO2" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<textField pattern="dd MMMMM yyyy">
+				<reportElement uuid="504c7356-7659-4896-b250-d4ef13a88a50" x="41" y="14" width="220" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="2eca62a6-5e8c-40f5-9337-f2c19763a174" x="1" y="14" width="40" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Quito, "]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="549" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="a5d5a40e-ab29-4cea-b5e8-324976eef684" x="338" y="360" width="212" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ANIO_FABRI}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="6a054682-e629-4114-bcb9-0a418b49e6cf" x="260" y="328" width="78" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CHASIS:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="27c598b9-4f6e-4c24-818c-e90d96aa8557" x="260" y="280" width="78" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MARCA:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="3f35e36d-2f6d-4747-9c1e-b588d6808ac4" x="338" y="296" width="212" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MODELO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="5c258d5c-85b6-4b48-a195-6cb6328406fa" x="1" y="508" width="270" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CARGO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="5415eb3c-e33e-4d3e-8a95-c769f5f73e80" x="0" y="96" width="166" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11" isBold="false"/>
+				</textElement>
+				<text><![CDATA[De nuestra consideración;]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5158323d-3d77-4f86-9003-511692a96845" x="1" y="425" width="100" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<text><![CDATA[Atentamente,]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ed7ab602-e16d-4d06-8c2d-46e09c904e49" x="260" y="360" width="78" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AÑO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="377c183f-bf37-4129-b957-36a0a1274935" x="260" y="344" width="78" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COLOR]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="bf229b1f-b1a5-45d5-9d70-5c5a30dfca42" x="338" y="312" width="212" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MOTOR}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="eb3621a8-d009-4174-ab39-bc3fad2fc2a6" x="338" y="280" width="212" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MARCA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="8cd77b9f-68f0-4b32-8b75-a7e3cdc4b676" x="1" y="488" width="270" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{REPONSABLE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="345d5e44-e9ba-4583-b77b-5c5f642280aa" x="260" y="296" width="78" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MODELO:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="370f407c-6756-4ee5-bf13-cb8292f803a6" x="0" y="141" width="555" height="28"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Por medio de la presente, CERTIFICAMOS que el cliente cuyos datos se detallan a continuación; ha terminado de CANCELAR el crédito otorgado por "+$F{NOMBRE_COMPANIA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="cb3ca2bc-211e-44e1-85a2-4b9efb9b05f9" x="338" y="344" width="212" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[!"6".equals($P{p_serie_fisico})? $F{COLOR_MASTER}:$F{COLOR_SEMI}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="a32704e1-a354-4a54-bf10-50fa83d6a3a1" x="260" y="312" width="78" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MOTOR:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="f8e9cd0c-5fbd-4b67-999a-b52bd1a6fa83" x="338" y="328" width="212" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CHASIS}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="f1204edc-f0c4-46a6-a628-e02149ea738e" x="0" y="528" width="356" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE_COMPANIA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="9c1bf82a-77cf-41c6-983c-c3fe151e1f6a" x="1" y="179" width="556" height="26"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Por medio de  la presente, autorizamos el levantamiento de la "+("3".equals($P{p_serie_fisico})?"RESERVA DE DOMINIO":"PRENDA INDUSTRIAL")+" y para el trámite adjuntamos el original del documento mencionado:"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="822576b0-fef9-47b9-8e27-4df407b001a0" x="1" y="1" width="100" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<text><![CDATA[SEÑORES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c1f38424-b142-4b26-a942-d41e60cf0413" x="1" y="21" width="254" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<text><![CDATA[REGISTRO MERCANTIL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5133dfeb-927c-4f32-ac32-eb9c80c774a6" x="1" y="41" width="254" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<text><![CDATA[Av. 6 de Diciembre y Gaspar de Villaroel]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="09b7c3af-4941-45b7-97ec-e51664c15828" x="1" y="61" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Ciudad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5b52ed56-1fb7-4e14-b7e2-1136031a9509" x="1" y="225" width="58" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMBRE]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="0f1ca01e-770f-472d-b25b-d9561835d591" x="59" y="225" width="302" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="5c3e8d21-24a7-423a-bae9-8000df09eb25" x="1" y="245" width="58" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[C.I/R.U.C.:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="cf7f0588-4458-40c8-8353-d5b1d1f463d6" x="59" y="245" width="107" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CEDULA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="f6664dd3-fb07-4a54-9a44-383acc04ba6c" x="0" y="280" width="65" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FACTURA:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="fffb84e3-0391-4436-8279-a3cccb6e0ffd" x="65" y="280" width="190" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FACTURA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="29e07b95-6660-4bfa-a032-cc0c7b4b9a4f" x="0" y="296" width="65" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No.INSCRIP: ]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="fbd28be2-7a72-4f5d-8a48-609ad027a0aa" x="65" y="296" width="190" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_no_inscripcion}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="127086a7-970b-420d-b3a0-397825a8a909" x="1" y="312" width="64" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOMO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="931c284e-9e20-4262-b971-7693d319f46c" x="1" y="328" width="64" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AÑO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5c2a1ddb-99ca-49a7-9779-3f4357766517" x="1" y="344" width="64" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="cd5f1e49-f69b-4443-a356-acb2782bab67" x="1" y="360" width="64" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[C.I.:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="99bb24a1-f4f2-4303-bc70-02c37a65a127" x="1" y="376" width="64" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="354a751c-9253-4cdc-97c8-56ce654f5880" x="65" y="376" width="116" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="5ff8fd4c-73e5-453d-bb0d-1e7d0b6b2602" x="65" y="312" width="190" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_tomo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="d5ffbccf-0d7c-4fec-978d-e3475581c635" x="65" y="328" width="116" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_anio}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="3303a057-09b7-4296-b9e3-107053b44cd9" x="65" y="344" width="116" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_fecha}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="de787dd0-5704-4733-86f5-93064cf9e219" x="65" y="360" width="116" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INGRESO1}!=null?$F{INGRESO1}:$F{INGRESO2}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="05379463-82b9-4305-b213-5f1e449ea93d" x="260" y="376" width="78" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CARROCERIA:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9f2deec5-418e-4a19-8386-456bf449b510" x="338" y="376" width="100" height="16"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[METÁLICA]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

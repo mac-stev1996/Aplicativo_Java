@@ -1,0 +1,476 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Cuentas por Cobrar - Solicitud Credito Postventa Express
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="fmrButtons">
+		<p:commandButton id="printConvenio" ajax="false" title="pdf"
+				rendered="#{cxcSolicitudCreditoPostventaController.convenio}"
+				value="Imprimir Convenio" icon="fa fa-file-pdf-o"
+				styleClass="green-btn" onclick="form.target='_blank'"
+				style="margin-top:0px;width:auto;" process="@this, frmButtons"
+				actionListener="#{cxcSolicitudCreditoPostventaController.reportConvenioPdf}"
+				update="#{p:component('frmButtons')}" />
+			<p:commandButton styleClass="green-btn" partialSubmit="true"
+				id="btnGuaSol" icon="ui-icon ui-icon-save"
+				disabled="#{cxcSolicitudCreditoPostventaController.actBtnGuardar}"
+				process="@this :idForm:tabVieGen:dataCliente :idForm:tabVieGen:dataSolCli :idForm:tabVieGen:dataGarante :idForm:tabVieGen:selIdentificacion"
+				actionListener="#{cxcSolicitudCreditoPostventaController.guardarSolicitud}"
+				update="@form :idForm:tabVieGen:dataSolCli :idForm:tabVieGen:dataGarante :idForm:tabVieGen:btnArchivo" />
+			<p:commandButton id="printReport" ajax="false" title="pdf"
+				disabled="#{cxcSolicitudCreditoPostventaController.activaReport}"
+				styleClass="red-btn" icon="fa fa-file-pdf-o"
+				onclick="form.target='_blank'" style="margin-top:0px;width:auto;"
+				process="@this, frmButtons"
+				actionListener="#{cxcSolicitudCreditoPostventaController.reportPdf}"
+				update="#{p:component('frmButtons')}" />
+			<p:commandButton styleClass="red-btn" partialSubmit="true"
+				icon="ui-icon ui-icon-mail" value="Enviar" id="btnEnvSol"
+				disabled="#{cxcSolicitudCreditoPostventaController.actBtnEnviar}"
+				actionListener="#{cxcSolicitudCreditoPostventaController.enviarSolicitud}"
+				process="@this :idForm:tabVieGen:dataCliente :idForm:tabVieGen:dataSolCli :idForm:tabVieGen:dataGarante"
+				update="@this :fmrButtons:btnGuaSol :idForm:tabVieGen:btnArchivo :idForm:tabVieGen:archivosDT" />
+			<p:commandButton title="Regresa" partialSubmit="true"
+				icon="ui-icon ui-icon-list"
+				actionListener="#{cxcSolicitudCreditoPostventaController.getUrlRegresa}"
+				update="@form" />
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+
+		<style type="text/css">
+</style>
+
+		<h:form id="idForm">
+
+			<p:panel>
+				<p:tabView id="tabVieGen">
+					<p:tab id="tabFormulario" title="Solicitud Express Postventa">
+						<b><p:messages id="messages" showDetail="true"
+								autoUpdate="true" closable="true" /></b>
+
+						<p:fieldset id="dataCliente" legend="Información Cliente">
+							<div class="ui-g dashboard">
+								<div class="ui-g-12">
+									<h:panelGrid id="pnlGriCliente" columns="4" style="width:100%;">
+
+										<h:outputText value="Tipo cliente:" styleClass="bold"
+											for="tipoCliente" />
+										<h:selectOneMenu id="tipoCliente" immediate="true"
+											required="true"
+											disabled="#{cxcSolicitudCreditoPostventaController.nuevo}"
+											value="#{cxcSolicitudCreditoPostventaController.idTipoCliente}"
+											styleClass="bold" style="width:233px;">
+											<f:selectItem itemLabel="Seleccione un tipo" itemValue="0"
+												noSelectionOption="true" />
+											<f:selectItems
+												value="#{cxcSolicitudCreditoPostventaController.listaCmbTiposCliente}" />
+										</h:selectOneMenu>
+
+										<p:outputLabel value="Estado civil:" for="estadoCivil"
+											styleClass="bold" />
+										<h:selectOneMenu id="estadoCivil" style="width:60%"
+											required="true"
+											value="#{cxcSolicitudCreditoPostventaController.estCivilCliente}">
+											<f:selectItem itemLabel="Seleccione un estado" itemValue="0"
+												noSelectionOption="true" />
+											<f:selectItems
+												value="#{cxcSolicitudCreditoPostventaController.estadoCivilList}" />
+										</h:selectOneMenu>
+
+										<h:outputLabel value="Identificación: " styleClass="bold"
+											for="idCedulaCliente" />
+										<h:selectOneMenu id="selIdentificacion"
+											style=" width : 233px;"
+											value="#{cxcSolicitudCreditoPostventaController.idTipoCedula}"
+											styleClass="normal backgroundSugerido" required="true"
+											disabled="#{cxcSolicitudCreditoPostventaController.nuevo}">
+											<f:selectItem itemLabel="Seleccione identificacion"
+												itemValue="" noSelectionOption="true" />
+											<f:selectItem itemLabel="CEDULA" itemValue="C" />
+											<f:selectItem itemLabel="PASAPORTE" itemValue="P" />
+											<f:selectItem itemLabel="RUC" itemValue="R" />
+										</h:selectOneMenu>
+
+										<p:outputLabel value="Correo Electronico:" for="txtEmail"
+											styleClass="bold" />
+										<p:inputText id="txtEmail" style="width:70%" required="true"
+											maxlength="200"
+											value="#{cxcSolicitudCreditoPostventaController.correoCliente}" />
+
+										<p:outputLabel value="Cédula/Pasaporte/RUC: "
+											style="COLOR:RED" styleClass="bold" for="idCedulaCliente" />
+										<p:inputText styleClass="inputUpper backgroundSugerido"
+											disabled="#{cxcSolicitudCreditoPostventaController.habCampo}"
+											style="text-transform: uppercase; width: 60%" maxlength="13"
+											id="idCedulaCliente" required="true"
+											value="#{cxcSolicitudCreditoPostventaController.cedulaCliente}">
+											<p:ajax event="change" process="@this"
+												listener="#{cxcSolicitudCreditoPostventaController.buscarCliente}"
+												update=":idForm:tabVieGen:idCedulaCliente :idForm:tabVieGen:idNombreCliente :idForm:tabVieGen:txtDomicilio :idForm:tabVieGen:txtLugarReferencia
+					:idForm:tabVieGen:txtTelefono :idForm:tabVieGen:txtCelular :idForm:tabVieGen:estadoCivil :idForm:tabVieGen:txtEmail
+					:idForm:tabVieGen:idBanco :idForm:tabVieGen:idTipoCuenta :idForm:tabVieGen:idNumeroCuenta :idForm:tabVieGen:selCiuCliente
+					:idForm:tabVieGen:selVivienda :idForm:tabVieGen:tipoCliente :idForm:tabVieGen:selIdentificacion" />
+										</p:inputText>
+
+										<p:outputLabel value="Nombre Entidad Bancaria:"
+											styleClass="bold" for="idBanco" />
+										<h:selectOneMenu id="idBanco" style="width:70% !important"
+											effect="fade" var="c" filter="true"
+											filterMatchMode="startsWith"
+											styleClass="normal backgroundSugerido"
+											value="#{cxcSolicitudCreditoPostventaController.bancoCliente}">
+											<f:selectItem itemLabel="Seleccione un banco" itemValue="0"
+												noSelectionOption="true" />
+											<f:selectItems
+												value="#{cxcSolicitudCreditoPostventaController.listarBancos}" />
+										</h:selectOneMenu>
+
+										<p:outputLabel value="Nombre Cliente/Razón Social:"
+											for="idNombreCliente" styleClass="bold" />
+										<p:inputText converter="convMay" required="true"
+											style="text-transform: uppercase; width: 70%" maxlength="100"
+											disabled="#{cxcSolicitudCreditoPostventaController.nuevo}"
+											id="idNombreCliente"
+											value="#{cxcSolicitudCreditoPostventaController.nombreCliente}" />
+
+										<p:outputLabel value="Tipo de Cuenta:" styleClass="bold" />
+										<h:selectOneMenu id="idTipoCuenta"
+											styleClass="normal backgroundSugerido"
+											value="#{cxcSolicitudCreditoPostventaController.tipoCuentaCliente}">
+											<f:selectItem itemLabel="Seleccione un tipo" itemValue="0"
+												noSelectionOption="true" />
+											<f:selectItems
+												value="#{cxcSolicitudCreditoPostventaController.listaCmbTipoCuenta}" />
+										</h:selectOneMenu>
+
+										<p:outputLabel value="Dirección Domicilio:" for="txtDomicilio"
+											styleClass="bold" />
+										<p:inputText id="txtDomicilio" converter="convMay"
+											required="true" style="text-transform: uppercase; width:60%;"
+											maxlength="100"
+											value="#{cxcSolicitudCreditoPostventaController.domicilioCliente}" />
+
+										<p:outputLabel value="Número cuenta:" styleClass="bold" />
+										<p:inputText id="idNumeroCuenta" converter="convMay"
+											value="#{cxcSolicitudCreditoPostventaController.noCuentaCliente}"
+											style="text-transform: uppercase; width:60%" />
+
+										<p:outputLabel value="Tipo de Vivienda:" styleClass="bold"
+											for="selVivienda" />
+										<h:selectOneMenu id="selVivienda" required="true"
+											value="#{cxcSolicitudCreditoPostventaController.creditoPostventa.tipoVivienda}"
+											styleClass="normal backgroundSugerido">
+											<f:selectItem itemLabel="Seleccione un tipo" itemValue="0"
+												noSelectionOption="true" />
+											<f:selectItems
+												value="#{cxcSolicitudCreditoPostventaController.listaCmbTipoVivienda}" />
+										</h:selectOneMenu>
+
+										<p:outputLabel value="Ciudad Domicilio:" styleClass="bold"
+											for="selCiuCliente" />
+										<p:selectOneMenu id="selCiuCliente" required="true"
+											value="#{cxcSolicitudCreditoPostventaController.creditoPostventa.ciudadCliente}"
+											styleClass="normal backgroundSugerido" effect="fade" var="c"
+											filter="true" filterMatchMode="startsWith">
+											<f:selectItem itemLabel="Seleccione una Ciudad" itemValue="0"
+												noSelectionOption="true" />
+											<f:selectItems var="cantonT"
+												itemLabel="#{cantonT.descripcion}"
+												itemValue="#{cantonT.descripcion}"
+												value="#{cxcSolicitudCreditoPostventaController.cantonesList}" />
+										</p:selectOneMenu>
+
+										<p:outputLabel value="Barrio Referencia:"
+											for="txtLugarReferencia" styleClass="bold" />
+										<p:inputText id="txtLugarReferencia" converter="convMay"
+											required="true" style="text-transform: uppercase; width: 70%"
+											maxlength="100"
+											value="#{cxcSolicitudCreditoPostventaController.refDomicilioCliente}" />
+
+										<p:outputLabel style="COLOR:RED" styleClass="bold"
+											value="Cupo Sugerido: " for="inpCupoSug" />
+										<p:inputNumber styleClass="number" id="inpCupoSug"
+											style="width:4px!important"
+											value="#{cxcSolicitudCreditoPostventaController.creditoPostventa.cupoSugerido}" />
+
+										<p:outputLabel value="Tlf. Convencional:" for="txtTelefono"
+											styleClass="bold" />
+										<p:inputText id="txtTelefono" maxlength="10"
+											style="text-transform: uppercase; width:60%"
+											converter="convMay"
+											value="#{cxcSolicitudCreditoPostventaController.telefonoCliente}" />
+
+										<p:outputLabel value="Plazo Sugerido: " for="inpPlazoSug"
+											style="COLOR:RED" styleClass="bold" />
+										<p:inputNumber styleClass="number" minValue="0" maxValue="12" id="inpPlazoSug"
+											style="width:50%!important"
+											value="#{cxcSolicitudCreditoPostventaController.creditoPostventa.plazoSugerido}" />
+
+										<p:outputLabel value="Tlf. Celular: " for="txtCelular"
+											styleClass="bold" />
+										<p:inputText id="txtCelular" required="true" maxlength="10"
+											style="text-transform: uppercase; width:70%"
+											converter="convMay"
+											value="#{cxcSolicitudCreditoPostventaController.celularCliente}" />
+
+									</h:panelGrid>
+								</div>
+							</div>
+						</p:fieldset>
+
+
+						<p:fieldset id="dataSolCli" legend="Información Lugar de Trabajo">
+							<h:panelGrid id="pnlGriSolCli" columns="4" style="width:100%;">
+
+								<p:outputLabel value="Lugar Trabajo:" for="txtTrabajo"
+									styleClass="bold" style="COLOR:RED" />
+								<p:inputText id="txtTrabajo" converter="convMay" required="true"
+									style="text-transform: uppercase; width: 70%" maxlength="100"
+									value="#{cxcSolicitudCreditoPostventaController.creditoPostventa.lugarTrabajo}" />
+
+								<p:outputLabel value="Ciudad Trabajo:" styleClass="bold"
+									for="selDirCanTra" />
+								<p:selectOneMenu id="selDirCanTra"
+									value="#{cxcSolicitudCreditoPostventaController.creditoPostventa.ciudadTra}"
+									styleClass="normal backgroundSugerido" effect="fade" var="c"
+									filter="true" filterMatchMode="startsWith">
+									<f:selectItem itemLabel="Seleccione una Ciudad" itemValue="0"
+										noSelectionOption="true" />
+									<f:selectItems var="cantonT" itemLabel="#{cantonT.descripcion}"
+										itemValue="#{cantonT.descripcion}"
+										value="#{cxcSolicitudCreditoPostventaController.cantonesList}" />
+								</p:selectOneMenu>
+
+								<p:outputLabel value="Tlf. Trabajo:" for="txtTlfTrabajo"
+									styleClass="bold" style="COLOR:RED" />
+								<p:inputText id="txtTlfTrabajo" converter="convMay"
+									required="true" style="text-transform: uppercase; width:70%"
+									maxlength="10"
+									value="#{cxcSolicitudCreditoPostventaController.creditoPostventa.telefonoTra}" />
+								<p:outputLabel value="Cargo:" for="txtCargo" />
+								<p:inputText id="txtCargo" converter="convMay"
+									style="text-transform: uppercase; width:70%" maxlength="100"
+									value="#{cxcSolicitudCreditoPostventaController.creditoPostventa.cargo}" />
+								<p:outputLabel value="Giro Negocio:" for="txtNegocio" />
+								<p:inputText id="txtNegocio" converter="convMay"
+									style="text-transform: uppercase; width: 70%" maxlength="100"
+									value="#{cxcSolicitudCreditoPostventaController.creditoPostventa.giroNegocio}" />
+
+								<p:outputLabel value="Antiguedad:" for="txtAntiguedad" />
+								<p:inputNumber id="txtAntiguedad" minValue="0" maxValue="100"
+									value="#{cxcSolicitudCreditoPostventaController.creditoPostventa.antiguedadTra}" />
+
+								<p:outputLabel value="Ingresos Mensuales:" for="inpIngresos" />
+								<p:inputNumber id="inpIngresos" minValue="0" decimalPlaces="2"
+									thousandSeparator="." decimalSeparator=","
+									value="#{cxcSolicitudCreditoPostventaController.creditoPostventa.ingreso}">
+									<p:ajax event="change"
+										process="@this :idForm:tabVieGen:inpIngresos  :idForm:tabVieGen:inpEgresos "
+										listener="#{cxcSolicitudCreditoPostventaController.calcularTotalDisponible}"
+										update=":idForm:tabVieGen:inpDisponible"></p:ajax>
+								</p:inputNumber>
+
+								<p:outputLabel value="Egresos Mensuales:" for="inpEgresos" />
+
+								<p:inputNumber id="inpEgresos" minValue="0" decimalPlaces="2"
+									thousandSeparator="." decimalSeparator=","
+									value="#{cxcSolicitudCreditoPostventaController.creditoPostventa.egreso}">
+									<p:ajax event="change"
+										process="@this :idForm:tabVieGen:inpIngresos  :idForm:tabVieGen:inpEgresos "
+										listener="#{cxcSolicitudCreditoPostventaController.calcularTotalDisponible}"
+										update=":idForm:tabVieGen:inpDisponible"></p:ajax>
+								</p:inputNumber>
+
+								<p:outputLabel value="Disponible:" for="inpDisponible" />
+								<p:inputNumber id="inpDisponible" minValue="0" decimalPlaces="2"
+									thousandSeparator="." decimalSeparator=","
+									value="#{cxcSolicitudCreditoPostventaController.creditoPostventa.montoDisponible}" />
+							</h:panelGrid>
+						</p:fieldset>
+
+						<p:fieldset id="dataGarante"
+							legend="Información Referencia Personal">
+							<h:panelGrid id="pnlGriGarante" columns="4" style="width:100%;">
+
+								<p:outputLabel value="Referencia Personal:" styleClass="bold"
+									style="COLOR:RED" for="txtReferencia" />
+								<p:inputText id="txtReferencia" converter="convMay"
+									required="true" style="text-transform: uppercase; width: 70%"
+									maxlength="100"
+									value="#{cxcSolicitudCreditoPostventaController.creditoPostventa.garanteNombres}" />
+
+								<p:outputLabel value="Ciudad Referencia:" styleClass="bold"
+									for="selDirCanRef" />
+								<p:selectOneMenu id="selDirCanRef"
+									value="#{cxcSolicitudCreditoPostventaController.creditoPostventa.garanteCiudad}"
+									styleClass="normal backgroundSugerido" effect="fade" var="c"
+									filter="true" filterMatchMode="startsWith">
+									<f:selectItem itemLabel="Seleccione una Ciudad" itemValue="0"
+										noSelectionOption="true" />
+									<f:selectItems var="canton" itemLabel="#{canton.descripcion}"
+										itemValue="#{canton.descripcion}"
+										value="#{cxcSolicitudCreditoPostventaController.cantonesListGarante}" />
+								</p:selectOneMenu>
+								<p:outputLabel value="Tlf. Referencia:" styleClass="bold"
+									style="COLOR:RED" for="txtTlfGarante" />
+								<p:inputText id="txtTlfGarante" required="true" maxlength="10"
+									style="text-transform: uppercase; width:70%"
+									value="#{cxcSolicitudCreditoPostventaController.creditoPostventa.garanteTelefono}" />
+
+								<p:outputLabel value="Parentezco / Relación:"
+									for="txtParentezco" />
+								<p:inputText id="txtParentezco" maxlength="10"
+									style="text-transform: uppercase; width:70%"
+									converter="convMay"
+									value="#{cxcSolicitudCreditoPostventaController.creditoPostventa.garanteParentesco}" />
+							</h:panelGrid>
+						</p:fieldset>
+
+						<p:fieldset id="dataObservacion"
+							legend="Observaciones Solicitud Express">
+							<h:panelGrid id="pnlGriObs" columns="2" style="width:100%;">
+								<p:outputLabel for="txaObsRevision"
+									value="Observaciones Revisión:" styleClass="bold" />
+								<h:panelGroup>
+									<p:inputTextarea id="txaObsRevision" maxlength="500"
+										readonly="true"
+										style="text-transform: uppercase; width:700px!important; height:20px!important;"
+										value="#{cxcSolicitudCreditoPostventaController.creditoPostventa.observacionEstRevisado}"
+										resizable="false" counter="disObsRev" converter="convMay"
+										required="true" counterTemplate="{0} caracteres restantes." />
+									<br />
+									<h:outputText id="disObsRev" />
+								</h:panelGroup>
+								<p:outputLabel for="txaObsAprobacion"
+									value="Observaciones Aprobación/Negación:" styleClass="bold" />
+								<h:panelGroup>
+									<p:inputTextarea id="txaObsAprobacion" maxlength="500"
+										readonly="true"
+										style="text-transform: uppercase; width:700px!important; height:20px!important;"
+										value="#{cxcSolicitudCreditoPostventaController.creditoPostventa.observacionEstAprobado}"
+										resizable="false" counter="disObsApr" converter="convMay"
+										required="true" counterTemplate="{0} caracteres restantes." />
+									<br />
+									<h:outputText id="disObsApr" />
+								</h:panelGroup>
+							</h:panelGrid>
+						</p:fieldset>
+
+
+					</p:tab>
+
+
+					<p:tab id="tabArchivos" title="Archivo Digital">
+						<p:fieldset id="archivos" legend="Archivos Digitales">
+
+							<p:fileUpload id="btnArchivo" required="true"
+								disabled="#{cxcSolicitudCreditoPostventaController.activaTab}"
+								widgetVar="btnArchivoWidgetVar"
+								fileUploadListener="#{cxcSolicitudCreditoPostventaController.guardarArchivoDigital}"
+								mode="advanced" dragDropSupport="true" multiple="true"
+								allowTypes="/(\.|\/)(jpe?g|png|doc|docx|pdf)$/"
+								invalidFileMessage="Formato de archivo no válida"
+								process="@this" update="archivosDT" label="Seleccionar"
+								cancelLabel="Cancelar" uploadLabel="Cargar" />
+							<p:spacer />
+							<p:dataTable id="archivosDT" widgetVar="wvArchivosDT"
+								value="#{cxcSolicitudCreditoPostventaController.listaArchivosDigitales}"
+								var="item"
+								emptyMessage="No hay archivos cargados para esta solicitud"
+								rowIndexVar="index" rowKey="#{item.noSolicitud}"
+								paginator="true" rows="5" paginatorPosition="bottom"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+								scrollable="true" scrollWidth="100%" style="width:100%;">
+								<f:facet name="header">
+			            Archivos Digitales cargados
+			        </f:facet>
+								<p:column headerText="Datos" styleClass="txtL" width="50%">
+									<p:panelGrid columns="2" styleClass="noborder"
+										columnClasses="ui-grid-col-3,ui-grid-col-9">
+										<p:outputLabel value="Nombre:" style="font-weight: bold;" />
+										<p:outputLabel value="#{item.nombre}" />
+										<p:outputLabel value="Tipo:" style="font-weight: bold;" />
+										<p:outputLabel
+											value="#{item.tipo eq 'D' ? 'DOCUMENTO DIGITAL':'N/A'}" />
+										<p:outputLabel value="Fecha:" style="font-weight: bold;" />
+										<p:outputLabel value="#{item.fechaCrea}">
+											<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+										</p:outputLabel>
+										<p:outputLabel value="Usuario:" style="font-weight: bold;" />
+										<p:outputLabel value="#{item.usuarioCrea}" />
+									</p:panelGrid>
+								</p:column>
+								<p:column headerText="Archivo" styleClass="txtC" width="50%">
+									<h:commandLink id="seeFoto"
+										action="#{cxcSolicitudCreditoPostventaController.verArchivo}"
+										target="_blank">
+										<p:graphicImage value="/images/dynamic?file=#{item.path}"
+											style="display: block; margin: 0px auto;" height="100"
+											width="150" />
+										<f:setPropertyActionListener value="#{item.path}"
+											target="#{cxcSolicitudCreditoPostventaController.urlArchivo}" />
+									</h:commandLink>
+								</p:column>
+								<p:column headerText="Eliminar"
+									style="width:75px;text-align: center">
+									<p:commandButton id="btnEliminarArchivo" icon="ui-icon-trash"
+										disabled="#{cxcSolicitudCreditoPostventaController.activaTab}"
+										process="@this" oncomplete="PF('diaEliArchivo').show();"
+										style="width:16px;height:16px;">
+										<f:setPropertyActionListener value="#{item}"
+											target="#{cxcSolicitudCreditoPostventaController.archivoSel}" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+
+						</p:fieldset>
+					</p:tab>
+				</p:tabView>
+			</p:panel>
+
+			<!-- DIALOGO FLUJO DE APROBACION -->
+			<p:dialog widgetVar="diaNuevoCLiente" modal="true" closable="false"
+				header="Confirmacion para crear nuevo usuario" showEffect="fade"
+				hideEffect="fade" position="top center" width="800px" height="150px"
+				resizable="false">
+				<p:toolbar>
+					<f:facet name="left">
+						<p:outputLabel
+							value="El usuario no se encuentra registrado, quiere crearlo?" />
+					</f:facet>
+					<f:facet name="right">
+						<p:commandButton icon="ui-icon-check" value="Si" process="@this"
+							actionListener="#{cxcSolicitudCreditoPostventaController.crearNuevoCliente}"
+							update=":idForm:tabVieGen:pnlGriCliente"
+							oncomplete="PF('diaNuevoCLiente').hide();">
+						</p:commandButton>
+						<p:commandButton icon="ui-icon-cancel" value="No" process="@this"
+							actionListener="#{cxcSolicitudCreditoPostventaController.resetearFormulario}"
+							update=":idForm:tabVieGen:pnlGriCliente" />
+					</f:facet>
+				</p:toolbar>
+			</p:dialog>
+
+			<!-- Cuadro de Dialogo Eliminar Archivo -->
+			<p:confirmDialog widgetVar="diaEliArchivo" modal="true"
+				header="Confirmación" message="Está seguro de eliminar el archivo">
+				<p:commandButton value="Si" process="@this"
+					actionListener="#{cxcSolicitudCreditoPostventaController.deleteFile}"
+					update="@this :idForm:tabVieGen:archivosDT"
+					oncomplete="PF('diaEliArchivo').hide();" />
+				<p:commandButton value="No" onclick="PF('diaEliArchivo').hide();" />
+			</p:confirmDialog>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

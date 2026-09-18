@@ -1,0 +1,188 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<p:panelGrid columns="1" id="pnlContactos" width="100%" layout="grid"
+		columnClasses="ui-grid-col-12">
+		<p:panel styleClass="noborder">
+			<p:fieldset legend="Datos del Cliente" toggleable="false">
+				<h:panelGrid id="pnlInfoCliente" columns="6" style="width:100%">
+					<p:outputLabel value="No. Cliente: " styleClass="bold" />
+					<p:outputLabel
+						value="#{cxcContactoServicioController.seguimientoVeh.noCliente}" />
+					<p:outputLabel value="Cedula del Cliente: " styleClass="bold" />
+					<p:outputLabel
+						value="#{cxcContactoServicioController.seguimientoVeh.cedulaCliente}" />
+
+					<p:outputLabel value="Nombre del Cliente: " styleClass="bold" />
+					<p:outputLabel
+						value="#{cxcContactoServicioController.seguimientoVeh.nombreCliente}" />
+
+					<p:outputLabel value="Vehiculo: " styleClass="bold"
+						style="COLOR:RED" />
+					<p:outputLabel
+						value="#{cxcContactoServicioController.seguimientoVeh.descripcion}" />
+
+
+					<p:outputLabel value="Placa Vehiculo: " styleClass="bold"
+						style="COLOR:RED" />
+					<p:outputLabel
+						value="#{cxcContactoServicioController.seguimientoVeh.placa}" />
+
+					<p:outputLabel value="Chasis Vehiculo: " styleClass="bold"
+						style="COLOR:RED" />
+					<p:outputLabel
+						value="#{cxcContactoServicioController.seguimientoVeh.chasis}" />
+				</h:panelGrid>
+			</p:fieldset>
+			<br />
+			<p:toolbar id="idToolbarCon" style="border: none; box-shadow: none;">
+				<f:facet name="right">
+					<p:commandButton value="Contacto Servicio"
+						style="width: auto; float: right;" icon="fa fa-user-plus"
+						process="@this" id="btnAgrConSer" styleClass="green-btn"
+						action="#{cxcContactoServicioController.inicializarContactoServicio}"
+						oncomplete="PF('diaContactosVeh').show();" update="@this :idForm:diaContactosVeh" />
+				</f:facet>
+			</p:toolbar>
+
+			<p:fieldset legend="Contactos de Servicio" toggleable="false">
+				<p:dataTable id="tblDetContactos" var="item" rowIndexVar="row"
+					styleClass="table" widgetVar="wtblDetContactos" rendered="true"
+					value="#{cxcContactoServicioController.listaContactosServicio}"
+					rowKey="#{item.codContacto}"
+					emptyMessage="No existen contactos de Servico registrados"
+					paginator="true" paginatorPosition="bottom"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+					style="margin-bottom:20px">
+
+					<f:facet name="header">
+						<h:outputLabel value="CONTACTOS DE SERVICIO"
+							style="font-weight: bold;" />
+					</f:facet>
+
+
+					<p:column headerText="No." style="text-align:left" width="5%">
+						<p:outputLabel value="#{row + 1}" />
+					</p:column>
+					<p:column headerText="Nombre Contacto" style="text-align:center"
+						width="50%">
+						<p:outputLabel value="#{item.nombreContacto}" />
+					</p:column>
+					<p:column headerText="Telefono Contacto" style="text-align:center"
+						width="30%">
+						<p:outputLabel value="#{item.telefono}" />
+					</p:column>
+					<p:column headerText="Email Contacto" style="text-align:center"
+						width="40%">
+						<p:outputLabel value="#{item.email}" />
+					</p:column>
+					<p:column headerText="Fecha Registro" style="text-align:center"
+						width="30%">
+						<p:outputLabel value="#{item.fechaCrea}" />
+					</p:column>
+					<p:column headerText="Usuario Registra" style="text-align:center"
+						width="30%">
+						<p:outputLabel value="#{item.usuarioCrea}" />
+					</p:column>
+					<p:column headerText="Estado" style="text-align:center" width="30%">
+						<p:outputLabel value="#{item.estado eq 'A' ? 'Activo':'Inactivo'}" />
+					</p:column>
+					<p:column headerText="Control"
+						style="text-align:center;color:red !important" width="20%">
+						<p:commandButton id="btnEditar" icon="fa fa-pencil" title="Editar"
+							styleClass="blue-btn" partialSubmit="true" process="@this"
+							action="#{cxcContactoServicioController.editarContacto}"
+							update=":idForm" oncomplete="PF('diaContactosVeh').show();">
+							<f:setPropertyActionListener value="#{item}"
+								target="#{cxcContactoServicioController.contactoSeleccionado}" />
+						</p:commandButton>
+
+						<p:commandButton id="btnEliminar" icon="fa fa-times-circle"
+							title="Eliminar" partialSubmit="true" styleClass="red-btn"
+							process="@this" oncomplete="PF('diaEliminar').show();">
+							<f:setPropertyActionListener value="#{item}"
+								target="#{cxcContactoServicioController.contactoSeleccionado}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</p:fieldset>
+
+			<p:fieldset legend="Contactos de Vehiculo" toggleable="false">
+				<p:dataTable id="tblDetConUsuarios" var="item" rowIndexVar="row"
+					widgetVar="wtblDetConUsuarios" rendered="true"
+					value="#{cxcContactoServicioController.listaContactosVehiculos}"
+					rowKey="#{item.codContacto}"
+					emptyMessage="No existen contactos de vehiculos registrados"
+					paginator="true" paginatorPosition="bottom"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+					style="margin-bottom:20px">
+					<f:facet name="header">
+						<h:outputLabel value="CONTACTOS DE VEHÍCULOS"
+							style="font-weight: bold;" />
+					</f:facet>
+
+					<p:column headerText="No." style="text-align:left" width="5%">
+						<p:outputLabel value="#{row + 1}" />
+					</p:column>
+
+					<p:column headerText="Nombre Contacto" style="text-align:center"
+						width="50%">
+						<p:outputLabel value="#{item.nombreContacto}" />
+					</p:column>
+
+					<p:column headerText="Telefono Contacto" style="text-align:center"
+						width="30%">
+						<p:outputLabel value="#{item.telefono}" />
+					</p:column>
+
+					<p:column headerText="Email Contacto" style="text-align:center"
+						width="40%">
+						<p:outputLabel value="#{item.email}" />
+					</p:column>
+
+					<p:column headerText="Placa Vehiculo" style="text-align:left"
+						width="30%">
+						<p:outputLabel value="#{item.placa}" />
+					</p:column>
+
+					<p:column headerText="Fecha Registro" style="text-align:center"
+						width="30%">
+						<p:outputLabel value="#{item.fechaCrea}" />
+					</p:column>
+
+					<p:column headerText="Usuario Registra" style="text-align:center"
+						width="30%">
+						<p:outputLabel value="#{item.usuarioCrea}" />
+					</p:column>
+					<p:column headerText="Estado" style="text-align:center" width="30%">
+						<p:outputLabel value="#{item.estado eq 'A' ? 'Activo':'Inactivo'}" />
+					</p:column>
+					<p:column headerText="Control"
+						style="text-align:center;color:red !important" width="20%">
+						<p:commandButton id="btnEditarV" icon="fa fa-pencil"
+							title="Editar" styleClass="blue-btn" partialSubmit="true"
+							process="@this"
+							action="#{cxcContactoServicioController.editarContacto}"
+							update=":idForm" oncomplete="PF('diaContactosVeh').show();">
+							<f:setPropertyActionListener value="#{item}"
+								target="#{cxcContactoServicioController.contactoSeleccionado}" />
+						</p:commandButton>
+
+						<p:commandButton id="btnEliminarV" icon="fa fa-times-circle"
+							title="Eliminar" partialSubmit="true" styleClass="red-btn"
+							process="@this" oncomplete="PF('diaEliminar').show();">
+							<f:setPropertyActionListener value="#{item}"
+								target="#{cxcContactoServicioController.contactoSeleccionado}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</p:fieldset>
+
+		</p:panel>
+
+	</p:panelGrid>
+</ui:composition>

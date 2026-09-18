@@ -1,0 +1,179 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Cuentas por Cobrar - Consulta Solicitud Credito Express Postventa
+	</ui:define>
+
+	<ui:define name="buttons">
+
+	</ui:define>
+
+	<ui:define name="content">
+		<style type="text/css">
+input {
+	width: 95%;
+}
+</style>
+
+		<h:form id="idForm">
+		<p:panel style="display: flex; justify-content: center;"
+			styleClass="noborder">
+			<h:panelGrid id="grid-1" columns="12">
+				<p:outputLabel value="Cédula/RUC Cliente" styleClass="bold" />
+				<p:inputText id="txtCedula" converter="convMay"
+					style="text-transform: uppercase; margin-right:10px"
+					maxlength="13"
+					value="#{cxcConsultaCreditoPostventaController.cedulaCliente}" />
+				<p:outputLabel value="Agencias:" styleClass="bold" />
+				<p:selectOneMenu id="cmbAgencias"
+					value="#{cxcConsultaCreditoPostventaController.codAgencia}" filter="true"
+					filterMatchMode="contains" autoWidth="false">
+					<f:selectItem itemLabel="Seleccione"
+						noSelectionOption="true" />
+					<f:selectItems
+						value="#{cxcConsultaCreditoPostventaController.listaAgencias}" var="ag"
+						itemLabel="#{ag.nombre}" itemValue="#{ag.agenciaPK.codigo}" />
+				</p:selectOneMenu>
+				<p:outputLabel value="Estado Solicitud:" styleClass="bold" />
+				<p:selectOneMenu id="cmbEstSolicitud" effect="drop"
+					value="#{cxcConsultaCreditoPostventaController.estadoBusqueda}"
+					style="text-align:center">
+					<f:selectItem itemLabel="Seleccione"
+						noSelectionOption="true" />
+					<f:selectItem itemLabel="APROBADA" itemValue="A" />
+					<f:selectItem itemLabel="NEGADA" itemValue="N" />
+					<f:selectItem itemLabel="ENVIADA" itemValue="E" />
+					<f:selectItem itemLabel="DEVUELTA" itemValue="D" />
+					<f:selectItem itemLabel="DEVUELTO REVISADO" itemValue="V" />
+					<f:selectItem itemLabel="INGRESADA" itemValue="I" />
+				</p:selectOneMenu>
+				<p:outputLabel for="fechaDesde" value="Fecha Inicio:"
+					styleClass="bold" />
+				<p:calendar id="fechaDesde" pattern="dd-MM-yyyy" showOn="button"
+					size="20" locale="es" navigator="true" maxdate="today"
+					value="#{cxcConsultaCreditoPostventaController.fechaDesde}" />
+				<p:outputLabel for="fechaHasta" value="Fecha Fin:"
+					styleClass="bold" />
+				<p:calendar id="fechaHasta" pattern="dd-MM-yyyy" showOn="button"
+					mindate="#{cxcConsultaCreditoPostventaController.fechaDesde}" size="20"
+					locale="es" navigator="true" maxdate="today"
+					value="#{cxcConsultaCreditoPostventaController.fechaHasta}" />
+				<p:commandButton title="Buscar" alt="Buscar solicitud"
+					value="Buscar" icon="fa fa-search" id="buscarSolicitud"
+					process="@this :idForm:cmbEstSolicitud :idForm:txtCedula
+					:idForm:fechaDesde :idForm:fechaHasta :idForm:cmbAgencias"
+					action="#{cxcConsultaCreditoPostventaController.buscarSolicitud}"
+					update=":idForm:tblSolicitudes" />
+					<p:spacer />
+			</h:panelGrid>
+		</p:panel>
+
+			<h:panelGrid id="panListado">
+			<p:dataTable id="tblSolicitudes" lazy="true"
+				widgetVar="tblSolicitudesWid"
+				value="#{cxcConsultaCreditoPostventaController.model}" var="item"
+				paginator="true" rows="#{cxcConsultaCreditoPostventaController.SIZE}"
+				rowKey="#{item.noSolicitud}" styleClass="table table-body"
+				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+				paginatorAlwaysVisible="false" paginatorPosition="bottom"
+				emptyMessage="No existen solicitudes" rowIndexVar="row" filterDelay="1000">
+
+
+					<f:facet name="header">
+					Listado de Solicitudes de Credito Postventa
+				</f:facet>
+					<p:column headerText="No" width="5%">
+						<p:commandLink value="#{item.noSolicitud}"
+							actionListener="#{cxcConsultaCreditoPostventaController.getUrlConsulta(item)}"
+							update="@form" />
+					</p:column>
+
+					<p:column headerText="Nombres Cliente" width="10%"
+						filterBy="#{item.nombres}" filterMatchMode="contains"
+						sortBy="#{item.nombres}">
+						<p:outputLabel value="#{item.nombres}" />
+					</p:column>
+					<p:column headerText="Cedula" width="10%" filterBy="#{item.cedula}"
+						filterMatchMode="contains" sortBy="#{item.cedula}">
+						<p:outputLabel value="#{item.cedula}" />
+					</p:column>
+					<p:column headerText="Centro" width="10%"
+						filterBy="#{item.nomAgencia}" filterMatchMode="contains"
+						sortBy="#{item.nomAgencia}">
+						<p:outputLabel value="#{item.nomAgencia}" />
+					</p:column>
+					<p:column headerText="Ejecutivo de Ventas" width="10%"
+						filterBy="#{item.usuario}" filterMatchMode="contains"
+						sortBy="#{item.usuario}">
+						<p:outputLabel value="#{item.usuario}" />
+					</p:column>
+
+					<p:column headerText="Fecha Creación" width="5%">
+						<p:outputLabel value="#{item.fecha}"> 
+						<f:convertDateTime pattern="yyyy-MM-dd" />
+						</p:outputLabel>
+					</p:column>
+
+					<p:column headerText="Estado" width="10%"
+						filterBy="#{item.estado eq 'I' ? 'INGRESADO':'N/A' or item.estado eq 'D' ? 'DEVUELTO':'N/A' or item.estado eq 'E' ? 'ENVIADO':'INGRESADO' or item.estado eq 'R' ? 'REVISADO':'INGRESADO' or item.estado eq 'A' ? 'APROBADO':'REVISADO' or item.estado eq 'N' ? 'NEGADO':'APROBADO' or item.estado eq 'V' ? 'DEVUELTO REVISION':'N/A'}"
+						filterMatchMode="contains"
+						sortBy="#{item.estado eq 'I' ? 'INGRESADO':'N/A' or item.estado eq 'D' ? 'DEVUELTO':'N/A' or item.estado eq 'E' ? 'ENVIADO':'INGRESADO' or item.estado eq 'R' ? 'REVISADO':'INGRESADO' or item.estado eq 'A' ? 'APROBADO':'REVISADO' or item.estado eq 'N' ? 'NEGADO':'APROBADO' or item.estado eq 'V' ? 'DEVUELTO REVISION':'N/A'}">
+						<p:outputLabel
+							value="#{item.estado eq 'I' ? 'INGRESADO':'N/A' or item.estado eq 'D' ? 'DEVUELTO':'N/A' or item.estado eq 'E' ? 'ENVIADO':'INGRESADO' or item.estado eq 'R' ? 'REVISADO':'INGRESADO' or item.estado eq 'A' ? 'APROBADO':'REVISADO' or item.estado eq 'N' ? 'NEGADO':'APROBADO' or item.estado eq 'V' ? 'DEVUELTO REVISION':'N/A'}" />
+					</p:column>
+
+					<p:column headerText="Ejecutivo Envío" width="10%">
+						<p:outputLabel value="#{item.usuarioEnvia}" />
+					</p:column>
+
+					<p:column headerText="Fecha Envío" width="5%">
+						<p:outputLabel value="#{item.fechaEstEnviado}"> 
+						<f:convertDateTime pattern="yyyy-MM-dd" />
+						</p:outputLabel>
+					</p:column>
+
+					<p:column headerText="Analista Revisión" width="10%">
+						<p:outputLabel value="#{item.usuarioRevisa}" />
+					</p:column>
+
+					<p:column headerText="Fecha Revisión" width="5%">
+						<p:outputLabel value="#{item.fechaEstRevisado}"> 
+						<f:convertDateTime pattern="yyyy-MM-dd" />
+						</p:outputLabel>
+					</p:column>
+
+					<p:column headerText="Analista Aprueba" width="10%">
+						<p:outputLabel value="#{item.usuarioAprueba}" />
+					</p:column>
+
+					<p:column headerText="Fecha Aprobación" width="5%">
+						<p:outputLabel value="#{item.fechaEstAprobado}" > 
+						<f:convertDateTime pattern="yyyy-MM-dd" />
+						</p:outputLabel>
+					</p:column>
+
+					<p:column headerText="Ingresos" width="5%">
+						<p:outputLabel value="#{item.ingreso}" />
+					</p:column>
+
+					<p:column headerText="Egresos" width="5%">
+						<p:outputLabel value="#{item.egreso}" />
+					</p:column>
+
+					<p:column headerText="Disponible" width="5%">
+						<p:outputLabel value="#{item.montoDisponible}" />
+					</p:column>
+
+				</p:dataTable>
+			</h:panelGrid>
+		</h:form>
+	</ui:define>
+
+</ui:composition>

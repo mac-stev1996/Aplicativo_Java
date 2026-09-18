@@ -1,0 +1,406 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+	<ui:define name="title">
+		Detalle Seguimiento Cobranzas
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmBotones">
+			<p:commandButton style="float: right;" icon="fa fa-arrow-left"
+				partialSubmit="true" styleClass="boton"
+				action="#{seguimientoCobranzasController.regresarPantalla}"
+				process="@this" title="Regresar"
+				update="#{p:component('frmDetCobranzas')}" id="regresar" />
+			<p:commandButton style="float: right;" icon="fa fa-save"
+				partialSubmit="true" styleClass="boton"
+				action="#{seguimientoCobranzasController.grabarSeguimiento}"
+				process="@this, frmDetCobranzas" title="Grabar Seguimiento"
+				update="#{p:component('frmDetCobranzas')}" id="grabar" />
+			<p:commandButton style="display :none;" id="descargar"
+				onclick="this.form.target='_blank'" ajax="false" immediate="true"
+				action="#{seguimientoCobranzasController.descargarDocumento}" />
+		</h:form>
+	</ui:define>
+	<ui:define name="content">
+		<style type="text/css">
+body {
+	font-size: 10px;
+}
+
+.ui-g-12 {
+	padding: .2em .5em !important;
+}
+
+.w5 {
+	width: 5%;
+}
+
+.dashboard .contact-form .ui-button {
+	margin-top: 0px;
+}
+
+body .ui-button .ui-button-text {
+	font-size: 10px !important;
+}
+
+.table thead th, .table tbody tr td {
+	font-size: 10px !important;
+	padding: 2px 7px !important;
+}
+
+body .ui-messages>div {
+	padding: 4px 4px;
+	margin: 2px 2px;
+}
+
+.menorFecha {
+	background-color: #08F993 !important;
+}
+
+.mayorfecha {
+	background-color: #f20f07 !important;
+}
+
+.fechaDia {
+	background-color: #EEF903 !important;
+}
+.noseguimiento {
+	background-color: #ba34eb !important;
+}
+</style>
+		<h:form id="frmDetCobranzas" onkeypress="return event.keyCode!=13">
+			<p:messages showDetail="true" autoUpdate="true" closable="true"
+				showSummary="true" />
+			<p:panel id="pnlDetCobranzas">
+				<div class="ui-g dashboard">
+					<div class="ui-g-12 ui-fluid contact-form">
+						<div class="ui-g-12">
+							<div class="ui-g-8">
+								<h:panelGrid columns="4" style="width:100%">
+									<p:outputLabel value="Nombre Cliente: " styleClass="bold" />
+									<p:outputLabel
+										value="#{seguimientoCobranzasController.clienteSeleccionado.nombre}"></p:outputLabel>
+									<p:outputLabel value="Cédula:" styleClass="bold" />
+									<p:outputLabel
+										value="#{seguimientoCobranzasController.clienteSeleccionado.cedula}"></p:outputLabel>
+									<p:outputLabel value="Teléfono1 Cliente: " styleClass="bold" />
+									<p:outputLabel
+										value="#{seguimientoCobranzasController.clienteSeleccionado.telefono}"></p:outputLabel>
+									<p:outputLabel value="Teléfono2 Cliente: " styleClass="bold" />
+									<p:outputLabel
+										value="#{seguimientoCobranzasController.clienteSeleccionado.telefono2} "></p:outputLabel>
+									<p:outputLabel value="Dirección :" styleClass="bold" />
+									<p:outputLabel
+										value="#{seguimientoCobranzasController.clienteSeleccionado.direccion}"></p:outputLabel>
+									<p:outputLabel value="Correo Electrónico 1 :" styleClass="bold" />
+									<p:outputLabel
+										value="#{seguimientoCobranzasController.clienteSeleccionado.email1}"></p:outputLabel>
+									<p:outputLabel value="Correo Electrónico 2 :" styleClass="bold" />
+									<p:outputLabel
+										value="#{seguimientoCobranzasController.clienteSeleccionado.email2}"></p:outputLabel>
+									<p:outputLabel value="Activar SMS :" styleClass="bold" />
+
+									<p:selectOneRadio
+										value="#{seguimientoCobranzasController.clienteSeleccionado.enviaSmsCxc}">
+										<f:selectItem itemLabel="Si" itemValue="S" />
+										<f:selectItem itemLabel="No" itemValue="N" />
+										<p:ajax event="change"
+											listener="#{seguimientoCobranzasController.actualizarSms}"
+											process="frmDetCobranzas" update="@this, :frmDetCobranzas" />
+									</p:selectOneRadio>
+									<p:outputLabel
+										value="#{seguimientoCobranzasController.clienteSeleccionado.enviaSmsCxc}"></p:outputLabel>
+
+								</h:panelGrid>
+							</div>
+							<div>
+
+								<p:commandButton value="Datos Cli." partialSubmit="true"
+									process="@this, :frmDetCobranzas" style="width:100px"
+									action="#{seguimientoCobranzasController.verPantallaCliente}" />
+								<p:commandButton value="Hist. Doc" partialSubmit="true"
+									process="@this, :frmDetCobranzas" style="width:100px"
+									action="#{seguimientoCobranzasController.verPantallaHistoricoDoc}" />
+								<p:commandButton partialSubmit="true" icon="fa fa-file-excel-o"
+									process="@this, :dlgReporte" style="width:50px"
+									styleClass="green-btn"
+									action="#{seguimientoCobranzasController.abrirDialogReporte}" />
+								<p:commandButton value="Inscripcion Contratos Por Cartera Venc." partialSubmit="true"
+									process="@this, :frmDetCobranzas" style="width:200px"
+									action="#{seguimientoCobranzasController.verPantallaReqCartera}" />
+							</div>
+						</div>
+						<div class="ui-g-12">
+							<h:panelGrid id="leyendaGrid" columns="6" border="0"
+								cellpadding="0" cellspacing="2">
+								<h:graphicImage
+									value="/common/imgs/imagenes/circuloAmarillo.png"
+									style="border:none" width="9" height="9" />
+								<h:outputText value="= Seguimiento al Dia" style="border:none"
+									width="9" height="9" />
+								<h:graphicImage value="/common/imgs/imagenes/circuloRojo.png"
+									style="border:none" width="9" height="9" />
+								<h:outputText value="= Seguimiento Caducado" styleClass="normal" />
+								<h:graphicImage value="/common/imgs/imagenes/circuloVerde.png"
+									style="border:none" width="9" height="9" />
+								<h:outputText value="= Seguimiento Actual" styleClass="normal" />
+							</h:panelGrid>
+						</div>
+						<p:fieldset legend="Seguimiento Cartera" toggleable="true"
+							toggleSpeed="500">
+							<p:panelGrid columns="6" height="480">
+								<p:outputLabel value="Tipo Seguimiento: " styleClass="bold" />
+								<p:selectOneMenu
+									value="#{seguimientoCobranzasController.cxcSeguimientosCartera.secuencialSeguimiento}"
+									style="width:100%" filter="true">
+									<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+									<f:selectItems
+										value="#{seguimientoCobranzasController.listadoTipoSeguimiento}"
+										var="seg" itemValue="#{seg.id.codigo}"
+										itemLabel="#{seg.descripcion}">
+									</f:selectItems>
+								</p:selectOneMenu>
+
+								<p:outputPanel autoUpdate="true">
+									<p:commandLink title="Usuario Cobro"
+										action="#{seguimientoCobranzasController.cargarUsuariosSistema}"
+										value="Usuario Cobro:" style="font-weight:bold;"
+										update=":frmUsuarios" />
+									<p:inputText
+										value="#{seguimientoCobranzasController.usuarioDto.usuario}"
+										readonly="true" style="width:100px" />
+									<p:inputText
+										value="#{seguimientoCobranzasController.usuarioDto.nombre}"
+										readonly="true" style="width:150px" />
+								</p:outputPanel>
+
+								<p:outputLabel value="Fecha Próximo Seguimiento: "
+									styleClass="bold" />
+								<p:calendar id="datetime"
+									value="#{seguimientoCobranzasController.cxcSeguimientosCartera.fechaProximoContacto}"
+									pattern="MM/dd/yyyy HH:mm:ss" navigator="true"
+									style="width:100px" />
+
+							</p:panelGrid>
+							<p:panelGrid columns="6" height="480">
+								<p:outputLabel value="Canal de Gestión: " styleClass="bold" />
+								<p:selectOneMenu
+									value="#{seguimientoCobranzasController.cxcSeguimientosCartera.canalGestion}"
+									style="width:100%" filter="true">
+									<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+									<f:selectItems
+										value="#{seguimientoCobranzasController.listadoCanalGestion}"
+										var="item" itemValue="#{item.id.codigo}"
+										itemLabel="#{item.descripcion}">
+									</f:selectItems>
+								</p:selectOneMenu>
+								<p:outputLabel value="Contactado A: " styleClass="bold" />
+								<p:selectOneMenu
+									value="#{seguimientoCobranzasController.cxcSeguimientosCartera.contactado}"
+									style="width:100%" filter="true">
+									<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+									<f:selectItems
+										value="#{seguimientoCobranzasController.listadoContactado}"
+										var="item" itemValue="#{item.id.codigo}"
+										itemLabel="#{item.descripcion}">
+									</f:selectItems>
+								</p:selectOneMenu>
+
+								<p:outputLabel value="Resultados Gestion: " styleClass="bold" />
+								<p:selectOneMenu
+									value="#{seguimientoCobranzasController.cxcSeguimientosCartera.codigoResultado}"
+									style="width:100%" filter="true">
+									<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+									<f:selectItems
+										value="#{seguimientoCobranzasController.listadoResultadoGestion}"
+										var="canalResul" itemValue="#{canalResul.id.codigo}"
+										itemLabel="#{canalResul.descripcion}">
+									</f:selectItems>
+								</p:selectOneMenu>
+							</p:panelGrid>
+
+							<p:outputLabel value="Comentario: " styleClass="bold" />
+							<p:inputTextarea rows="2" cols="8" style="width:650px"
+								value="#{seguimientoCobranzasController.cxcSeguimientosCartera.comentario}" />
+						</p:fieldset>
+
+						<div class="ui-g-12">
+							<p:dataTable id="detCliente" var="item" rowIndexVar="row"
+								styleClass="table"
+								value="#{seguimientoCobranzasController.listadoDetalleCartera}"
+								rowKey="#{item}" emptyMessage="No existe detalle de Cartera"
+								paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+								paginator="true" rows="15" rowsPerPageTemplate="20,30,40"
+								paginatorPosition="bottom" rowStyleClass="#{item[19]}"
+								rowSelectMode="checkbox">
+								<p:ajax event="rowUnselectCheckbox" update="@this"
+									process="@this"
+									listener="#{seguimientoCobranzasController.rowUnselectCheckbox}" />
+								<p:ajax event="rowSelectCheckbox" update="@this" process="@this"
+									listener="#{seguimientoCobranzasController.rowSelectCheckbox}" />
+								<p:ajax event="toggleSelect" update="@this" process="@this"
+									listener="#{seguimientoCobranzasController.selectAllCheckboxes}" />
+								<p:column selectionMode="multiple"
+									style="width:16px;text-align:center" width="5%">
+								</p:column>
+								<p:column width="2%"
+									style="color:blue; font-weight: bold; text-align: center !important">
+									<p:commandLink value="#{row + 1}" partialSubmit="true"
+										style="font-size: 12px; font-weight: bold;" process="@this"
+										actionListener="#{seguimientoCobranzasController.abrirDialogoSeguimientoNoDocu(item)}"
+										update=":dlgDetalle">
+									</p:commandLink>
+								</p:column>
+								<p:column headerText="Tipo Documento" width="8%">
+									<p:outputLabel value="#{item[0]}" />
+								</p:column>
+								<p:column headerText="Fecha" width="10%" sortBy="#{item[1]}">
+									<p:outputLabel value="#{item[1]}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</p:outputLabel>
+								</p:column>
+								<p:column headerText="No Fisico" width="25%"
+									filterBy="#{item[2]}" filterMatchMode="contains"
+									sortBy="#{item[2]}">
+									<p:commandLink value="#{item[2]}" partialSubmit="true"
+										style="font-size: 12px; font-weight: bold;" process="@this"
+										action="#{seguimientoCobranzasController.asignarFilaSeleccionada(item,'pdf')}"
+										update="detCliente">
+									</p:commandLink>
+								</p:column>
+								<p:column headerText="Fecha Vencimiento" width="25%"
+									sortBy="#{item[3]}">
+									<p:outputLabel value="#{item[3]}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</p:outputLabel>
+								</p:column>
+								<p:column headerText="Val Original" width="10%"
+									styleClass="number">
+									<p:outputLabel value="#{item[4]}">
+										<f:convertNumber pattern="¤#,##0.00" />
+									</p:outputLabel>
+								</p:column>
+								<p:column headerText="Saldo" width="10%" styleClass="number">
+									<p:outputLabel value="#{item[5]}">
+										<f:convertNumber pattern="¤#,##0.00" />
+									</p:outputLabel>
+								</p:column>
+								<p:column headerText="Int." width="10%" styleClass="number">
+									<p:outputLabel value="#{item[18]}">
+										<f:convertNumber pattern="¤#,##0.00" />
+									</p:outputLabel>
+								</p:column>
+								<p:column headerText="Letra" width="10%">
+									<p:outputLabel value="#{item[6]}" />
+								</p:column>
+								<p:column headerText="Dias Vencidos" width="10%">
+									<p:outputLabel value="#{item[7]}" />
+								</p:column>
+								<p:column headerText="Clase Documento" width="10%">
+									<p:outputLabel value="#{item[9]}" />
+								</p:column>
+								<p:column headerText="Antigüedad" width="10%"
+									sortBy="#{item[10]}">
+									<p:outputLabel value="#{item[10]}" />
+								</p:column>
+								<p:column headerText="Fec. prox. Seguimiento" width="15%">
+									<p:outputLabel value="#{item[12]}">
+										<f:convertDateTime pattern="dd/MM/yyyy hh:mm" />
+									</p:outputLabel>
+								</p:column>
+							</p:dataTable>
+
+						</div>
+					</div>
+				</div>
+			</p:panel>
+		</h:form>
+
+		<p:dialog widgetVar="dlgReporte" id="dlgReporte"
+			header="Seleccione Tipo Reporte" resizable="true" modal="true"
+			closable="true" appendTo="@(body)" width="250" height="150"
+			closeOnEscape="true">
+			<h:form id="idFrmReporte">
+				<div class="ui-g dashboard">
+					<div class="ui-g-12 ui-fluid contact-form">
+						<div class="ui-g-12">
+							<div class="ui-g-6">
+								<LABEL>Tipo Reporte:</LABEL>
+								<p:selectOneMenu
+									value="#{seguimientoCobranzasController.tipoReporte}"
+									style="width:100%">
+									<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+									<f:selectItem itemValue="R" itemLabel="Resumido" />
+									<f:selectItem itemValue="D" itemLabel="Detallado Clientes" />
+								</p:selectOneMenu>
+
+							</div>
+
+						</div>
+					</div>
+					<center>
+						<p:commandButton id="btnReporte" ajax="false"
+							onclick="this.form.target='_blank'" styleClass="green-btn"
+							actionListener="#{seguimientoCobranzasController.generarReporte('excel')}"
+							partialSubmit="true" process="@this,:idFrmReporte"
+							update=":frmDetCobranzas" icon="fa fa-file-excel-o" />
+					</center>
+				</div>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgDetalle" id="dlgDetalle"
+			header="Detalle Seguimiento" resizable="true" modal="true"
+			closable="true" appendTo="@(body)" width="700" height="450"
+			closeOnEscape="true">
+			<h:form id="idFrmDetalle">
+				<div class="ui-g dashboard">
+					<div class="ui-g-12 ui-fluid contact-form">
+						<div class="ui-g-12">
+							<p:dataTable id="detSeguimiento" var="item" rowIndexVar="row"
+								styleClass="table"
+								value="#{seguimientoCobranzasController.listadoSeguimientoCartera}"
+								rowKey="#{item}"
+								emptyMessage="No existe detalle Seguimiento de Cartera"
+								paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+								paginator="true" rows="15" rowsPerPageTemplate="20,30,40"
+								paginatorPosition="bottom">
+								<p:column headerText="Comentario" width="40%">
+									<p:outputLabel value="#{item.comentario}" />
+								</p:column>
+								<p:column headerText="Usuario" width="15%">
+									<p:outputLabel value="#{item.usuarioCreacion}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</p:outputLabel>
+								</p:column>
+								<p:column headerText="Letra" width="15%">
+									<p:outputLabel value="#{item.noDocuRefe}" />
+								</p:column>
+								<p:column headerText="No Fisico" width="15%">
+									<p:outputLabel value="#{item.noFisico}" />
+								</p:column>
+								<p:column headerText="Fecha Seg." width="15%">
+									<p:outputLabel value="#{item.fechaSeguimiento}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</p:outputLabel>
+								</p:column>
+								<p:column headerText="Fecha  prox. Seg." width="15%">
+									<p:outputLabel value="#{item.fechaProximoContacto}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</p:outputLabel>
+								</p:column>
+							</p:dataTable>
+						</div>
+					</div>
+				</div>
+			</h:form>
+		</p:dialog>
+
+		<ui:include src="/jsf/common/dialog/dialogUsuarios.xhtml" />
+	</ui:define>
+</ui:composition>

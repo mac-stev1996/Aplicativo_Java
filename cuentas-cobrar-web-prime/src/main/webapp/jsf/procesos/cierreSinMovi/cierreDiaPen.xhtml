@@ -1,0 +1,35 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core">
+	
+	<p:panelGrid columns="1" id="pgEdicionPendientes" width="100%" layout="grid" columnClasses="ui-grid-col-12" >
+				
+		<p:dataTable id="dtCierreDiaPen" styleClass="tblPrincipal"
+			widgetVar="dtRegistrosPen"
+			value="#{cierreDiaSinMovimientosController.cierreDiaSinMovimientosDTOList}" var="item"
+			emptyMessage="No hay registros" paginator="true"
+			rows="25" rowKey="#{item.rownum}"
+			currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+			rowsPerPageTemplate="25,50,100" 
+			paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+			paginatorAlwaysVisible="true" paginatorPosition="top"
+			filterDelay="1000" rowIndexVar="row"
+			selection="#{cierreDiaSinMovimientosController.cierreDiaSinMovimientosSelectDTOList}" rowSelectMode="checkbox">
+			
+			<p:column selectionMode="multiple" width="10%" styleClass="txtC"/>
+	        
+			<p:column headerText="Centro" width="50%">
+				<p:outputLabel value="#{item.centro} - #{item.nombre}"/>
+			</p:column>
+			<p:column headerText="Dia proceso caja" width="40%" styleClass="txtC">
+				<p:outputLabel value="#{item.diaProcesoCaja}">
+					<f:convertDateTime pattern="dd/MM/yyyy" />
+				</p:outputLabel>
+			</p:column>
+		</p:dataTable>
+	</p:panelGrid>
+	
+</ui:composition>

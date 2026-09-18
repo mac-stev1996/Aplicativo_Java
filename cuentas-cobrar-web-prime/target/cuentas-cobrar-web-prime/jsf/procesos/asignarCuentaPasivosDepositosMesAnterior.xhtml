@@ -1,0 +1,280 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Diarios A - Asignar Cuenta Pasivos Depositos Meses Anteriores
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmButtons">
+			<p:commandButton style="float: right;" icon="fa fa-refresh"
+				partialSubmit="true" styleClass="boton"
+				actionListener="#{asignarCuentaPasivosController.limpiar}"
+				process="@this, #{p:component('frmAsignarCuentaPasivos')}" title="Refrescar"
+				update="#{p:component('frmAsignarCuentaPasivos')}, #{p:component('idDlgClientes')}"
+				id="refesh" />
+			<p:commandButton id="btnProcesar" icon="ui-icon-settings"
+				value="Procesar"
+				actionListener="#{asignarCuentaPasivosController.procesar}"
+				process="@this, #{p:component('idPanelCruzarValores')}" partialSubmit="true"
+				update="#{p:component('frmAsignarCuentaPasivos')}, #{p:component('idDlgClientes')}"
+				disabled="#{asignarCuentaPasivosDM.habilitarBoton}"/>
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+
+		<style type="text/css">
+.ui-inputnumber input {
+	text-align: right;
+	width: 90%;
+}
+</style>
+
+		<h:form id="frmAsignarCuentaPasivos" enctype="multipart/form-data">
+			<p:panelGrid id="idPanelAsignarCuentaPasivos" style="width:80%"
+				styleClass="ui-noborder">
+				<p:row>
+					<p:column width="5%">Codigo </p:column>
+					<p:column width="5%">Cedula </p:column>
+					<p:column width="50%">Nombre </p:column>
+					<p:column width="50%">Nombre comercial </p:column>
+					<p:column width="80%">
+						<p:commandLink action="#{asignarCuentaPasivosController.limpiar}"
+							style="font-weight: bold;" value="Seleccione Cliente"
+							oncomplete="PF('dlgClientes').show();" />
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column width="5%">#{asignarCuentaPasivosDM.codigoCliente}
+					</p:column>
+					<p:column width="5%">
+					<p:inputText value="#{asignarCuentaPasivosDM.cedulaCliente}">
+					<p:ajax event="change" process="@this"
+						update="#{p:component('idPanelAsignarCuentaPasivos')}, #{p:component('idTableListaDepositos')}, #{p:component('idTableListaDeudas')}, #{p:component('idPanelCruzarValores')}, #{p:component('idPanelSubirExcel')}"					listener="#{asignarCuentaPasivosController.consultarCliente}" />
+					</p:inputText>
+					</p:column>
+					<p:column width="50%">#{asignarCuentaPasivosDM.nombreCliente}
+					</p:column>
+					<p:column width="50%">#{asignarCuentaPasivosDM.nombreComercial}
+					</p:column>
+					<p:column width="25%"></p:column>
+				</p:row>
+			</p:panelGrid>
+
+			<br />
+			<p:panel id="idPanelSubirExcel"
+				visible="#{asignarCuentaPasivosDM.esEmisorTarjeta}">
+				<center>
+					<p:panelGrid id="idPanelGridSubirExcel" columns="2">
+						<p:fileUpload mode="simple" dragDropSupport="false"
+							value="#{asignarCuentaPasivosController.file}"
+							sizeLimit="20000000" skinSimple="true" fileLimit="20"
+							allowTypes="/(\.|\/)(xls|xlsx)$/" label="Seleccionar Archivo">
+						</p:fileUpload>
+						<p:commandButton id="idProcesar" value="Procesar Excel"
+							icon="fa fa-caret-square-o-right"
+							action="#{asignarCuentaPasivosController.cargaArchivo}"
+							ajax="false"
+							onclick="PrimeFaces.monitorDownload(showStatus, hideStatus)"
+							update="#{p:component('idPanelAsignarCuentaPasivos')}, #{p:component('idTableListaDepositos')}, #{p:component('idTableListaDeudas')}, #{p:component('idPanelCruzarValores')}" />
+					</p:panelGrid>
+				</center>
+			</p:panel>
+
+			<h:panelGrid id="idPanelListaClientes" columns="2">
+				<p:fieldset legend="Despositos" style="margin-bottom:20px">
+					<p:dataTable id="idTableListaDepositos" var="item"
+						value="#{asignarCuentaPasivosDM.listaDepositosCliente}"
+						selection="#{asignarCuentaPasivosDM.depositosSelecionados}"
+						rowKey="#{item.id.noFisico}" rows="5"
+						emptyMessage="No hay registros" paginator="true"
+						paginatorPosition="bottom"
+						paginatorTemplate="{CurrentPageReport} {PageLinks} {RowsPerPageDropdown}">
+
+						<p:ajax event="rowSelectCheckbox"
+							listener="#{asignarCuentaPasivosController.rowSelectDeposito}"
+							update="#{p:component('idPanelCruzarValores')}, frmButtons" />
+						<p:ajax event="rowUnselectCheckbox"
+							listener="#{asignarCuentaPasivosController.rowUnSelectDeposito}"
+							update="#{p:component('idPanelCruzarValores')}, frmButtons" />
+						<p:ajax event="toggleSelect"
+							listener="#{asignarCuentaPasivosController.toggleSelectedDeposito}"
+							update="#{p:component('idPanelCruzarValores')}, frmButtons" />
+
+						<p:column selectionMode="multiple" width="10%"
+							style="text-align:center" />
+
+						<p:column headerText="Cuenta" filterBy="#{item.id.noCta}"
+							filterStyle="background:#e3e3e3;width:80%" width="25%">
+							<p:outputLabel value="#{item.id.noCta}" />
+						</p:column>
+
+						<p:column headerText="Documento" filterBy="#{item.id.noFisico}"
+							filterStyle="background:#e3e3e3;width:80%" width="25%">
+							<p:outputLabel value="#{item.id.noFisico}" />
+						</p:column>
+
+						<p:column headerText="Saldo" width="25%">
+							<p:outputLabel value="#{item.valor}" />
+						</p:column>
+
+						<p:column headerText="Comentario" width="50%">
+							<p:outputLabel value="#{item.comentario}" />
+						</p:column>
+
+						<p:column headerText="F.Deposito"
+							filterBy="#{item.id.fechaDeposito}"
+							filterStyle="background:#e3e3e3;width:80%" width="25%">
+							<p:outputLabel value="#{item.id.fechaDeposito}">
+								<f:convertDateTime pattern="yyyy-MM-dd" />
+							</p:outputLabel>
+						</p:column>
+
+						<p:column headerText="F.Carga" width="25%">
+							<p:outputLabel value="#{item.fechaCarga}">
+								<f:convertDateTime pattern="yyyy-MM-dd" />
+							</p:outputLabel>
+						</p:column>
+					</p:dataTable>
+				</p:fieldset>
+
+				<p:fieldset legend="Creditos" style="margin-bottom:20px">
+					<p:dataTable id="idTableListaDeudas" var="item"
+						value="#{asignarCuentaPasivosDM.listaDeudasCliente}"
+						rowKey="#{item.noFisico}" rows="5" emptyMessage="No hay registros"
+						paginator="true" paginatorPosition="bottom"
+						paginatorTemplate="{CurrentPageReport} {PageLinks} {RowsPerPageDropdown}">
+
+						<p:column headerText="Valor" width="30%"
+							style="background-color:#{asignarCuentaPasivosController.colorCelda(item)};">
+							<p:inputNumber value="#{item.valor}" decimalPlaces="3"
+								rendered="#{!asignarCuentaPasivosDM.esEmisorTarjeta}">
+								<p:ajax event="change"
+									listener="#{asignarCuentaPasivosController.agregarDeuda(item)}"
+									update="#{p:component('idTableListaDeudas')}, #{p:component('idPanelCruzarValores')}"
+									process="@this, idTableListaDeudas, frmButtons" partialSubmit="true"
+									global="false" />
+							</p:inputNumber>
+							<p:inputNumber value="#{item.valorTarjetas}" decimalPlaces="3"
+								rendered="#{asignarCuentaPasivosDM.esEmisorTarjeta}">
+								<p:ajax event="change"
+									listener="#{asignarCuentaPasivosController.sumarDeudas}"
+									update="#{p:component('idTableListaDeudas')}, #{p:component('idPanelCruzarValores')}, frmButtons"
+									process="@this, idTableListaDeudas" partialSubmit="true"
+									global="false" />
+							</p:inputNumber>
+						</p:column>
+
+						<p:column headerText="Saldo" width="30%">
+							<p:outputLabel value="#{item.saldo}" />
+						</p:column>
+
+						<p:column headerText="Linea" filterBy="#{item.noLinea}"
+							width="15%" filterStyle="background:#e3e3e3;width:80%">
+							<p:outputLabel value="#{item.noLinea}" />
+						</p:column>
+
+						<p:column headerText="Descripcion" width="50%">
+							<p:outputLabel value="#{item.descripcionLinea}" />
+						</p:column>
+
+						<p:column headerText="No Documento" filterBy="#{item.noDocu}"
+							width="35%" filterStyle="background:#e3e3e3;width:80%">
+							<p:outputLabel value="#{item.noDocu}" />
+						</p:column>
+
+						<p:column headerText="Letra" width="15%">
+							<p:outputLabel value="#{item.letra}" />
+						</p:column>
+
+						<p:column headerText="Fecha Vencimiento" width="30%">
+							<p:outputLabel value="#{item.fechaVence}">
+								<f:convertDateTime pattern="yyyy-MM-dd" />
+							</p:outputLabel>
+						</p:column>
+					</p:dataTable>
+				</p:fieldset>
+			</h:panelGrid>
+
+			<h:panelGrid id="idPanelCruzarValores" columns="1">
+				<p:fieldset legend="Cruce de valores" style="margin-bottom:20px">
+					<p:panelGrid columns="4">
+						<p:outputLabel value="Saldo Disponible: " />
+						<p:outputLabel value="Valor de deudas: " />
+						<p:outputLabel value="Valor para anticipo: " />
+						<h:outputText value="Aplicar a linea: " />
+
+						<p:inputNumber value="#{asignarCuentaPasivosDM.saldoDisponible}"
+							rendered="true" readonly="true" />
+
+						<p:inputNumber value="#{asignarCuentaPasivosDM.saldoDeudas}"
+							rendered="true" readonly="true" />
+
+						<p:inputNumber value="#{asignarCuentaPasivosDM.valorAnticipo}"
+							rendered="true" readonly="true" />
+
+						<p:selectOneMenu style="width:100%;" ilterMatchMode="contains"
+							filter="true" value="#{asignarCuentaPasivosDM.lineaSeleccionada}"
+							disabled="#{asignarCuentaPasivosDM.habilitarComboLinea}">
+							<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+							<f:selectItems
+								value="#{asignarCuentaPasivosController.lineaNegocio}" />
+						</p:selectOneMenu>
+					</p:panelGrid>
+				</p:fieldset>
+			</h:panelGrid>
+		</h:form>
+
+		<p:dialog id="idDlgClientes" modal="true" widgetVar="dlgClientes"
+			position="center,center" closable="true" appendTo="@(body)"
+			responsive="true" width="620" closeOnEscape="true">
+			<f:facet name="header">
+				<h:outputLabel style="color: white; font-size: 15px;"
+					value="CLIENTES" />
+			</f:facet>
+			<h:form id="idFormDlgClientes">
+				<p:outputLabel style="font-size: 12px; font-weight: bold;"
+					value="Identificacion: " />
+				<p:inputText onkeyup="mayus(this)"
+					placeholder="Ingrese valor a buscar"
+					value="#{asignarCuentaPasivosDM.cedulaCliente}" />
+				<p:outputLabel style="font-size: 12px; font-weight: bold;"
+					value="Nombre: " />
+				<p:inputText onkeyup="mayus(this)"
+					placeholder="Ingrese valor a buscar"
+					value="#{asignarCuentaPasivosDM.nombreCliente}" />
+				<p:commandButton style="font-size: 12px;" icon="fa fa-search fa-3x"
+					update=":#{p:component('idTblClientes')} "
+					actionListener="#{asignarCuentaPasivosController.cargarClientes}" />
+				<br />
+				<br />
+				<p:dataTable emptyMessage="Sin Registros" id="idTblClientes"
+					styleClass="less-padding"
+					value="#{asignarCuentaPasivosDM.listaClientes}"
+					paginator="#{not empty asignarCuentaPasivosDM.listaClientes}"
+					paginatorPosition="bottom" rowsPerPageTemplate="5" rows="5"
+					paginatorTemplate="{CurrentPageReport} {PageLinks}"
+					selectionMode="single" rowKey="#{item.clientePK}" var="item">
+					<p:ajax event="rowSelect" oncomplete="PF('dlgClientes').hide();"
+						listener="#{asignarCuentaPasivosController.seleccionarFilaCliente}"
+						update="#{p:component('idPanelAsignarCuentaPasivos')}, #{p:component('idTableListaDepositos')}, #{p:component('idTableListaDeudas')}, #{p:component('idPanelCruzarValores')}, #{p:component('idPanelSubirExcel')}" />
+					<p:column headerText="No. Cliente" styleClass="columAlignCenter">
+						<h:outputLabel value="#{item.clientePK.noCliente}" />
+					</p:column>
+					<p:column headerText="Identificacion">
+						<h:outputLabel value="#{item.cedula}" />
+					</p:column>
+					<p:column headerText="Nombre">
+						<h:outputLabel value="#{item.nombre}" />
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

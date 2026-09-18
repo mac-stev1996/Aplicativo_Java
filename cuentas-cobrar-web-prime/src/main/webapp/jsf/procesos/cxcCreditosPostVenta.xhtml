@@ -1,0 +1,957 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Credito PostVenta
+	</ui:define>
+
+	<ui:define name="buttons">
+		<p:commandButton partialSubmit="true"
+			value="Guardar" process="@this, idForm"
+			title="Guardar" icon="ui-icon ui-icon-save"
+			action="#{cxcCreditosPostVentaController.guardarCliente}"
+			update="@this, :idForm:tabView" />
+	</ui:define>
+
+
+	<ui:define name="content">
+		<style type="text/css">
+			.ui-g-1, .ui-g-2, .ui-g-3, .ui-g-4, .ui-g-5, .ui-g-6, .ui-g-7, .ui-g-8,
+				.ui-g-9, .ui-g-10, .ui-g-11, .ui-g-12 {
+				padding: .2em .5em !important;
+			}
+			
+			.ui-inputfield {
+				background-color: #cde9f1 !important;
+			}
+			
+			.totales .ui-fieldset-content {
+				background-color: #d6ffda;
+				border-radius: 5%;
+			}
+			
+			input:read-only {
+				background-color: #dcecf5;
+			}
+			
+			.ui-inputnumber input {
+				text-align: rigth;
+				width: 80%;
+			}
+			
+			.ui-btn-save {
+				-webkit-border-radius: 0%;
+				border-radius: 3%;
+				width: 110px;
+				margin-top: 10px;
+			}
+		</style>
+		<script type="text/javascript">
+		</script>
+		<h:form id="idForm">
+			<p:tabView id="tabView" activeIndex="#{cxcCreditosPostVentaController.tabActiveIndex}">
+				<p:tab id="tabProformas" title="Proformas">
+					<div class="ui-g dashboard">
+						<div class="ui-g-12">
+
+							<p:dataTable id="dtRevision"
+								value="#{cxcCreditosPostVentaController.listCotizacionRep}"
+								var="item" emptyMessage="No existen registros"
+								selectionMode="single" rowKey="#{item}"
+								paginatorPosition="bottom"  rows="10"
+								styleClass="table" paginator="true"
+								currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+								paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+
+								<p:column headerText="Proforma" width="70" filterBy="#{item.noFisico}">
+									<p:commandLink value="#{item.noFisico}" process="@this"
+										update="@this, :idForm:tabView" ajax="false"
+										action="#{cxcCreditosPostVentaController.cargarProformaCliente(item)}" />
+								</p:column>
+								<p:column headerText="Vendedor" width="100" >
+									<h:outputText value="#{item.nombreVendedor}" />
+								</p:column>
+								<p:column headerText="Cliente" width="200" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" filterBy="#{item.nombreCliente}" sortBy="#{item.nombreCliente}">
+									<h:outputText value="#{item.nombreCliente}" />
+								</p:column>
+								<p:column headerText="Agencia" width="70" styleClass="txtC" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" filterBy="#{item.id.centro}" >
+									<h:outputText value="#{item.id.centro}" title="#{item.id.centro}" />
+								</p:column>
+								<p:column headerText="Zona" width="50" styleClass="txtC" filterBy="#{item.zonaCliente}" >
+									<h:outputText value="#{item.zonaCliente}"  />
+								</p:column>
+								<p:column headerText="Estado" width="50">
+									<h:outputText
+										value="#{item.aprobadoCredito eq 'P' ? 'PENDIENTE' : item.aprobadoCredito}" />
+								</p:column>
+								<p:column headerText="Cotización" width="70" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" filterBy="#{item.id.numeroCotizacion}" sortBy="#{item.id.numeroCotizacion}" >
+									<h:outputText value="#{item.id.numeroCotizacion}" />
+								</p:column>
+								<p:column headerText="Fecha" width="70" sortBy="#{item.fechaElabora}">
+									<h:outputText value="#{item.fechaElabora}" > 
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</p:column>
+								<p:column headerText="Anular" width="30">
+									<p:commandButton update="@this, :idForm:tabView" styleClass="red-btn"
+										process="@this" icon="ui-icon-trash" partialSubmit="true"
+										action="#{cxcCreditosPostVentaController.anularProforma(item)}" />
+								</p:column>
+							</p:dataTable>
+						</div>
+					</div>
+				</p:tab>
+				<p:tab id="tabCliente" title="Cliente">
+					<div class="ui-g dashboard">
+						<div class="ui-g-6">
+							<p:fieldset legend="Cliente" id="Cli">
+								<h:panelGrid id="pgCliente" columns="4">
+	
+									<p:commandLink value="Cliente:"
+										actionListener="#{cxcCreditosPostVentaController.clearFilters}"
+										onclick="PF('DlgCli').show();">
+									</p:commandLink>
+									<p:inputText id="txtCedulaCli"
+										value="#{cxcCreditosPostVentaController.cliente.cedula}"
+										placeholder="RUC/CI">
+										<p:focus context="idForm:tabView" for="txtCedulaCli" />
+										<p:ajax event="change" process="@this"
+											update="@this, :idForm:tabView"
+											listener="#{cxcCreditosPostVentaController.loadCliente}" />
+									</p:inputText>
+	
+									<p:outputLabel value="N° Cliente:" />
+									<p:inputText readonly="true"
+										value="#{cxcCreditosPostVentaController.cliente.clientePK.noCliente}" />
+	
+									<p:outputLabel value="Nombres:" />
+									<p:inputText readonly="true"
+										value="#{cxcCreditosPostVentaController.cliente.nombres}" />
+	
+									<p:outputLabel value="Apellidos:" />
+									<p:inputText readonly="true"
+										value="#{cxcCreditosPostVentaController.cliente.apellidos}" />
+	
+									<p:outputLabel value="Razon Social:" />
+									<p:inputText value="#{cxcCreditosPostVentaController.cedula}"
+										readonly="true" />
+	
+									<p:outputLabel value="N° Comercial:" />
+									<p:inputText readonly="true"
+										value="#{cxcCreditosPostVentaController.cliente.nombreComercial}" />
+	
+								</h:panelGrid>
+								<h:panelGrid columns="2">
+									<p:outputLabel value="E-mail:" style="margin-right: 40px;" />
+									<p:inputText style="width:180px;"
+										value="#{cxcCreditosPostVentaController.cliente.email1}" />
+								</h:panelGrid>
+								<h:panelGrid columns="1">
+									<p:outputLabel value="Observación servicio:" />
+									<p:inputTextarea style="width:400px; heigth:80px;"
+										
+										value="#{cxcCreditosPostVentaController.cliente.observacionIndeseable}" />
+	
+									<p:outputLabel value="Observación repuestos:" />
+									<p:inputTextarea style="width:400px; heigth:80px;"
+										
+										value="#{cxcCreditosPostVentaController.cliente.motivo}" />
+								</h:panelGrid>
+								<h:panelGrid columns="2">
+	
+									<p:commandLink value="Bloqueo:"
+										onclick="PF('DlgBloqCli').show();">
+									</p:commandLink>
+									<h:panelGrid id="pgBloqueo" columns="3">
+										<p:inputText readonly="true"
+											value="#{cxcCreditosPostVentaController.cliente.segCensal}"
+											size="3" lang="2" />
+										<p:inputText
+											value="#{cxcCreditosPostVentaController.descrBloqueoCli}"
+											readonly="true" />
+											
+										<h:outputText value="#{cxcCreditosPostVentaController.cliente.FCierre}" > 
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</h:outputText>
+								
+									</h:panelGrid>
+									<p:outputLabel value="Tiene pagare:" />
+									<p:selectBooleanCheckbox
+										value="#{cxcCreditosPostVentaController.tienePagare}">
+										<p:ajax event="change" partialSubmit="true" process="@this"
+											update="@this"
+											listener="#{cxcCreditosPostVentaController.checkPagare}" />
+									</p:selectBooleanCheckbox>
+								</h:panelGrid>
+							</p:fieldset>
+						</div>
+						<div class="ui-g-6">
+							<div class="ui-g-12">
+								<p:fieldset legend="Clasificación Cliente" id="ClaCli">
+									<h:panelGrid columns="2">
+										<p:commandLink value="Vehiculo:"
+											onclick="PF('DlgCliVeh').show();">
+										</p:commandLink>
+										<h:panelGrid id="idCliVeh" columns="2">
+											<p:inputText
+												value="#{cxcCreditosPostVentaController.cliente.claseVehiculos}"
+												size="3" lang="2" readonly="true" />
+	
+											<p:inputText size="25"
+												value="#{cxcCreditosPostVentaController.descrClaseVeh}"
+												readonly="true" />
+	
+										</h:panelGrid>
+	
+										<p:commandLink value="Servicio:"
+											onclick="PF('DlgCliSer').show();">
+										</p:commandLink>
+										<h:panelGrid id="idCliSer" columns="2">
+											<p:inputText
+												value="#{cxcCreditosPostVentaController.cliente.claseServicio}"
+												size="3" lang="2" readonly="true" />
+	
+											<p:inputText size="25"
+												value="#{cxcCreditosPostVentaController.descrClaseSer}"
+												readonly="true" />
+										</h:panelGrid>
+	
+										<p:commandLink value="Repuestos:"
+											onclick="PF('DlgCliRep').show();">
+										</p:commandLink>
+										<h:panelGrid id="idCliRep" columns="2">
+											<p:inputText
+												value="#{cxcCreditosPostVentaController.cliente.claseRepuestos}"
+												size="3" lang="2" readonly="true" />
+											<p:inputText size="25"
+												value="#{cxcCreditosPostVentaController.descrClaseRep}"
+												readonly="true" />
+										</h:panelGrid>
+									</h:panelGrid>
+								</p:fieldset>
+	
+							</div>
+							<div class="ui-g-12">
+								<p:fieldset legend="Valores Vencimiento">
+									<h:panelGrid columns="4">
+										<h:outputText value="Vencido de 1 a 30 dias:" />
+										<p:inputNumber styleClass="number"
+											value="#{cxcCreditosPostVentaController.vencido30}"
+											readonly="true" />
+	
+										<h:outputText value="Vencido de 31 a 60 dias:" />
+										<p:inputNumber styleClass="number"
+											value="#{cxcCreditosPostVentaController.vencido60}"
+											readonly="true" />
+	
+										<h:outputText value="Vencido de 61 a 90 dias:" />
+										<p:inputNumber styleClass="number"
+											value="#{cxcCreditosPostVentaController.vencido90}"
+											readonly="true" />
+	
+										<h:outputText value="Vencido Mas 90 dias:" />
+										<p:inputNumber styleClass="number"
+											value="#{cxcCreditosPostVentaController.vencidoMas90}"
+											readonly="true" />
+	
+										<h:outputText value="Total Cartera:" />
+										<p:inputNumber styleClass="number"
+											value="#{cxcCreditosPostVentaController.totalCartera}"
+											readonly="true" />
+									</h:panelGrid>
+								</p:fieldset>
+							</div>
+	
+						</div>
+					</div>
+				</p:tab>
+				<p:tab id="tabParam" title="Parametros De Credito">
+					<div class="ui-g dashboard">
+						<div class="ui-g-12">
+							<div class="ui-g-6" align="center">
+								<p:fieldset legend="Repuestos" >
+									<h:panelGrid columns="2">
+
+										<p:outputLabel value="Cupo Asignado Cliente: " />
+										<p:inputNumber styleClass="number"
+											value="#{cxcCreditosPostVentaController.cliente.limiteCredi}" />
+	
+										<p:outputLabel value="Cupo Asignado Facturación: " />
+										<p:inputNumber styleClass="number"
+											value="#{cxcCreditosPostVentaController.cliente.limiteFact}" />
+	
+										<p:outputLabel value="Plazo Credito Corriente:" />
+										<p:inputNumber styleClass="number"
+											value="#{cxcCreditosPostVentaController.cliente.plazo}"
+											decimalPlaces="0" thousandSeparator=""
+											decimalSeparator="" />
+	
+										<p:outputLabel value="Plazo Credito Diferido:" />
+										<p:inputNumber styleClass="number"
+											value="#{cxcCreditosPostVentaController.cliente.promo}"
+											decimalPlaces="0" thousandSeparator="" decimalSeparator="" />
+	
+										<p:outputLabel value="Tasa De Interes:" />
+										<p:inputNumber styleClass="number"
+											value="#{cxcCreditosPostVentaController.cliente.tasaInt}"
+											readonly="true" />
+											
+										<p:outputLabel value="Pagare Por Cupo:" />
+										<h:panelGrid columns="2" id="pngPagare">
+											<p:selectOneMenu
+												value="#{cxcCreditosPostVentaController.cliente.pagare}">
+												<p:ajax event="change" update="@this, :idForm:tabView:pngPagare" />
+												<f:selectItem itemLabel="SELECCIONE" noSelectionOption="true" />
+												<f:selectItem itemLabel="SI" itemValue="S" />
+												<f:selectItem itemLabel="NO" itemValue="N" />
+											</p:selectOneMenu>
+
+											<h:commandLink target="_blank" id="downloadPagare"
+												rendered="#{cxcCreditosPostVentaController.cliente.pagare eq 'S'}"
+												title="Descargar Pagare"
+												action="#{cxcCreditosPostVentaController.downloadPagare}">
+												<i class="fa fa-cloud-download fa-2x" style="color: green;" />
+											</h:commandLink>
+										</h:panelGrid>
+										<p:outputLabel value="Dias de gracia:" />
+										<p:inputNumber styleClass="number"
+											value="#{cxcCreditosPostVentaController.cliente.diasGracia}"
+											maxValue="31" decimalPlaces="0" thousandSeparator=""
+											decimalSeparator="" />
+	
+										<p:commandLink value="Canal:"
+											onclick="PF('DlgCanRep').show();">
+										</p:commandLink>
+										<h:panelGrid id="idCanRep" columns="2">
+											<p:inputText
+												value="#{cxcCreditosPostVentaController.cliente.canalRepuestos}"
+												size="3" lang="2" readonly="true" />
+											<p:inputText
+												value="#{cxcCreditosPostVentaController.descrCanalRep}"
+												readonly="true" size="10" />
+										</h:panelGrid>
+
+									</h:panelGrid>
+	
+									<h:panelGrid columns="1">
+										<p:outputLabel value="Observacion Repuestos:" />
+										<p:inputTextarea style="width:300px; heigth:80px;"
+											readonly="true"
+											value="#{cxcCreditosPostVentaController.cliente.motivo}" />
+									</h:panelGrid>
+									<p:commandButton value="Actualizar"
+										update=":idForm:idDlgRevision"
+										oncomplete="PF('DlgRevision').show();" process="@this"
+										icon="ui-icon ui-icon-save"
+										action="#{cxcCreditosPostVentaController.loadListCoti}" />
+								</p:fieldset>
+							</div>
+	
+							<div class="ui-g-6" align="center">
+								<p:fieldset legend="Servicio" id="Rep">
+									<h:panelGrid columns="2">
+										<p:outputLabel value="Dias Plazo Servicio:" />
+										<p:inputNumber styleClass="number"
+											value="#{cxcCreditosPostVentaController.cliente.plazoServicio}" />
+	
+										<p:commandLink value="Agencia:"
+											onclick="PF('DlgAgeSer').show();">
+										</p:commandLink>
+										<h:panelGrid id="loadPgAge" columns="2">
+											<p:inputText
+												value="#{cxcCreditosPostVentaController.agencia.agenciaPK.codigo}"
+												size="3" lang="2" readonly="true" />
+											<p:inputText
+												value="#{cxcCreditosPostVentaController.agencia.nombre}"
+												readonly="true" />
+										</h:panelGrid>
+										<p:commandLink value="Linea:"
+											onclick="PF('DlgLineSer').show();">
+										</p:commandLink>
+										<h:panelGrid id="loadPgLinea" columns="2">
+											<p:inputText
+												value="#{cxcCreditosPostVentaController.lineaDeNegocio.lineaNegocioPK.noLinea}"
+												size="3" lang="2" readonly="true" />
+											<p:inputText
+												value="#{cxcCreditosPostVentaController.lineaDeNegocio.descripcion}"
+												readonly="true" />
+										</h:panelGrid>
+	
+									</h:panelGrid>
+	
+									<h:panelGrid columns="1">
+										<p:outputLabel value="Observacion Servicio:" />
+										<p:inputTextarea style="width:300px; heigth:80px;"
+											value="#{cxcCreditosPostVentaController.cliente.observacionIndeseable}"
+											 readonly="true"
+											/>
+									</h:panelGrid>
+	
+									<div align="center">
+										<p:commandButton partialSubmit="true" style="width:130px;"
+											styleClass="blue-btn ui-btn-save" value="Otorgar Credito"
+											process="@this" title="OtorgarCredito" icon="ui-icon-check"
+											action="#{cxcCreditosPostVentaController.ortogarCredito}"
+											update="@this" />
+	
+										<p:commandButton partialSubmit="true"
+											style="width:130px;margin-left:10px"
+											styleClass="green-btn ui-btn-save" value="Autorizar O/R"
+											process="@this" title="Autorizar O/R con saldos vencidos"
+											icon="ui-icon ui-icon-person"
+											action="#{cxcCreditosPostVentaController.autORSaldosVencidos}"
+											update="@this" />
+	
+									</div>
+	
+								</p:fieldset>
+							</div>
+						</div>
+					</div>
+				</p:tab>
+			</p:tabView>
+			
+
+			<p:dialog header="Clientes" id="idDlgCli" widgetVar="DlgCli"
+				modal="true" showEffect="fade" hideEffect="fade" resizable="true"
+				width="450" height="400" position="center center"
+				closeOnEscape="true">
+				<h:panelGrid id="pgFltCLi" columns="3">
+					<p:inputText id="txtCedula"
+						value="#{cxcCreditosPostVentaController.cedula}"
+						placeholder="RUC/CI" />
+					<p:inputText id="txtNombre"
+						value="#{cxcCreditosPostVentaController.nombre}"
+						placeholder="Nombre" />
+					<p:commandButton styleClass="blue-btn" partialSubmit="true"
+						process="@this :idForm:txtCedula :idForm:txtNombre "
+						title="Buscar" icon="ui-icon ui-icon-search"
+						update=":idForm:dtCli"
+						action="#{cxcCreditosPostVentaController.loadCliente}" />
+				</h:panelGrid>
+				<p:dataTable id="dtCli"
+					value="#{cxcCreditosPostVentaController.lstClientes}" var="item"
+					emptyMessage="No existen registros" selectionMode="single"
+					rowKey="#{item}" paginatorPosition="bottom" rows="10"
+					paginator="true"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+
+					<p:column headerText="Cedula" width="20">
+						<p:commandLink value="#{item.cedula}" partialSubmit="true"
+							process="@this" update="@this, :idForm:tabView"
+							action="#{cxcCreditosPostVentaController.selectCliente(item)}"
+							oncomplete="PF('DlgCli').hide();" />
+					</p:column>
+					<p:column headerText="No cliente"
+						filterBy="#{item.clientePK.noCliente}" width="20">
+						<h:outputText value="#{item.clientePK.noCliente}" />
+					</p:column>
+					<p:column headerText="Nombre" filterBy="#{item.nombre}" width="50">
+						<h:outputText value="#{item.nombre}" />
+					</p:column>
+				</p:dataTable>
+			</p:dialog>
+
+			<p:dialog header="Tipo de bloqueo a cliente" id="idDlgBloqCli"
+				widgetVar="DlgBloqCli" modal="true" showEffect="fade"
+				hideEffect="fade" resizable="true" width="400" height="350"
+				closable="true" position="center center" closeOnEscape="true">
+				<p:dataTable id="dtBloqCli"
+					value="#{cxcCreditosPostVentaController.lstBloqueosCli}" var="item"
+					emptyMessage="No existen registros" selectionMode="single"
+					rowKey="#{item}" paginatorPosition="bottom" rowsPerPageTemplate="5"
+					rows="10" paginatorTemplate="{CurrentPageReport} {PageLinks}">
+
+					<p:column headerText="Codigo" width="30">
+						<p:commandLink value="#{item.paramDetPK.codigoDet}"
+							partialSubmit="true" process="@this"
+							update="@this, :idForm:tabView:pgBloqueo"
+							action="#{cxcCreditosPostVentaController.selectBloCliente(item)}"
+							oncomplete="PF('DlgBloqCli').hide();" />
+					</p:column>
+					<p:column headerText="Descripcion" filterBy="#{item.descripcion}">
+						<h:outputText value="#{item.descripcion}" />
+					</p:column>
+				</p:dataTable>
+			</p:dialog>
+
+			<p:dialog header="Clase Cliente Veh" id="idDlgCliVeh"
+				widgetVar="DlgCliVeh" modal="true" showEffect="fade"
+				hideEffect="fade" resizable="true" width="400" height="350"
+				closable="true" position="center center" closeOnEscape="true">
+				<p:dataTable id="dtCliVeh"
+					value="#{cxcCreditosPostVentaController.lstClaseVeh}" var="item"
+					emptyMessage="No existen registros" selectionMode="single"
+					rowKey="#{item}" paginatorPosition="bottom" rowsPerPageTemplate="5"
+					rows="10" paginatorTemplate="{CurrentPageReport} {PageLinks}">
+
+					<p:column headerText="Clase" width="40"
+						filterBy="#{item.cxcClaseClientePK.clase}">
+						<p:commandLink value="#{item.cxcClaseClientePK.clase}"
+							partialSubmit="true" process="@this"
+							update="@this, :idForm:tabView:idCliVeh"
+							action="#{cxcCreditosPostVentaController.castDescrClase('VEH', item)}"
+							oncomplete="PF('DlgCliVeh').hide();" />
+					</p:column>
+					<p:column headerText="Descripcion" filterBy="#{item.descripcion}">
+						<h:outputText value="#{item.descripcion}" />
+					</p:column>
+				</p:dataTable>
+			</p:dialog>
+
+			<p:dialog header="Clase Cliente Ser" id="idDlgCliSer"
+				widgetVar="DlgCliSer" modal="true" showEffect="fade"
+				hideEffect="fade" resizable="true" width="400" height="350"
+				closable="true" position="center center" closeOnEscape="true">
+				<p:dataTable id="dtCliSer"
+					value="#{cxcCreditosPostVentaController.lstClaseSer}" var="item"
+					emptyMessage="No existen registros" selectionMode="single"
+					rowKey="#{item}" paginatorPosition="bottom" rowsPerPageTemplate="5"
+					rows="10" paginatorTemplate="{CurrentPageReport} {PageLinks}">
+
+					<p:column headerText="Clase" width="40"
+						filterBy="#{item.cxcClaseClientePK.clase}">
+						<p:commandLink value="#{item.cxcClaseClientePK.clase}"
+							partialSubmit="true" process="@this"
+							update="@this, :idForm:tabView:idCliSer"
+							action="#{cxcCreditosPostVentaController.castDescrClase('SER', item)}"
+							oncomplete="PF('DlgCliSer').hide();" />
+
+					</p:column>
+					<p:column headerText="Descripcion" filterBy="#{item.descripcion}">
+						<h:outputText value="#{item.descripcion}" />
+					</p:column>
+				</p:dataTable>
+			</p:dialog>
+
+			<p:dialog header="Clase Cliente Rep" id="idDlgCliRep"
+				widgetVar="DlgCliRep" modal="true" showEffect="fade"
+				hideEffect="fade" resizable="true" width="400" height="350"
+				closable="true" position="center center" closeOnEscape="true">
+				<p:dataTable id="dtCliRep"
+					value="#{cxcCreditosPostVentaController.lstClaseRep}" var="item"
+					emptyMessage="No existen registros" selectionMode="single"
+					rowKey="#{item}" paginatorPosition="bottom" rowsPerPageTemplate="5"
+					rows="10" paginatorTemplate="{CurrentPageReport} {PageLinks}">
+
+					<p:column headerText="Clase" width="40"
+						filterBy="#{item.cxcClaseClientePK.clase}">
+						<p:commandLink value="#{item.cxcClaseClientePK.clase}"
+							partialSubmit="true" process="@this"
+							update="@this, :idForm:tabView:idCliRep"
+							action="#{cxcCreditosPostVentaController.castDescrClase('REP', item)}"
+							oncomplete="PF('DlgCliRep').hide();" />
+					</p:column>
+					<p:column headerText="Descripcion" filterBy="#{item.descripcion}">
+						<h:outputText value="#{item.descripcion}" />
+					</p:column>
+				</p:dataTable>
+			</p:dialog>
+
+			<p:dialog header="Canal Repuestos" id="idDlgCanRep"
+				widgetVar="DlgCanRep" modal="true" showEffect="fade"
+				hideEffect="fade" resizable="true" width="400" height="350"
+				closable="true" position="center center" closeOnEscape="true">
+				<p:dataTable id="dtCanRep"
+					value="#{cxcCreditosPostVentaController.lstCanalesRepuestos}"
+					var="item" emptyMessage="No existen registros"
+					selectionMode="single" rowKey="#{item}" paginatorPosition="bottom"
+					rowsPerPageTemplate="5" rows="10"
+					paginatorTemplate="{CurrentPageReport} {PageLinks}">
+
+					<p:column headerText="Clase" width="40"
+						filterBy="#{item.paramDetPK.codigoDet}">
+						<p:commandLink value="#{item.paramDetPK.codigoDet}"
+							partialSubmit="true" process="@this"
+							update="@this, :idForm:tabView:idCanRep"
+							action="#{cxcCreditosPostVentaController.castCanalRep(item)}"
+							oncomplete="PF('DlgCanRep').hide();" />
+					</p:column>
+					<p:column headerText="Descripcion" filterBy="#{item.descripcion}">
+						<h:outputText value="#{item.descripcion}" />
+					</p:column>
+				</p:dataTable>
+			</p:dialog>
+
+
+			<p:dialog header="Agencias de Servicios" id="idDlgAgeSer"
+				widgetVar="DlgAgeSer" modal="true" showEffect="fade"
+				hideEffect="fade" resizable="true" width="400" height="350"
+				closable="true" position="center center" closeOnEscape="true">
+				<p:dataTable id="dtAgeSer"
+					value="#{cxcCreditosPostVentaController.lstAgenciasSer}" var="item"
+					emptyMessage="No existen registros" selectionMode="single"
+					rowKey="#{item}" paginatorPosition="bottom" rowsPerPageTemplate="5"
+					rows="10" paginatorTemplate="{CurrentPageReport} {PageLinks}">
+
+					<p:column headerText="Clase" width="40"
+						filterBy="#{item.agenciaPK.codigo}">
+						<p:commandLink value="#{item.agenciaPK.codigo}"
+							partialSubmit="true" process="@this"
+							update="@this, :idForm:tabView:loadPgAge"
+							action="#{cxcCreditosPostVentaController.selectAgencia(item)}"
+							oncomplete="PF('DlgAgeSer').hide();" />
+					</p:column>
+					<p:column headerText="Descripcion" filterBy="#{item.nombre}">
+						<h:outputText value="#{item.nombre}" />
+					</p:column>
+				</p:dataTable>
+			</p:dialog>
+
+			<p:dialog header="Lineas de negocio de Servicios" id="idDlgLineSer"
+				widgetVar="DlgLineSer" modal="true" showEffect="fade"
+				hideEffect="fade" resizable="true" width="400" height="350"
+				closable="true" position="center center" closeOnEscape="true">
+				<p:dataTable id="dtLineSer"
+					value="#{cxcCreditosPostVentaController.lstLineasNeg}" var="item"
+					emptyMessage="No existen registros" selectionMode="single"
+					rowKey="#{item}" paginatorPosition="bottom" rowsPerPageTemplate="5"
+					rows="10" paginatorTemplate="{CurrentPageReport} {PageLinks}">
+
+					<p:column headerText="Clase" width="40"
+						filterBy="#{item.lineaNegocioPK.noLinea}">
+						<p:commandLink value="#{item.lineaNegocioPK.noLinea}"
+							partialSubmit="true" process="@this"
+							update="@this, :idForm:tabView:loadPgLinea"
+							action="#{cxcCreditosPostVentaController.selectLinea(item)}"
+							oncomplete="PF('DlgLineSer').hide();" />
+					</p:column>
+					<p:column headerText="Descripcion" filterBy="#{item.descripcion}">
+						<h:outputText value="#{item.descripcion}" />
+					</p:column>
+				</p:dataTable>
+			</p:dialog>
+
+			<p:dialog header="Revisón de Proformas" id="idDlgRevision"
+				widgetVar="DlgRevision" modal="true" resizable="true" width="700" height="350"
+				closable="true" position="center center" closeOnEscape="true">
+				<p:dataTable id="dtRevision"
+					value="#{cxcCreditosPostVentaController.listCotiByCliente}"
+					var="item" emptyMessage="No existen registros"
+					selectionMode="single" rowKey="#{item}" paginatorPosition="bottom"
+					rowsPerPageTemplate="5" rows="10" styleClass="txtC"
+					paginatorTemplate="{CurrentPageReport} {PageLinks}">
+
+					<p:column headerText="Cia" width="30">
+						<h:outputText value="#{item.id.noCia}" />
+					</p:column>
+					<p:column headerText="Proforma">
+						<p:commandLink value="#{item.noFisico}" partialSubmit="true"
+							process="@this" update="@this, :idForm:idDlgEvaluacion"
+							action="#{cxcCreditosPostVentaController.revisionProforma(item)}"
+							oncomplete="PF('DlgEvaluacion').show();" />
+					</p:column>
+					<p:column headerText="Vendedor">
+						<h:outputText value="#{item.nombreVendedor}" />
+					</p:column>
+					<p:column headerText="Cliente" width="100">
+						<h:outputText value="#{item.nombres} #{item.apellidos}" />
+					</p:column>
+					<p:column headerText="Centro">
+						<h:outputText value="#{item.id.centro}" />
+					</p:column>
+					<p:column headerText="Estado">
+						<h:outputText
+							value="#{item.aprobadoCredito eq 'P' ? 'PENDIENTE' : item.aprobadoCredito}" />
+					</p:column>
+					<p:column headerText="Cotización">
+						<h:outputText value="#{item.id.numeroCotizacion}" />
+					</p:column>
+					<p:column headerText="Fecha">
+						<h:outputText value="#{item.fechaElabora}" />
+					</p:column>
+				</p:dataTable>
+			</p:dialog>
+
+
+			<p:dialog header="Evaluacion de proformas" id="idDlgEvaluacion"
+				widgetVar="DlgEvaluacion" modal="true" showEffect="fade"
+				hideEffect="fade" resizable="true" width="600" height="370"
+				closable="true" position="center center" closeOnEscape="true">
+
+				<p:tabView id="tabViewEvaluacion" dynamic="true" activeIndex="0">
+					<p:tab id="tabFinanciamiento" title="Financiamiento">
+						<div class="ui-g dashboard">
+							<div class="ui-g-12">
+								<div class="ui-g-6">
+									<h:panelGrid columns="2">
+										<h:outputText value="Subtotal:" />
+										<p:inputNumber styleClass="number"
+											value="#{cxcCreditosPostVentaController.cotizacionRepuesto.subtotal}"
+											readonly="true" />
+
+										<h:outputText value="Descuento:" />
+										<p:inputNumber styleClass="number"
+											value="#{cxcCreditosPostVentaController.cotizacionRepuesto.descuento}"
+											readonly="true" />
+
+										<h:outputText value="Otros cargos:" />
+										<p:inputNumber styleClass="number"
+											value="#{cxcCreditosPostVentaController.cotizacionRepuesto.otrosCargos}"
+											readonly="true" />
+
+										<h:outputText value="Neto:" />
+										<p:inputNumber styleClass="number"
+											value="#{cxcCreditosPostVentaController.cotizacionRepuesto.neto}"
+											readonly="true" />
+
+										<h:outputText value="IVA:" />
+										<p:inputNumber styleClass="number"
+											value="#{cxcCreditosPostVentaController.cotizacionRepuesto.iva}"
+											readonly="true" />
+
+										<h:outputText value="Transporte:" />
+										<p:inputNumber styleClass="number"
+											value="#{cxcCreditosPostVentaController.cotizacionRepuesto.transporte}"
+											readonly="true" />
+
+										<h:outputText value="Cuota de Entrada:" />
+										<p:inputNumber styleClass="number"
+											value="#{cxcCreditosPostVentaController.cotizacionRepuesto.cuotaDeEntrada}"
+											readonly="true" />
+
+										<h:outputText value="Saldo Financiar:" />
+										<p:inputNumber styleClass="number"
+											value="#{cxcCreditosPostVentaController.cotizacionRepuesto.saldoFinanciar}"
+											readonly="true" />
+									</h:panelGrid>
+
+									<p:commandButton partialSubmit="true"
+										styleClass="blue-btn ui-btn-save" value="Estado Cuenta"
+										oncomplete="PF('DlgEstadoCuenta').show();" process="@this"
+										update=":idForm:idDlgEstadoCuenta" />
+
+								</div>
+
+								<div class="ui-g-6">
+									<h:panelGrid columns="2">
+										<h:outputText value="Pagos Por Año:" />
+										<p:inputNumber styleClass="number"
+											value="#{cxcCreditosPostVentaController.cotizacionRepuesto.pagosPorAno}"
+											readonly="true" />
+
+										<h:outputText value="Plazo credito:" />
+										<p:inputNumber styleClass="number"
+											value="#{cxcCreditosPostVentaController.cotizacionRepuesto.plazoCredito}"
+											readonly="true" />
+
+										<h:outputText value="Tasa financiacion:" />
+										<p:inputNumber styleClass="number"
+											value="#{cxcCreditosPostVentaController.cotizacionRepuesto.tasaFinancia}"
+											readonly="true" />
+
+										<h:outputText value="Letras:" />
+										<p:inputNumber styleClass="number"
+											value="#{cxcCreditosPostVentaController.cotizacionRepuesto.periodo}"
+											readonly="true" />
+
+										<h:outputText value="Cuota Mensual:" />
+										<p:inputNumber styleClass="number"
+											value="#{cxcCreditosPostVentaController.cotizacionRepuesto.cuotaMensual}"
+											readonly="true" />
+
+										<h:outputText value="Intereses:" />
+										<p:inputNumber styleClass="number"
+											value="#{cxcCreditosPostVentaController.cotizacionRepuesto.intereses}"
+											readonly="true" />
+
+										<h:outputText value="Total General:" />
+										<p:inputNumber styleClass="number"
+											value="#{cxcCreditosPostVentaController.cotizacionRepuesto.totalGeneral}"
+											readonly="true" />
+									</h:panelGrid>
+								</div>
+							</div>
+						</div>
+					</p:tab>
+					<p:tab id="tabEvaluacion" title="Aprobación">
+						<div class="ui-g dashboard">
+							<div class="ui-g-12">
+								<h:panelGrid columns="4">
+									<h:outputText value="Cupo Cliente:" />
+									<p:inputNumber styleClass="number"
+										value="#{cxcCreditosPostVentaController.cliente.limiteCredi}"
+										readonly="true" />
+									<h:outputText value="Usuario" style="margin-left:15px" />
+									<p:inputText
+										value="#{cxcCreditosPostVentaController.cotizacionRepuesto.usuarioAprob}"
+										readonly="true" />
+								</h:panelGrid>
+								<h:panelGrid columns="2">
+									<h:panelGrid columns="2">
+
+										<h:outputText value="Cupo asignado:" />
+										<p:inputNumber styleClass="number"
+											value="#{cxcCreditosPostVentaController.cotizacionRepuesto.cupoAsignadoNuevo}"
+											readonly="true" />
+
+										<h:outputText value="Cupo disponible:" />
+										<p:inputNumber styleClass="number"
+											value="#{cxcCreditosPostVentaController.cupoDisponible}"
+											readonly="true" />
+
+										<h:outputText value="Credito solicitado:" />
+										<p:inputNumber styleClass="number"
+											value="#{cxcCreditosPostVentaController.creditoSolicitado}"
+											readonly="true" />
+
+										<h:outputText value="Nuevo Cupo disponible:" />
+										<p:inputNumber styleClass="number"
+											value="#{cxcCreditosPostVentaController.nuevoCupoDisponible}"
+											readonly="true" />
+
+										<h:outputText value="Sobregiro:" />
+										<p:inputNumber styleClass="number"
+											value="#{cxcCreditosPostVentaController.cotizacionRepuesto.sobregiros}" />
+
+									</h:panelGrid>
+
+									<p:fieldset legend="Credito Temporal" id="CreTem">
+										<h:panelGrid columns="2">
+											<h:outputText value="Dias:" />
+											<p:inputNumber size="3" lang="2" decimalPlaces="0"
+												thousandSeparator="" decimalSeparator="" maxValue="31"
+												value="#{cxcCreditosPostVentaController.proformaCab.diasCredTemporal}" />
+
+											<h:outputText value="Autorización:" />
+											<p:inputText size="3" lang="2"
+												value="#{cxcCreditosPostVentaController.cotizacionRepuesto.garancheck}"
+												readonly="true" />
+										</h:panelGrid>
+
+									</p:fieldset>
+								</h:panelGrid>
+
+								<h:panelGrid columns="1">
+									<p:outputLabel value="Comentario:" />
+									<p:inputTextarea style="width:400px; heigth:80px;"
+										value="#{cxcCreditosPostVentaController.cotizacionRepuesto.comentarioAprob}" />
+								</h:panelGrid>
+
+								<h:panelGrid columns="2">
+									<h:panelGrid columns="2">
+										<p:outputLabel value="Estado:  " />
+										<p:selectOneRadio id="tiposObciones" layout="grid" columns="1"
+											value="#{cxcCreditosPostVentaController.cotizacionRepuesto.aprobadoCredito}">
+											<f:selectItem itemValue="S" itemLabel="Aprobada" />
+											<f:selectItem itemValue="N" itemLabel="Negada" />
+											<p:ajax event="change" update="tiposObciones" />
+										</p:selectOneRadio>
+									</h:panelGrid>
+								
+									<h:panelGrid columns="3">
+										<p:outputLabel value="Revisión comité:  " />
+										<p:selectBooleanCheckbox
+											value="#{cxcCreditosPostVentaController.revisionComite}">
+											<p:ajax event="change" partialSubmit="true" process="@this"
+												update="@this, idForm:tabViewEvaluacion:pgAdjunto"
+												listener="#{cxcCreditosPostVentaController.checkRevision}" />
+										</p:selectBooleanCheckbox>
+										<h:panelGrid columns="2" id="pgAdjunto">
+											<p:outputLabel value="Subir Adjunto Carga:"
+												rendered="#{cxcCreditosPostVentaController.cotizacionRepuesto.revisionComite eq 'S'}" />
+											<p:commandLink title="Click Subir Adjunto"
+												rendered="#{cxcCreditosPostVentaController.cotizacionRepuesto.revisionComite eq 'S'}"
+												partialSubmit="true" process="@this"
+												oncomplete="PF('dlgArchivo').show();"
+												value="#{cxcCreditosPostVentaController.nombreFileComprobante}">
+												<i class="fa fa-cloud-upload fa-2x" style="color: #00BCD4;" />
+											</p:commandLink>
+										</h:panelGrid>
+									</h:panelGrid>
+								</h:panelGrid>
+
+								<p:commandButton partialSubmit="true"
+									styleClass="blue-btn ui-btn-save" value="Guardar"
+									oncomplete="PF('DlgEvaluacion').hide(); PF('DlgRevision').hide();" process="@this"
+									title="Guardar" icon="ui-icon ui-icon-save"
+									action="#{cxcCreditosPostVentaController.guardarCotizacion}"
+									update="@this, idForm:tabView" />
+
+							</div>
+						</div>
+
+					</p:tab>
+				</p:tabView>
+			</p:dialog>
+			
+			<p:dialog header="Estado De Cuenta" id="idDlgEstadoCuenta"
+				widgetVar="DlgEstadoCuenta" modal="true" showEffect="fade"
+				hideEffect="fade" resizable="true" width="400" height="150"
+				closable="true" position="center center" closeOnEscape="true">
+
+				<h:panelGrid columns="2">
+
+					<p:outputLabel value="N° Cliente:" />
+					<h:panelGrid id="idCanRep" columns="2">
+						<p:inputText
+							value="#{cxcCreditosPostVentaController.cliente.clientePK.noCliente}"
+							size="6" readonly="true" />
+						<p:inputText
+							value="#{cxcCreditosPostVentaController.cliente.nombres} #{cxcCreditosPostVentaController.cliente.apellidos}"
+							readonly="true" size="30" />
+					</h:panelGrid>
+
+					<p:outputLabel value="Linea de negocio:" />
+					<p:selectOneMenu filter="true" 
+						value="#{cxcCreditosPostVentaController.codLinea}" >
+						<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+						<f:selectItems
+							value="#{cxcCreditosPostVentaController.lstLineasNegocio}"
+							var="item" itemLabel="#{item.lineaNegocioPK.noLinea} - #{item.descripcion}"
+							itemValue="#{item.lineaNegocioPK.noLinea}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Tipo de reporte: " />
+					<p:selectOneMenu
+						value="#{cxcCreditosPostVentaController.tipoReporte}">
+						<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+						<f:selectItem itemLabel="Resumido" itemValue="R" />
+						<f:selectItem itemLabel="Detallado clientes" itemValue="D" />
+					</p:selectOneMenu>
+
+				</h:panelGrid>
+
+				<p:commandButton value="Excel" style="margin-top:15px; margin-right: 15px;"
+					icon="fa fa-file-excel-o" styleClass="green-btn"
+					ajax="false" onclick="form.target='_blank'"
+					process="@this, idForm:pnDownReport" partialSubmit="true" update="@this"
+					actionListener="#{cxcCreditosPostVentaController.estadoCuentaReport}">
+					<f:param name="format" value="excel" />
+				</p:commandButton>
+				
+				<p:commandButton value="PDF" style="margin-top:15px;"
+					icon="fa fa-file-pdf-o" styleClass="blue-btn"
+					ajax="false" onclick="form.target='_blank'"
+					process="@this, idForm:pnDownReport" update="@this"
+					actionListener="#{cxcCreditosPostVentaController.estadoCuentaReport}">
+					<f:param name="format" value="pdf" />
+				</p:commandButton>
+
+			</p:dialog>
+
+			<p:dialog header="Adjuntar archivo" widgetVar="dlgArchivo"
+				modal="true" showEffect="fade" hideEffect="fade" resizable="true"
+				width="600" position="center center" closeOnEscape="true">
+				<p:fileUpload required="true"
+					fileUploadListener="#{cxcCreditosPostVentaController.adjuntarArchivo}"
+					oncomplete="PF('dlgArchivo').hide();"
+					mode="advanced" dragDropSupport="true" update="@this"
+					uploadLabel="Subir Archivo" cancelLabel="Cancelar"
+					label="Seleccionar Archivo" fileLimit="1"
+					fileLimitMessage="Solo puede subir un archivo">
+				</p:fileUpload>
+			</p:dialog>
+
+			<h:inputHidden value="/reports/EstadoCuentaClienteResumido.jasper"
+				binding="#{cxcCreditosPostVentaController.reportPath}" />
+
+		</h:form>
+		
+	</ui:define>
+</ui:composition>

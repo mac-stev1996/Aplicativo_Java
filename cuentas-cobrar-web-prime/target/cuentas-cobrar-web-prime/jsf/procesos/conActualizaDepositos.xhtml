@@ -1,0 +1,375 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Consulta y Actualización de Solicitudes de Confirmación
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmButtons"></h:form>
+	</ui:define>
+
+	<ui:define name="content">
+		<style type="text/css">
+			body {
+				font-size: 11px !important;
+			}			
+			body .ui-datatable.ui-datatable-scrollable thead tr th {
+				font-size: 11px !important;
+				padding: 0px 2px;
+			}
+			body .ui-datatable tbody tr td {
+				font-size: 10px !important;
+				padding: 2px 3px;
+			}
+			body .ui-panelgrid .ui-panelgrid-cell{
+				padding: 4px 7px;
+			}
+			.ui-dialog .ui-dialog-titlebar {
+		    	background-color: #4aaff7 !important;
+		    }
+		    .ui-dialog .ui-dialog-content {
+			    border: 1px solid #d8d8d8 !important;
+		    } 
+		</style>
+		<h:form id="idForm" enctype="multipart/form-data">
+			<p:messages id="messages" showDetail="true" autoUpdate="true"
+				closable="true" />
+			
+			<p:panelGrid columns="9" id="pgBusqueda" width="100%" layout="grid">
+				<p:outputLabel for="fechaDesdeB" value="Fecha Doc. desde:"/>
+				<p:calendar id="fechaDesdeB" navigator="true" value="#{actualizaAnticiposController.conDepositosBusqueda.fechaDesde}" 
+					showOn="button" pattern="dd/MM/yyyy" style="width:100% !important">
+				</p:calendar>
+				
+				<p:outputLabel for="fechaHastaB" value="Fecha Doc. hasta:"/>
+				<p:calendar id="fechaHastaB" navigator="true" value="#{actualizaAnticiposController.conDepositosBusqueda.fechaHasta}" 
+					showOn="button" pattern="dd/MM/yyyy" style="width:100% !important">
+				</p:calendar>
+									
+				<p:outputLabel for="solicitudB" value="No. Solicitud:"/>
+				<p:inputNumber id="solicitudB" value="#{actualizaAnticiposController.conDepositosBusqueda.id}" 
+					decimalPlaces="0" thousandSeparator="" decimalSeparator="" size="8"/>
+				
+				<p:commandLink id="clienteCommandLink" value="Identificación:"
+					oncomplete="PF('modalCLientes').show();" update="modalCLientes"
+					action="#{actualizaAnticiposController.ejecutarConsultaClientes}">
+				</p:commandLink>
+				<p:inputText id="cedulaB" value="#{actualizaAnticiposController.conDepositosBusqueda.cedula}" />
+				
+				<p:commandButton value="Buscar" icon="ui-icon-search"
+					process="@this :#{p:component('pgBusqueda')}"
+					action="#{actualizaAnticiposController.consultaSolicitudesConfirmacion}" 
+					update="idDtDepositosResult">
+				</p:commandButton>					
+			</p:panelGrid>
+			<p:spacer />
+			<p:panelGrid columns="1" id="idPanelGridDatos" style="width:140%">
+				<p:dataTable id="idDtDepositosResult"
+					value="#{actualizaAnticiposController.conDepositosLazyDataModel}" lazy="true"
+					rows="#{actualizaAnticiposController.batchSize}" var="item"
+					emptyMessage="No hay registros"	paginator="true"
+					paginatorPosition="bottom" rowsPerPageTemplate="25,50,100" 
+		            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowIndexVar="index" rowKey="#{item.id}"				
+					styleClass="table" scrollable="true" scrollWidth="100%" style="width:100%;">
+					<f:facet name="header">
+			            Solicitudes de Confirmación de Depósitos
+			        </f:facet>									
+					<p:column headerText="No. Sol." width="4%">
+			   			<h:outputLabel value="#{item.id}"/>
+			   		</p:column>
+			   		
+			   		<p:column headerText="Fecha Sol." width="5%">
+			     		<h:outputLabel value="#{item.fechaSolicitud}">
+			     			<f:convertDateTime pattern="dd/MM/yyyy"/>
+			     		</h:outputLabel>
+			     	</p:column>			
+			     		
+					<p:column headerText="Tipo Transaccion" width="7%">
+			     	   <h:outputLabel value="#{item.nombreTipoTransaccion}"/>
+			     	</p:column>
+			     	
+		     		<p:column headerText="Identificacion" width="6%">
+		     			<h:outputLabel value="#{item.cedula}"/>
+		     		</p:column>
+		     		<p:column headerText="Nombre" width="9%">
+		     			<h:outputLabel value="#{item.nombreCliente}"/>
+		     		</p:column>
+		     		<p:column headerText="Banco" width="8%">
+		     			<h:outputLabel value="#{item.nombreBanco}"/>
+		     		</p:column>
+		     		<p:column headerText="Area confirma" width="5%"
+		     			rendered="#{actualizaAnticiposController.compania.noCia eq '01' 
+		     				or actualizaAnticiposController.compania.noCia eq '08'
+		     				or actualizaAnticiposController.compania.noCia eq '11'}">
+		     				<h:outputLabel value="#{item.areaConfirma}"/>
+		     		</p:column> 
+		     		<p:column headerText="Agencia" width="6%"
+		     			rendered="#{actualizaAnticiposController.compania.noCia eq '01' 
+		     				or actualizaAnticiposController.compania.noCia eq '08'
+		     				or actualizaAnticiposController.compania.noCia eq '11'}">
+		     				<h:outputLabel value="#{item.nombreAgenciaCajero}"/>
+		     		</p:column>
+		     		<p:column headerText="Linea Anticipo" width="7%"
+		     			rendered="#{actualizaAnticiposController.compania.noCia eq '01' 
+		     				or actualizaAnticiposController.compania.noCia eq '08'
+		     				or actualizaAnticiposController.compania.noCia eq '11'}">
+		     				<h:outputLabel value="#{item.nombreLinea}"/>
+		     		</p:column>
+		     		<p:column headerText="Fecha Doc." width="5%">
+	               		<h:outputText value="#{item.fechaDocumento}">
+	                		<f:convertDateTime pattern="dd/MM/yyyy"/>
+	                	</h:outputText>
+		     		</p:column>
+		     		<p:column headerText="No. Documento" width="6%">     				
+		     			<h:outputText value="#{item.numeroDocumento}" />
+		     		</p:column>
+		     		<p:column headerText="Valor" width="5%" styleClass="txtR">
+		     			<h:outputText value="#{item.valorDocumento}" >
+		           			<f:convertNumber pattern="#,##0.00" />
+		           		</h:outputText>    			
+		     		</p:column>
+		     		<p:column headerText="Estado" width="5%">
+		     			<h:outputLabel value="#{item.estado eq 'S'?'SOLICITADO':(item.estado eq 'P'?'CONFIRMADO':(item.estado eq 'A'?'ANULADO':'RECHAZADO'))}"/>
+		     		</p:column>
+		     		<p:column headerText="Usuario Utiliza" width="5%"
+			     		rendered="#{actualizaAnticiposController.compania.noCia eq '01' 
+			     				or actualizaAnticiposController.compania.noCia eq '08'
+			     				or actualizaAnticiposController.compania.noCia eq '11'}">
+		     			<h:outputLabel value="#{item.usuarioUtiliza}"/>
+		     		</p:column>
+		     		<p:column headerText="Usuario Solicita" width="5%">
+		     			<h:outputLabel value="#{item.usuario}"/>
+		     		</p:column>		     		     	
+		     		<p:column headerText="Fecha Confirma" width="5%">
+	               		<h:outputText value="#{item.fechaConfirmado}">
+	                		<f:convertDateTime pattern="dd/MM/yyyy"/>
+	                	</h:outputText>
+		     		</p:column>
+		     		<p:column headerText="Archivo" style="text-align:center" width="3%">
+						<h:commandLink id="seePhoto"
+							action="#{actualizaAnticiposController.seeFile}" target="_blank">
+							<h:graphicImage value="/common/imgs/icons/carpeta.png" height="24"
+								width="24" style="border:none" title="Ver Documento"
+								alt="Ver Documento" />
+							<f:setPropertyActionListener
+								value="#{item.pathArchivo}"
+								target="#{actualizaAnticiposController.urlImagen}" />
+						</h:commandLink>
+					</p:column>
+
+					<p:column headerText="Aut. Terc" style="text-align:center"
+						width="3%">
+						<h:commandLink id="seePhotoAutorizacion"
+							rendered="#{not empty item.pathArchivoTercero}"
+							action="#{actualizaAnticiposController.seeFileAutorizacionTerceros}"
+							target="_blank">
+							<h:graphicImage value="/common/imgs/reports/preview.png"
+								height="24" width="24" style="border:none"
+								title="Ver Autorizacion" alt="Ver Autorizacion" />
+							<f:setPropertyActionListener value="#{item.pathArchivoTercero}"
+								target="#{actualizaAnticiposController.urlPathArchivoTercero}" />
+						</h:commandLink>
+					</p:column>
+
+					<p:column headerText="Editar" width="3%">
+				    	<p:commandButton icon="ui-icon-pencil" id="idBtEditar" title="Editar" 
+				    		rendered="#{item.estado eq 'S' || item.estado eq 'R'}"
+				    		disabled="#{!actualizaAnticiposController.puedeEditar and item.usuario ne actualizaAnticiposController.loggedUsername}"
+	    					action="#{actualizaAnticiposController.editar(item)}"
+	    					update="idDlgEditarValores"/>
+		        	</p:column>
+		     		
+		     		<p:column headerText="Observacion" width="13%">
+		     			<h:outputText value="#{item.condicion}" />    	
+		        	</p:column>
+		        </p:dataTable>
+			</p:panelGrid>
+	    </h:form>
+    
+    	<p:dialog id="idDlgEditarValores" widgetVar="dlgEditarValores"
+			header="Actualización Solicitud No. #{actualizaAnticiposController.conDepositos.id}"
+			style="position:fixed;" responsive="true" closeOnEscape="false"
+			modal="true" appendTo="@(body)" width="55%" height="400px">
+			<h:form id="frmValoresDeposito">
+				<p:growl id="idGrowlDialog" life="5000" showDetail="true" autoUpdate="true"></p:growl>
+				<p:panelGrid columns="2" >
+					<p:outputLabel value="Linea Anticipo:" 
+					rendered="#{actualizaAnticiposController.compania.noCia eq '01' 
+							or actualizaAnticiposController.compania.noCia eq '08'
+							or actualizaAnticiposController.compania.noCia eq '11'}"/>
+					<p:selectOneMenu rendered="#{actualizaAnticiposController.compania.noCia eq '01' 
+						or actualizaAnticiposController.compania.noCia eq '08'
+						or actualizaAnticiposController.compania.noCia eq '11'}"
+						value="#{actualizaAnticiposController.conDepositos.noLinea}"
+						filter="true" filterMatchMode="contains">
+						<f:selectItem itemLabel="Seleccione" itemValue="" noSelectionOption="true" />
+						<f:selectItem itemLabel="NA - No Aplica" itemValue="NA" />
+						<f:selectItems value="#{actualizaAnticiposController.lineaSelectItems}"/>
+					</p:selectOneMenu>
+					
+					<p:outputLabel value="Area confirma:" 
+						rendered="#{actualizaAnticiposController.compania.noCia eq '01' 
+							or actualizaAnticiposController.compania.noCia eq '08'
+							or actualizaAnticiposController.compania.noCia eq '11'}"/>
+					<p:selectOneMenu rendered="#{actualizaAnticiposController.compania.noCia eq '01' 
+						or actualizaAnticiposController.compania.noCia eq '08'
+						or actualizaAnticiposController.compania.noCia eq '11'}"
+						value="#{actualizaAnticiposController.conDepositos.areaConfirma}"
+						filter="true" filterMatchMode="contains">
+						<f:selectItem itemLabel="Seleccione un Area" itemValue=""
+							noSelectionOption="true" />
+						<f:selectItems value="#{actualizaAnticiposController.listAreas}"/>
+					</p:selectOneMenu>
+					
+					<p:outputLabel value="Banco:"/>
+					<p:selectOneMenu autoWidth="false"
+						value="#{actualizaAnticiposController.conDepositos.banco}"
+						filter="true" filterMatchMode="contains">
+						<f:selectItem itemLabel="Seleccione un Banco" itemValue=""
+							noSelectionOption="true" />
+						<f:selectItems value="#{actualizaAnticiposController.listMaestroCuenta}"
+							var="item" itemLabel="#{item.nomBanco}" itemValue="#{item.banco}" />
+					</p:selectOneMenu>
+					
+					<p:outputLabel value="Tipo Transaccion:"/>
+					<p:selectOneMenu id="tipoTransaccion" autoWidth="false"
+						value="#{actualizaAnticiposController.conDepositos.tipoTransaccion}"
+						 panelStyle="width:250px">
+						<f:selectItem itemLabel="Seleccione un Tipo de Transaccion" itemValue=""
+							noSelectionOption="true" />
+						<f:selectItems
+							value="#{actualizaAnticiposController.listaTipoTransaccion}" />							
+					</p:selectOneMenu>
+					
+					<p:outputLabel value="Fecha de Depósito:" />
+					<p:calendar navigator="true"
+						value="#{actualizaAnticiposController.conDepositos.fechaDocumento}" pattern="dd-MM-yyyy">
+					</p:calendar>
+					
+					<p:outputLabel value="N° Deposito/ Transferencia:" />
+					<p:inputText placeholder="NO IDENTIFICADO" 
+						value="#{actualizaAnticiposController.conDepositos.numeroDocumento}"
+						style="text-align: right"></p:inputText>
+						
+					<p:outputLabel value="N° Pedido Ecommerce:" />
+					<p:inputText value="#{actualizaAnticiposController.conDepositos.noPedido}"
+						style="text-align: right" maxlength="25"></p:inputText>	
+
+					<p:outputLabel value="Valor:"/>
+					<p:inputText
+						value="#{actualizaAnticiposController.conDepositos.valorDocumento}"
+						style="text-align: right">
+					</p:inputText>
+											
+					<p:outputLabel value="Identificación:" />		
+					<p:outputPanel>
+						<p:inputText id="clienteId" size="12" readonly="true"
+							requiredMessage="Debe ingresar al menos un cliente"
+							value="#{actualizaAnticiposController.conDepositos.cedula}">	
+						</p:inputText>
+					</p:outputPanel>
+
+					<p:outputLabel value="Nombre completo del cliente:"/>
+					<p:inputText id ="nombreCliente" readonly="true" size="50"
+						value="#{actualizaAnticiposController.conDepositos.nombreCliente}"></p:inputText>
+					
+					<p:outputLabel value="Agencia:" 
+						rendered="#{actualizaAnticiposController.compania.noCia eq '01' 
+							or actualizaAnticiposController.compania.noCia eq '08'
+							or actualizaAnticiposController.compania.noCia eq '11'}"/>
+					<p:selectOneMenu autoWidth="false"
+					    rendered="#{actualizaAnticiposController.compania.noCia eq '01' 
+					    	or actualizaAnticiposController.compania.noCia eq '08'
+					    	or actualizaAnticiposController.compania.noCia eq '11'}"
+						value="#{actualizaAnticiposController.conDepositos.agenciaCajero}"
+						filter="true" filterMatchMode="contains">
+						<f:selectItem itemLabel="Seleccione una agencia" itemValue="" noSelectionOption="true" />
+						<f:selectItems value="#{actualizaAnticiposController.agenciasSelectItems}" />
+					</p:selectOneMenu>
+
+					<p:commandLink value="Cargar Archivo:"
+						oncomplete="PF('dialogArchivo').show();"></p:commandLink>
+					<p:outputLabel value="#{actualizaAnticiposController.conDepositos.pathArchivo}"/>							
+				</p:panelGrid>
+				<p:spacer />
+				<center>			
+					<p:commandButton value="Guardar" icon="ui-icon-save"					
+						update="idForm" id="idCommad5" widgetVar="varButtonid"
+						validateClient="true"
+						action="#{actualizaAnticiposController.actualizar}"/>
+				</center>
+				
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Cargar Archivo - Informacion"
+			widgetVar="dialogArchivo" width="550" hideEffect="fade" height="250"
+			resizable="true" position="center center" modal="true">
+			<h:form id="frmUploadCuantitavios" enctype="multipart/form-data">
+				<p:fileUpload label="Archivo"
+					update="frmValoresDeposito"
+					oncomplete="PF('dialogArchivo').hide()"
+					fileUploadListener="#{actualizaAnticiposController.asignarArchivo}"
+					uploadLabel="Upload">
+				</p:fileUpload>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="Clientes" widgetVar="modalCLientes" id="modalCLientes" modal="true"
+			showEffect="fade" hideEffect="fade" resizable="true" width="600"
+			height="300" position="center center" closeOnEscape="true" appendTo="@(body)">
+			<h:form id="frmCliente">
+				<p:panelGrid columns="5" layout="grid">
+					<p:outputLabel value="Cedula:" />
+					<p:inputText id="clienteIdCC"
+						value="#{actualizaAnticiposController.cedulaClienteConsulta}"
+						size="10" />
+	
+					<p:outputLabel value="Nombre:" />
+					<p:inputText id="idNombreClieC" 
+						value="#{actualizaAnticiposController.nombreClienteConsulta}" />
+	
+					<p:commandButton id="clienteCommandink1" icon="ui-icon-search" update="carTable"
+						action="#{actualizaAnticiposController.ejecutarConsultaClientes}" />
+				</p:panelGrid>	
+	
+				<p:dataTable var="item"				
+					value="#{actualizaAnticiposController.lazyModel}"
+					widgetVar="idTableGeneral" paginator="true" rows="25" lazy="true"
+					rowIndexVar="var" scrollWidth="100%" scrollable="true"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+					rowsPerPageTemplate="25,50" id="carTable"
+					paginatorPosition="bottom" style="width:100%;">
+
+					<p:column headerText="No" width="5%">
+						<p:outputLabel value="#{var + 1}" />
+					</p:column>
+					<p:column headerText="Codigo" width="15%">
+						<p:commandLink id="viClieCommandLink"
+							value="#{item.clientePK.noCliente}"
+							action="#{actualizaAnticiposController.seleccionarCliente(item)}"
+							oncomplete="PF('modalCLientes').hide();"
+							partialSubmit="true"
+							update=":#{p:component('cedulaB')}"
+							process="@this">							
+						</p:commandLink>
+					</p:column>
+					<p:column headerText="Cedula" width="30%">
+						<p:outputLabel value="#{item.cedula}" />
+					</p:column>
+					<p:column headerText="Nombres/Apellidos " width="50%" styleClass="txtL">
+						<p:outputLabel value="#{item.nombre}" />
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

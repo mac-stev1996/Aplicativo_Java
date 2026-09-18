@@ -1,0 +1,55 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+<head>
+<script type="text/javascript">
+	function mayus(e) {
+		e.value = e.value.toUpperCase();
+	}
+</script>
+</head>
+<ui:composition>
+	<p:dialog id="idDlgZonas" header="Seleccione Zona" modal="true"
+		widgetVar="dialogZonasSW" position="center,center" closable="true"
+		appendTo="@(body)" responsive="true" width="70%" closeOnEscape="true">
+		<h:form id="frmZonas">
+			<h:panelGrid id="idPanelZonas" columns="1">
+				<p:dataTable id="idTableZonas" var="item" multiViewState="true"
+					rowIndexVar="row" rows="10" filterDelay="600" rowKey="#{item.id}"
+					paginatorPosition="bottom"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+					paginator="true" lazy="true"
+					value="#{dialogZonasController.lazyZonasDataModel}"
+					selection="#{dialogZonasController.zonasDto}"
+					selectionMode="single">
+
+					<p:ajax event="rowSelect"
+						listener="#{dialogZonasController.seleccionarZona}"
+						process="@this" partialSubmit="true" update="@parent" />
+
+					<p:column headerText="Zona" filterBy="#{item.zona}"
+						filterStyle="background:#e3e3e3;width:80%" width="10%">
+						<h:outputText value="#{item.zona}" />
+					</p:column>
+					<p:column headerText="Descripcion" filterBy="#{item.descripcion}"
+						filterStyle="background:#e3e3e3;width:80%" width="30%">
+						<h:outputText value="#{item.descripcion}" />
+					</p:column>
+					<p:column headerText="Codigo Vendedor"
+						filterBy="#{item.vendedorDirecto}"
+						filterStyle="background:#e3e3e3;width:80%" width="10%">
+						<h:outputText value="#{item.vendedorDirecto}" />
+					</p:column>
+					<p:column headerText="Nombre Vendedor"
+						filterBy="#{item.nombreVendedorDirecto}"
+						filterStyle="background:#e3e3e3;width:80%" width="50%">
+						<h:outputText value="#{item.nombreVendedorDirecto}" />
+					</p:column>
+				</p:dataTable>
+			</h:panelGrid>
+		</h:form>
+	</p:dialog>
+</ui:composition>
+</html>

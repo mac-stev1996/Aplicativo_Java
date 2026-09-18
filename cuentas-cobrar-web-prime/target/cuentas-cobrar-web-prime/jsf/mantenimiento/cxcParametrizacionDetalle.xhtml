@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<style type="text/css">
+body {
+	font-size: 10px;
+}
+
+body .ui-toolbar {
+	padding: 5px;
+}
+
+.columAlignCenter {
+	text-align: center;
+}
+
+.columAlignRight {
+	text-align: right;
+}
+</style>
+	<script type="text/javascript">
+		PrimeFaces.locales["es"] = {
+			    closeText: "Cerrar",
+			    prevText: "Anterior",
+			    nextText: "Siguiente",
+			    monthNames: ["Enero","Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+			    monthNamesShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+			    dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+			    dayNamesShort: ["Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab"],
+			    dayNamesMin: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
+			    weekHeader: "Semana",
+			    firstDay: 0,
+			    isRTL: false,
+			    showMonthAfterYear: false,
+			    yearSuffix: "",
+			    timeOnlyTitle: "Solo hora",
+			    timeText: "Tiempo",
+			    hourText: "Hora",
+			    minuteText: "Minuto",
+			    secondText: "Segundo",
+			    currentText: "Fecha actual",
+			    ampm: false,
+			    month: "Mes",
+			    week: "Semana",
+			    day: "Día",
+			    allDayText : "Todo el día"
+			};
+
+		</script>
+</h:head>
+<h:body>
+	<p:ajaxStatus onstart="PF('statusDialog').show()"
+		onsuccess="PF('statusDialog').hide()"
+		onerror="PF('statusDialog').hide()" />
+
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+		closable="false" resizable="false" showHeader="false">
+		<h:graphicImage value="/common/imgs/gifs/ajaxloadingbar.gif" />
+	</p:dialog>
+	<p:growl id="idGrowl" globalOnly="true" autoUpdate="true"
+		widgetVar="groMessages" showDetail="true" life="5000" />
+
+	<h:form id="idForm">
+		<p:toolbar>
+			<f:facet name="left">
+				<h:outputLabel style="font-size: 15px;"
+					value="PARAMETRIZACION DETALLE" />
+			</f:facet>
+
+			<f:facet name="right">
+				<p:commandButton value="Agregar" icon="fa fa-plus"
+					update="idForm, FrmResult"
+					action="#{cxcParametrizacionDetalleController.abrirItem}"
+					styleClass="green-btn" process="idForm"></p:commandButton>
+
+			</f:facet>
+
+		</p:toolbar>
+		<p:dataTable id="idTblDiarios" emptyMessage="Sin Registros"
+			value="#{cxcParametrizacionDetalleController.parametros}" var="item"
+			paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+			rows="15" paginator="true">
+
+			<p:column headerText="CODIGO DETALLE" styleClass="columAlignCenter">
+				<p:outputLabel value="#{item.paramDetPK.codigoDet}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="DESCRIPCION" styleClass="columAlignCenter">
+				<p:outputLabel value="#{item.descripcion}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="ESTADO" styleClass="columAlignCenter">
+				<p:outputLabel value="Activo" rendered="#{item.estado1 == 'A'}"></p:outputLabel>
+				<p:outputLabel value="Inactivo" rendered="#{item.estado1 != 'A'}"></p:outputLabel>
+			</p:column>
+			<p:column headerText="ACCIONES " styleClass="columAlignCenter"
+				width="300">
+				<p:commandButton value="Editar" icon="ui-icon-pencil"
+					action="#{cxcParametrizacionDetalleController.editarItem(item)}"
+					update="FrmResult" process="@this" partialSubmit="true">
+
+				</p:commandButton>
+				<p:spacer width="5" height="5"></p:spacer>
+				<p:commandButton value="Eliminar" icon="ui-icon-trash"
+					styleClass="red-btn"
+					action="#{cxcParametrizacionDetalleController.eliminarItem(item)}"
+					update="idForm">
+					<p:confirm header="Confirmacion"
+						message="¿Esta seguro que desea eliminar el registro?"
+						icon="pi pi-exclamation-triangle" />
+				</p:commandButton>
+			</p:column>
+
+		</p:dataTable>
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+			<p:commandButton value="Si" type="button"
+				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+			<p:commandButton value="No" type="button"
+				styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+		</p:confirmDialog>
+	</h:form>
+
+
+	<p:dialog widgetVar="DlgResult" id="DlgResult"
+		header="Registro de item" resizable="true" modal="true"
+		closable="true" appendTo="@(body)" width="490" height="120"
+		closeOnEscape="true">
+		<h:form id="FrmResult">
+			<h:panelGrid columns="2">
+				<h:outputLabel value="Codigo " />
+				<p:inputText size="30" maxlength="100"
+					value="#{cxcParametrizacionDetalleController.parametro.paramDetPK.codigoDet}">
+				</p:inputText>
+				<h:outputLabel value="Descripcion " />
+				<p:inputText size="30" maxlength="100"
+					value="#{cxcParametrizacionDetalleController.parametro.descripcion}">
+				</p:inputText>
+				<h:outputLabel value="Estado: " />
+				<p:selectOneMenu
+					value="#{cxcParametrizacionDetalleController.parametro.estado1}">
+					<f:selectItem itemLabel="Activo" itemValue="A" />
+					<f:selectItem itemLabel="Inactivo" itemValue="I" />
+				</p:selectOneMenu>
+			</h:panelGrid>
+
+			<br />
+			<center>
+				<p:commandButton value="Guardar"
+					action="#{cxcParametrizacionDetalleController.guardarItem}"
+					update="idForm"></p:commandButton>
+			</center>
+		</h:form>
+	</p:dialog>
+
+	<h:outputStylesheet name="css/layout-lightblue.css"
+		library="serenity-layout" />
+</h:body>
+</html>

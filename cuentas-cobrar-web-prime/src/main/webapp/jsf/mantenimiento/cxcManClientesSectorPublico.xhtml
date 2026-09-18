@@ -1,0 +1,51 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+	<ui:define name="title">
+		Clientes Sector Publico
+	</ui:define>
+	<ui:define name="buttons">
+		<h:form id="frmBotones">
+		<p:commandButton id="cargaArchivo" value="Carga Archivo"
+				styleClass="deep-orange-btn" title="Carga Archivo" immediate="true"
+				actionListener="#{cxcManCliSectorPublicoController.abrirCargaExcel}"
+				update="idForm" />		
+			<p:commandButton id="reporte" value="Reporte"
+				styleClass="deep-blue-btn" title="Reporte"
+				icon="fa fa-file-excel-o" immediate="true"
+				actionListener="#{cxcManCliSectorPublicoController.excel}"				
+				update="idForm" />
+			<p:commandButton id="limpiar" styleClass="deep-orange-btn"
+				title="Limpiar" icon="fa fa-refresh" immediate="true"
+				actionListener="#{cxcManCliSectorPublicoController.init}"
+				update="idForm" />
+		</h:form>
+	</ui:define>
+<ui:define name="content">
+		<style type="text/css">
+		</style>
+	<h:form id="idForm" onkeypress="return event.keyCode!=13">
+			<p:messages id="messages" showDetail="true" autoUpdate="true"
+				closable="true" showSummary="true" />
+				
+	</h:form>
+	
+		<p:dialog header="Cargar Excel" widgetVar="dlgArchivo" modal="true"
+			showEffect="fade" hideEffect="fade" resizable="true" width="600"
+			position="center center" closeOnEscape="true">
+			<h:form id="frmArchivo" enctype="multipart/form-data">
+				<p:fileUpload required="true"
+					fileUploadListener="#{cxcManCliSectorPublicoController.leerArchivo}"
+					mode="advanced" dragDropSupport="true" process="@this"
+					update="idForm, frmBotones" uploadLabel="Carga Masiva" cancelLabel="Cancelar"
+					label="Seleccionar Archivo" fileLimit="1"
+					fileLimitMessage="Solo puede subir un archivo">
+				</p:fileUpload>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

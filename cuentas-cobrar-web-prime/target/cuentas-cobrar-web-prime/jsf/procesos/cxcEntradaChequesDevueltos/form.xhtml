@@ -1,0 +1,579 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:param name="readonly"
+		value="#{cxcEntradaChequesDevueltosController.readonly}" />
+
+	<ui:define name="title">
+		Cuentas por Cobrar - Entrada de Cheques Devueltos
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="fmrButtons">
+			<p:commandButton styleClass="green-btn" partialSubmit="true"
+				process="@this :idForm:fsDatos :idForm:fsNd :idForm:fsCh :idForm:fsObs"
+				icon="ui-icon ui-icon-save" disabled="#{readonly}"
+				actionListener="#{cxcEntradaChequesDevueltosController.guardar}"
+				update="@this :idForm:fsDatos :idForm:fsNd :idForm:fsCh :idForm:fsObs" />
+			<p:commandButton title="Registro de Custodia" partialSubmit="true"
+				process="@this" icon="ui-icon ui-icon-list"
+				actionListener="#{cxcEntradaChequesDevueltosController.cargarDetalle}"
+				update="@this :idForm:tblCustodia"
+				oncomplete="PF('dlgCustodia').show()" />
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">
+
+		<style type="text/css">
+input {
+	width: 95%;
+}
+</style>
+
+		<h:form id="idForm">
+
+			<div class="ui-g dashboard">
+				<div class="ui-g-12 ui-fluid contact-form">
+					<p:fieldset id="fsDatos">
+						<div class="ui-g-12 nopadding">
+							<p:remoteCommand name="commandCliente" rendered="#{not readonly}"
+								process="@this :idForm:fsDatos" partialSubmit="true"
+								oncomplete="PF('dlgClientes').show()" />
+							<div class="ui-g-2">
+								<p:outputLabel value="No Transa" />
+								<p:inputText readonly="true"
+									value="#{cxcEntradaChequesDevueltosController.arccck.id.noDocu}" />
+							</div>
+							<div class="ui-g-2">
+								<p:outputLabel value="Código" />
+								<p:inputText readonly="#{readonly}"
+									value="#{cxcEntradaChequesDevueltosController.arccck.noCliente}"
+									onkeydown="if (event.keyCode == 120 ) {commandCliente(); return false;}">
+									<p:ajax event="change" process="@this" partialSubmit="true"
+										disabled="#{readonly}"
+										listener="#{cxcEntradaChequesDevueltosController.validarClientePorCodigo}"
+										update=":idForm:fsDatos" />
+								</p:inputText>
+							</div>
+							<div class="ui-g-2">
+								<p:outputLabel value="Cédula" />
+								<p:inputText readonly="#{readonly}"
+									value="#{cxcEntradaChequesDevueltosController.arccck.cedula}"
+									onkeydown="if (event.keyCode == 120 ) {commandCliente(); return false;}">
+									<p:ajax event="change" process="@this" partialSubmit="true"
+										disabled="#{readonly}"
+										listener="#{cxcEntradaChequesDevueltosController.validarClientePorCedula}"
+										update=":idForm:fsDatos" />
+								</p:inputText>
+							</div>
+							<div class="ui-g-5">
+								<p:outputLabel value="Nombre" />
+								<p:inputText readonly="true"
+									value="#{cxcEntradaChequesDevueltosController.arccck.nomCliente}" />
+							</div>
+						</div>
+					</p:fieldset>
+
+					<div class="ui-g-12 nopadding">
+						<p:fieldset id="fsNd" legend="Datos de la Nota de Débito">
+							<div class="ui-g-12 nopadding">
+								<div class="ui-g-5">
+									<p:outputLabel value="Banco que envía" />
+									<p:selectOneMenu filter="true" filterMatchMode="contains"
+										disabled="#{readonly}"
+										value="#{cxcEntradaChequesDevueltosController.arccck.cuentaNd}">
+										<f:selectItem itemLabel="Seleccione Banco y Cuenta"
+											noSelectionOption="true" />
+										<f:selectItems
+											value="#{cxcEntradaChequesDevueltosController.bancosNd}"
+											var="b" itemLabel="#{b[0]} - #{b[1]} - #{b[2]}"
+											itemValue="#{b[2]}" />
+										<p:ajax event="itemSelect" partialSubmit="true"
+											process="@this" global="false" disabled="#{readonly}"
+											listener="#{cxcEntradaChequesDevueltosController.changeBancoEnvia}"
+											update=":idForm:fsNd" />
+									</p:selectOneMenu>
+								</div>
+								<div class="ui-g-2">
+									<p:outputLabel value="Cuenta Banco Emisor" />
+									<p:inputText maxlength="15" readonly="true"
+										value="#{cxcEntradaChequesDevueltosController.arccck.cuentaNd}" />
+								</div>
+								<div class="ui-g-2">
+									<p:outputLabel value="Fecha" />
+									<p:calendar locale="es" pattern="dd/MM/yyyy"
+										readonly="#{readonly}"
+										value="#{cxcEntradaChequesDevueltosController.arccck.fechaNd}">
+										<p:ajax event="dateSelect" partialSubmit="true"
+											disabled="#{readonly}" process="@this :idForm:fsNd"
+											global="false" update=":idForm:fsNd" />
+										<p:ajax event="change" partialSubmit="true"
+											disabled="#{readonly}" process="@this :idForm:fsNd"
+											global="false" update=":idForm:fsNd" />
+									</p:calendar>
+								</div>
+							</div>
+							<div class="ui-g-12 nopadding">
+								<div class="ui-g-2">
+									<p:outputLabel value="Número Nota Débito" />
+									<p:inputText maxlength="12" readonly="#{readonly}"
+										value="#{cxcEntradaChequesDevueltosController.arccck.notaDebito}" />
+								</div>
+								<div class="ui-g-2">
+									<p:outputLabel value="Valor" />
+									<p:inputNumber decimalPlaces="2" styleClass="number"
+										readonly="#{readonly}"
+										value="#{cxcEntradaChequesDevueltosController.arccck.valorNd}" />
+								</div>
+							</div>
+						</p:fieldset>
+					</div>
+
+					<div class="ui-g-12 nopadding">
+						<p:fieldset id="fsCh" legend="Datos del Cheque">
+							<div class="ui-g-12 nopadding">
+								<div class="ui-g-4">
+									<p:outputLabel value="Banco" />
+									<p:selectOneMenu filter="true" filterMatchMode="contains"
+										disabled="#{readonly}"
+										value="#{cxcEntradaChequesDevueltosController.arccck.banco}">
+										<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+										<f:selectItems
+											value="#{cxcEntradaChequesDevueltosController.bancosCh}"
+											var="b" itemLabel="#{b[0]} - #{b[1]}" itemValue="#{b[0]}" />
+									</p:selectOneMenu>
+								</div>
+								<div class="ui-g-2">
+									<p:outputLabel value="Fecha" />
+									<p:calendar locale="es" pattern="dd/MM/yyyy"
+										readonly="#{readonly}"
+										value="#{cxcEntradaChequesDevueltosController.arccck.fecha}" />
+								</div>
+								<div class="ui-g-2">
+									<p:outputLabel value="Cheque" />
+									<p:inputText maxlength="8" readonly="#{readonly}"
+										value="#{cxcEntradaChequesDevueltosController.arccck.noCheque}">
+										<p:ajax event="change" partialSubmit="true"
+											disabled="#{readonly}"
+											process="@this :idForm:fsCh :idForm:fsDatos" global="false"
+											listener="#{cxcEntradaChequesDevueltosController.changeCheque}"
+											update=":idForm:fsCh" />
+									</p:inputText>
+								</div>
+							</div>
+							<div class="ui-g-12 nopadding">
+								<div class="ui-g-4">
+									<p:outputLabel value="Motivo" />
+									<p:selectOneMenu filter="true" filterMatchMode="contains"
+										disabled="#{readonly}"
+										value="#{cxcEntradaChequesDevueltosController.arccck.motivo}">
+										<f:selectItem itemLabel="Endoso Irregular"
+											itemValue="Endoso Irregular" />
+										<f:selectItem itemLabel="Cuenta Cerrada"
+											itemValue="Cuenta Cerrada" />
+										<f:selectItem itemLabel="Falta Sello Antefirma"
+											itemValue="Falta Sello Antefirma" />
+										<f:selectItem itemLabel="Falta Firma" 
+											itemValue="Falta Firma" />
+										<f:selectItem itemLabel="Firma Inconforme"
+											itemValue="Firma Inconforme" />
+										<f:selectItem itemLabel="Insuficiencia de Fondos"
+											itemValue="Insuficiencia de Fondos" />
+										<f:selectItem itemLabel="Mal Girado" 
+											itemValue="Mal Girado" />
+										<f:selectItem itemLabel="Falta Fecha" 
+											itemValue="Falta Fecha" />
+										<f:selectItem itemLabel="Cheque Alterado"
+											itemValue="Cheque Alterado" />
+										<f:selectItem itemLabel="Falta Beneficiario"
+											itemValue="Falta Beneficiario" />
+										<f:selectItem itemLabel="Falta Endoso"
+											itemValue="Falta Endoso" />
+										<f:selectItem itemLabel="Revocatoria Girador"
+											itemValue="Revocatoria Girador" />
+										<f:selectItem itemLabel="Chequera No Entregada"
+											itemValue="Chequera No Entregada" />
+										<f:selectItem itemLabel="Firma No Autorizada"
+											itemValue="Firma No Autorizada" />
+										<f:selectItem itemLabel="Inhabilitada De Firma No Autorizada"
+											itemValue="Inhabilitada De Firma No Autorizada" />
+									</p:selectOneMenu>
+								</div>
+								<div class="ui-g-2">
+									<p:outputLabel value="No Memo" />
+									<p:inputText maxlength="12" readonly="#{readonly}"
+										value="#{cxcEntradaChequesDevueltosController.arccck.noMemo}" />
+								</div>
+								<div class="ui-g-2">
+									<p:outputLabel value="Valor" />
+									<p:inputNumber decimalPlaces="2" styleClass="number"
+										readonly="#{readonly}"
+										value="#{cxcEntradaChequesDevueltosController.arccck.monto}" />
+								</div>
+							</div>
+							<div class="ui-g-12 nopadding">
+								<div class="ui-g-4">
+									<p:outputLabel value="Línea de Negocio" />
+									<p:selectOneMenu filter="true" filterMatchMode="contains"
+										disabled="#{readonly}"
+										value="#{cxcEntradaChequesDevueltosController.arccck.perteneceA}">
+										<f:selectItem itemLabel="Seleccione" noSelectionOption="true" />
+										<f:selectItems
+											value="#{cxcEntradaChequesDevueltosController.lineas}"
+											var="l" itemLabel="#{l[0]} - #{l[1]} - #{l[2]}"
+											itemValue="#{l[0]}" />
+										<p:ajax event="itemSelect" partialSubmit="true"
+											disabled="#{readonly}" process="@this :idForm:fsCh"
+											global="false"
+											listener="#{cxcEntradaChequesDevueltosController.changeLinea}"
+											update=":idForm:fsCh" />
+									</p:selectOneMenu>
+								</div>
+								<div class="ui-g-2">
+									<p:outputLabel value="Estado Actual" />
+									<p:selectOneMenu filter="true" filterMatchMode="contains"
+										disabled="#{readonly}"
+										value="#{cxcEntradaChequesDevueltosController.arccck.estado}">
+										<f:selectItem itemLabel="Digitado" itemValue="P" />
+										<f:selectItem itemLabel="Devuelto" itemValue="D" />
+										<f:selectItem itemLabel="Gestión de Cobro" itemValue="G" />
+										<f:selectItem itemLabel="Cobrado" itemValue="C" />
+										<p:ajax event="itemSelect" partialSubmit="true"
+											process="@this" global="false" />
+									</p:selectOneMenu>
+								</div>
+							</div>
+						</p:fieldset>
+					</div>
+
+					<p:fieldset id="fsObs">
+						<div class="ui-g-12 nopadding">
+							<p:remoteCommand name="commandUsuario" rendered="#{not readonly}"
+								process="@this :idForm:fsObs" partialSubmit="true"
+								oncomplete="PF('dlgUsuarios').show()" />
+							<div class="ui-g-5">
+								<p:outputLabel value="Cajero" />
+								<h:panelGrid columns="2" border="0" width="100%"
+									columnClasses="w20, w80">
+									<p:inputText styleClass="nopadding" required="true"
+										requiredMessage="Ingrese Cajero" readonly="#{readonly}"
+										value="#{cxcEntradaChequesDevueltosController.arccck.usuarioCajero}"
+										onkeydown="if (event.keyCode == 120 ) {commandUsuario(); return false;}"
+										onkeyup="this.value = this.value.toUpperCase();">
+										<p:ajax event="change" partialSubmit="true" process="@this"
+											disabled="#{readonly}"
+											listener="#{cxcEntradaChequesDevueltosController.validarUsuario}"
+											update=":idForm:fsObs #{p:component('tblUsuarios')}" />
+									</p:inputText>
+									<p:inputText styleClass="nopadding" readonly="true"
+										value="#{cxcEntradaChequesDevueltosController.arccck.nomUserCaja}" />
+								</h:panelGrid>
+							</div>
+							<div class="ui-g-2">
+								<p:outputLabel value="Estado" />
+								<p:selectOneMenu filter="true" filterMatchMode="contains"
+									disabled="#{readonly}"
+									value="#{cxcEntradaChequesDevueltosController.arccck.estadoCkp}">
+									<f:selectItem itemLabel="Pendiente" itemValue="P" />
+									<f:selectItem itemLabel="Enviado" itemValue="E" />
+									<f:selectItem itemLabel="Recibido" itemValue="R" />
+									<f:selectItem itemLabel="Retorno Cobranzas" itemValue="C" />
+									<f:selectItem itemLabel="Enviado a Legal" itemValue="L" />
+									<p:ajax event="itemSelect" partialSubmit="true" process="@this"
+										global="false" />
+								</p:selectOneMenu>
+							</div>
+						</div>
+						<div class="ui-g-12 nopadding">
+							<p:remoteCommand name="commandVendedor"
+								rendered="#{not readonly}" process="@this :idForm:fsObs"
+								partialSubmit="true" oncomplete="PF('dlgVendedores').show()" />
+							<div class="ui-g-5">
+								<p:outputLabel value="Vendedor" />
+								<h:panelGrid columns="2" border="0" width="100%"
+									columnClasses="w20, w80">
+									<p:inputText styleClass="nopadding" required="false"
+										requiredMessage="Ingrese Vendedor" readonly="#{readonly}"
+										value="#{cxcEntradaChequesDevueltosController.arccck.vendedor}"
+										onkeydown="if (event.keyCode == 120 ) {commandVendedor(); return false;}"
+										onkeyup="this.value = this.value.toUpperCase();">
+										<p:ajax event="change" partialSubmit="true" process="@this"
+											disabled="#{readonly}"
+											listener="#{cxcEntradaChequesDevueltosController.validarVendedor}"
+											update=":idForm:fsObs #{p:component('tblVendedores')}" />
+									</p:inputText>
+									<p:inputText styleClass="nopadding" readonly="true"
+										value="#{cxcEntradaChequesDevueltosController.arccck.nomVendedor}" />
+								</h:panelGrid>
+							</div>
+						</div>
+					</p:fieldset>
+				</div>
+			</div>
+
+			<p:dialog header="Seleccione un cliente..." widgetVar="dlgClientes"
+				modal="true" height="400" width="750" showEffect="clip"
+				rendered="#{not readonly}" hideEffect="blind">
+
+				<p:dataTable id="tblClientesDisponibles" var="cliente"
+					value="#{cxcEntradaChequesDevueltosController.clientes}"
+					emptyMessage="No se han encontrado clientes" rows="10"
+					paginator="true" paginatorPosition="bottom"
+					currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+
+					<f:facet name="header">
+						<p:inputText id="filtroCliente"
+							value="#{cxcEntradaChequesDevueltosController.filtroCliente}"
+							placeholder="Buscar">
+							<p:ajax event="change" partialSubmit="true" process="@this"
+								listener="#{cxcEntradaChequesDevueltosController.buscarClientes}"
+								update="@this, #{p:component('tblClientesDisponibles')}" />
+						</p:inputText>
+					</f:facet>
+
+					<p:column headerText="Código" width="10%">
+						<p:commandLink value="#{cliente.clientePK.noCliente}"
+							process="@this" partialSubmit="true"
+							actionListener="#{cxcEntradaChequesDevueltosController.selectCliente(cliente)}"
+							oncomplete="PF('dlgClientes').hide()" update=":idForm:fsDatos" />
+					</p:column>
+
+					<p:column headerText="Cédula" width="15%">
+						<h:outputText value="#{cliente.cedula}" />
+					</p:column>
+
+					<p:column headerText="Nombre" width="60%">
+						<h:outputText value="#{cliente.nombre}" />
+					</p:column>
+
+					<p:column headerText="Teléfono" width="15%">
+						<h:outputText value="#{cliente.telefono}" />
+					</p:column>
+
+				</p:dataTable>
+
+			</p:dialog>
+
+			<p:dialog header="Seleccione un usuario..." widgetVar="dlgUsuarios"
+				modal="true" height="400" width="400" showEffect="clip"
+				hideEffect="blind">
+
+				<p:dataTable id="tblUsuarios" var="u"
+					value="#{cxcEntradaChequesDevueltosController.usuarios}"
+					emptyMessage="No se han encontrado usuarios" rows="10"
+					paginator="true" paginatorPosition="bottom"
+					currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+
+					<f:facet name="header">
+						<p:inputText id="filtroUsuario"
+							value="#{cxcEntradaChequesDevueltosController.filtroUsuario}"
+							placeholder="Buscar">
+							<p:ajax event="change" partialSubmit="true" process="@this"
+								listener="#{cxcEntradaChequesDevueltosController.buscarUsuarios}"
+								update="@this, #{p:component('tblUsuarios')}" />
+						</p:inputText>
+					</f:facet>
+
+					<p:column headerText="Código" width="20%">
+						<p:commandLink value="#{u.usuario}" process="@this"
+							partialSubmit="true"
+							actionListener="#{cxcEntradaChequesDevueltosController.selectUsuario(u)}"
+							oncomplete="PF('dlgUsuarios').hide()" update=":idForm:fsObs" />
+					</p:column>
+
+					<p:column headerText="Nombre" width="80%">
+						<h:outputText value="#{u.nombre}" />
+					</p:column>
+
+				</p:dataTable>
+
+			</p:dialog>
+
+			<p:dialog header="Seleccione un vendedor..."
+				widgetVar="dlgVendedores" modal="true" height="400" width="400"
+				showEffect="clip" hideEffect="blind">
+
+				<p:dataTable id="tblVendedores" var="v"
+					value="#{cxcEntradaChequesDevueltosController.vendedores}"
+					emptyMessage="No se han encontrado vendedores" rows="10"
+					paginator="true" paginatorPosition="bottom"
+					currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+
+					<f:facet name="header">
+						<p:inputText id="filtroVendedor"
+							value="#{cxcEntradaChequesDevueltosController.filtroVendedor}"
+							placeholder="Buscar">
+							<p:ajax event="change" partialSubmit="true" process="@this"
+								listener="#{cxcEntradaChequesDevueltosController.buscarVendedores}"
+								update="@this, #{p:component('tblVendedores')}" />
+						</p:inputText>
+					</f:facet>
+
+					<p:column headerText="Código" width="20%">
+						<p:commandLink value="#{v[0]}" process="@this"
+							partialSubmit="true"
+							actionListener="#{cxcEntradaChequesDevueltosController.selectVendedor(v)}"
+							oncomplete="PF('dlgVendedores').hide()" update=":idForm:fsObs" />
+					</p:column>
+
+					<p:column headerText="Nombre" width="80%">
+						<h:outputText value="#{v[1]}" />
+					</p:column>
+
+				</p:dataTable>
+
+			</p:dialog>
+
+			<p:dialog header="Registro de Custodia" widgetVar="dlgCustodia"
+				modal="true" height="400" width="800" showEffect="clip"
+				hideEffect="blind">
+
+				<p:dataTable id="tblCustodia" var="item"
+					value="#{cxcEntradaChequesDevueltosController.listaDetalle}"
+					emptyMessage="No se han encontrado registros" rows="10"
+					paginator="true" paginatorPosition="top"
+					currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink} {Botones}">
+
+					<f:facet name="{Botones}">
+						<p:commandButton style="float:right;margin-top:-4px" title="Nuevo"
+							icon="ui-icon ui-icon-create" partialSubmit="true"
+							process="@this"
+							actionListener="#{cxcEntradaChequesDevueltosController.nuevoDetalle}"
+							update=":idForm:pgNuevoDetalle" />
+					</f:facet>
+
+					<p:column headerText="Envía" width="15%">
+						<p:outputLabel value="#{item.usuarioEnvia}" />
+					</p:column>
+
+					<p:column headerText="Recibe" width="15%">
+						<p:outputLabel value="#{item.usuarioRecibe}" />
+					</p:column>
+
+					<p:column headerText="Agencia" width="10%">
+						<p:outputLabel value="#{item.agenciaRecibe}" />
+					</p:column>
+
+					<p:column headerText="Fecha" width="25%">
+						<p:outputLabel value="#{item.fechaRecibe}">
+							<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+						</p:outputLabel>
+					</p:column>
+
+					<p:column headerText="Observación" width="35%">
+						<p:outputLabel value="#{item.observacion}" />
+					</p:column>
+
+					<p:column headerText="Eliminar" width="10%"
+						rendered="#{!cxcEntradaChequesDevueltosController.readonly}">
+						<p:commandButton title="Eliminar" icon="ui-icon-trash"
+							styleClass="red-btn" process="@this"
+							action="#{cxcEntradaChequesDevueltosController.eliminarDetalle(item)}"
+							update="@this, :idForm:tblCustodia" />
+					</p:column>
+
+				</p:dataTable>
+
+			</p:dialog>
+
+			<p:dialog header="Nuevo Custodio" widgetVar="dlgNuevoCustodia"
+				modal="true" height="auto" width="auto" showEffect="clip"
+				hideEffect="blind">
+
+				<p:remoteCommand name="commandUsuarioRecibe" process="@this"
+					partialSubmit="true" oncomplete="PF('dlgUsuariosRecibe').show()" />
+
+				<p:panelGrid id="pgNuevoDetalle" columns="2">
+					<p:outputLabel value="Usuario que envía" />
+					<p:inputText
+						value="#{cxcEntradaChequesDevueltosController.detalle.usuarioEnvia}"
+						readonly="true" />
+
+					<p:outputLabel value="Usuario que recibe" />
+					<p:inputText styleClass="nopadding" required="true"
+						requiredMessage="Ingrese Usuario"
+						value="#{cxcEntradaChequesDevueltosController.detalle.usuarioRecibe}"
+						onkeydown="if (event.keyCode == 120 ) {commandUsuarioRecibe(); return false;}"
+						onkeyup="this.value = this.value.toUpperCase();">
+						<p:ajax event="change" partialSubmit="true" process="@this"
+							listener="#{cxcEntradaChequesDevueltosController.validarUsuarioRecibe}"
+							update=":idForm:pgNuevoDetalle, :idForm:tblUsuariosRecibe" />
+					</p:inputText>
+
+					<p:outputLabel value="Agencia que recibe" />
+					<p:selectOneMenu required="true"
+						requiredMessage="Seleccione agencia"
+						value="#{cxcEntradaChequesDevueltosController.detalle.agenciaRecibe}">
+						<f:selectItems
+							value="#{cxcEntradaChequesDevueltosController.agencias}" var="a"
+							itemLabel="#{a.agenciaPK.codigo} - #{a.nombre}"
+							itemValue="#{a.agenciaPK.codigo}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Observación" />
+					<p:inputTextarea cols="80" required="true"
+						requiredMessage="Ingrese observación"
+						value="#{cxcEntradaChequesDevueltosController.detalle.observacion}"
+						maxlength="500" rows="6" autoResize="true" />
+				</p:panelGrid>
+
+				<br />
+
+				<p:commandButton title="Guardar" icon="ui-icon ui-icon-save"
+					partialSubmit="true" process="@this, :idForm:pgNuevoDetalle"
+					actionListener="#{cxcEntradaChequesDevueltosController.guardarDetalle}"
+					update=":idForm:tblCustodia" />
+
+			</p:dialog>
+
+			<p:dialog header="Seleccione un usuario..."
+				widgetVar="dlgUsuariosRecibe" modal="true" height="400" width="400"
+				showEffect="clip" hideEffect="blind">
+
+				<p:dataTable id="tblUsuariosRecibe" var="u"
+					value="#{cxcEntradaChequesDevueltosController.usuarios}"
+					emptyMessage="No se han encontrado usuarios" rows="10"
+					paginator="true" paginatorPosition="bottom"
+					currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+
+					<f:facet name="header">
+						<p:inputText id="filtroUsuarioRecibe"
+							value="#{cxcEntradaChequesDevueltosController.filtroUsuario}"
+							placeholder="Buscar">
+							<p:ajax event="change" partialSubmit="true" process="@this"
+								listener="#{cxcEntradaChequesDevueltosController.buscarUsuarios}"
+								update="@this, #{p:component('tblUsuariosRecibe')}" />
+						</p:inputText>
+					</f:facet>
+
+					<p:column headerText="Código" width="20%">
+						<p:commandLink value="#{u.usuario}" process="@this"
+							partialSubmit="true"
+							actionListener="#{cxcEntradaChequesDevueltosController.selectUsuarioRecibe(u)}"
+							oncomplete="PF('dlgUsuariosRecibe').hide()"
+							update=":idForm:pgNuevoDetalle" />
+					</p:column>
+
+					<p:column headerText="Nombre" width="80%">
+						<h:outputText value="#{u.nombre}" />
+					</p:column>
+
+				</p:dataTable>
+
+			</p:dialog>
+
+		</h:form>
+	</ui:define>
+
+</ui:composition>

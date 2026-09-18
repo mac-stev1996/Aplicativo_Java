@@ -1,0 +1,414 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+	</f:facet>
+	<title>Control de Documentos</title>
+	<h:outputScript name="js/layout.js" library="serenity-layout" />
+	<h:outputScript name="js/ripple.js" library="serenity-layout" />
+	<h:outputStylesheet name="css/layout-lightblue.css"
+		library="serenity-layout" />
+</h:head>
+<h:body>
+	<p:messages autoUpdate="true" showDetail="true"></p:messages>
+	<p:ajaxStatus onstart="PF('statusDialog').show()"
+		onsuccess="PF('statusDialog').hide()"
+		onerror="PF('statusDialog').hide()" />
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+		closable="false" resizable="false" showHeader="false">
+		<h:graphicImage value="/common/imgs/gifs/ajaxloadingbar.gif" />
+	</p:dialog>
+
+	<h:form id="frmPrincipal">
+		<p:toolbar>
+			<f:facet name="left">Resumen de la Cotización</f:facet>
+			<f:facet name="right">
+			</f:facet>
+		</p:toolbar>
+		
+		<p:panelGrid styleClass="gridSinBordes">
+			<p:row>
+				<p:column>
+					<p:outputLabel value="No. Cotizaci&oacute;n"
+						style="font-weight:bold;" />
+				</p:column>
+				<p:column>
+					<p:outputLabel
+						value="#{cxcControlDocumentosCtrl.cotizacion.cotizacionPK.numeroCotizacion}" />
+				</p:column>
+			</p:row>
+			<p:row>
+				<p:column>
+					<p:outputLabel value="C&eacute;dula Due&ntilde;o"
+						style="font-weight:bold;" />
+				</p:column>
+				<p:column>
+					<p:outputLabel
+						value="#{cxcControlDocumentosCtrl.cotizacion.cedulaDueno}" />
+				</p:column>
+			</p:row>
+			<p:row>
+				<p:column>
+					<p:outputLabel value="C&eacute;dula Garante"
+						style="font-weight:bold;" />
+				</p:column>
+				<p:column>
+					<p:outputLabel
+						value="#{cxcControlDocumentosCtrl.cotizacion.cedulaGarante}" />
+				</p:column>
+				<p:column colspan="9">
+					<p:outputLabel
+						value="#{cxcControlDocumentosCtrl.cotizacion.garanteNombres}" />
+				</p:column>
+			</p:row>
+			<p:row>
+				<p:column>
+					<p:outputLabel value="C&eacute;dula Deudor"
+						style="font-weight:bold;" />
+				</p:column>
+				<p:column>
+					<p:outputLabel
+						value="#{cxcControlDocumentosCtrl.cotizacion.cedulaDeudor}" />
+				</p:column>
+				<p:column colspan="9">
+					<p:outputLabel
+						value="#{cxcControlDocumentosCtrl.cotizacion.nombreDeudor}" />
+				</p:column>
+			</p:row>
+			<p:row>
+				<p:column>
+					<p:outputLabel value="Tipo 	Financia" style="font-weight:bold;" />
+				</p:column>
+				<p:column>
+					<p:outputLabel
+						value="#{cxcControlDocumentosCtrl.cotizacion.tipoFinanciacion}" />
+				</p:column>
+				<p:column colspan="9">
+					<p:outputLabel
+						value="#{cxcControlDocumentosCtrl.cotizacion.tipoFinanciacionDescripcion}" />
+				</p:column>
+			</p:row>
+			<p:row>
+				<p:column>
+					<p:outputLabel value="Subtotal" style="font-weight:bold;" />
+				</p:column>
+				<p:column>
+					<p:outputLabel
+						value="#{cxcControlDocumentosCtrl.cotizacion.subtotal}" />
+				</p:column>
+				<p:column>
+					<p:outputLabel value="Tasa Financia" style="font-weight:bold;" />
+				</p:column>
+				<p:column>
+					<p:outputLabel
+						value="#{cxcControlDocumentosCtrl.cotizacion.tasaFinancia}" />
+				</p:column>
+			</p:row>
+			<p:row>
+				<p:column>
+					<p:outputLabel value="Descuento" style="font-weight:bold;" />
+				</p:column>
+				<p:column>
+					<p:outputLabel
+						value="#{cxcControlDocumentosCtrl.cotizacion.descuento}" />
+				</p:column>
+				<p:column>
+					<p:outputLabel value="Cuota De Entrada" style="font-weight:bold;" />
+				</p:column>
+				<p:column>
+					<p:outputLabel
+						value="#{cxcControlDocumentosCtrl.cotizacion.cuotaDeEntrada}" />
+				</p:column>
+			</p:row>
+			<p:row>
+				<p:column>
+					<p:outputLabel value="Neto" style="font-weight:bold;" />
+				</p:column>
+				<p:column>
+					<p:outputLabel
+						value="#{cxcControlDocumentosCtrl.cotizacion.neto}" />
+				</p:column>
+				<p:column>
+					<p:outputLabel value="Cuota De Alcance" style="font-weight:bold;" />
+				</p:column>
+				<p:column>
+					<p:outputLabel
+						value="#{cxcControlDocumentosCtrl.cotizacion.cuotaDeAlcance}" />
+				</p:column>
+				<p:column>
+					<p:outputLabel
+						value="#{cxcControlDocumentosCtrl.cotizacion.fechaDeAlcance}">
+						<f:convertDateTime pattern="yyyy/MM/dd" />
+					</p:outputLabel>
+				</p:column>
+			</p:row>
+			<p:row>
+				<p:column>
+					<p:outputLabel value="Iva" style="font-weight:bold;" />
+				</p:column>
+				<p:column>
+					<p:outputLabel
+						value="#{cxcControlDocumentosCtrl.cotizacion.iva}" />
+				</p:column>
+				<p:column>
+					<p:outputLabel value="Monto Adicional" style="font-weight:bold;" />
+				</p:column>
+				<p:column>
+					<p:outputLabel
+						value="#{cxcControlDocumentosCtrl.cotizacion.montoAdicional}" />
+				</p:column>
+			</p:row>
+			<p:row>
+				<p:column>
+					<p:outputLabel value="Valor Garant&#237;a"
+						style="font-weight:bold;" />
+				</p:column>
+				<p:column>
+					<p:outputLabel
+						value="#{cxcControlDocumentosCtrl.cotizacion.valorGarantia}"
+						rendered="#{cxcControlDocumentosCtrl.cotizacion.valorGarantia != null}" />
+					<p:outputLabel value="0.00"
+						rendered="#{cxcControlDocumentosCtrl.cotizacion.valorGarantia == null}" />
+				</p:column>
+				<p:column>
+					<p:outputLabel value="Saldo Financiar" style="font-weight:bold;" />
+				</p:column>
+				<p:column>
+					<p:outputLabel
+						value="#{cxcControlDocumentosCtrl.cotizacion.saldoFinanciar+cxcControlDocumentosCtrl.cotizacion.cuotaFinalValorActual}" />
+				</p:column>
+			</p:row>
+			<p:row>
+				<p:column>
+					<p:outputLabel value="Valor Iva Garant&#237;a"
+						style="font-weight:bold;" />
+				</p:column>
+				<p:column>
+					<p:outputLabel
+						value="#{cxcControlDocumentosCtrl.cotizacion.valorIvaGarantia}"
+						rendered="#{cxcControlDocumentosCtrl.cotizacion.valorIvaGarantia != null}" />
+					<p:outputLabel value="0.00"
+						rendered="#{cxcControlDocumentosCtrl.cotizacion.valorIvaGarantia == null}" />
+				</p:column>
+				<p:column>
+					<p:outputLabel value="Plazo Cr&eacute;dito"
+						style="font-weight:bold;" />
+				</p:column>
+				<p:column>
+					<p:outputLabel
+						value="#{cxcControlDocumentosCtrl.cotizacion.plazoCredito}" />
+				</p:column>
+				<p:column>
+					<p:outputLabel value="Pagos por a&ntilde;o"
+						style="font-weight:bold;" />
+				</p:column>
+				<p:column>
+					<p:outputLabel
+						value="#{cxcControlDocumentosCtrl.cotizacion.pagosPorAno}" />
+				</p:column>
+				<p:column>
+					<p:outputLabel value="Periodo" />
+				</p:column>
+				<p:column>
+					<p:outputLabel
+						value="#{cxcControlDocumentosCtrl.cotizacion.periodo}" />
+				</p:column>
+			</p:row>
+			<p:row>
+				<p:column>
+					<p:outputLabel value="Otros Cargos" style="font-weight:bold;" />
+				</p:column>
+				<p:column>
+					<p:outputLabel
+						value="#{cxcControlDocumentosCtrl.cotizacion.otrosCargos}" />
+				</p:column>
+				<p:column>
+					<p:outputLabel value="Cuota Mensual" style="font-weight:bold;" />
+				</p:column>
+				<p:column>
+					<p:outputLabel
+						value="#{cxcControlDocumentosCtrl.cotizacion.cuotaMensual}" />
+				</p:column>
+			</p:row>
+			<p:row>
+				<p:column>
+					<p:outputLabel value="Gastos Inscripci&oacute;n"
+						style="font-weight:bold;" />
+				</p:column>
+				<p:column>
+					<p:outputLabel
+						value="#{cxcControlDocumentosCtrl.cotizacion.gastosIncripcion}" />
+				</p:column>
+				<p:column>
+					<p:outputLabel value="Cuota Seguro" style="font-weight:bold;" />
+				</p:column>
+				<p:column>
+					<p:outputLabel
+						value="#{cxcControlDocumentosCtrl.cotizacion.cuotaSeguro}" />
+				</p:column>
+			</p:row>
+			<p:row>
+				<p:column>
+					<p:outputLabel value="Intereses" style="font-weight:bold;" />
+				</p:column>
+				<p:column>
+					<p:outputLabel
+						value="#{cxcControlDocumentosCtrl.cotizacion.intereses}" />
+				</p:column>
+
+			</p:row>
+			<p:row>
+				<p:column>
+					<p:outputLabel value="Total General" style="font-weight:bold;" />
+				</p:column>
+				<p:column>
+					<p:outputLabel
+						value="#{cxcControlDocumentosCtrl.cotizacion.totalGeneral}" />
+				</p:column>
+
+			</p:row>
+			<p:row>
+				<p:column>
+					<p:outputLabel value="N&uacute;m. Autorizaci&oacute;n"
+						style="font-weight:bold;" />
+				</p:column>
+				<p:column>
+					<p:outputLabel
+						value="#{cxcControlDocumentosCtrl.cotizacion.noSolicitudCred}" />
+				</p:column>
+				<p:column>
+					<p:outputLabel value="#{cxcControlDocumentosCtrl.cotizacion.aprobadoCredito == 'S' ? 'Aprobado' : cxcControlDocumentosCtrl.cotizacion.aprobadoCredito == 'N' ? 'No aprobado' : cxcControlDocumentosCtrl.cotizacion.aprobadoCredito == 'B' ? 'Baja' : 'Desconocido'}"></p:outputLabel>
+				</p:column>
+
+				<p:column colspan="7">
+
+					<p:outputLabel value="Motivo negación:" />
+					<p:outputLabel value="Capacidad de Pago" rendered="#{cxcControlDocumentosCtrl.cotizacion.observacion == 'CAPACIDAD_DE_PAGO'}"></p:outputLabel>
+					<p:outputLabel value="Situacion Financiera" rendered="#{cxcControlDocumentosCtrl.cotizacion.observacion == 'SITUACION_FINANCIERA'}"></p:outputLabel>
+					<p:outputLabel value="Situacion Legal" rendered="#{cxcControlDocumentosCtrl.cotizacion.observacion == 'SITUACION_LEGAL'}"></p:outputLabel>
+					<p:outputLabel value="Otros" rendered="#{cxcControlDocumentosCtrl.cotizacion.observacion == 'OTROS'}"></p:outputLabel>
+				</p:column>
+			</p:row>
+			<p:row>
+				<p:column>
+					<p:outputLabel value="Comentario" style="font-weight:bold;" />
+				</p:column>
+				<p:column colspan="10">
+					<p>#{cxcControlDocumentosCtrl.cotizacion.comentarioAprob} - #{cxcControlDocumentosCtrl.cotizacion.observacionCredito}</p>
+				</p:column>
+			</p:row>
+		</p:panelGrid>
+
+		<p:toolbar>
+			<f:facet name="left">Control de Documentos</f:facet>
+			<f:facet name="right">
+				<p:commandButton value="Recibir de Ventas" action="#{cxcControlDocumentosCtrl.recibirDocumentos}"
+				rendered="#{not cxcControlDocumentosCtrl.esUsuarioCobranza}"
+					update=":frmPrincipal:dtDocumentos"></p:commandButton>
+				<p:commandButton value="Entregar a Cobranzas" action="#{cxcControlDocumentosCtrl.entregarDocumentos}"
+				rendered="#{not cxcControlDocumentosCtrl.esUsuarioCobranza}"
+					update=":frmPrincipal:dtDocumentos"></p:commandButton>
+				<p:commandButton value="Recibir en Cobranzas" action="#{cxcControlDocumentosCtrl.recibirDocumentosEnCobranzas}"
+				rendered="#{cxcControlDocumentosCtrl.esUsuarioCobranza}"
+				update=":frmPrincipal:dtDocumentos"
+				></p:commandButton>
+			</f:facet>
+		</p:toolbar>
+		
+		<p:dataTable id="dtDocumentos" value="#{cxcControlDocumentosCtrl.documentos}"
+			var="documento">
+			<p:column headerText="Documento">
+				<p:commandLink value="#{documento.pk.descripcionDocumento}" action="#{cxcControlDocumentosCtrl.seleccionarDocumento(documento)}"
+				oncomplete="PF('dlgDetalles').show();" update=":pgResumen :headerDetalle"></p:commandLink> 
+			</p:column>
+			<p:column headerText="Observaciones">
+				<p:inputTextarea maxlength="200" value="#{documento.observaciones}"
+				disabled="#{documento.entregadoBoolean or cxcControlDocumentosCtrl.esUsuarioCobranza}"
+				>
+				</p:inputTextarea>
+			</p:column>
+			<p:column headerText="Documentos Requeridos">
+				<p:selectBooleanCheckbox value="#{documento.enviadoBoolean}"
+				disabled="#{documento.entregadoBoolean or cxcControlDocumentosCtrl.esUsuarioCobranza}">					
+				</p:selectBooleanCheckbox>
+			</p:column>
+			<p:column headerText="Recibido Físico Ventas">
+				<p:outputLabel value="Recibido"/>
+				<p:selectBooleanCheckbox id="chkAplica"  value="#{documento.recibidoFisicoVenta}"
+					disabled="#{documento.entregadoBoolean or cxcControlDocumentosCtrl.esUsuarioCobranza}">
+					<p:ajax update="chkAplica, chkNoAplica" process="@this"/>
+				</p:selectBooleanCheckbox>
+				<p:outputLabel value="NA"/>
+				<p:selectBooleanCheckbox id="chkNoAplica" value="#{documento.noAplicaFisico}"
+					disabled="#{documento.entregadoBoolean or cxcControlDocumentosCtrl.esUsuarioCobranza}">
+					<p:ajax update="chkAplica, chkNoAplica" process="@this"/>
+				</p:selectBooleanCheckbox>	
+			</p:column>
+			<p:column headerText="Entregado a Cobranzas">
+				<p:selectBooleanCheckbox 
+					disabled="#{not documento.enviadoBoolean or (documento.enviadoBoolean and documento.entregadoBoolean) or cxcControlDocumentosCtrl.esUsuarioCobranza}"
+					value="#{documento.entregadoBoolean}"></p:selectBooleanCheckbox>
+			</p:column>
+			<p:column headerText="Recibido por Cobranzas">
+				<p:selectBooleanCheckbox 
+					disabled="#{not documento.entregadoBoolean or (documento.entregadoBoolean and documento.recibeCobranzasBoolean) or not cxcControlDocumentosCtrl.esUsuarioCobranza}"
+					value="#{documento.recibeCobranzasBoolean}"></p:selectBooleanCheckbox>
+			</p:column>
+		</p:dataTable>
+	</h:form>
+	
+	<p:dialog id="dlgDetalles" widgetVar="dlgDetalles" modal="true" width="auto"
+		>
+		<h:panelGroup layout="block" id="headerDetalle">
+			<p>Detalles del documento: #{cxcControlDocumentosCtrl.documentoSeleccionado.pk.descripcionDocumento}</p>
+		</h:panelGroup>
+		<p:panelGrid columns="2" id="pgResumen">
+			<p:outputLabel value="Recibido de Ventas"></p:outputLabel>
+			<p:outputLabel value="#{cxcControlDocumentosCtrl.documentoSeleccionado.enviadoBoolean ? 'SI' : 'NO'}"></p:outputLabel>
+			<p:outputLabel value="Fecha Recibido de Ventas"></p:outputLabel>
+			<p:outputLabel value="#{cxcControlDocumentosCtrl.documentoSeleccionado.fechaEnvio}">
+				<f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+			</p:outputLabel>
+			<p:outputLabel value="Usuario Recibe de Ventas"></p:outputLabel>
+			<p:outputLabel value="#{cxcControlDocumentosCtrl.documentoSeleccionado.usuarioEnvio}"></p:outputLabel>
+			
+			<p:outputLabel value="Recibido Físico"></p:outputLabel>
+			<p:outputLabel value="#{cxcControlDocumentosCtrl.documentoSeleccionado.recibidoFisicoVenta ? 'SI' : 'NO'}"/>
+			<p:outputLabel value="Fecha Recibido de Ventas"></p:outputLabel>
+			<p:outputLabel value="#{cxcControlDocumentosCtrl.documentoSeleccionado.fechaRecibeFisico}">
+				<f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+			</p:outputLabel>
+			<p:outputLabel value="Usuario Recibe Físico"></p:outputLabel>
+			<p:outputLabel value="#{cxcControlDocumentosCtrl.documentoSeleccionado.usuarioRecibeFisico}"/>
+			
+			<p:outputLabel value="Entregado a Cobranzas"></p:outputLabel>
+			<p:outputLabel value="#{cxcControlDocumentosCtrl.documentoSeleccionado.entregadoBoolean ? 'SI' : 'NO'}"></p:outputLabel>
+			<p:outputLabel value="Fecha Entrega a Cobranzas"></p:outputLabel>
+			<p:outputLabel value="#{cxcControlDocumentosCtrl.documentoSeleccionado.fechaEntrega}">
+				<f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+			</p:outputLabel>
+			<p:outputLabel value="Usuario Entrega a Cobranzas"></p:outputLabel>
+			<p:outputLabel value="#{cxcControlDocumentosCtrl.documentoSeleccionado.usuarioEntrega}"></p:outputLabel>
+			
+			<p:outputLabel value="Recibido por Cobranzas"></p:outputLabel>
+			<p:outputLabel value="#{cxcControlDocumentosCtrl.documentoSeleccionado.recibeCobranzasBoolean ? 'SI' : 'NO'}"></p:outputLabel>
+			<p:outputLabel value="Fecha Recibo de Cobranzas"></p:outputLabel>
+			<p:outputLabel value="#{cxcControlDocumentosCtrl.documentoSeleccionado.fechaRecibeCobranzas}">
+				<f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+			</p:outputLabel>
+			<p:outputLabel value="Usuario Recibe en Cobranzas"></p:outputLabel>
+			<p:outputLabel value="#{cxcControlDocumentosCtrl.documentoSeleccionado.usuarioRecibeCobranzas}"></p:outputLabel>
+		</p:panelGrid>
+	</p:dialog>
+</h:body>
+</html>

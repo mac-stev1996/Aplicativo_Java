@@ -1,0 +1,215 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Cumplimiento - Mantenimiento de Tablas
+	</ui:define>
+
+	<ui:define name="buttons">
+
+	</ui:define>
+	<ui:define name="content">
+
+
+		<h:form id="form" onkeypress="return event.keyCode!=13">
+			<p:messages id="messages" showDetail="true" autoUpdate="true"
+				closable="true" showSummary="true" />
+			<div class="ui-g dashboard">
+				<div class="ui-g-12 ui-fluid contact-form">
+				
+
+					<div class="ui-g-12" style="padding-top: 1px;">
+						<p:tabView id="tabViewTablas">
+							<p:tab title="Tipo Cliente">
+								<p:outputPanel autoUpdate="false" id="opTipoCliente">
+									<ui:fragment>
+										<ui:include src="./manTipoCliente.xhtml" />
+									</ui:fragment>
+								</p:outputPanel>
+							</p:tab>
+							
+							<p:tab title="Peps">
+								<p:outputPanel autoUpdate="false" id="opPeps">
+									<ui:fragment>
+										<ui:include src="manPep.xhtml" />
+									</ui:fragment>
+								</p:outputPanel>
+							</p:tab>
+							
+														
+							<p:tab title="Titular Cuenta">
+								<p:outputPanel autoUpdate="false" id="opTitularCuenta">
+									<ui:fragment>
+										<ui:include src="manTitularCuenta.xhtml" />
+									</ui:fragment>
+								</p:outputPanel>
+							</p:tab>
+							
+							
+							<p:tab title="Listas PO">
+								<p:outputPanel autoUpdate="false" id="opListasPo">
+									<ui:fragment>
+										<ui:include src="manListasPo.xhtml" />
+									</ui:fragment>
+								</p:outputPanel>
+							</p:tab>
+
+
+							<p:tab title="Ingreso Declarado PN">
+								<p:outputPanel autoUpdate="false" id="opIngresoDeclaradoPn">
+									<ui:fragment>
+										<ui:include src="manIngresoDeclaradoPn.xhtml" />
+									</ui:fragment>
+								</p:outputPanel>
+							</p:tab>
+
+
+							<p:tab title="Ingreso Declarado PJ">
+								<p:outputPanel autoUpdate="false" id="opIngresoDeclaradoPj">
+									<ui:fragment>
+										<ui:include src="manIngresoDeclaradoPj.xhtml" />
+									</ui:fragment>
+								</p:outputPanel>
+							</p:tab>
+
+
+							<p:tab title="Rangos Edad">
+								<p:outputPanel autoUpdate="false" id="opRangosEdad">
+									<ui:fragment>
+										<ui:include src="manRangosEdad.xhtml" />
+									</ui:fragment>
+								</p:outputPanel>
+							</p:tab>
+
+
+							<p:tab title="Rangos Monto Transaccion" id="opRangosMontoTransaccion">
+								<ui:fragment>
+									<ui:include src="manRangosMontoTransaccion.xhtml" />
+								</ui:fragment>
+							</p:tab>
+
+
+							<p:tab title="Parentesco" id="opParentesco">
+								<ui:fragment>
+									<ui:include src="manParentesco.xhtml" />
+								</ui:fragment>
+							</p:tab>
+
+
+							<p:tab title="Actividad Economica">
+								<p:outputPanel autoUpdate="false" id="opActividadEconomica">
+									<ui:fragment>
+										<ui:include src="manActividadEconomica.xhtml" />
+									</ui:fragment>
+								</p:outputPanel>
+							</p:tab>
+							
+							<p:tab title="Nacionalidad">
+								<p:outputPanel autoUpdate="false" id="opNacionalidad">
+									<ui:fragment>
+										<ui:include src="manNacionalidad.xhtml" />
+									</ui:fragment>
+								</p:outputPanel>
+							</p:tab>
+							
+							<p:tab title="Pais">
+								<p:outputPanel autoUpdate="false" id="opPais">
+									<ui:fragment>
+										<ui:include src="manPais.xhtml" />
+									</ui:fragment>
+								</p:outputPanel>
+							</p:tab>
+							
+							
+							<p:tab title="Origen Fondos">
+								<p:outputPanel autoUpdate="false" id="opOrigenFondos">
+									<ui:fragment>
+										<ui:include src="manOrigenFondo.xhtml" />
+									</ui:fragment>
+								</p:outputPanel>
+							</p:tab>
+							
+							<p:tab title="Linea Negocio">
+								<p:outputPanel autoUpdate="false" id="opLineaNegocio">
+									<ui:fragment>
+										<ui:include src="manLineaNegocio.xhtml" />
+									</ui:fragment>
+								</p:outputPanel>
+							</p:tab>
+							
+							<p:tab title="Medio Atencion">
+								<p:outputPanel autoUpdate="false" id="opMedioAtencion">
+									<ui:fragment>
+										<ui:include src="manMedioAtencion.xhtml" />
+									</ui:fragment>
+								</p:outputPanel>
+							</p:tab>
+							
+							
+							<p:tab title="Medio Transaccional">
+								<p:outputPanel autoUpdate="false" id="opMedioTransaccional">
+									<ui:fragment>
+										<ui:include src="manMedioTransaccional.xhtml" />
+									</ui:fragment>
+								</p:outputPanel>
+							</p:tab>
+							
+							
+							<p:tab title="Provincia">
+								<p:outputPanel autoUpdate="false" id="opProvincia">
+									<ui:fragment>
+										<ui:include src="manProvincia.xhtml" />
+									</ui:fragment>
+								</p:outputPanel>
+							</p:tab>
+							
+							
+							<p:tab title="Agencia">
+								<p:outputPanel autoUpdate="false" id="opAgencia">
+									<ui:fragment>
+										<ui:include src="manAgencia.xhtml" />
+									</ui:fragment>
+								</p:outputPanel>
+							</p:tab>
+							
+							
+							<p:tab title="Reputacion Representante">
+								<p:outputPanel autoUpdate="false" id="opReputacionRepresentante">
+									<ui:fragment>
+										<ui:include src="manReputacionRepresentante.xhtml" />
+									</ui:fragment>
+								</p:outputPanel>
+							</p:tab>
+							
+							
+							<p:tab title="Cumplimiento Obligaciones">
+								<p:outputPanel autoUpdate="false" id="opCumplimientoObligaciones">
+									<ui:fragment>
+										<ui:include src="manCumplimientoObligaciones.xhtml" />
+									</ui:fragment>
+								</p:outputPanel>
+							</p:tab>
+							
+							<p:tab title="Rangos Riesgo">
+								<p:outputPanel autoUpdate="false" id="opRangosRiesgo">
+									<ui:fragment>
+										<ui:include src="manRangosRiesgo.xhtml" />
+									</ui:fragment>
+								</p:outputPanel>
+							</p:tab>
+							
+						</p:tabView>
+					</div>
+
+				</div>
+			</div>
+		</h:form>
+
+
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,44 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/jsf/templates/bodyTemplate.xhtml">
+
+	<ui:define name="title">
+		Comprobación de Ingreso de Facturas
+	</ui:define>
+
+	<ui:define name="buttons">
+		<h:form id="frmButtons">
+			<p:commandButton value="Pdf" partialSubmit="true"
+				process="@this, :idForm" styleClass="red-btn"
+				actionListener="#{cxcAceptaLOPDPController.pdf}" />
+			<p:commandButton value="Excel" partialSubmit="true"
+				process="@this, :idForm" styleClass="green-btn"
+				actionListener="#{cxcAceptaLOPDPController.excel}" />
+		</h:form>
+	</ui:define>
+
+	<ui:define name="content">	
+		<h:form id="idForm">
+						
+			
+			<div class="ui-g-8 dashboard">
+				<div class="ui-g-8 ui-fluid contact-form">
+					<div class="ui-g-4">
+						<p:fieldset legend="Parámetros">
+
+							<h:outputText value="Este reporte no requiere parametros, por favor seleccione el formato en el que desea descargar " styleClass="normal" />
+
+						</p:fieldset>
+
+					</div>
+				</div>
+			</div>
+
+			
+		</h:form>
+	</ui:define>
+</ui:composition>
