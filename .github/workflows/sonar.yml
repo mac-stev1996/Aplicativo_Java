@@ -110,6 +110,7 @@ jobs:
       # ==========================================
       # 6. Build + Tests + SonarQube
       # ==========================================
+
       - name: Build, Test and SonarQube analysis
         shell: powershell
         env:
@@ -117,22 +118,52 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
           Write-Host "================================="
+          Write-Host "BUSCANDO POM.XML"
+          Write-Host "================================="
+      
+          $poms = @(Get-ChildItem `
+            -Path $env:GITHUB_WORKSPACE `
+            -Filter pom.xml `
+            -Recurse `
+            -File)
+      
+          if ($poms.Count -eq 0) {
+              Write-Host "ERROR: No se encontró ningún pom.xml"
+              exit 1
+          }
+      
+          Write-Host "POM encontrados:"
+          foreach ($pom in $poms) {
+              Write-Host $pom.FullName
+          }
+      
+          Write-Host ""
+      
+          if ($poms.Count -gt 1) {
+              Write-Host "Se encontraron $($poms.Count) archivos pom.xml."
+              Write-Host "Se utilizará el primero encontrado:"
+          }
+      
+          $pom = $poms[0]
+      
+          Write-Host "POM seleccionado:"
+          Write-Host $pom.FullName
+      
+          Write-Host ""
+          Write-Host "================================="
+          Write-Host "SONARQUBE"
+          Write-Host "================================="
+      
+          Write-Host "SonarQube URL: $env:SONAR_HOST_URL"
+      
+          Write-Host ""
+          Write-Host "================================="
           Write-Host "MAVEN BUILD + SONARQUBE"
           Write-Host "================================="
-
-          if ([string]::IsNullOrWhiteSpace($env:SONAR_TOKEN)) {
-              Write-Host "ERROR: SONAR_TOKEN no está configurado."
-              exit 1
-          }
-
-          if ([string]::IsNullOrWhiteSpace($env:SONAR_HOST_URL)) {
-              Write-Host "ERROR: SONAR_HOST_URL no está configurado."
-              exit 1
-          }
-
-          Write-Host "SonarQube URL: $env:SONAR_HOST_URL"
-
-          mvn -B verify `
+      
+          mvn -B `
+            -f "$($pom.FullName)" `
+            verify `
             org.sonarsource.scanner.maven:sonar-maven-plugin:sonar `
             "-Dsonar.projectKey=mac-stev1996_Aplicativo_Java_c7e97964-ff9c-489f-b145-aa03bc730586" `
             "-Dsonar.host.url=http://localhost:9002/
