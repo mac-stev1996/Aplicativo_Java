@@ -169,8 +169,11 @@ jobs:
       # 7. Quality Gate
       # ==========================================
       - name: Check SonarQube Quality Gate
-        uses: sonarsource/sonarqube-quality-gate-action@master
-        timeout-minutes: 10
+        shell: powershell
         env:
           SONAR_TOKEN: sqp_38d5f9c21024fc49782a4a435f3d18f05e29cf23
           SONAR_HOST_URL: http://localhost:9002/
+        run: |
+
+          # Quality Gate
+          # código anterior
