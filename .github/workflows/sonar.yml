@@ -8,12 +8,13 @@ jobs:
     runs-on: self-hosted
 
     steps:
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Verificar directorio
+      - name: Verificar directorio y POM
         shell: powershell
         run: |
           Write-Host "================================="
@@ -38,24 +39,33 @@ jobs:
       - name: Verificar Java
         shell: powershell
         run: |
+          Write-Host "================================="
+          Write-Host "JAVA"
+          Write-Host "================================="
           java -version
 
       - name: Verificar Maven
         shell: powershell
         run: |
+          Write-Host "================================="
+          Write-Host "MAVEN"
+          Write-Host "================================="
           mvn -version
 
       - name: Verificar SonarQube
         shell: powershell
         run: |
-          Write-Host "Verificando SonarQube en localhost:9002..."
+          Write-Host "================================="
+          Write-Host "SONARQUBE"
+          Write-Host "================================="
+          Write-Host "Verificando localhost:9002..."
 
           $result = Test-NetConnection localhost -Port 9002
 
           if ($result.TcpTestSucceeded) {
-              Write-Host "OK - SonarQube está accesible."
+              Write-Host "OK - SonarQube está accesible en localhost:9002"
           }
           else {
-              Write-Host "ERROR - SonarQube NO está accesible."
+              Write-Host "ERROR - SonarQube NO está accesible en localhost:9002"
               exit 1
           }
