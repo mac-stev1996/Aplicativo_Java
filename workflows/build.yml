@@ -9,7 +9,8 @@ on:
     branches:
       - main
       - develop
- 
+  workflow_dispatch:
+
 jobs:
   build-and-analyze:
     name: Build and SonarQube Scan
