@@ -21,14 +21,20 @@ jobs:
         with:
           # SonarQube necesita el historial completo para el análisis de "novedades" (New Code)
           fetch-depth: 0
+          
       - name: Inspect repository
+        shell: powershell
         run: |
-         echo "Directorio actual:"
-         pwd
-         echo "Contenido:"
-         ls -la
-         echo "POM encontrados:"
-         find . -name "pom.xml" -type f
+           Write-Host "Directorio actual:"
+           Get-Location
+       
+           Write-Host ""
+           Write-Host "Contenido:"
+           Get-ChildItem -Force
+       
+           Write-Host ""
+           Write-Host "POM encontrados:"
+           Get-ChildItem -Path . -Filter pom.xml -Recurse -File | Select-Object -ExpandProperty FullName
  
       - name: Set up JDK 17
         uses: actions/setup-java@v4
