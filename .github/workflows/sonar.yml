@@ -36,13 +36,27 @@ jobs:
           Get-ChildItem -Path . -Filter pom.xml -Recurse -File |
             Select-Object -ExpandProperty FullName
 
-      - name: Verificar Java
+      - name: Diagnosticar Java
         shell: powershell
         run: |
           Write-Host "================================="
           Write-Host "JAVA"
           Write-Host "================================="
+      
+          Write-Host "JAVA_HOME:"
+          Write-Host $env:JAVA_HOME
+      
+          Write-Host ""
+          Write-Host "JAVA:"
+          where.exe java
+      
+          Write-Host ""
+          Write-Host "VERSION:"
           java -version
+      
+          Write-Host ""
+          Write-Host "DIRECTORIOS JAVA:"
+          Get-ChildItem "C:\Program Files\Java" -ErrorAction SilentlyContinue
 
       - name: Verificar Maven
         shell: powershell
