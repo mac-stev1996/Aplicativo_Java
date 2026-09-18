@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" id="WebApp_ID" version="3.1">
+  <display-name>compras-web-prime</display-name>
+  
+  <servlet>
+		<servlet-name>Faces Servlet</servlet-name>
+		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+  
+  <context-param>
+		<param-name>primefaces.THEME</param-name>
+		<param-value>serenity-lightblue</param-value>
+	</context-param>
+	<servlet-mapping>
+		<servlet-name>Faces Servlet</servlet-name>
+		<url-pattern>/faces/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Faces Servlet</servlet-name>
+		<url-pattern>*.jsf</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Faces Servlet</servlet-name>
+		<url-pattern>*.faces</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Faces Servlet</servlet-name>
+		<url-pattern>*.xhtml</url-pattern>
+	</servlet-mapping>
+
+	<context-param>
+		<param-name>com.casabaca.twc.web.KAIZEN_FILE_PATH</param-name>
+		<param-value>opt/archivosKAIZEN</param-value>
+	</context-param>
+	<context-param>
+		<param-name>primefaces.UPLOADER</param-name>
+		<param-value>commons</param-value>
+	</context-param>
+	<filter>
+		<filter-name>PrimeFaces FileUpload Filter</filter-name>
+		<filter-class>org.primefaces.webapp.filter.FileUploadFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>PrimeFaces FileUpload Filter</filter-name>
+		<servlet-name>Faces Servlet</servlet-name>
+	</filter-mapping>
+	
+	<context-param>
+		<param-name>com.casabaca.compras.web.TMP_FILE_PATH</param-name>
+		<param-value>opt/archivosTMP</param-value>
+	</context-param>  
+	
+	<context-param>
+		<param-name>
+			com.casabaca.evaluacion.web.EVA_FILE_PATH
+		</param-name>
+		<param-value>opt/archivosEVALUACION</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>primefaces.FONT_AWESOME</param-name>
+		<param-value>true</param-value>
+	</context-param>
+
+	<mime-mapping>
+		<extension>jpeg</extension>
+		<mime-type>image/jpeg</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>jpg</extension>
+		<mime-type>image/jpeg</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>bmp</extension>
+		<mime-type>image/bmp</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>png</extension>
+		<mime-type>image/png</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>tiff</extension>
+		<mime-type>image/tiff</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>tif</extension>
+		<mime-type>image/tiff</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>gif</extension>
+		<mime-type>image/gif</mime-type>
+	</mime-mapping>
+  
+  
+</web-app>

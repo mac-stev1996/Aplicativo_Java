@@ -1,0 +1,732 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="or-compras-estado" language="groovy" pageWidth="5780" pageHeight="595" orientation="Landscape" columnWidth="5740" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="a3d071ce-60df-44ed-868e-2fb4f71089fc">
+	<property name="ireport.zoom" value="1.6105100000000028"/>
+	<property name="ireport.x" value="2675"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="no_cia" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fecha_inicio" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fecha_fin" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+c.no_cia,
+C.NO_ORDEN_COMPRA,
+C.CODE,
+CAST(C.fecha AS DATE) FECHA,
+nvl (c.usuario_registra,'-') as USUARIO_CREA,
+nvl (u.nombre, ' ') AS NOMBRE_CREA,
+nvl (substr(c.usuarios_aprobacion,1,instr(c.usuarios_aprobacion,'|')-1),'-') as USUARIO_APROBADOR1,
+nvl (UA1.nombre, ' ') AS NOMBRE_APROBADOR1,
+nvl (substr(c.usuarios_aprobacion,instr(c.usuarios_aprobacion,'|')+1,length(c.usuarios_aprobacion)), '-') as USUARIO_APROBADOR2,
+nvl (UA2.nombre, ' ') AS NOMBRE_APROBADOR2,
+c.agencia codigo_agencia,
+A.NOMBRE AGENCIA,
+G.CUENTA_CONTABLE,
+plancta.NOMBRE AS NOMBRE_CUENTA,
+
+nvl(cmpcostos.CODIGO_CENTRO, (select codigo_centro_costos from cmp_centro_de_costos
+                                                                        WHERE no_cia=c.no_cia and codigo_agencia=c.agencia  and code_orden_compra=c.code and rownum=1)) AS CENTRO_COSTOS,
+
+                nvl(cc.nombre,(select gu.nombre from cmp_centro_de_costos ccc, g_uniadmin gu
+                                            WHERE ccc.no_cia=gu.empresa_id and ccc.codigo_centro_costos=gu.uniadmin_id  and codigo_agencia=c.agencia  and code_orden_compra=c.code and rownum=1))NOMBE_CENTRO_COSTOS,
+
+
+R.DESCRIPCION TIPO_FLUJO,
+C.CODIGO_GRUPO_COMPRA,
+G.DESCRIPCION GRUPO_DE_COMPRA,
+(SELECT DESCRIPCION FROM (
+SELECT '0' CODIGO, 'SOLICITUD COMPRA NEGADA' DESCRIPCION FROM DUAL UNION
+SELECT '1' CODIGO, 'SOLICITUD INGRESADA' DESCRIPCION FROM DUAL UNION
+SELECT '2' CODIGO, 'SOLICITUD ENVIADA' DESCRIPCION FROM DUAL UNION
+SELECT '3' CODIGO, 'COTIZANDO ORDEN DE COMPRA' DESCRIPCION FROM DUAL UNION
+SELECT '4' CODIGO, 'DECISION COTIZACIONES' DESCRIPCION FROM DUAL UNION
+SELECT '5' CODIGO, 'ORDEN DE COMPRA RETORNADA' DESCRIPCION FROM DUAL UNION
+SELECT '6' CODIGO, 'ESPERA APROBACION' DESCRIPCION FROM DUAL UNION
+SELECT '7' CODIGO, 'ESPERA APROBACION GERENCIA GENERAL' DESCRIPCION FROM DUAL UNION
+SELECT '8' CODIGO, 'ORDEN DE COMPRA APROBADA' DESCRIPCION FROM DUAL UNION
+SELECT '9' CODIGO, 'ESPERA REVISION COORDINADOR COMPRAS' DESCRIPCION FROM DUAL UNION
+SELECT '10' CODIGO, 'ENVIADO PARCIALMENTE PROVEEDOR' DESCRIPCION FROM DUAL UNION
+SELECT '11' CODIGO, 'ENVIADO A PROVEEDOR' DESCRIPCION FROM DUAL UNION
+SELECT '12' CODIGO, 'RECEPCION PRODUCTO O SERVICIO' DESCRIPCION FROM DUAL UNION
+SELECT '13' CODIGO, 'VALIDACION PRODUCTO SERVICIO FACTURA' DESCRIPCION FROM DUAL UNION
+SELECT '14' CODIGO, 'ENVIADO TESORERIA PARCIALMENTE' DESCRIPCION FROM DUAL UNION
+SELECT '15' CODIGO, 'ENVIADO TESORERIA' DESCRIPCION FROM DUAL UNION
+SELECT '16' CODIGO, 'PAGADO TESORERIA' DESCRIPCION FROM DUAL UNION
+SELECT '17' CODIGO, 'REVISION COORDINADOR ADMINISTRATIVO' DESCRIPCION FROM DUAL UNION
+SELECT '21' CODIGO, 'ESPERA AUTORIZACION JEFE COMPRAS' DESCRIPCION FROM DUAL UNION
+SELECT '22' CODIGO, 'DECISION PRESUPUESTO' DESCRIPCION FROM DUAL UNION
+SELECT '23' CODIGO, 'ESPERA APROBACION DEL GASTO' DESCRIPCION FROM DUAL UNION
+SELECT '24' CODIGO, 'INFORMACION PRESUPUESTO' DESCRIPCION FROM DUAL UNION
+SELECT '25' CODIGO, 'DESCION PRESUPUESTO MONTOS' DESCRIPCION FROM DUAL UNION
+SELECT '27' CODIGO, 'ESPERA APROBACION DEPARTAMENTO FINANCIERO' DESCRIPCION FROM DUAL UNION
+SELECT '28' CODIGO, 'EN ESPERA SALIDA INVENTARIO' DESCRIPCION FROM DUAL UNION
+SELECT '33' CODIGO, 'RETORNADO FACTURA' DESCRIPCION FROM DUAL UNION
+SELECT '34' CODIGO, 'DECISION RECEPCION FACTURAS' DESCRIPCION FROM DUAL UNION
+SELECT '37' CODIGO, 'INFORMACION COMPRAS' DESCRIPCION FROM DUAL UNION
+SELECT '50' CODIGO, 'ELIMINADO ORDEN COMPRA' DESCRIPCION FROM DUAL UNION
+SELECT '61' CODIGO, 'DECISION ESPERA APROBACION' DESCRIPCION FROM DUAL UNION
+SELECT '80' CODIGO, 'ENVIO FACTURAS CUENTAS POR PAGAR' DESCRIPCION FROM DUAL UNION
+SELECT '85' CODIGO, 'DECISION PRODUCTO SERVICIO INTERNO' DESCRIPCION FROM DUAL UNION
+SELECT '91' CODIGO, 'DECISION APROBACION COTIZACIONES' DESCRIPCION FROM DUAL UNION
+SELECT '92' CODIGO, 'DECISION ORDEN FINALIZADA' DESCRIPCION FROM DUAL UNION
+SELECT '94' CODIGO, 'DECISION ENVIO TESORERIA' DESCRIPCION FROM DUAL UNION
+SELECT '95' CODIGO, 'SOLICITUD RETORNADA A PROVEEDOR' DESCRIPCION FROM DUAL UNION
+SELECT '96' CODIGO, 'ESPERA RECEPCION PRODUCTO O SERVICIO' DESCRIPCION FROM DUAL UNION
+SELECT '97' CODIGO, 'DECISION RECEPCION PRODUCTO O SERVICIO' DESCRIPCION FROM DUAL UNION
+SELECT '98' CODIGO, 'DECISION ENVIO PROVEEDOR' DESCRIPCION FROM DUAL UNION
+SELECT '99' CODIGO, 'SOLICITUD COMPRA FINALIZADA' DESCRIPCION FROM DUAL )
+WHERE CODIGO = C.ESTADO_ORDEN_COMPRA) ESTADO_COMPRA,
+prove.cedula ruc,
+prove.nombre AS proveedor,
+c.no_orden_compra,
+cmpprov.no_orden_envio AS ordenenvio,
+d.razon_compra,
+d.descripicion_maestro_item AS descipcion_compra,
+d.cantidad_solicitada,
+d.cantidad_recibida,
+d.precio,
+d.subtotal,
+d.iva,
+d.porcentaje_iva,
+d.subtotal AS total,
+cmpprov.fecha_estimada,
+d.usuario_solicita,
+d.persona_recibe_pedido,
+orfact.no_factura,
+orfact.numero_autorizacion,
+orfact.fecha_factura,
+orfact.iva AS iva_factura,
+orfact.total AS total_factura
+FROM
+    admscb.cmp_orden_compra                 c
+    LEFT JOIN admscb.cmp_detalle_orden_compra         d ON c.code = d.code_orden_compra
+    LEFT JOIN admscb.cmp_grupo_compra                 g ON c.codigo_grupo_compra = g.code
+                                           AND c.no_cia = g.no_cia
+    LEFT JOIN admscb.cmp_grupo_tipo_compra            t ON c.codigo_grupo_compra = t.codigo_grupo_compra
+    LEFT JOIN admscb.cmp_ruteo_compras                r ON c.no_cia = r.no_cia
+                                            AND t.codigo_tipo_compra = r.code
+    LEFT JOIN admscb.cmp_detalle_compra_costos        cmpcostos ON d.code = cmpcostos.codigo_detalle_compra
+    LEFT JOIN admscb.g_uniadmin                       cc ON cmpcostos.codigo_centro = cc.uniadmin_id
+    LEFT JOIN admscb.con_planctas                     plancta ON c.no_cia = plancta.empresa_id
+                                             AND g.cuenta_contable = plancta.ctacon_id
+    LEFT JOIN admscb.cmp_detalle_compra_proveedores   cmpprov ON cmpcostos.code = cmpprov.codigo_centro_costos
+    LEFT JOIN admscb.arcpmp                           prove ON cmpprov.no_prove = prove.no_prove
+                                     AND cmpprov.no_cia = prove.no_cia
+    LEFT JOIN admscb.cmp_orden_compra_factura         orfact ON c.code = orfact.code_orden_compra
+                                                        AND prove.no_prove = orfact.codigo_proveedor
+    LEFT JOIN admscb.agencias                         a ON c.no_cia = a.no_cia
+                                   AND c.agencia = a.codigo
+    LEFT JOIN admscb.usuarios_sis                     u ON c.usuario_registra = u.usuario
+    LEFT JOIN admscb.usuarios_sis                     ua1 ON substr(c.usuarios_aprobacion, 1, instr(c.usuarios_aprobacion, '|') - 1) = ua1.usuario
+    LEFT JOIN admscb.usuarios_sis                     ua2 ON substr(c.usuarios_aprobacion, instr(c.usuarios_aprobacion, '|') + 1, length(c.usuarios_aprobacion
+    )) = ua2.usuario
+WHERE
+    trunc(c.fecha) BETWEEN trunc($P{fecha_inicio}) AND trunc($P{fecha_fin})
+    AND c.no_cia = $P{no_cia}
+-- and C.NO_ORDEN_COMPRA IN (2723) AND C.agencia = '03'
+ORDER BY c.no_cia,
+         c.hora,
+         a.nombre,
+         g.descripcion,
+         c.no_orden_compra DESC]]>
+	</queryString>
+	<field name="NO_CIA" class="java.lang.String"/>
+	<field name="NO_ORDEN_COMPRA" class="java.lang.String"/>
+	<field name="CODE" class="java.math.BigDecimal"/>
+	<field name="FECHA" class="java.sql.Timestamp"/>
+	<field name="USUARIO_CREA" class="java.lang.String"/>
+	<field name="NOMBRE_CREA" class="java.lang.String"/>
+	<field name="USUARIO_APROBADOR1" class="java.lang.String"/>
+	<field name="NOMBRE_APROBADOR1" class="java.lang.String"/>
+	<field name="USUARIO_APROBADOR2" class="java.lang.String"/>
+	<field name="NOMBRE_APROBADOR2" class="java.lang.String"/>
+	<field name="CODIGO_AGENCIA" class="java.lang.String"/>
+	<field name="AGENCIA" class="java.lang.String"/>
+	<field name="CUENTA_CONTABLE" class="java.lang.String"/>
+	<field name="NOMBRE_CUENTA" class="java.lang.String"/>
+	<field name="CENTRO_COSTOS" class="java.lang.String"/>
+	<field name="NOMBE_CENTRO_COSTOS" class="java.lang.String"/>
+	<field name="TIPO_FLUJO" class="java.lang.String"/>
+	<field name="CODIGO_GRUPO_COMPRA" class="java.math.BigDecimal"/>
+	<field name="GRUPO_DE_COMPRA" class="java.lang.String"/>
+	<field name="ESTADO_COMPRA" class="java.lang.String"/>
+	<field name="RUC" class="java.lang.String"/>
+	<field name="PROVEEDOR" class="java.lang.String"/>
+	<field name="ORDENENVIO" class="java.lang.String"/>
+	<field name="RAZON_COMPRA" class="java.lang.String"/>
+	<field name="DESCIPCION_COMPRA" class="java.lang.String"/>
+	<field name="CANTIDAD_SOLICITADA" class="java.math.BigDecimal"/>
+	<field name="CANTIDAD_RECIBIDA" class="java.math.BigDecimal"/>
+	<field name="PRECIO" class="java.math.BigDecimal"/>
+	<field name="SUBTOTAL" class="java.math.BigDecimal"/>
+	<field name="IVA" class="java.math.BigDecimal"/>
+	<field name="PORCENTAJE_IVA" class="java.math.BigDecimal"/>
+	<field name="TOTAL" class="java.math.BigDecimal"/>
+	<field name="FECHA_ESTIMADA" class="java.sql.Timestamp"/>
+	<field name="USUARIO_SOLICITA" class="java.lang.String"/>
+	<field name="PERSONA_RECIBE_PEDIDO" class="java.lang.String"/>
+	<field name="NO_FACTURA" class="java.lang.String"/>
+	<field name="NUMERO_AUTORIZACION" class="java.lang.String"/>
+	<field name="FECHA_FACTURA" class="java.sql.Timestamp"/>
+	<field name="IVA_FACTURA" class="java.math.BigDecimal"/>
+	<field name="TOTAL_FACTURA" class="java.math.BigDecimal"/>
+	<columnHeader>
+		<band height="23" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="4f23c7c4-c989-4526-97ac-f28427d80660" mode="Opaque" x="80" y="0" width="40" height="23" forecolor="#000000" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CODE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a2da459e-cda3-411b-894a-21a3372de6d5" mode="Opaque" x="302" y="0" width="79" height="23" forecolor="#000000" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d750f114-c784-4211-96d5-5a4f257b5cd4" mode="Opaque" x="0" y="0" width="80" height="23" forecolor="#000000" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NO ORDEN COMPRA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1a963a56-4eb4-40f0-988a-c989c204242a" mode="Opaque" x="120" y="0" width="182" height="23" forecolor="#000000" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AGENCIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f7840cd9-dc82-4f4b-94b2-24d285f4ca36" mode="Opaque" x="2600" y="0" width="205" height="23" forecolor="#000000" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ESTADO COMPRA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7506c1d2-c4e2-4865-b770-204b6058f6ec" mode="Opaque" x="2102" y="0" width="176" height="23" forecolor="#000000" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TIPO FLUJO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4b8b3b74-4867-43cc-82e4-db410c1301df" mode="Opaque" x="2380" y="0" width="220" height="23" forecolor="#000000" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[GRUPO DE COMPRA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="722912be-85fa-4f79-a83b-d30d1c498e05" mode="Opaque" x="2278" y="0" width="102" height="23" forecolor="#000000" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CODIGO GRUPO COMPRA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="70130071-5550-483a-9f6c-2115a02d1ebf" mode="Opaque" x="3260" y="0" width="569" height="23" forecolor="#000000" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RAZON COMPRA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="73f391d1-7652-4147-ad25-9320d6e5da30" mode="Opaque" x="3829" y="0" width="465" height="23" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESCIPCION COMPRA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9e8b9f1e-286a-493a-959c-9c0131c86fb2" mode="Opaque" x="5651" y="0" width="89" height="23" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL FACTURA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9e8b9f1e-286a-493a-959c-9c0131c86fb2" mode="Opaque" x="381" y="0" width="90" height="23" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[USUARIO CREA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9e8b9f1e-286a-493a-959c-9c0131c86fb2" mode="Opaque" x="561" y="0" width="82" height="23" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[USUARIO APROBADOR1]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9e8b9f1e-286a-493a-959c-9c0131c86fb2" mode="Opaque" x="643" y="0" width="254" height="23" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMBRE APROBADOR 1]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9e8b9f1e-286a-493a-959c-9c0131c86fb2" mode="Opaque" x="897" y="0" width="96" height="23" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[USUARIO APROBADOR 2]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9e8b9f1e-286a-493a-959c-9c0131c86fb2" mode="Opaque" x="993" y="0" width="254" height="23" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMBRE APROBADOR 2]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9e8b9f1e-286a-493a-959c-9c0131c86fb2" mode="Opaque" x="1314" y="0" width="98" height="23" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NO CUENTA CONTABLE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9e8b9f1e-286a-493a-959c-9c0131c86fb2" mode="Opaque" x="1412" y="0" width="272" height="23" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMBRE CUENTA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9e8b9f1e-286a-493a-959c-9c0131c86fb2" mode="Opaque" x="1684" y="0" width="136" height="23" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CENTRO COSTOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9e8b9f1e-286a-493a-959c-9c0131c86fb2" mode="Opaque" x="1820" y="0" width="282" height="23" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMBRE CENTRO COSTOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9e8b9f1e-286a-493a-959c-9c0131c86fb2" mode="Opaque" x="471" y="0" width="90" height="23" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[USUARIO CREA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9e8b9f1e-286a-493a-959c-9c0131c86fb2" mode="Opaque" x="1247" y="0" width="67" height="23" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CODIGO AGENCIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f7840cd9-dc82-4f4b-94b2-24d285f4ca36" mode="Opaque" x="2805" y="0" width="100" height="23" forecolor="#000000" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RUC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f7840cd9-dc82-4f4b-94b2-24d285f4ca36" mode="Opaque" x="2905" y="0" width="233" height="23" forecolor="#000000" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PROVEEDOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f7840cd9-dc82-4f4b-94b2-24d285f4ca36" mode="Opaque" x="3138" y="0" width="122" height="23" forecolor="#000000" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ORDEN ENVIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="73f391d1-7652-4147-ad25-9320d6e5da30" mode="Opaque" x="4294" y="0" width="77" height="23" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CANTIDAD SOLICITADA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="73f391d1-7652-4147-ad25-9320d6e5da30" mode="Opaque" x="4371" y="0" width="78" height="23" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CANTIDAD RECIBIDA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="73f391d1-7652-4147-ad25-9320d6e5da30" mode="Opaque" x="4449" y="0" width="71" height="23" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRECIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="73f391d1-7652-4147-ad25-9320d6e5da30" mode="Opaque" x="4520" y="0" width="71" height="23" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SUB TOTAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="73f391d1-7652-4147-ad25-9320d6e5da30" mode="Opaque" x="4591" y="0" width="71" height="23" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[IVA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="73f391d1-7652-4147-ad25-9320d6e5da30" mode="Opaque" x="4662" y="0" width="71" height="23" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PORCENTAJE IVA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="73f391d1-7652-4147-ad25-9320d6e5da30" mode="Opaque" x="4733" y="0" width="71" height="23" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="73f391d1-7652-4147-ad25-9320d6e5da30" mode="Opaque" x="4804" y="0" width="71" height="23" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA ESTIMADA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="73f391d1-7652-4147-ad25-9320d6e5da30" mode="Opaque" x="4875" y="0" width="71" height="23" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[USUARIO SOLICITA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="73f391d1-7652-4147-ad25-9320d6e5da30" mode="Opaque" x="4946" y="0" width="92" height="23" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[USUARIOS RECIBE PEDIDO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="73f391d1-7652-4147-ad25-9320d6e5da30" mode="Opaque" x="5038" y="0" width="92" height="23" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NO FACTURA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="73f391d1-7652-4147-ad25-9320d6e5da30" mode="Opaque" x="5130" y="0" width="343" height="23" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NUMERO AUTORIZACION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9e8b9f1e-286a-493a-959c-9c0131c86fb2" mode="Opaque" x="5473" y="0" width="89" height="23" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA FACTURA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9e8b9f1e-286a-493a-959c-9c0131c86fb2" mode="Opaque" x="5562" y="0" width="89" height="23" backcolor="#3399FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[IVA FACTURA]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="8c31c4d2-fecb-4f88-9772-49cffac4253c" x="80" y="0" width="40" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CODE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="ef7f3eb2-8d27-4f3d-9c09-27a8ce420851" x="302" y="0" width="79" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="7b1ff836-0c48-47a6-9877-3540137df870" x="0" y="0" width="80" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NO_ORDEN_COMPRA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="f04ba082-4717-4037-aeb1-cc0c4184c3b6" x="120" y="0" width="182" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AGENCIA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="e5e0277a-cdc6-4d13-82ca-2e5c9cd26413" x="3260" y="0" width="569" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RAZON_COMPRA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="90b165f7-e5fd-4017-b509-7650961ec7b5" x="3829" y="0" width="465" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCIPCION_COMPRA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement uuid="5e2b388c-8968-4a7f-9a3d-43bb59e8b64c" x="5651" y="0" width="89" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL_FACTURA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="579dd308-25b0-4749-8c10-04ce8f9e21b2" x="381" y="0" width="90" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{USUARIO_CREA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="81662d7f-044d-4d90-ba1e-d5f3bae7b491" x="471" y="0" width="90" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE_CREA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="69aa4ca0-b615-4f79-888b-23250639bb93" x="561" y="0" width="82" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{USUARIO_APROBADOR1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c616ada9-4434-4845-a057-32c49023d776" x="643" y="0" width="254" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE_APROBADOR1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="e8b25fe9-41a8-401e-b5cc-cc35ffd41d5d" x="897" y="0" width="96" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{USUARIO_APROBADOR2}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="56f66dfe-59fc-465a-b12a-bef2f7e7f08f" x="993" y="0" width="254" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE_APROBADOR2}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="e3aea64b-5e02-4289-ba2e-9a24dd44d423" x="1247" y="0" width="67" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CODIGO_AGENCIA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="851bf380-61fe-47bf-8379-2f45683ff28a" x="1314" y="0" width="98" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CUENTA_CONTABLE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="f99feb96-1d83-403e-932a-07d6b89b56a9" x="1412" y="0" width="272" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE_CUENTA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="21ea6f90-65f0-494f-9aff-aface8788140" x="1684" y="0" width="136" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CENTRO_COSTOS}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="9e0371bf-360d-4b75-a0d7-a3034cf33458" x="1820" y="0" width="282" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBE_CENTRO_COSTOS}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="81561905-a3ce-4eea-800f-4e1f5932be3f" x="2102" y="0" width="176" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TIPO_FLUJO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="5e836538-badd-4dcf-be21-53206bee4e1a" x="2380" y="0" width="220" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GRUPO_DE_COMPRA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="451edd4c-2bd9-45bd-b52e-35ec1fca5310" x="2278" y="0" width="102" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CODIGO_GRUPO_COMPRA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c8201cd4-9e1a-43db-b6d2-f8cb560c8680" x="2600" y="0" width="205" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ESTADO_COMPRA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="033cca86-b95a-4ed7-90ea-0501ad366c03" x="2805" y="0" width="100" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RUC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="49dfd61a-a4ec-458d-8775-3a1d0880c668" x="2905" y="0" width="233" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PROVEEDOR}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="6953e120-47e9-47b3-8890-62ba1cad8ee3" x="3138" y="0" width="122" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORDENENVIO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="1cd455e4-0ae1-484d-99b0-8df001f54809" x="4294" y="0" width="77" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CANTIDAD_SOLICITADA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="463485cb-0093-4104-9eb8-b47ac991994d" x="4371" y="0" width="78" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CANTIDAD_RECIBIDA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="2de99d3c-716a-424d-be8d-a8c03600abec" x="4449" y="0" width="71" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRECIO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="03a161f6-14c3-470c-a311-8832a1b90622" x="4520" y="0" width="71" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SUBTOTAL}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="9e4b8706-b623-480c-be11-d254cf0004a5" x="4591" y="0" width="71" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IVA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="6f84e9e2-0637-4024-b0b2-2c72fa10d2fb" x="4662" y="0" width="71" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PORCENTAJE_IVA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="ea87aa37-7812-41a1-bfdb-e5f239d27649" x="4733" y="0" width="71" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="ef9d2628-b84c-4d4b-aec6-bb56dbdbe2ea" x="4804" y="0" width="71" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA_ESTIMADA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="2b34e5f2-9814-4bf8-b5c5-47e16f17dbb4" x="4875" y="0" width="71" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{USUARIO_SOLICITA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="7c8041fd-9aff-4da8-b075-9428e3ea93fe" x="4946" y="0" width="92" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PERSONA_RECIBE_PEDIDO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="ff3113ad-3992-4864-a674-c9fac6d4f1fd" x="5038" y="0" width="92" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NO_FACTURA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="bdb4b2fc-35d2-4285-98ae-0efb678ebe47" x="5130" y="0" width="343" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NUMERO_AUTORIZACION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="a6110337-812c-4832-b8b1-431437b40224" x="5473" y="0" width="89" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA_FACTURA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="f30151fc-62fd-428e-acc7-befc4167ddfb" x="5562" y="0" width="89" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IVA_FACTURA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

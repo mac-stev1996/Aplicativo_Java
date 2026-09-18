@@ -1,0 +1,275 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.casabaca</groupId>
+	<artifactId>compras-web-prime</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<sonar.sourceEncoding>UTF-8</sonar.sourceEncoding>
+	</properties>
+	<dependencies>
+		<!-- CASABACA PROVIDED -->
+		<dependency>
+			<groupId>com.casabaca</groupId>
+			<artifactId>commons-casabaca</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.casabaca</groupId>
+			<artifactId>commons-ejb</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.casabaca</groupId>
+			<artifactId>s3s-ejb</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.casabaca</groupId>
+			<artifactId>twc-ejb</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.casabaca</groupId>
+			<artifactId>compras-ejb</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- JEE PROVIDED -->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+			<scope>provided</scope>
+		</dependency>
+		<!--
+		https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports -->
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports</artifactId>
+			<version>4.7.0</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!--
+		https://mvnrepository.com/artifact/org.jboss.spec.javax.faces/jboss-jsf-api_2.2_spec -->
+		<dependency>
+			<groupId>org.jboss.spec.javax.faces</groupId>
+			<artifactId>jboss-jsf-api_2.2_spec</artifactId>
+			<version>2.2.12.redhat-1</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!--
+		https://mvnrepository.com/artifact/org.jboss.spec.javax.servlet/jboss-servlet-api_3.1_spec -->
+		<dependency>
+			<groupId>org.jboss.spec.javax.servlet</groupId>
+			<artifactId>jboss-servlet-api_4.0_spec</artifactId>
+			<version>2.0.0.Final-redhat-00001</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>5.3.20.Final-redhat-00001</version>
+			<scope>provided</scope>
+		</dependency>
+		<!--
+		https://mvnrepository.com/artifact/org.hibernate.common/hibernate-commons-annotations -->
+		<dependency>
+			<groupId>org.hibernate.common</groupId>
+			<artifactId>hibernate-commons-annotations</artifactId>
+			<version>4.0.2.Final</version>
+			<scope>provided</scope>
+		</dependency>
+
+
+		<!-- https://mvnrepository.com/artifact/javax.validation/validation-api -->
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>1.1.0.Final-redhat-1</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.spec.javax.ejb</groupId>
+			<artifactId>jboss-ejb-api_3.2_spec</artifactId>
+			<version>1.0.0.Final-redhat-1</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.googlecode.lambdaj/lambdaj -->
+		<dependency>
+			<groupId>com.googlecode.lambdaj</groupId>
+			<artifactId>lambdaj</artifactId>
+			<version>2.3.3</version>
+			<scope>provided</scope>
+		</dependency>
+
+
+		<!-- DEPENDENCY NORMAL -->
+		<!--
+		https://mvnrepository.com/artifact/org.primefaces.extensions/primefaces-extensions -->
+		<dependency>
+			<groupId>org.primefaces.extensions</groupId>
+			<artifactId>primefaces-extensions</artifactId>
+			<version>6.0.0</version>
+		</dependency>
+
+		<!--
+		https://mvnrepository.com/artifact/org.primefaces.extensions/all-themes -->
+		<dependency>
+			<groupId>org.primefaces.extensions</groupId>
+			<artifactId>all-themes</artifactId>
+			<version>1.0.8</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.primefaces</groupId>
+			<artifactId>serenity-theme</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<finalName>${project.artifactId}</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>3.3.2</version>
+				<configuration>
+					<webResources>
+						<resource>
+							<!-- this is relative to the pom.xml directory -->
+							<directory>src/main/resources</directory>
+						</resource>
+					</webResources>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+						</manifest>
+					</archive>
+					<outputDirectory>
+						C:/java/jboss/jboss-EAP-7.4/standalone/deployments/</outputDirectory>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>
+								C:/java/jboss/jboss-EAP-7.4/standalone/deployments/</directory>
+							<includes>
+								<include>**/${project.artifactId}.war</include>
+							</includes>
+							<followSymlinks>false</followSymlinks>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>3.9.0.2155</version>
+				<configuration>
+					<sonar.sources>src/main/java</sonar.sources>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<repositories>
+		<repository>
+			<id>centric-maven-central</id>
+			<url>https://nexus.centric.com.ec/repository/maven-central/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>centric-maven-public</id>
+			<url>https://nexus.centric.com.ec/repository/maven-public/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>centric-maven-releases</id>
+			<url>https://nexus.centric.com.ec/repository/maven-releases/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>centric-maven-snapshots</id>
+			<url>https://nexus.centric.com.ec/repository/maven-snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>mvn_jboss_repository</id>
+			<url>https://nexus.centric.com.ec/repository/mvn_jboss_repository/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>mvnrepository_apache</id>
+			<url>https://nexus.centric.com.ec/repository/mvnrepository_apache/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+	<distributionManagement>
+		<snapshotRepository>
+			<id>nexus-centric</id>
+			<url>https://nexus.centric.com.ec/repository/maven-snapshots/</url>
+		</snapshotRepository>
+		<repository>
+			<id>nexus-centric</id>
+			<url>https://nexus.centric.com.ec/repository/maven-releases/</url>
+		</repository>
+	</distributionManagement>
+</project>

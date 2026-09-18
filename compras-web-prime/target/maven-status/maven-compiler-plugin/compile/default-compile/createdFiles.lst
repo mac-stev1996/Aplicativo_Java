@@ -1,0 +1,6 @@
+com\casabaca\compras\web\common\controller\CmpValeGenerico.class
+com\casabaca\compras\web\common\controller\UserDataManager.class
+com\casabaca\compras\web\proceso\datamanager\CmpValeDataManager.class
+com\casabaca\compras\web\common\controller\CommonController.class
+com\casabaca\compras\web\proceso\controller\CmpValeController.class
+com\casabaca\compras\web\reportes\ctrl\OrCompraEstadoReporteCtrl.class

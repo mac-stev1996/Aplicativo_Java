@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk">
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+	</f:facet>
+
+	<script type="text/javascript">
+
+PrimeFaces.locales["es"] = {
+	    closeText: "Cerrar",
+	    prevText: "Anterior",
+	    nextText: "Siguiente",
+	    monthNames: ["Enero","Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+	    monthNamesShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+	    dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+	    dayNamesShort: ["Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab"],
+	    dayNamesMin: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
+	    weekHeader: "Semana",
+	    firstDay: 0,
+	    isRTL: false,
+	    showMonthAfterYear: false,
+	    yearSuffix: "",
+	    timeOnlyTitle: "Solo hora",
+	    timeText: "Tiempo",
+	    hourText: "Hora",
+	    minuteText: "Minuto",
+	    secondText: "Segundo",
+	    currentText: "Fecha actual",
+	    ampm: false,
+	    month: "Mes",
+	    week: "Semana",
+	    day: "Día",
+	    allDayText : "Todo el día"
+	};
+
+</script>
+
+
+</h:head>
+<h:body>
+	<f:event listener="#{cmpValeController.init()}" type="preRenderView" />
+	<p:growl id="messages1" showDetail="true" autoUpdate="true" life="2500" />
+	<h:form id="frmGeneral" enctype="multipart/form-data">
+		<p:ajaxStatus onstart="PF('statusDialog').show()"
+			onsuccess="PF('statusDialog').hide()" />
+
+		<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+			closable="false" resizable="false" showHeader="false">
+			<p:graphicImage value="/common/imgs/icons/ajax-loader.gif" />
+		</p:dialog>
+
+		<p:toolbar id="generalToolsB">
+			<p:toolbarGroup align="left">
+				<h:outputText value="REGISTRO DE VOUCHER" />
+			</p:toolbarGroup>
+			<p:toolbarGroup align="right">
+				<p:commandButton value="NUEVO" id="nuevoVoucher" icon="ui-icon-plus" action="#{cmpValeController.nuevo()}" 
+					update=":frmNuevoVale" oncomplete="PF('dialogNuevoVale').show();" >
+				</p:commandButton>
+				<p:commandButton value="LIMPIAR" id="ascRegresar"
+					icon="ui-icon-refresh" action="#{cmpValeController.limpiar()}"
+					update="@form" />
+			</p:toolbarGroup>
+		</p:toolbar>
+		
+		<center>
+		
+			<p:panelGrid id="pnlFrm" columns="6" styleClass="normal" style=" width : 95%;">
+				<h:outputText value="Compania" />
+				<h:selectOneMenu id="dealer" value="#{cmpValeDataManager.noCia}" styleClass="normal"
+					style=" width : 170px;">
+					<f:selectItems value="#{cmpValeDataManager.companias}" />
+				</h:selectOneMenu>
+				
+				<h:outputText value="Agencia" styleClass="normal" />
+				<h:selectOneMenu id="agen"
+					value="#{cmpValeDataManager.agencia}" styleClass="normal"
+					title="Responsable" style=" width : 170px;">
+					<f:selectItems value="#{cmpValeDataManager.agencias}" />
+				</h:selectOneMenu>
+
+				<h:outputLabel value="Tipo Vale" styleClass="normal" for="tipVale" />
+				<h:panelGroup>
+					<h:selectOneMenu id="tipVale" value="#{cmpValeDataManager.tipoVale}" styleClass="normal" style=" width : 170px;">
+						<f:selectItem itemValue="" itemLabel="Seleccione" />
+						<f:selectItem itemValue="C" itemLabel="COMBUSTIBLE" />
+						<f:selectItem itemValue="T" itemLabel="TAXI" />
+						<p:ajax event="change" listener="#{cmpValeController.cargarProveedor}" update="itProve"/>
+					</h:selectOneMenu>
+				</h:panelGroup>
+				
+				<h:outputText value="Proveedor" styleClass="normal" />
+				<h:selectOneMenu id="itProve" value="#{cmpValeDataManager.noProve}" styleClass="normal" style=" width : 170px;">
+						<f:selectItem itemValue="" itemLabel="Seleccione" />
+						<f:selectItems value="#{cmpValeDataManager.proveedor}" />
+				</h:selectOneMenu>
+				
+				<h:outputText value="Fecha desde" />
+				<h:panelGroup>
+					<p:calendar value="#{cmpValeDataManager.fechaDesde}" locale="es"
+						pattern="dd-MM-yyyy" showButtonPanel="true"
+						style=" width : 120px;">
+					</p:calendar>
+				</h:panelGroup>
+				
+				<h:outputText value="Fecha hasta" />
+				<h:panelGroup>
+					<p:calendar value="#{cmpValeDataManager.fechaHasta}" locale="es"
+						pattern="dd-MM-yyyy" showButtonPanel="true"
+						style=" width : 120px;">
+					</p:calendar>
+				</h:panelGroup>
+				
+				<p:commandButton value="BUSCAR" id="buscarVoucher"
+					icon="ui-icon-search" action="#{cmpValeController.buscar()}"
+					update="listadoDetail1" />
+				
+				<h:outputText value="" />
+				
+				<h:outputText value="" />
+				
+				<h:outputText value="" />
+				
+				<h:outputText value="" />
+				
+				<h:outputText value="" />
+
+			</p:panelGrid>
+		</center>
+		
+		
+		<p:panel>
+			<p:dataTable id="listadoDetail1" rows="25" widgetVar="listadoDetail1"
+				value="#{cmpValeDataManager.listaCmpVale}"
+				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink} {Exporters}"
+				var="item" paginator="true" rowIndexVar="row">
+
+				<f:facet name="{Exporters}">
+					<div style="float: left;">
+						<h:commandLink>
+							<p:graphicImage name="/serenity-layout/reports/excel.png" width="24" />
+							<p:dataExporter type="xls" target="listadoDetail1" fileName="listaVales" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage name="/serenity-layout/reports/adobe.png" width="24" />
+							<p:dataExporter type="pdf" target="listadoDetail1" fileName="listaVales" />
+						</h:commandLink>
+					</div>
+				</f:facet>
+
+				<f:facet name="header">
+					<p:columnGroup>
+						<p:column colspan="4">
+							<h:outputText value="Registros Ingresados" />
+						</p:column>
+					</p:columnGroup>
+				</f:facet>
+				<p:column headerText="Nro." width="3%">
+					<h:outputText value="#{row+1}" />
+				</p:column>
+
+				<p:column headerText="Tipo Vale">
+					<h:outputText value="#{item.tipoVale eq 'C'?'COMBUSTIBLE':'TAXI'}" />
+				</p:column>
+
+				<p:column headerText="Fecha">
+					<h:outputText value="#{item.fecha}">
+						<f:convertDateTime pattern = "dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Proveedor" width="15%">
+				    <h:outputText value="#{cmpValeController.buscarNombreProveedor(item.noProve)}" />
+				</p:column>
+
+				<p:column headerText="Agencia" width="5%">
+					<h:outputText value="#{item.agencia}" />
+				</p:column>
+
+				<p:column headerText="Responsable">
+					<h:outputText value="#{cmpValeController.obtenerNombreEmple(item.responsable)}" />
+				</p:column>
+
+				<p:column headerText="Responsable Tarj." exportable="true" visible="false">
+					<h:outputText value="#{cmpValeController.obtenerNombreEmple(item.responsableTarjeta)}" />
+				</p:column>
+
+				<p:column headerText="Linea de Negocio">
+					<h:outputText id="obsCaus" value="#{item.lineaNegocio}" />
+				</p:column>
+
+				<p:column headerText="Placa">
+					<h:outputText value="#{item.placa}" />
+				</p:column>
+
+				<p:column headerText="Chasis">
+					<h:outputText value="#{item.chasis}" />
+				</p:column>
+				
+				<p:column headerText="Valor">
+					<h:outputText value="#{item.valor}" />
+				</p:column>
+				
+				<p:column headerText="Tipo Combustible" exportable="true" visible="false">
+					<h:outputText value="#{item.tipoCombustible}" />
+				</p:column>
+				
+				<p:column headerText="Nro Despacho" exportable="true" visible="false">
+					<h:outputText value="#{item.nroDespacho}" />
+				</p:column>
+				
+				<p:column headerText="Origen" exportable="true" visible="false">
+					<h:outputText value="#{item.origen}" />
+				</p:column>
+				
+				<p:column headerText="Destino" exportable="true" visible="false">
+					<h:outputText value="#{item.destino}" />
+				</p:column>
+				
+				<p:column headerText="Hora" exportable="true" visible="false">
+					<h:outputText value="#{item.hora}" />
+				</p:column>
+				
+				<p:column headerText="Observaciones" exportable="true" visible="false">
+					<h:outputText value="#{item.observaciones}" />
+				</p:column>
+				
+				<p:column headerText="Area/Linea" exportable="true" visible="false">
+					<h:outputText value="#{item.area}" />
+				</p:column>
+				
+				<p:column headerText="Subarea" exportable="true" visible="false">
+					<h:outputText value="#{item.subArea}" />
+				</p:column>
+
+				<p:column headerText="Conductor/Usuario">
+					<h:outputText value="#{cmpValeController.obtenerNombreEmple(item.conductor)}" />
+				</p:column>
+
+				<p:column headerText="Controles" exportable="false">
+					<p:commandButton ajax="true" icon="fa fa-fw fa-edit" action="#{cmpValeController.editarPrevio}" update="@form, :frmNuevoVale" oncomplete="PF('dialogNuevoVale').show();">
+						<f:setPropertyActionListener value="#{item}" target="#{cmpValeDataManager.cmpVale}" />
+					</p:commandButton>
+
+					<p:commandButton ajax="true" icon="fa fa-fw fa-remove" onclick="PF('eliminarInfo').show();">
+						<f:setPropertyActionListener value="#{item}" target="#{cmpValeDataManager.cmpVale}" />
+					</p:commandButton>
+
+				</p:column>
+
+			</p:dataTable>
+		</p:panel>
+	</h:form>
+	
+	<p:dialog header="REGISTRO INFORMACIÓN" widgetVar="dialogNuevoVale" modal="true"
+	 style="position: fixed;top: 5%; left: 50%;margin-top: -60px;" hideEffect="fade" resizable="true">
+		<h:form id="frmNuevoVale">
+			<center>
+			<p:panelGrid id="pnlFrmNew" columns="6" styleClass="normal"
+				style=" width : 95%;">
+
+				<h:outputText value="Codigo" style="width:40px;" />
+				<h:inputText value="#{cmpValeDataManager.cmpVale.code}"
+					disabled="true" />
+
+				<h:outputLabel value="Tipo Vale" styleClass="normal" for="tipVa" />
+				<h:panelGroup>
+					<h:selectOneMenu id="tipVa"
+						value="#{cmpValeDataManager.cmpVale.tipoVale}" styleClass="normal" style=" width : 170px;">
+						<f:selectItem itemValue="" itemLabel="Seleccione" />
+						<f:selectItem itemValue="C" itemLabel="COMBUSTIBLE" />
+						<f:selectItem itemValue="T" itemLabel="TAXI" />
+						<p:ajax event="change" listener="#{cmpValeController.cargarProveedorNuevo}" update="itProvNuev,frmNuevoVale"/>
+					</h:selectOneMenu>
+				</h:panelGroup>
+
+				<h:outputText value="Proveedor" />
+				<h:selectOneMenu id="itProvNuev" value="#{cmpValeDataManager.cmpVale.noProve}" styleClass="normal" style=" width : 170px;">
+						<f:selectItem itemValue="" itemLabel="Seleccione" />
+						<f:selectItems value="#{cmpValeDataManager.proveedor}" var="prov" itemLabel="#{prov.label}" itemValue="#{prov.value}" />
+				</h:selectOneMenu>
+
+				<p:commandLink value="Responsable" rendered="#{cmpValeDataManager.cmpVale.tipoVale eq 'C'}"
+				actionListener="#{cmpValeController.showModalResponsable}" styleClass="normal"
+				oncomplete="PF('usuarioSist').show()"
+				update=":frmUsuaSis,:frmUsuaSis:tblUserId"/>
+				<h:inputText id="pcResponsable" rendered="#{cmpValeDataManager.cmpVale.tipoVale eq 'C'}" value="#{cmpValeDataManager.cmpVale.responsable}" />
+
+				<p:commandLink value="Responsable tarjeta" rendered="#{cmpValeDataManager.cmpVale.tipoVale eq 'C'}"
+				actionListener="#{cmpValeController.showModalResponsableTjta}" styleClass="normal"
+				oncomplete="PF('usuarioSist').show()"
+				update=":frmUsuaSis,:frmUsuaSis:tblUserId"/>
+				<h:inputText id="iTResTarj" rendered="#{cmpValeDataManager.cmpVale.tipoVale eq 'C'}" value="#{cmpValeDataManager.cmpVale.responsableTarjeta}" />
+
+				<h:outputText value="Nro. Tarjeta" rendered="#{cmpValeDataManager.cmpVale.tipoVale eq 'C'}" />
+				<h:inputText value="#{cmpValeDataManager.cmpVale.nroTarjeta}" rendered="#{cmpValeDataManager.cmpVale.tipoVale eq 'C'}" />
+
+				<h:outputText value="Area" styleClass="normal" rendered="#{cmpValeDataManager.cmpVale.tipoVale eq 'C'}"/>
+				<h:selectOneMenu id="areaCombo" value="#{cmpValeDataManager.cmpVale.area}" rendered="#{cmpValeDataManager.cmpVale.tipoVale eq 'C'}">
+					<f:selectItem itemValue="" itemLabel="Seleccione" />
+					<f:selectItems value="#{cmpValeDataManager.area}" var="areac" itemLabel="#{areac.label}" itemValue="#{areac.value}" />
+					<p:ajax event="change" listener="#{cmpValeController.cargarSubArea()}" update="subareaCombo" />
+				</h:selectOneMenu>
+				
+				<h:outputText value="Subarea" styleClass="normal" rendered="#{cmpValeDataManager.cmpVale.tipoVale eq 'C'}"/>
+				<h:selectOneMenu id="subareaCombo" value="#{cmpValeDataManager.cmpVale.subArea}" rendered="#{cmpValeDataManager.cmpVale.tipoVale eq 'C'}">
+					<f:selectItem itemValue="" itemLabel="Seleccione" />
+					<f:selectItems value="#{cmpValeDataManager.subArea}" var="sareac" itemLabel="#{sareac.label}" itemValue="#{sareac.value}" />
+				</h:selectOneMenu>
+
+				<h:outputText value="Placa" rendered="#{cmpValeDataManager.cmpVale.tipoVale eq 'C'}" />
+				<h:inputText value="#{cmpValeDataManager.cmpVale.placa}" rendered="#{cmpValeDataManager.cmpVale.tipoVale eq 'C'}" />
+
+				<h:outputText value="Chasis" rendered="#{cmpValeDataManager.cmpVale.tipoVale eq 'C'}" />
+				<h:inputText value="#{cmpValeDataManager.cmpVale.chasis}" rendered="#{cmpValeDataManager.cmpVale.tipoVale eq 'C'}" />
+
+				<h:outputText value="Km" rendered="#{cmpValeDataManager.cmpVale.tipoVale eq 'C'}" />
+				<h:inputText value="#{cmpValeDataManager.cmpVale.km}" rendered="#{cmpValeDataManager.cmpVale.tipoVale eq 'C'}"/>
+
+				<p:commandLink value="Conductor" rendered="#{cmpValeDataManager.cmpVale.tipoVale eq 'C'}"
+				actionListener="#{cmpValeController.showModalConductor}" styleClass="normal"
+				oncomplete="PF('usuarioSist').show()"
+				update=":frmUsuaSis,:frmUsuaSis:tblUserId"/>
+				
+				<p:commandLink value="Usuario" rendered="#{cmpValeDataManager.cmpVale.tipoVale eq 'T'}"
+				actionListener="#{cmpValeController.showModalConductor}" styleClass="normal"
+				oncomplete="PF('usuarioSist').show()"
+				update=":frmUsuaSis,:frmUsuaSis:tblUserId"/>
+				<h:inputText id="iTCond" value="#{cmpValeDataManager.cmpVale.conductor}" />
+				
+				<h:outputText value="Centro de Costo"/>
+				<h:inputText id="idCent" value="#{cmpValeDataManager.cmpVale.centronNombre}"/>
+				
+				<h:outputText value="Codigo Centro"/>
+				<h:inputText id="codCent" value="#{cmpValeDataManager.cmpVale.centroCosto}"/>
+
+				<h:outputText value="Nro. Despacho" rendered="#{cmpValeDataManager.cmpVale.tipoVale eq 'C'}" />
+				<h:inputText value="#{cmpValeDataManager.cmpVale.nroDespacho}" rendered="#{cmpValeDataManager.cmpVale.tipoVale eq 'C'}" />
+
+				<h:outputText value="Nro. Unidad"  rendered="#{cmpValeDataManager.cmpVale.tipoVale eq 'T'}"/>
+				<h:inputText value="#{cmpValeDataManager.cmpVale.nroUnidad}" rendered="#{cmpValeDataManager.cmpVale.tipoVale eq 'T'}"/>
+				
+				<h:outputText value="Origen" rendered="#{cmpValeDataManager.cmpVale.tipoVale eq 'T'}"/>
+				<h:inputText value="#{cmpValeDataManager.cmpVale.origen}" rendered="#{cmpValeDataManager.cmpVale.tipoVale eq 'T'}" />
+
+				<h:outputText value="Destino" rendered="#{cmpValeDataManager.cmpVale.tipoVale eq 'T'}"/>
+				<h:inputText value="#{cmpValeDataManager.cmpVale.destino}" rendered="#{cmpValeDataManager.cmpVale.tipoVale eq 'T'}" />
+
+				<h:outputText value="Nro. Vale" rendered="#{cmpValeDataManager.cmpVale.tipoVale eq 'T'}" />
+				<h:inputText value="#{cmpValeDataManager.cmpVale.nroVale}" rendered="#{cmpValeDataManager.cmpVale.tipoVale eq 'T'}"/>
+
+				<h:outputText value="Valor" />
+				<h:inputText value="#{cmpValeDataManager.cmpVale.valor}"  requiredMessage="Es necesario que digite un número" >
+					<f:convertNumber minFractionDigits="2"  currencySymbol="$" />
+				</h:inputText>
+				
+				<h:outputText value="Fecha" />
+				<h:panelGroup>
+					<p:calendar value="#{cmpValeDataManager.cmpVale.fecha}" locale="es"
+						pattern="dd/MM/yyyy" showButtonPanel="true" style=" width : 120px;">
+					</p:calendar>
+				</h:panelGroup>
+				
+				<h:outputText value="Hora taxi" rendered="#{cmpValeDataManager.cmpVale.tipoVale eq 'T'}"/>
+				<p:panelGrid columns="3" rendered="#{cmpValeDataManager.cmpVale.tipoVale eq 'T'}">
+					 <p:inputText style="width:20px !important;" id="spHora" value="#{cmpValeDataManager.horaTmp}" />
+					 <h:outputLabel value=":" />
+					 <p:inputText style="width:20px !important;" id="spMinutos" value="#{cmpValeDataManager.minutoTmp}" />
+				</p:panelGrid>
+				
+				<h:outputLabel value="Tipo Combustible" styleClass="normal" for="tipVa" rendered="#{cmpValeDataManager.cmpVale.tipoVale eq 'C'}"/>
+				<h:selectOneMenu id="tipComb" rendered="#{cmpValeDataManager.cmpVale.tipoVale eq 'C'}"
+						value="#{cmpValeDataManager.cmpVale.tipoCombustible}" styleClass="normal" style=" width : 170px;">
+						<f:selectItem itemValue="" itemLabel="Seleccione" />
+						<f:selectItem itemValue="SUPER" itemLabel="SUPER" />
+						<f:selectItem itemValue="EXTRA" itemLabel="EXTRA" />
+						<f:selectItem itemValue="DIESEL" itemLabel="DIESEL" />
+			    </h:selectOneMenu>
+
+				<h:outputText value="Observaciones" />
+				<h:inputTextarea value="#{cmpValeDataManager.cmpVale.observaciones}" />
+				
+				<p:commandButton value="GUARDAR" id="ascEnviar" icon="fa fa-save" action="#{cmpValeController.guardar()}" update=":frmGeneral"/>
+				
+				<p:commandButton value="CANCELAR" id="ascCancelar" icon="fa fa-close" onclick="PF('dialogNuevoVale').hide();"/>
+				
+			</p:panelGrid>
+		</center>
+		</h:form>
+	</p:dialog>
+	
+	
+	<!-- COMPLETAR LA BUSQUEDA DE PERSONAS -->
+	<p:dialog header="Asignar a.." widgetVar="usuarioSist" modal="true" width="480px;" height="456px;" style="width:480px !important; height:456px !important; top: 88px; position: fixed;">
+			<h:form id="frmUsuaSis">
+				<p:panel id="richpanelUsuario">
+					<p:dataTable id="tblUserId" value="#{cmpValeDataManager.usuariosModal}" 
+					binding="#{cmpValeController.tableUsuarioSisModal}" paginator="true"
+					var="rowUser" rowIndexVar="varUser" rows="10">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value=""/>
+							</f:facet>
+								<p:commandLink value="#{varUser+1}" update=":frmNuevoVale:pcResponsable :frmNuevoVale:iTResTarj :frmNuevoVale:iTCond, :frmNuevoVale:idCent, :frmNuevoVale:codCent"
+								actionListener="#{cmpValeController.selectUserSistemasModal}"
+								oncomplete="PF('usuarioSist').hide();"/>
+						</p:column>
+						<p:column id="nombreUsuario" filterBy="#{rowUser.nombre}" filterEvent="onkeyup">
+							<f:facet name="header">
+								<h:outputText value="Nombre" styleClass="normal"/>
+							</f:facet>
+								<h:outputText value="#{rowUser.nombre}"/>
+						</p:column>
+						<p:column id="usrDialog" filterBy="#{rowUser.usuario}" filterEvent="onkeyup">
+							<f:facet name="header">
+								<h:outputText value="Usuario" styleClass="normal"/>
+							</f:facet>
+								<h:outputText value="#{rowUser.usuario}"/>
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+			</h:form>
+	</p:dialog>
+	
+	
+	<p:dialog header="Confirmación" widgetVar="eliminarInfo" modal="true">
+			<h:form id="frmDeleteInfo">
+				<h:outputText value="Esta seguro de eliminar esta información?" />
+				
+				<h:panelGrid columns="2">
+					<p:commandButton value="ELIMINAR" id="infoEliminar" icon="fa fa-fw fa-remove" action="#{cmpValeController.eliminar()}" update=":frmGeneral"
+					oncomplete="PF('eliminarInfo').hide();"/>
+					<p:commandButton value="CANCELAR" id="infoCancelar" icon="fa fa-close" onclick="PF('eliminarInfo').hide();"/>
+				</h:panelGrid>
+			</h:form>
+	</p:dialog>
+	
+	
+
+	<h:outputStylesheet name="css/layout-lightblue.css"
+		library="serenity-layout" />
+	<h:outputScript name="js/layout.js" library="serenity-layout" />
+	<h:outputScript name="js/ripple.js" library="serenity-layout" />
+</h:body>
+</html>
