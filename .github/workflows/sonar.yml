@@ -14,72 +14,26 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Verificar directorio y POM
+      - name: Configurar Java 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Verificar Java
         shell: powershell
         run: |
-          Write-Host "================================="
-          Write-Host "DIRECTORIO ACTUAL"
-          Write-Host "================================="
-          Get-Location
-
-          Write-Host ""
-          Write-Host "================================="
-          Write-Host "CONTENIDO DEL REPOSITORIO"
-          Write-Host "================================="
-          Get-ChildItem -Force
-
-          Write-Host ""
-          Write-Host "================================="
-          Write-Host "POM.XML ENCONTRADOS"
-          Write-Host "================================="
-
-          Get-ChildItem -Path . -Filter pom.xml -Recurse -File |
-            Select-Object -ExpandProperty FullName
-
-      - name: Diagnosticar Java
-        shell: powershell
-        run: |
-          Write-Host "================================="
-          Write-Host "JAVA"
-          Write-Host "================================="
-      
           Write-Host "JAVA_HOME:"
           Write-Host $env:JAVA_HOME
-      
+
           Write-Host ""
-          Write-Host "JAVA:"
-          where.exe java
-      
-          Write-Host ""
-          Write-Host "VERSION:"
           java -version
-      
-          Write-Host ""
-          Write-Host "DIRECTORIOS JAVA:"
-          Get-ChildItem "C:\Program Files\Java" -ErrorAction SilentlyContinue
 
       - name: Verificar Maven
         shell: powershell
         run: |
-          Write-Host "================================="
-          Write-Host "MAVEN"
-          Write-Host "================================="
+          Write-Host "JAVA_HOME:"
+          Write-Host $env:JAVA_HOME
+
+          Write-Host ""
           mvn -version
-
-      - name: Verificar SonarQube
-        shell: powershell
-        run: |
-          Write-Host "================================="
-          Write-Host "SONARQUBE"
-          Write-Host "================================="
-          Write-Host "Verificando localhost:9002..."
-
-          $result = Test-NetConnection localhost -Port 9002
-
-          if ($result.TcpTestSucceeded) {
-              Write-Host "OK - SonarQube está accesible en localhost:9002"
-          }
-          else {
-              Write-Host "ERROR - SonarQube NO está accesible en localhost:9002"
-              exit 1
-          }
