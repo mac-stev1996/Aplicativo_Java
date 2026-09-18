@@ -1,39 +1,149 @@
-name: Diagnóstico SonarQube
+name: SonarQube Analysis
 
 on:
+  push:
+    branches:
+      - main
+      - develop
+
+  pull_request:
+    branches:
+      - main
+      - develop
+
   workflow_dispatch:
 
 jobs:
-  diagnostico:
+  build-and-analyze:
+
+    name: Build, Test and SonarQube
+
     runs-on: self-hosted
 
     steps:
 
-      - name: Checkout
+      # ==========================================
+      # 1. Descargar código
+      # ==========================================
+      - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Configurar Java 17
+      # ==========================================
+      # 2. Configurar Java
+      # ==========================================
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: maven
 
-      - name: Verificar Java
+      # ==========================================
+      # 3. Verificar entorno
+      # ==========================================
+      - name: Verify environment
         shell: powershell
         run: |
-          Write-Host "JAVA_HOME:"
-          Write-Host $env:JAVA_HOME
-
-          Write-Host ""
+          Write-Host "================================="
+          Write-Host "JAVA"
+          Write-Host "================================="
+          Write-Host "JAVA_HOME: $env:JAVA_HOME"
           java -version
 
-      - name: Verificar Maven
-        shell: powershell
-        run: |
-          Write-Host "JAVA_HOME:"
-          Write-Host $env:JAVA_HOME
+          Write-Host ""
+          Write-Host "================================="
+          Write-Host "MAVEN"
+          Write-Host "================================="
+          mvn -version
 
           Write-Host ""
-          mvn -version
+          Write-Host "================================="
+          Write-Host "DIRECTORIO"
+          Write-Host "================================="
+          Get-Location
+
+      # ==========================================
+      # 4. Verificar POM
+      # ==========================================
+      - name: Verify Maven project
+        shell: powershell
+        run: |
+          Write-Host "================================="
+          Write-Host "POM.XML"
+          Write-Host "================================="
+
+          $poms = Get-ChildItem -Path . -Filter pom.xml -Recurse -File
+
+          if ($poms.Count -eq 0) {
+              Write-Host "ERROR: No se encontró ningún pom.xml"
+              exit 1
+          }
+
+          foreach ($pom in $poms) {
+              Write-Host $pom.FullName
+          }
+
+      # ==========================================
+      # 5. Verificar conexión SonarQube
+      # ==========================================
+      - name: Verify SonarQube
+        shell: powershell
+        run: |
+          Write-Host "================================="
+          Write-Host "SONARQUBE"
+          Write-Host "================================="
+
+          Write-Host "Verificando localhost:9002..."
+
+          $result = Test-NetConnection localhost -Port 9002
+
+          if ($result.TcpTestSucceeded) {
+              Write-Host "OK - SonarQube está accesible."
+          }
+          else {
+              Write-Host "ERROR - SonarQube no está accesible."
+              exit 1
+          }
+
+      # ==========================================
+      # 6. Build + Tests + SonarQube
+      # ==========================================
+      - name: Build, Test and SonarQube analysis
+        shell: powershell
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: |
+          Write-Host "================================="
+          Write-Host "MAVEN BUILD + SONARQUBE"
+          Write-Host "================================="
+
+          if ([string]::IsNullOrWhiteSpace($env:SONAR_TOKEN)) {
+              Write-Host "ERROR: SONAR_TOKEN no está configurado."
+              exit 1
+          }
+
+          if ([string]::IsNullOrWhiteSpace($env:SONAR_HOST_URL)) {
+              Write-Host "ERROR: SONAR_HOST_URL no está configurado."
+              exit 1
+          }
+
+          Write-Host "SonarQube URL: $env:SONAR_HOST_URL"
+
+          mvn -B verify `
+            org.sonarsource.scanner.maven:sonar-maven-plugin:sonar `
+            "-Dsonar.projectKey=mac-stev1996_Aplicativo_Java_c7e97964-ff9c-489f-b145-aa03bc730586" `
+            "-Dsonar.host.url=$env:SONAR_HOST_URL" `
+            "-Dsonar.token=$env:SONAR_TOKEN"
+
+      # ==========================================
+      # 7. Quality Gate
+      # ==========================================
+      - name: Check SonarQube Quality Gate
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        timeout-minutes: 10
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
