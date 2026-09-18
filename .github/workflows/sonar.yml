@@ -58,12 +58,12 @@ jobs:
         run: >
           mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
           -Dsonar.projectKey=mac-stev1996_Aplicativo_Java_c7e97964-ff9c-489f-b145-aa03bc730586
-          -Dsonar.host.url= 'http://127.0.0.1:9002'
+          -Dsonar.host.url= 'http://localhost:9002'
           -Dsonar.token= 'sqp_38d5f9c21024fc49782a4a435f3d18f05e29cf23'
  
       - name: Check SonarQube Quality Gate
         uses: sonarsource/sonarqube-quality-gate-action@master
         timeout-minutes: 5
         env:
-          SONAR_TOKEN: 'sqp_38d5f9c21024fc49782a4a435f3d18f05e29cf23'
-          SONAR_HOST_URL: 'http://127.0.0.1:9002'
+         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
